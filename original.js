@@ -26,7 +26,7 @@ app.get('/1',function(req,res){
 	//var name = req.body.name;
 	//var password = req.body.password;
 });
-app.post('/login',function (req,res	){
+app.get('/login',function (req,res	){
 	var account = req.body.account;
 	var password = req.body.password;
 	console.log('account:',account);
