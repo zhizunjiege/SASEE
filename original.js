@@ -21,6 +21,9 @@ app.get('/1',function(req,res){
 	//var name = req.body.name;
 	//var password = req.body.password;
 });
+app.post('/login',function (req,res	){
+	
+})
 //404
 app.use(function(req,res){
 	res.type('text/plain');
