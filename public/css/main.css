@@ -1,8 +1,13 @@
-#accordion{
+aside{
     position:fixed;
     left:0;
-    padding-top: 74px;
+    bottom:0;
+    top: 73px;
 }
 #content{
-    padding-top:74px;
+    padding-top:73px;
+    width:87%
+}
+.aside{
+    width:13%;
 }

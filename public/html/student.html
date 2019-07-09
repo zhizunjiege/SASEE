@@ -33,67 +33,78 @@
     </header>
 
     <div class="row">
-        <aside class="col-1 h-100 px-0 text-center border-right border-light" id="accordion">
-            <div class="card">
-                <button class="btn mb-1" data-toggle="collapse" data-target="#news">通知公告</button>
-            </div>
-            <div class="card">
-                <button class="btn mb-1" data-toggle="collapse" data-target="#bysj">毕业设计</button>
-                <div id="bysj" class="collapse" data-parent="#accordion">
-                    <ul class="list-group list-group-flush">
-                        <a href="#bysj-xyqk" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>学业情况</small></a>
-                        <a href="#bysj-kxkt" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>可选课题</small></a>
-                        <a href="#bysj-wdkt" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>我的课题</small></a>
-                        <a href="#bysj-zltj" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>资料提交</small></a>
-                    </ul>
-                </div>
-            </div>
-            <div class="card">
-                <button class="btn mb-1" data-toggle="collapse" data-target="#scsx">生产实习</button>
-                <div id="scsx" class="collapse" data-parent="#accordion">
-                    <ul class="list-group list-group-flush">
-                        <a href="#" class="list-group-item list-group-item-action"><small>学业情况</small></a>
-                        <a href="#" class="list-group-item list-group-item-action"><small>可选课题</small></a>
-                        <a href="#" class="list-group-item list-group-item-action"><small>我的课题</small></a>
-                        <a href="#" class="list-group-item list-group-item-action"><small>资料提交</small></a>
-                    </ul>
-                </div>
-            </div>
-            <div class="card">
-                <button class="btn mb-1" data-toggle="collapse" data-target="#zhsy">综合实验</button>
-                <div id="zhsy" class="collapse" data-parent="#accordion">
-                    <ul class="list-group list-group-flush">
-                        <a href="#zhsy-xyqk" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>学业情况</small></a>
-                        <a href="#zhsy-kxkt" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>可选课题</small></a>
-                        <a href="#zhsy-wdkt" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>我的课题</small></a>
-                        <a href="#zhsy-zltj" class="list-group-item list-group-item-action"
-                            data-toggle="collapse"><small>资料提交</small></a>
-                    </ul>
-                </div>
-            </div>
+        <aside class="aside border-right border-info">
+            <dl class="list-group list-group-flush" id="accordion">
+                <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
+                <dd class="list-group-item">
+                    <a class="" data-toggle="collapse" href="#news"><span
+                            class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
+                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                </dd>
+                <dd class="list-group-item">
+                    <a class="" data-toggle="collapse" href="#bysj"><span
+                            class="glyphicon glyphicon-eye-open mr-2"></span>毕业设计<span
+                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    <div id="bysj" class="collapse" data-parent="#accordion">
+                        <ul class="list-group list-group-flush">
+                            <a href="#bysj-xyqk" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>学业情况</small></a>
+                            <a href="#bysj-kxkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>可选课题</small></a>
+                            <a href="#bysj-wdkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>我的课题</small></a>
+                            <a href="#bysj-zltj" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>资料提交</small></a>
+                        </ul>
+                    </div>
+                </dd>
+                <dd class="list-group-item">
+                    <a class="" data-toggle="collapse" href="#scsx"><span
+                            class="glyphicon glyphicon-fire mr-2"></span>生产实习<span
+                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    <div id="scsx" class="collapse" data-parent="#accordion">
+                        <ul class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action"><small>学业情况</small></a>
+                            <a href="#" class="list-group-item list-group-item-action"><small>可选课题</small></a>
+                            <a href="#" class="list-group-item list-group-item-action"><small>我的课题</small></a>
+                            <a href="#" class="list-group-item list-group-item-action"><small>资料提交</small></a>
+                        </ul>
+                    </div>
+                </dd>
+                <dd class="list-group-item">
+                    <a class="" data-toggle="collapse" href="#zhsy"><span
+                            class="glyphicon glyphicon-leaf mr-2"></span>综合实验<span
+                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    <div id="zhsy" class="collapse" data-parent="#accordion">
+                        <ul class="list-group list-group-flush">
+                            <a href="#zhsy-xyqk" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>学业情况</small></a>
+                            <a href="#zhsy-kxkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>可选课题</small></a>
+                            <a href="#zhsy-wdkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>我的课题</small></a>
+                            <a href="#zhsy-zltj" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>资料提交</small></a>
+                        </ul>
+                    </div>
+                </dd>
+            </dl>
         </aside>
 
-        <div class="col-1 invisible">占位</div>
+        <div class="aside invisible">占位</div>
 
-        <div id="content" class="col-11 mt-3">
+        <div id="content" class="mt-3">
 
             <div id="news" class="collapse card show" data-parent="#content">
                 <div class="card-header">
                     <h3 id="title" class="text-center">通知</h3>
                 </div>
-                <ul class="list-group col-8 mx-auto">
+                <ul class="list-group list-group-flush col-10 mx-auto">
                     <li class="list-group-item list-group-item-action">
                         <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
                         <span class="float-right">管理员--毕业设计--2019/07/08</span>
                     </li>
-                   <li class="list-group-item list-group-item-action">
+                    <li class="list-group-item list-group-item-action">
                         <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
                         <span class="float-right">管理员--毕业设计--2019/07/08</span>
                     </li>
@@ -104,8 +115,8 @@
                 </ul>
                 <nav class="my-5">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item"><a href="#" class="page-link"><span><<</span></a></li>
-                        <li class="page-item"><a href="#" class="page-link">1</a></li>
+                        <li class="page-item"><a href="#" class="page-link"><span>
+                                    <<</span> </a> </li> <li class="page-item"><a href="#" class="page-link">1</a></li>
                         <li class="page-item"><a href="#" class="page-link">···</a></li>
                         <li class="page-item"><a href="#" class="page-link">7</a></li>
                         <li class="page-item"><a href="#" class="page-link"><span>>></span></a></li>
@@ -126,7 +137,7 @@
     </div>
 
     <footer class="fixed-bottom text-right">
-            <p class="mr-3">北京航空航天大学</p>
+        <p class="mr-3">北京航空航天大学</p>
     </footer>
 
     <script src="../bootstrap/others/jquery-3.4.0.js"></script>
