@@ -17,15 +17,15 @@
         </div>
 
         <div class="col-2 dropdown">
-            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center justify-content-around"
-                type="button" data-toggle="dropdown">
-                <img src="../pictures/profile.png" class="float-left rounded-circle navbar-brand" alt="profile">
+            <div id="id-info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around"
+                data-toggle="dropdown">
+                <img src="../pictures/profile.png" class="float-left rounded-circle" alt="profile">
                 <div class="">
                     <div id="name" class="h5 my-0">Jason</div>
                     <span class="badge badge-pill badge-info">学生</span>
                 </div>
-            </button>
-            <ul class="dropdown-menu text-center w-50">
+            </div>
+            <ul class="dropdown-menu text-center w-75">
                 <li class="dropdown-item"><a href="#">个人信息</a></li>
                 <li class="dropdown-item"><a href="#">退出登陆</a></li>
             </ul>
@@ -33,7 +33,7 @@
     </header>
 
     <div class="row">
-        <aside class="aside border-right border-info">
+        <aside id="navigator" class="aside border-right border-light">
             <dl class="list-group list-group-flush" id="accordion">
                 <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
                 <dd class="list-group-item">
@@ -57,6 +57,7 @@
                                 data-toggle="collapse"><small>资料提交</small></a>
                         </ul>
                     </div>
+
                 </dd>
                 <dd class="list-group-item">
                     <a class="" data-toggle="collapse" href="#scsx"><span
@@ -93,46 +94,42 @@
 
         <div class="aside invisible">占位</div>
 
-        <div id="content" class="mt-3">
+        <div id="content" class="mt-3 px-3">
 
             <div id="news" class="collapse card show" data-parent="#content">
-                <div class="card-header">
-                    <h3 id="title" class="text-center">通知</h3>
+                <div id="news_title" class="card-header">
+                    <h3 class="text-center">通知</h3>
                 </div>
-                <ul class="list-group list-group-flush col-10 mx-auto">
-                    <li class="list-group-item list-group-item-action">
-                        <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
-                        <span class="float-right">管理员--毕业设计--2019/07/08</span>
-                    </li>
-                    <li class="list-group-item list-group-item-action">
-                        <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
-                        <span class="float-right">管理员--毕业设计--2019/07/08</span>
-                    </li>
-                    <li class="list-group-item list-group-item-action">
-                        <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
-                        <span class="float-right">管理员--毕业设计--2019/07/08</span>
-                    </li>
-                </ul>
-                <nav class="my-5">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a href="#" class="page-link"><span>
-                                    <<</span> </a> </li> <li class="page-item"><a href="#" class="page-link">1</a></li>
-                        <li class="page-item"><a href="#" class="page-link">···</a></li>
-                        <li class="page-item"><a href="#" class="page-link">7</a></li>
-                        <li class="page-item"><a href="#" class="page-link"><span>>></span></a></li>
+                <div id="news_content" class="col-10 mx-auto mt-3"></div>
+                <div>
+                    <ul id="news_list" class="list-group list-group-flush col-10 mx-auto">
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
+                            <span class="float-right">管理员--毕业设计--2019/07/08</span>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
+                            <span class="float-right">管理员--毕业设计--2019/07/08</span>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" class="float-left"><span class="badge badge-pill badge-warning">置顶</span>开通啦</a>
+                            <span class="float-right">管理员--毕业设计--2019/07/08</span>
+                        </li>
                     </ul>
-                </nav>
+                    <nav class="my-5">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item"><a href="#" class="page-link"><span>
+                                        <<</span> </a> </li> <li class="page-item"><a href="#" class="page-link">1</a>
+                            </li>
+                            <li class="page-item"><a href="#" class="page-link">···</a></li>
+                            <li class="page-item"><a href="#" class="page-link">7</a></li>
+                            <li class="page-item"><a href="#" class="page-link"><span>>></span></a></li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
 
-            <div id="bysj-xyqk" class="collapse" data-parent="#content"></div>
-            <div id="bysj-kxkt" class="collapse" data-parent="#content"></div>
-            <div id="bysj-wdkt" class="collapse" data-parent="#content"></div>
-            <div id="bysj-zltj" class="collapse" data-parent="#content"></div>
-
-            <div id="zhsy-xyqk" class="collapse" data-parent="#content"></div>
-            <div id="zhsy-kxkt" class="collapse" data-parent="#content"></div>
-            <div id="zhsy-wdkt" class="collapse" data-parent="#content"></div>
-            <div id="zhsy-zltj" class="collapse" data-parent="#content"></div>
+            <div id="bysj_xyqk" class="collapse" data-parent="#content"></div>
         </div>
     </div>
 
@@ -143,6 +140,7 @@
     <script src="../bootstrap/others/jquery-3.4.0.js"></script>
     <script src="../bootstrap/others/popper.min.js"></script>
     <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../js/main.js"></script>
 </body>
 
 </html>

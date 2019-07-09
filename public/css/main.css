@@ -2,12 +2,26 @@ aside{
     position:fixed;
     left:0;
     bottom:0;
-    top: 73px;
-}
-#content{
-    padding-top:73px;
-    width:87%
+    top: 65px;
 }
 .aside{
     width:13%;
+}
+
+#content{
+    padding-top:65px;
+    width:87%;
+}
+#id-info:hover{
+    background-color:blue;
+    cursor:pointer;
+}
+a{
+    color:black;
+}
+a:hover{
+    text-decoration: none;
+}
+.list-group-item-action:focus,.list-group-item-action:hover{
+    cursor: pointer;
 }
