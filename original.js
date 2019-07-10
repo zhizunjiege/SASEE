@@ -1,10 +1,12 @@
 var express = require('express');
 var fs = require('fs');
 var ejs = require('ejs');
-var app = express();
 var bodyParser = require('body-parser');
+var path = require('path');
+var bodyParser = require('body-parser')
 
-path = require('path');
+var app = express();
+
 //view uses html
 app.set('views', __dirname + '/public/html');
 app.engine('.html', ejs.__express);
@@ -12,8 +14,6 @@ app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
 
-
-var bodyParser = require('body-parser')
 //app.set('port',process.env.PORT||3000);
 
 app.get('/', function (req, res) {
