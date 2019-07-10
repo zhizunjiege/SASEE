@@ -16,9 +16,6 @@ aside{
     background-color:blue;
     cursor:pointer;
 }
-a{
-    color:black;
-}
 a:hover{
     text-decoration: none;
 }
