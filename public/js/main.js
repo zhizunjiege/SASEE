@@ -1,18 +1,19 @@
 (function ($) {
-    const NEWS_URL = "../doc/notice.html";
+    const NEWS_URL = '../doc/notice.html';
 
     $(function ($) {
         //绑定点击news的行为
-        var newsList=null;
-        $("#news_list>li").click(function () {
-            if (!$(this).hasClass("active")) {
-                $("#news_content").load(NEWS_URL, "num=" + $(this).index(), function () {
-                    newsList=$(this).next().remove();
-                });
-            }
-            $(this).toggleClass("active");
-        });
+        function newsToggle() {
+          $('#news_header').children().toggle();
+          $('#news_content').toggle();
+          $('#news_list').toggle();
+        };
 
+
+        $('#news_list>ul>li').click(function () {
+            $('#news_content').load(NEWS_URL, 'num=' + $(this).index(),newsToggle);
+        });
+        $('#news_header>button').click(newsToggle);
     });
 })(window.jQuery);
 
