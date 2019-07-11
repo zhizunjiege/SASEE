@@ -7,6 +7,8 @@ var bodyParser = require('body-parser')
 
 var app = express();
 
+var query = require('./sql');
+
 //view uses html
 app.set('views', __dirname + '/public/html');
 app.engine('.html', ejs.__express);
@@ -27,33 +29,58 @@ app.get('/1', function (req, res) {
 	//var password = req.body.password;
 });
 app.get('/login', function (req, res) {
-	var account = req.query.account;
-	var password = req.query.password;
-	console.log('account:' + account);
-	console.log('password:' + password);
-	if (account == password) {
+    var account = req.query.account;
+    var password = req.query.password;
+    console.log('account:' + account);
+    console.log('password:' + password);
+    if (account == password) {
 
-		var contents = (new Array(10)).fill({
-			top: true,
-			title: '系统开通',
-			publisher: '管理员',
-			category: '综合实验',
-			date: '2019/7/10'
-		});
+        var contents = (new Array(10)).fill({
+            top: true,
+            title: '系统开通',
+            publisher: '管理员',
+            category: '综合实验',
+            date: '2019/7/10'
+        });
 
-		res.render('student', {
-			user: {
-				profile: 'profile',
-				name: '333',
-				identity: req.query.identity ? '教师' : '学生',
-			},
-			news: {
-				num: 53,
-				contents: contents
-			}
-		})
-	}
-})
+        res.render('student', {
+            user: {
+                profile: 'profile',
+                name: '333',
+                identity: req.query.identity ? '教师' : '学生',
+            },
+            news: {
+                num: 53,
+                contents: contents
+            }
+        });return ;
+    }
+    var selectSQL = "select * from student where id = '" + account + "' and password = '" + password + "'"
+
+    query(selectSQL, [], function (err,results, fields) {
+        if (err)console.log(err)
+        console.log(results)
+        var contents = (new Array(10)).fill({
+            top: true,
+            title: '系统开通',
+            publisher: '管理员',
+            category: '综合实验',
+            date: '2019/7/10'
+        });
+
+        res.render('student', {
+            user: {
+                profile: 'profile',
+                name: '333',
+                identity: req.query.identity ? '教师' : '学生',
+            },
+            news: {
+                num: 53,
+                contents: contents
+            }
+        })
+    })
+});
 //404
 app.use(function (req, res) {
 	res.type('text/plain');
