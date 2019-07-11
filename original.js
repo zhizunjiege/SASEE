@@ -32,11 +32,24 @@ app.get('/login', function (req, res) {
 	console.log('account:' + account);
 	console.log('password:' + password);
 	if (account == password) {
+
+		var contents = (new Array(10)).fill({
+			top: true,
+			title: '系统开通',
+			publisher: '管理员',
+			category: '综合实验',
+			date: '2019/7/10'
+		});
+
 		res.render('student', {
 			user: {
 				profile: 'profile',
 				name: '333',
 				identity: req.query.identity ? '教师' : '学生',
+			},
+			news: {
+				num: 53,
+				contents: contents
 			}
 		})
 	}

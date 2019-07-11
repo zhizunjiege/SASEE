@@ -22,3 +22,10 @@ a:hover{
 .list-group-item-action:focus,.list-group-item-action:hover{
     cursor: pointer;
 }
+#page_jump input[type=text]{
+    width:3rem;
+}
+#page_jump{
+    min-width: 14rem;
+    transform:translate3d(-50%,-60px,0px);
+}
