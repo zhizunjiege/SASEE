@@ -79,6 +79,17 @@ app.get('/login', function (req, res) {
                 contents: contents
             }
         })
+    });
+    var noticeSQL = "SELECT * FROM notice ORDER BY id DESC LIMIT 0, 1"
+    query(noticeSQL,[],function (err, results, fields) {
+        if(err) {
+            console.log(err)
+        return;
+        }
+        console.log("the max id is :")
+        console.log(results);
+        console.log(results[0])
+        console.log(JSON.parse(JSON.stringify(results)))
     })
 });
 //404
