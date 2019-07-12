@@ -24,32 +24,38 @@
             $('#news_list').load(URL_NEWS_LIST, 'type=newsList&' + 'nextPage=' + nextPage, () => {
                 if (pageNum > 1) {
                     var sel = $('#page_nav>ul>li');
-                    
-                    sel.each((index,element)=>{
-                        if($(element).text()==currentPage.toString()){
+                    var already=true;
+                    sel.each((index, element) => {
+                        if ($(element).text() == currentPage.toString()) {
                             $(element).toggleClass('active');
                             return false;
-                        }else return true;
+                        } else return true;
                     });
-                    sel.each((index,element)=>{
-                        if($(element).text()==nextPage.toString()){
+                    sel.each((index, element) => {
+                        if ($(element).text() == nextPage.toString()) {
                             $(element).toggleClass('active');
+                            already=false;
                             return false;
-                        }else return true;
+                        } else return true;
                     });
-                    if (currentPage == 1||nextPage==1) {
+                    if(already){
+                        $('#page_jump').replaceWith($('#page_jump').prev().clone());
+                        $('#page_nav>ul>li').eq(2).attr('id','page_jump').toggleClass('active').children('a').text(nextPage);
+                        //$('#page_jump').removeClass('dropup').html($('#page_jump').prev().clone().children('a').text(nextPage)).toggleClass('active');
+                    }
+                    if (currentPage == 1 || nextPage == 1) {
                         sel.first().toggleClass('disabled');
                     }
-                    if (currentPage == pageNum||nextPage==pageNum) {
+                    if (currentPage == pageNum || nextPage == pageNum) {
                         sel.last().toggleClass('disabled');
-                    } 
+                    }
                     currentPage = nextPage;
                 }
             });
         }
 
         if (pageNum > 3) {
-            $('#page_jump').click((e) => {
+            $('#page_jump>div').click((e) => {
                 e.stopPropagation();
             });
             $('#page_jump button').click((e) => {

@@ -25,7 +25,7 @@ a:hover{
 #page_jump input[type=text]{
     width:3rem;
 }
-#page_jump{
+#page_jump>div{
     min-width: 14rem;
     transform:translate3d(-50%,-60px,0px);
 }
