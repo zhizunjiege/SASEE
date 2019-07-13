@@ -12,7 +12,7 @@ aside{
     padding-top:65px;
     width:87%;
 }
-#id-info:hover{
+#id_info:hover{
     background-color:blue;
     cursor:pointer;
 }

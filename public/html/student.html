@@ -17,17 +17,17 @@
         </div>
 
         <div class="col-2 dropdown">
-            <div id="id-info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around"
+            <div id="id_info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around"
                 data-toggle="dropdown">
                 <img src=<%= '../pictures/'+user.profile+'.png' %> class="float-left rounded-circle" alt="profile">
                 <div>
-                    <div id="name" class="h5 my-0"><%= user.name %></div>
+                    <div class="h5 my-0"><%= user.name %></div>
                     <span class="badge badge-pill badge-info"><%= user.identity %></span>
                 </div>
             </div>
             <ul class="dropdown-menu text-center w-75">
-                <li class="dropdown-item"><a href="#">个人信息</a></li>
-                <li class="dropdown-item"><a href="#">退出登陆</a></li>
+                <a id="toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse">个人信息</a>
+                <a href="/?type=logout" class="dropdown-item">退出登陆</a>
             </ul>
         </div>
     </header>
@@ -65,10 +65,10 @@
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     <div id="scsx" class="collapse" data-parent="#accordion">
                         <ul class="list-group list-group-flush">
-                            <a href="#" class="list-group-item list-group-item-action"><small>学业情况</small></a>
-                            <a href="#" class="list-group-item list-group-item-action"><small>可选课题</small></a>
-                            <a href="#" class="list-group-item list-group-item-action"><small>我的课题</small></a>
-                            <a href="#" class="list-group-item list-group-item-action"><small>资料提交</small></a>
+                            <a href="#scsx_xyqk" class="list-group-item list-group-item-action"><small>学业情况</small></a>
+                            <a href="#scsx_kxkt" class="list-group-item list-group-item-action"><small>可选课题</small></a>
+                            <a href="#scsx_wdkt" class="list-group-item list-group-item-action"><small>我的课题</small></a>
+                            <a href="#scsx_zltj" class="list-group-item list-group-item-action"><small>资料提交</small></a>
                         </ul>
                     </div>
                 </dd>
@@ -130,7 +130,8 @@
 
                             <% if (pageNum<=3) { 
                              for( let index = 1; index <= pageNum; index++ ) { %>
-                            <li class="page-item <%_ index==1?' active':'' _%> "><a href="#" class="page-link"><%= index %></a></li>
+                            <li class="page-item <%_ index==1?' active':'' _%> "><a href="#"
+                                    class="page-link"><%= index %></a></li>
                             <% } %>
                             <% } else { %>
                             <li class="page-item active"><a href="#" class="page-link">1</a></li>
@@ -138,7 +139,8 @@
                                 <a href="#" class="page-link" data-toggle="dropdown">···</a>
                                 <div class="dropdown-menu px-3">
                                     <form class="form-inline">
-                                        <span>第<input type="text" class="form-control text-center mx-3" placeholder="">页</span>
+                                        <span>第<input type="text" class="form-control text-center mx-3"
+                                                placeholder="">页</span>
                                         <button class="btn btn-primary ml-3" type="submit">跳转</button>
                                     </form>
                                 </div>
@@ -156,7 +158,6 @@
                 </div>
             </div>
 
-            <div id="bysj_xyqk" class="collapse" data-parent="#content"></div>
         </div>
     </div>
 
