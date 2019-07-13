@@ -1,29 +1,20 @@
 (function ($) {
-    const URL_NOTICE = '../doc/notice.html';
+    const CONTENTS_NEWSPS=10;
     const URL_VIEW = '../view';
+    const URL_NOTICE = '../doc/notice.html';
 
     $(function ($) {
-        //绑定点击news的行为
-        function newsToggle() {
-            $('#news_header').children().toggle();
-            $('#news_content').toggle();
-            $('#news_list').toggle();
-        };
-
-        $('#news_list>ul>li').click((e) => {
-            $('#news_content').load(URL_NOTICE, 'type=notice&' + 'num=' + $(e.currentTarget).index(), newsToggle);
-        });
-        $('#news_header>button').click(newsToggle);
 
         //绑定news翻页的行为
-        const pageNum = Number($('#page_nav>ul>li').eq(-2).text());
+        const newsNum = $('#news_list').data().newsNum;
+        const pageNum = $('#news_list').data().pageNum;
         var currentPage = 1;
         var nextPage = 1;
 
         function pageNavToggle(e) {
             $('#news_list').load(URL_VIEW, 'type=newsList&' + 'nextPage=' + nextPage, () => {
                 if (pageNum > 1) {
-                    var sel = $('#page_nav>ul>li');
+                    var sel = $('#news_page_nav>ul>li');
                     var already = true;
                     sel.each((index, element) => {
                         if ($(element).text() == currentPage.toString()) {
@@ -39,9 +30,8 @@
                         } else return true;
                     });
                     if (already) {
-                        $('#page_jump').replaceWith($('#page_jump').prev().clone());
-                        $('#page_nav>ul>li').eq(2).attr('id', 'page_jump').toggleClass('active').children('a').text(nextPage);
-                        //$('#page_jump').removeClass('dropup').html($('#page_jump').prev().clone().children('a').text(nextPage)).toggleClass('active');
+                        $('#news_page_jump').replaceWith($('#news_page_jump').prev().clone());
+                        $('#news_page_nav>ul>li').eq(2).attr('id', 'news_page_jump').toggleClass('active').children('a').text(nextPage);
                     }
                     if (currentPage == 1 || nextPage == 1) {
                         sel.first().toggleClass('disabled');
@@ -55,12 +45,12 @@
         }
 
         if (pageNum > 3) {
-            $('#page_jump>div').click((e) => {
+            $('#news_page_jump>div').click((e) => {
                 e.stopPropagation();
             });
-            $('#page_jump button').click((e) => {
+            $('#news_page_jump button').click((e) => {
                 e.preventDefault();
-                nextPage = Number($('#page_jump input').val());
+                nextPage = Number($('#news_page_jump input').val());
                 if (nextPage >= 1 && nextPage <= pageNum) {
                     pageNavToggle();
                 } else {
@@ -68,16 +58,16 @@
                 }
             });
         }
-        $('#page_nav>ul').click((e) => {
+        $('#news_page_nav>ul').click((e) => {
             switch (e.target.innerText) {
                 case '«':
-                    if (!$('#page_prev').hasClass('disabled')) {
+                    if (!$('#news_page_prev').hasClass('disabled')) {
                         nextPage = currentPage - 1;
                         pageNavToggle();
                     }
                     break;
                 case '»':
-                    if (!$('#page_next').hasClass('disabled')) {
+                    if (!$('#news_page_next').hasClass('disabled')) {
                         nextPage = currentPage + 1;
                         pageNavToggle();
                     }
@@ -95,17 +85,30 @@
             }
         });
 
+        //绑定点击news的行为
+        function newsToggle() {
+            $('#news_header').children().toggle();
+            $('#news_content').toggle();
+            $('#news_list').toggle();
+            $('#news_page_nav').toggle();
+        };
+
+        $('#news_list>ul>li').click((e) => {
+            $('#news_content').load(URL_NOTICE, 'type=notice&' + 'num=' +((currentPage-1)*CONTENTS_NEWSPS+$(e.currentTarget).index()), newsToggle);
+        });
+        $('#news_back').click(newsToggle);
+
         //个人信息的加载
-        $('#toggle_user_info').click((e)=>{
-            var href=$(e.currentTarget).attr('href');
+        $('#_toggle_user_info').click((e) => {
+            var href = $(e.currentTarget).attr('href');
             if (!$(href).length) {
                 $('<div>', {
                     "id": href.substring(1),
                     "class": "collapse",
-                    "data-parent": "#content"
-                }).appendTo('#content').collapse({
-                    parent:'#content',
-                    toggle:true
+                    "data-parent": "#contents"
+                }).appendTo('#contents').collapse({
+                    parent: '#contents',
+                    toggle: true
                 }).load(URL_VIEW, 'type=userInfo', (e) => {
                     console.log(e);
                 })
@@ -119,10 +122,10 @@
                 $('<div>', {
                     "id": periodId.substring(1),
                     "class": "collapse",
-                    "data-parent": "#content"
-                }).appendTo('#content').collapse({
-                    parent:'#content',
-                    toggle:true
+                    "data-parent": "#contents"
+                }).appendTo('#contents').collapse({
+                    parent: '#contents',
+                    toggle: true
                 }).load(URL_VIEW, 'type=period&' + 'id=' + periodId.substring(1), (e) => {
                     console.log(e);
                 })

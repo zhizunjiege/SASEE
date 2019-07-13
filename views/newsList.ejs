@@ -1,7 +1,5 @@
-<% var pageNum=Math.ceil(news.num/10)
-    if (pageNum) { %>
 <ul class="list-group list-group-flush col-10 mx-auto">
-    <% for( let index = 0; index < 10; index++ ) { %>
+    <% for( let index = 0; index < news.contents.length; index++ ) { %>
     <li class="list-group-item list-group-item-action">
         <a href="#" class="float-left">
             <% if (news.contents[index].top) { %>
@@ -15,33 +13,3 @@
     </li>
     <% } %>
 </ul>
-<nav id="page_nav" class="my-4">
-    <ul class="pagination justify-content-center">
-        <% if (pageNum>1) { %>
-        <li class="page-item disabled"><a href="#" class="page-link">&laquo;</a></li>
-        <% } %>
-
-        <% if (pageNum<=3) { 
-             for( let index = 1; index <= pageNum; index++ ) { %>
-        <li class="page-item <%_ index==1?' active':'' _%> "><a href="#" class="page-link"><%= index %> </a></li>
-        <% } %>
-        <% } else { %>
-        <li class="page-item active"><a href="#" class="page-link">1</a></li>
-        <li id="page_jump" class="page-item dropup">
-            <a href="#" class="page-link" data-toggle="dropdown">···</a>
-            <div class="dropdown-menu px-3">
-                <form class="form-inline">
-                    <span>第<input type="text" class="form-control text-center mx-3" placeholder="">页</span>
-                    <button class="btn btn-primary ml-3" type="submit">跳转</button>
-                </form>
-            </div>
-        </li>
-        <li class="page-item"><a href="#" class="page-link"><%= pageNum %> </a></li>
-        <% } %>
-
-        <% if (pageNum>1) { %>
-        <li class="page-item"><a href="#" class="page-link">&raquo;</a></li>
-        <% } %>
-    </ul>
-</nav>
-<% } %>

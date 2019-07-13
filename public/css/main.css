@@ -8,11 +8,11 @@ aside{
     width:13%;
 }
 
-#content{
+#contents{
     padding-top:65px;
     width:87%;
 }
-#id_info:hover{
+#account_info:hover{
     background-color:blue;
     cursor:pointer;
 }
@@ -22,10 +22,10 @@ a:hover{
 .list-group-item-action:focus,.list-group-item-action:hover{
     cursor: pointer;
 }
-#page_jump input[type=text]{
+#news_page_jump input[type=text]{
     width:3rem;
 }
-#page_jump>div{
+#news_page_jump>div{
     min-width: 14rem;
     transform:translate3d(-50%,-60px,0px);
 }

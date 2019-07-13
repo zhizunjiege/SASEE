@@ -45,8 +45,8 @@ app.get('/login', function (req, res) {
 
         res.render('student', {
             user: {
-                profile: 'profile',
                 name: '333',
+                sex:'man',
                 identity: req.query.identity ? '教师' : '学生',
             },
             news: {
@@ -70,8 +70,8 @@ app.get('/login', function (req, res) {
 
         res.render('student', {
             user: {
-                profile: 'profile',
                 name: '333',
+                sex:'man',
                 identity: req.query.identity ? '教师' : '学生',
             },
             news: {
