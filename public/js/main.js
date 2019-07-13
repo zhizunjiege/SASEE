@@ -1,7 +1,7 @@
 (function ($) {
     const CONTENTS_NEWSPS=10;
-    const URL_VIEW = '../view';
-    const URL_NOTICE = '../doc/notice.html';
+    const URL_VIEW = '/views';
+    const URL_NEWS_CONTENT = '/doc/notice.html';
 
     $(function ($) {
 
@@ -94,7 +94,7 @@
         };
 
         $('#news_list>ul>li').click((e) => {
-            $('#news_content').load(URL_NOTICE, 'type=notice&' + 'num=' +((currentPage-1)*CONTENTS_NEWSPS+$(e.currentTarget).index()), newsToggle);
+            $('#news_content').load(URL_NEWS_CONTENT, 'type=newsContent&' + 'num=' +((currentPage-1)*CONTENTS_NEWSPS+$(e.currentTarget).index()), newsToggle);
         });
         $('#news_back').click(newsToggle);
 

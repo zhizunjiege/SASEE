@@ -19,14 +19,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //app.set('port',process.env.PORT||3000);
 
 app.get('/', function (req, res) {
-	res.render('login', { title: 'paint title' });
-	//var name = req.body.name;
-	//var password = req.body.password;
+    res.render('login', { title: 'paint title' });
+    //var name = req.body.name;
+    //var password = req.body.password;
 });
 app.get('/1', function (req, res) {
-	res.render('student', { title: 'paint title' });
-	//var name = req.body.name;
-	//var password = req.body.password;
+    res.render('student', { title: 'paint title' });
+    //var name = req.body.name;
+    //var password = req.body.password;
 });
 app.get('/login', function (req, res) {
     var account = req.query.account;
@@ -46,19 +46,19 @@ app.get('/login', function (req, res) {
         res.render('student', {
             user: {
                 name: '333',
-                sex:'man',
+                gender: 'man',
                 identity: req.query.identity ? '教师' : '学生',
             },
             news: {
                 num: 53,
                 contents: contents
             }
-        });return ;
+        }); return;
     }
     var selectSQL = "select * from student where id = '" + account + "' and password = '" + password + "'"
 
-    query(selectSQL, [], function (err,results, fields) {
-        if (err)console.log(err)
+    query(selectSQL, [], function (err, results, fields) {
+        if (err) console.log(err)
         console.log(results)
         var contents = (new Array(10)).fill({
             top: true,
@@ -71,7 +71,7 @@ app.get('/login', function (req, res) {
         res.render('student', {
             user: {
                 name: '333',
-                sex:'man',
+                gender: 'man',
                 identity: req.query.identity ? '教师' : '学生',
             },
             news: {
@@ -81,10 +81,10 @@ app.get('/login', function (req, res) {
         })
     });
     var noticeSQL = "SELECT * FROM notice ORDER BY id DESC LIMIT 0, 1"
-    query(noticeSQL,[],function (err, results, fields) {
-        if(err) {
+    query(noticeSQL, [], function (err, results, fields) {
+        if (err) {
             console.log(err)
-        return;
+            return;
         }
         console.log("the max id is :")
         console.log(results);
@@ -92,14 +92,38 @@ app.get('/login', function (req, res) {
         console.log(JSON.parse(JSON.stringify(results)))
     })
 });
+
+//动态加载的代码
+app.get('/views', (req, res) => {
+    switch (req.query.type) {
+        case 'newsContent':
+            //req.query.num表示第几条通知
+            console.log(req.query.num);
+            break;
+        case 'newsList':
+            //req.query.nextPage表示第几页
+            console.log(req.query.nextPage);
+            break;
+        case 'userInfo':
+
+            break;
+        case 'period':
+            //req.query.id表示所要加载的阶段
+            console.log(req.query.id);
+            break;
+        default:
+            break;
+    }
+});
+
 //404
 app.use(function (req, res) {
-	res.type('text/plain');
-	res.status(404);
-	res.send('404 ！- Not Found');
+    res.type('text/plain');
+    res.status(404);
+    res.send('404 ！- Not Found');
 });
 
 app.listen(3000, '0.0.0.0', function () {
-	console.log('express is running on localhost:3000')
+    console.log('express is running on localhost:3000')
 
 });
