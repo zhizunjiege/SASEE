@@ -1,0 +1,30 @@
+<div id="subject_content" class="col-10 mx-auto mt-3" style="display: none"></div>
+<% var pageNum=Math.ceil(subject.num/10)
+                    if (pageNum) { %>
+<div id="subject_list" data-num=<%= subject.num %> data-page=<%= pageNum %>>
+    <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container">
+        <% for( let index = 0; index < subject.contents.length; index++ ) { %>
+        <li class="list-group-item list-group-item-action">
+            <a href="#" class="float-left">
+                <% if (subject.contents[index].top) { %>
+                <span class="badge badge-pill badge-warning">置顶</span>
+                <% } %>
+                <%= subject.contents[index].title %>
+            </a>
+            <span
+                class="float-right"><%= subject.contents[index].publisher+'--'+subject.contents[index].category+'--'+subject.contents[index].date %>
+            </span>
+        </li>
+        <% } %>
+    </ul>
+    <div class="text-center card-footer infinite-scroll-status" style="display:none">
+        <span class="infinite-scroll-request">加载中···</span>
+        <span class="infinite-scroll-last">没有啦</span>
+        <span class="text-warning infinite-scroll-error">出错了</span>
+    </div>
+</div>
+<% } else { %>
+<div class="d-flex justify-content-center" style="height: 250px">
+    <h1 class="text-muted align-self-center">暂时没有课题</h1>
+</div>
+<% }  %>

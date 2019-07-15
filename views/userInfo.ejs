@@ -1,9 +1,4 @@
-<table class="table table-bordered text-center">
-    <thead class="thead-light">
-        <tr>
-            <th scope="col" colspan="6">个人信息</th>
-        </tr>
-    </thead>
+<table class="table table-bordered text-center col-11 mx-auto">
     <tbody>
         <tr>
             <th scope="col" colspan="6">账户信息</th>
@@ -13,7 +8,7 @@
             <td><%= account %></td>
             <th scope="row">密码</th>
             <td>········</td>
-            <td><a id="modify_pw" href="#">修改密码</a></td>
+            <td><a id="modify_pw" data-toggle="modal" href="#modifyPWModal">修改密码</a></td>
         </tr>
         <tr>
             <th scope="col" colspan="6">学籍信息</th>
@@ -45,19 +40,52 @@
             <th scope="row">算术平均分</th>
             <td><%= academic.average %></td>
         </tr>
-    </tbody>
-    <tfoot>
         <tr>
             <th scope="col" colspan="6">资格审查</th>
         </tr>
-        <% var conv=(flag)=>flag?'有':'无' %>
+        <% var conv=(flag)=>flag?'有':'无';
+        var warn=(flag)=>flag?'':'text-warning' %>
         <tr>
             <th scope="row">毕业设计</th>
-            <td><%= conv(qualification.bysj) %></td>
+            <td class="<%= warn(qualification.bysj) %>"><%= conv(qualification.bysj) %></td>
             <th scope="row">生产实习</th>
-            <td><%= conv(qualification.scsx) %></td>
+            <td class="<%= warn(qualification.scsx) %>"><%= conv(qualification.scsx) %></td>
             <th scope="row">综合实验</th>
-            <td><%= conv(qualification.zhsy) %></td>
+            <td class="<%= warn(qualification.zhsy) %>"><%= conv(qualification.zhsy) %></td>
         </tr>
-    </tfoot>
+    </tbody>
 </table>
+<div id="modifyPWModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">修改密码</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="form_modifyPW" action="/request" method="POST" class="text-center">
+                    <div class="form-group form-row">
+                        <label for="pw_old" class="col-4 col-form-label">旧密码：</label>
+                        <input name="oldPW" id="pw_old" type="password" class="col-8 form-control" placeholder="请输入旧密码"
+                            required>
+                    </div>
+                    <div class="form-group form-row">
+                        <label for="pw_new" class="col-4 col-form-label">新密码：</label>
+                        <input name="newPW" id="pw_new" type="password" class="col-8 form-control" placeholder="请输入新密码"
+                            required>
+                    </div>
+                    <div class="form-group form-row">
+                        <label for="pw_repeat" class="col-4 col-form-label">重复密码：</label>
+                        <input name="repeatPW" id="pw_repeat" type="password" class="col-8 form-control"
+                            placeholder="请重新输入新密码" required>
+                    </div>
+                    <div class="form-group form-row justify-content-around">
+                     <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary col-3">提交</button>   
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>

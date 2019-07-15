@@ -10,9 +10,9 @@ var app = express();
 var query = require('./sql');
 
 //view uses html
-app.set('views', __dirname + '/public/html');
-app.engine('.html', ejs.__express);
-app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+app.engine('.ejs', ejs.__express);
+app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -35,7 +35,7 @@ app.get('/login', function (req, res) {
     console.log('password:' + password);
     if (account == password) {
 
-        var contents = (new Array(10)).fill({
+        var contents = (new Array(14)).fill({
             top: true,
             title: '系统开通',
             publisher: '管理员',
@@ -50,7 +50,7 @@ app.get('/login', function (req, res) {
                 identity: req.query.identity ? '教师' : '学生',
             },
             news: {
-                num: 53,
+                num: 34,
                 contents: contents
             }
         }); return;
@@ -60,7 +60,7 @@ app.get('/login', function (req, res) {
     query(selectSQL, [], function (err, results, fields) {
         if (err) console.log(err)
         console.log(results)
-        var contents = (new Array(10)).fill({
+        var contents = (new Array(6)).fill({
             top: true,
             title: '系统开通',
             publisher: '管理员',
@@ -102,10 +102,42 @@ app.get('/views', (req, res) => {
             break;
         case 'newsList':
             //req.query.nextPage表示第几页
+            res.render('newsList', {
+                news: {
+                    num: 53,
+                    contents: (new Array(5)).fill({
+                        top: true,
+                        title: '系统开通',
+                        publisher: '管理员',
+                        category: '毕业设计',
+                        date: '2019/7/13'
+                    })
+                }
+            });
             console.log(req.query.nextPage);
             break;
         case 'userInfo':
-
+            res.render('userInfo',{
+                account:17375433,
+                status:{
+                    specialty:'自动化',
+                    subject:'模式识别',
+                    class:'170326',
+                    stuNum:'17375433',
+                    name:'陈智杰',
+                    gender:'男'
+                },
+                academic:{
+                    gpa:'3.77',
+                    weightAver:'91',
+                    average:'89'
+                },
+                qualification:{
+                    bysj:true,
+                    scsx:true,
+                    zhsy:false
+                }
+            });
             break;
         case 'period':
             //req.query.id表示所要加载的阶段
