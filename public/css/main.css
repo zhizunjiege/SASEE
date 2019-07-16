@@ -21,10 +21,14 @@ a:hover{
 .list-group-item-action:focus,.list-group-item-action:hover{
     cursor: pointer;
 }
-#news_page_jump input[type=text]{
-    width:3rem;
+
+/*
+body{
+    overflow-y: hidden;
 }
-#news_page_jump>div{
-    min-width: 14rem;
-    transform:translate3d(-50%,-60px,0px);
-}
+#contents>div>div{
+    overflow-y: scroll;
+    height:700px;
+}*/
+/* 仅支持PC端Chrome */
+::-webkit-scrollbar {display:none}

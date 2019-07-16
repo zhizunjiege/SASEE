@@ -1,0 +1,39 @@
+<% var subjectNum=num;
+var pageNum=Math.ceil(num/10);
+ if (pageNum) { %>
+<div id="subject_content" class="col-10 mx-auto mt-3" style="display: none"></div>
+<div id="subject_list" data-num=<%= num %> data-page=<%= pageNum %>>
+    <table class="table table-hover text-center col-10 mx-auto">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">标题</th>
+                <th scope="col">方向</th>
+                <th scope="col">已选</th>
+                <th scope="col">发布者</th>
+                <th scope="col">发布时间</th>
+            </tr>
+        </thead>
+        <tbody class="infinite-scroll-container-2">
+            <% for( let index = 0; index < contents.length; index++ ) { %>
+            <tr class="infinite-scroll-item">
+                <td><%= contents[index].title %></td>
+                <td><%= contents[index].derection %></td>
+                <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>
+                <td><%= contents[index].publisher %></td>
+                <td><%= contents[index].date %></td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <div class="text-center card-footer infinite-scroll-status-2" style="display:none">
+        <span class="infinite-scroll-request">加载中···</span>
+        <span class="infinite-scroll-last">没有啦</span>
+        <span class="text-warning infinite-scroll-error">出错了</span>
+    </div>
+    
+</div>
+<% } else { %>
+<div class="d-flex justify-content-center" style="height: 250px">
+    <h1 class="text-muted align-self-center">暂时没有课题</h1>
+</div>
+<% } %>

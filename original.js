@@ -20,22 +20,18 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.get('/', function (req, res) {
     res.render('login', { title: 'paint title' });
-    //var name = req.body.name;
-    //var password = req.body.password;
 });
 app.get('/1', function (req, res) {
     res.render('student', { title: 'paint title' });
-    //var name = req.body.name;
-    //var password = req.body.password;
 });
-app.get('/login', function (req, res) {
-    var account = req.query.account;
-    var password = req.query.password;
+app.post('/login', function (req, res) {
+    var account = req.body.account;
+    var password = req.body.password;
     console.log('account:' + account);
     console.log('password:' + password);
     if (account == password) {
 
-        var contents = (new Array(14)).fill({
+        var contents = (new Array(8)).fill({
             top: true,
             title: '系统开通',
             publisher: '管理员',
@@ -105,7 +101,7 @@ app.get('/views', (req, res) => {
             res.render('newsList', {
                 news: {
                     num: 53,
-                    contents: (new Array(5)).fill({
+                    contents: (new Array(8)).fill({
                         top: true,
                         title: '系统开通',
                         publisher: '管理员',
@@ -117,31 +113,57 @@ app.get('/views', (req, res) => {
             console.log(req.query.nextPage);
             break;
         case 'userInfo':
-            res.render('userInfo',{
-                account:17375433,
-                status:{
-                    specialty:'自动化',
-                    subject:'模式识别',
-                    class:'170326',
-                    stuNum:'17375433',
-                    name:'陈智杰',
-                    gender:'男'
+            res.render('userInfo', {
+                account: 17375433,
+                status: {
+                    specialty: '自动化',
+                    subject: '模式识别',
+                    class: '170326',
+                    stuNum: '17375433',
+                    name: '陈智杰',
+                    gender: '男'
                 },
-                academic:{
-                    gpa:'3.77',
-                    weightAver:'91',
-                    average:'89'
+                academic: {
+                    gpa: 3.77,
+                    weightAver: 91,
+                    average: 89
                 },
-                qualification:{
-                    bysj:true,
-                    scsx:true,
-                    zhsy:false
+                qualification: {
+                    bysj: true,
+                    scsx: true,
+                    zhsy: false
                 }
             });
             break;
-        case 'period':
-            //req.query.id表示所要加载的阶段
-            console.log(req.query.id);
+        case 'subject':
+            res.render('subject', {
+                num: 23,
+                contents: (new Array(18)).fill({
+                    title: '基于FPGA的无线雷达矩阵',
+                    derection: '探测制导',
+                    chosen: 5,
+                    capacity: 7,
+                    publisher: '管理员',
+                    date: '2019/7/16'
+                })
+            });
+            break;
+        case 'subjectList':
+            console.log('qqq');
+            
+            res.render('subjectList', {
+                contents: (new Array(5)).fill({
+                    title: '基于FPGA的无线雷达矩阵',
+                    derection: '探测制导',
+                    chosen: 5,
+                    capacity: 7,
+                    publisher: '我',
+                    date: '2019/7/16'
+                })
+            });
+            break;
+        case 'subjectContent':
+            res.render('subjectContent', null);
             break;
         default:
             break;
