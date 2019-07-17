@@ -3,12 +3,12 @@ var fs = require('fs');
 var ejs = require('ejs');
 var bodyParser = require('body-parser');
 var path = require('path');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 var app = express();
 
-var query = require('./sql');
-
+var action = require("./action.js")
+const student_url = "./json/student.json"
 //view uses html
 app.set('views', __dirname + '/views');
 app.engine('.ejs', ejs.__express);
@@ -29,8 +29,8 @@ app.post('/login', function (req, res) {
     var password = req.body.password;
     console.log('account:' + account);
     console.log('password:' + password);
-    if (account == password) {
-
+    console.log(action.login_in(student_url,account,password))
+    if (action.login_in(student_url,account,password)) {
         var contents = (new Array(10)).fill({
             top: true,
             title: '系统开通',
@@ -50,43 +50,9 @@ app.post('/login', function (req, res) {
                 contents: contents
             }
         }); return;
+
     }
-    var selectSQL = "select * from student where id = '" + account + "' and password = '" + password + "'"
 
-    query(selectSQL, [], function (err, results, fields) {
-        if (err) console.log(err)
-        console.log(results)
-        var contents = (new Array(6)).fill({
-            top: true,
-            title: '系统开通',
-            publisher: '管理员',
-            category: '综合实验',
-            date: '2019/7/10'
-        });
-
-        res.render('student', {
-            user: {
-                name: '333',
-                gender: 'man',
-                identity: req.query.identity ? '教师' : '学生',
-            },
-            news: {
-                num: 53,
-                contents: contents
-            }
-        })
-    });
-    var noticeSQL = "SELECT * FROM notice ORDER BY id DESC LIMIT 0, 1"
-    query(noticeSQL, [], function (err, results, fields) {
-        if (err) {
-            console.log(err)
-            return;
-        }
-        console.log("the max id is :")
-        console.log(results);
-        console.log(results[0])
-        console.log(JSON.parse(JSON.stringify(results)))
-    })
 });
 
 //动态加载的代码
@@ -172,7 +138,7 @@ app.get('/views', (req, res) => {
 app.use(function (req, res) {
     res.type('text/plain');
     res.status(404);
-    res.send('404 ！- Not Found');
+    res.send('404 ！- Not Found 该页面未建立');
 });
 
 app.listen(3000, '0.0.0.0', function () {

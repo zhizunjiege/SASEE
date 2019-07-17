@@ -20,12 +20,15 @@ function get_new(url, num) {
     fs.readFile(url,function (err, data) {
         if(err) return console.log(err);
         var Data = data.toString();
+        console.log(Data)
         Data = JSON.parse(Data);
+        console.log(Data)
         var len = Data.data.length;
-        let  final = Data.data[len-1];
-        console.log(final)
-        for (var i = 1; i < num; i++) {
-            final.push(Data.data[len-1-i]);
+        var  final = {"data":[
+
+            ]};
+        for (var i = 0; i < num; i++) {
+            final.data.push(Data.data[len-1-i]);
         }
         return console.log(final)
     })
@@ -36,20 +39,24 @@ function login_in(url, a, b) {
         if(err) return console.log(err);
         var obj = obj.toString();
         obj = JSON.parse(obj);
-        var password = obj.data.password;
-        var id = obj.data.id;
-        if(id == a&&password == b)return console.log(1);
-         return console.log(0);
+        console.log(obj)
+        var password = obj.data[0].password;//should'nt be data.password
+        var id = obj.data[1].id;
+        console.log(password,id)
+        if(id == a&&password == b)return 1;
+         return 0;
     })
 }
-var demo_str = "./1.json"
+var demo_str = "./student.json"
 var new_data = {
-    "id":1234,
-    "name":"jake",
-    "password":1334
+    "id":1,
+    "name":"admin",
+    "password":"1"
 }
 //write(demo_str,new_data);
-//get_new("./1.json",2);
-login_in(demo_str,1234,1334);
+get_new(demo_str,2);
+//login_in(demo_str,1234,"none");
 
-//login_in() always return 0;get_new() is wrong ;
+exports.login_in = login_in;
+exports.get_new = get_new;
+exports.write = write;
