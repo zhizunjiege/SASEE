@@ -1,9 +1,13 @@
-<% for( let index = 0; index < contents.length; index++ ) { %>
-<tr class="infinite-scroll-item">
-    <td><%= contents[index].title %></td>
-    <td><%= contents[index].derection %></td>
-    <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>
-    <td><%= contents[index].publisher %></td>
-    <td><%= contents[index].date %></td>
-</tr>
-<% } %>
+<table>
+    <tbody>
+        <% for( let index = 0; index < contents.length; index++ ) { %>
+        <tr class="infinite-scroll-item">
+            <td class="text-left"><a href="#"><%= contents[index].title %></a></td>
+            <td><%= contents[index].derection %></td>
+            <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>
+            <td><%= contents[index].publisher %></td>
+            <td><%= contents[index].date %></td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>

@@ -31,7 +31,7 @@ app.post('/login', function (req, res) {
     console.log('password:' + password);
     if (account == password) {
 
-        var contents = (new Array(8)).fill({
+        var contents = (new Array(10)).fill({
             top: true,
             title: '系统开通',
             publisher: '管理员',
@@ -138,8 +138,8 @@ app.get('/views', (req, res) => {
         case 'subject':
             res.render('subject', {
                 num: 23,
-                contents: (new Array(18)).fill({
-                    title: '基于FPGA的无线雷达矩阵',
+                contents: (new Array(14)).fill({
+                    title: '基于FPGA的无线雷达矩阵但是访华时',
                     derection: '探测制导',
                     chosen: 5,
                     capacity: 7,
@@ -149,8 +149,6 @@ app.get('/views', (req, res) => {
             });
             break;
         case 'subjectList':
-            console.log('qqq');
-            
             res.render('subjectList', {
                 contents: (new Array(5)).fill({
                     title: '基于FPGA的无线雷达矩阵',

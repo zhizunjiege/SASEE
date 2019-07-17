@@ -22,13 +22,25 @@ a:hover{
     cursor: pointer;
 }
 
-/*
+table{
+    table-layout: fixed;
+}
+
+td{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+td:hover{
+    cursor: pointer;
+}
+
 body{
     overflow-y: hidden;
 }
-#contents>div>div{
+#news_list,#subject_list{
     overflow-y: scroll;
-    height:700px;
-}*/
+    height:600px;
+}
 /* 仅支持PC端Chrome */
 ::-webkit-scrollbar {display:none}

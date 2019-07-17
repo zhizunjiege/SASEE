@@ -40,20 +40,27 @@
                     $(button, context).hide();
                 });
             };
+
             //$infiniteScrollObj.on('scrollThreshold.infiniteScroll', log);
-            $infiniteScrollObj.on('request.infiniteScroll', log);
-            $infiniteScrollObj.on('load.infiniteScroll', log);
-            $infiniteScrollObj.on('append.infiniteScroll', appendCallback);
+            //$infiniteScrollObj.on('request.infiniteScroll', log);
+            if (loadCallback) {
+                $infiniteScrollObj.on('load.infiniteScroll', loadCallback);
+            }
+            if (appendCallback) {
+                $infiniteScrollObj.on('append.infiniteScroll', appendCallback);
+            }
             //$infiniteScrollObj.on('error.infiniteScroll', log);
             //$infiniteScrollObj.on('last.infiniteScroll', log);
         };
 
         //点击news
         function newsContentToggle() {
+            //$('#contents_title').text('通知');
             $('#contents_header').children().toggle();
             $('#news').children().toggle();
         };
         function subjectContentToggle() {
+            //$('#contents_title').text('课题');
             $('#contents_header').children().toggle();
             $('#bysj_xt').children().toggle();
         }
@@ -63,24 +70,31 @@
         function loadSubjectContent(e) {
             $('#subject_content').load(URL_VIEW, 'type=subjectContent&' + 'num=' + $(e.currentTarget).index(), subjectContentToggle);
         };
-        function clickToLoadContent(item, loadContent) {
-            $(item).click(loadContent);
+        function clickToLoadContent(context, item, loadContent, contentToggle) {
+            $(item, $(context)).click(loadContent);
+            //document.getElementById('contents_back').onclick=contentToggle;
         };
-        
+
         instScroll(document, '.infinite-scroll-container', function () {
             if (this.loadCount + 2 <= $('#news_list').data().page) {
                 return URL_VIEW + '?type=newsList&nextPage=' + (this.loadCount + 2);
             }
-        }, '.list-group-item', 400, false, false, '.infinite-scroll-status', '.infinite-scroll-button',null, (e, res, path, items) => {
+        }, '.list-group-item', 400, '#news_list', false, '.infinite-scroll-status', '.infinite-scroll-button', null, (e, res, path, items) => {
             for (let i = 0; i < items.length; i++) {
-                clickToLoadContent(items[i], loadNewsContent);
+                clickToLoadContent('#news_list', items[i], loadNewsContent, newsContentToggle);
             }
         });
-        
-        //初始化news条目
-        clickToLoadContent('#news_list>ul>li', loadNewsContent);
-        $('#contents_back').click(newsContentToggle);
 
+        //初始化news条目
+        clickToLoadContent('#news_list', 'ul>li', loadNewsContent, newsContentToggle);
+        document.getElementById('contents_back').onclick = newsContentToggle;
+        $('#navigator a[href="#news"]').click(() => {
+            $('#contents_title').text('通知');
+            document.getElementById('contents_back').onclick = newsContentToggle;
+        });
+        $('#navigator a[href="#bysj_xt"]').click(() => {
+            document.getElementById('contents_back').onclick = subjectContentToggle;
+        });
         //封装加载其余框架的函数
         function loadFrame(e, type, callback) {
             var href = $(e.currentTarget).attr('href');
@@ -98,6 +112,7 @@
 
         //个人信息的加载
         $('#_toggle_user_info').click((e) => {
+            $('#contents_title').text('个人信息');
             loadFrame(e, 'userInfo', () => {
                 $('#modifyPW_submit').click(function (e) {
                     e.preventDefault();
@@ -117,30 +132,17 @@
             });
         });
 
-        function loadSubject(e) {
-            console.log(e);
-
-            console.log(this);
-
-            
-            instScroll(document, '.infinite-scroll-container-2', function () {
-                console.log($('#subject_list').data().page);
-                
+        function loadSubject() {
+            clickToLoadContent(this, '.infinite-scroll-item', loadSubjectContent, subjectContentToggle);
+            instScroll(this, '.infinite-scroll-container-2', function () {
                 if (this.loadCount + 2 <= $('#subject_list').data().page) {
                     return URL_VIEW + '?type=subjectList&nextPage=' + (this.loadCount + 2);
                 }
-            }, '.infinite-scroll-item', 100, false, true, '.infinite-scroll-status-2',null, (e,res,path)=>{
-                console.log(res);
-                
-                $('.infinite-scroll-container-2').infiniteScroll('appendItems',$(res).find('.infinite-scroll-item'));
-            },(e, res, path, items) => {
-                console.log(items);
-                
+            }, '.infinite-scroll-item', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
                 for (let i = 0; i < items.length; i++) {
-                    clickToLoadContent(items[i], loadSubjectContent);
+                    clickToLoadContent(document, items[i], loadSubjectContent, subjectContentToggle);
                 }
             });
-            
         };
 
 
@@ -154,6 +156,7 @@
         //各个阶段的加载
         $('#navigator ul>a').each((index, element) => {
             $(element).click((e) => {
+                $('#contents_title').text($(element).find('small').text());
                 loadFrame(e, arrayLoadType[index], arrayLoadCallback[index]);
             })
         });
