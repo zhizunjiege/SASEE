@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d6dcc313-6652-41e3-9258-9bef4366321a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/1.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/action.js" beforeDir="false" afterPath="$PROJECT_DIR$/action.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/original.js" beforeDir="false" afterPath="$PROJECT_DIR$/original.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/action.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/original.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/student.json" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -18,21 +20,14 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/original.js">
+        <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="140" column="31" selection-start-line="140" selection-start-column="31" selection-end-line="140" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/action.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="42" column="72" lean-forward="true" selection-start-line="42" selection-start-column="72" selection-end-line="42" selection-end-column="72" />
+            <state relative-caret-position="391">
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
               <folding>
-                <element signature="e#1403#1457#0" />
+                <element signature="n#style#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -50,27 +45,31 @@
         <option value="$PROJECT_DIR$/sql.js" />
         <option value="$PROJECT_DIR$/action.js" />
         <option value="$PROJECT_DIR$/original.js" />
+        <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="156" />
-    <option name="y" value="129" />
-    <option name="width" value="2100" />
-    <option name="height" value="1287" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="953" />
+    <option name="width" value="974" />
+    <option name="height" value="1041" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="SASEE" type="b2602c69:ProjectViewProjectNode" />
               <item name="SASEE" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SASEE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SASEE" type="462c0819:PsiDirectoryNode" />
+              <item name="json" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SASEE" type="b2602c69:ProjectViewProjectNode" />
@@ -87,6 +86,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -143,12 +143,13 @@
       <workItem from="1562890719341" duration="4808000" />
       <workItem from="1563172531017" duration="5664000" />
       <workItem from="1563356198717" duration="1724000" />
-      <workItem from="1563361995067" duration="4070000" />
+      <workItem from="1563361995067" duration="4240000" />
+      <workItem from="1563438505045" duration="2035000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25725000" />
+    <option name="totallyTimeSpent" value="27930000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -163,13 +164,13 @@
     <frame x="-8" y="-8" width="1936" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16332982" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16332982" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3548035" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.104803495" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.26091704" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -196,6 +197,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/html/student.html" />
     <entry file="file://$PROJECT_DIR$/public/html/login.html" />
+    <entry file="file://$PROJECT_DIR$/json/student.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="82" lean-forward="true" selection-start-column="82" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/sql.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="575">
@@ -205,18 +213,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/action.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="42" column="72" lean-forward="true" selection-start-line="42" selection-start-column="72" selection-end-line="42" selection-end-column="72" />
-          <folding>
-            <element signature="e#1403#1457#0" />
-          </folding>
+        <state relative-caret-position="261">
+          <caret line="41" selection-start-line="41" selection-end-line="41" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/original.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="140" column="31" selection-start-line="140" selection-start-column="31" selection-end-line="140" selection-end-column="31" />
+        <state relative-caret-position="437">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="e#1624#3939#0" />
+            <element signature="n#style#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="e#3977#4070#0" />
+            <element signature="e#4114#4174#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="n#style#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

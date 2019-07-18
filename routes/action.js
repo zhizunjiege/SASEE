@@ -39,9 +39,7 @@ function login_in(url, a, b) {
         if(err) return console.log(err);
         var obj = obj.toString();
         obj = JSON.parse(obj);
-        console.log(obj)
-        var password = obj.data[0].password;//should'nt be data.password
-        var id = obj.data[1].id;
+
         console.log(password,id)
         if(id == a&&password == b)return 1;
          return 0;
@@ -54,7 +52,7 @@ var new_data = {
     "password":"1"
 }
 //write(demo_str,new_data);
-get_new(demo_str,2);
+//get_new(demo_str,2);
 //login_in(demo_str,1234,"none");
 
 exports.login_in = login_in;

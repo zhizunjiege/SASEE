@@ -6,8 +6,8 @@ var path = require('path');
 var bodyParser = require('body-parser');
 
 var app = express();
-
-var action = require("./action.js")
+const URL_ACTION= ".routes/action.js"
+var action = require(URL_ACTION);
 const student_url = "./json/student.json"
 //view uses html
 app.set('views', __dirname + '/views');
@@ -16,21 +16,14 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
 
-//app.set('port',process.env.PORT||3000);
 
 app.get('/', function (req, res) {
     res.render('login', { title: 'paint title' });
 });
-app.get('/1', function (req, res) {
-    res.render('student', { title: 'paint title' });
-});
 app.post('/login', function (req, res) {
     var account = req.body.account;
     var password = req.body.password;
-    console.log('account:' + account);
-    console.log('password:' + password);
-    console.log(action.login_in(student_url,account,password))
-    if (action.login_in(student_url,account,password)) {
+    if (account == password) {
         var contents = (new Array(10)).fill({
             top: true,
             title: '系统开通',
