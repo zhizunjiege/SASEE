@@ -31,7 +31,7 @@ app.post('/login', function (req, res) {
                 res.render('student', {
                     user: {
                         name: '333',
-                        gender: 'man',
+                        gender: 'coder_chen',
                         identity: req.query.identity ? '教师' : '学生',
                     },
                     news: {
