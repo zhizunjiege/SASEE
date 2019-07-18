@@ -1,14 +1,16 @@
+const NOTICE_JSON = "./json/notice.json"
+const STUDENT_JSON = "./json/student.json"
+
 var express = require('express');
 var fs = require('fs');
 var ejs = require('ejs');
 var bodyParser = require('body-parser');
 var path = require('path');
 var bodyParser = require('body-parser');
-
 var app = express();
-const URL_ACTION= ".routes/action.js"
-var action = require(URL_ACTION);
-const student_url = "./json/student.json"
+
+var action = require("./routes/action.js");
+
 //view uses html
 app.set('views', __dirname + '/views');
 app.engine('.ejs', ejs.__express);
@@ -24,25 +26,21 @@ app.post('/login', function (req, res) {
     var account = req.body.account;
     var password = req.body.password;
     if (account == password) {
-        var contents = (new Array(10)).fill({
-            top: true,
-            title: '系统开通',
-            publisher: '管理员',
-            category: '综合实验',
-            date: '2019/7/10'
-        });
+        action.get_new(NOTICE_JSON,3)
+            .then((data) => {
+                res.render('student', {
+                    user: {
+                        name: '333',
+                        gender: 'man',
+                        identity: req.query.identity ? '教师' : '学生',
+                    },
+                    news: {
+                        num: 34,
+                        contents: data
+                    }
+                });
 
-        res.render('student', {
-            user: {
-                name: '333',
-                gender: 'man',
-                identity: req.query.identity ? '教师' : '学生',
-            },
-            news: {
-                num: 34,
-                contents: contents
-            }
-        }); return;
+            }).catch(console.error);
 
     }
 
