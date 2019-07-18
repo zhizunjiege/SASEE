@@ -68,9 +68,16 @@
             $('#news_content').load(URL_NEWS_CONTENT, 'type=newsContent&' + 'num=' + $(e.currentTarget).index(), newsContentToggle);
         };
         function loadSubjectContent(e) {
-            $('#subject_content').load(URL_VIEW, 'type=subjectContent&' + 'num=' + $(e.currentTarget).index(), subjectContentToggle);
+            $('#subject_content').load(URL_VIEW, 'type=subjectContent&' + 'num=' + $(e.currentTarget).index(), ()=>{
+                subjectContentToggle();
+                $('#subject_check_submit').click(function(e){
+                    e.preventDefault();
+                    this.form.action=URL_REQUEST;
+                    this.form.submit();
+                });
+            });
         };
-        function clickToLoadContent(context, item, loadContent, contentToggle) {
+        function clickToLoadContent(context, item, loadContent) {
             $(item, $(context)).click(loadContent);
             //document.getElementById('contents_back').onclick=contentToggle;
         };
@@ -81,15 +88,16 @@
             }
         }, '.list-group-item', 400, '#news_list', false, '.infinite-scroll-status', '.infinite-scroll-button', null, (e, res, path, items) => {
             for (let i = 0; i < items.length; i++) {
-                clickToLoadContent('#news_list', items[i], loadNewsContent, newsContentToggle);
+                clickToLoadContent('#news_list', items[i], loadNewsContent);
             }
         });
 
-        //初始化news条目
-        clickToLoadContent('#news_list', 'ul>li', loadNewsContent, newsContentToggle);
+        //初始化各条目
+        clickToLoadContent('#news_list', 'ul>li', loadNewsContent);
         document.getElementById('contents_back').onclick = newsContentToggle;
         $('#navigator a[href="#news"]').click(() => {
-            $('#contents_title').text('通知');
+            $('#contents_back').hide();
+            $('#contents_title').show().text('通知');
             document.getElementById('contents_back').onclick = newsContentToggle;
         });
         $('#navigator a[href="#bysj_xt"]').click(() => {
@@ -107,6 +115,9 @@
                     parent: '#contents',
                     toggle: true
                 }).load(URL_VIEW, 'type=' + type, callback);
+            } else {
+                $(href).children(':first').hide();
+                $(href).children(':last').show();
             }
         };
 
@@ -133,14 +144,14 @@
         });
 
         function loadSubject() {
-            clickToLoadContent(this, '.infinite-scroll-item', loadSubjectContent, subjectContentToggle);
+            clickToLoadContent(this, '.infinite-scroll-item', loadSubjectContent);
             instScroll(this, '.infinite-scroll-container-2', function () {
                 if (this.loadCount + 2 <= $('#subject_list').data().page) {
                     return URL_VIEW + '?type=subjectList&nextPage=' + (this.loadCount + 2);
                 }
             }, '.infinite-scroll-item', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
                 for (let i = 0; i < items.length; i++) {
-                    clickToLoadContent(document, items[i], loadSubjectContent, subjectContentToggle);
+                    clickToLoadContent(document, items[i], loadSubjectContent);
                 }
             });
         };
@@ -156,7 +167,8 @@
         //各个阶段的加载
         $('#navigator ul>a').each((index, element) => {
             $(element).click((e) => {
-                $('#contents_title').text($(element).find('small').text());
+                $('#contents_back').hide();
+                $('#contents_title').show().text($(element).find('small').text());
                 loadFrame(e, arrayLoadType[index], arrayLoadCallback[index]);
             })
         });

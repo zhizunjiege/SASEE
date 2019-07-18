@@ -38,9 +38,12 @@ td:hover{
 body{
     overflow-y: hidden;
 }
-#news_list,#subject_list{
+#news_list,#subject_list,#news_content,#subject_content{
     overflow-y: scroll;
     height:600px;
+}
+#contents>div>div{
+    overflow-y: auto;
 }
 /* 仅支持PC端Chrome */
 ::-webkit-scrollbar {display:none}

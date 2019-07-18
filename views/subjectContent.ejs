@@ -1,1 +1,103 @@
-<h3>这是内容···</h3>
+<div class="mb-3 text-center text-info border-bottom border-secondary">
+    <h3><%= subject.title %></h3>
+</div>
+<div class="row text-center">
+    <div class="col-4">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" colspan="4">课题基本信息</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th colspan="2">方向</th>
+                    <td colspan="2"><%= subject.derection %></td>
+                </tr>
+                <tr>
+                    <th>容量</th>
+                    <td><%= subject.capacity %>人</td>
+                    <th>已选</th>
+                    <td><%= subject.chosen %>人</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-8">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" colspan="6">教师简介</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>姓名</th>
+                    <td><%= teacher.name %></td>
+                    <th>性别</th>
+                    <td><%= teacher.gender %></td>
+                    <th>职称</th>
+                    <td><%= teacher.pro %></td>
+                </tr>
+                <tr>
+                    <th>研究方向</th>
+                    <td colspan="2"><%= teacher.field %></td>
+                    <th>联系邮箱</th>
+                    <td colspan="2"><%= teacher.mail %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div>
+    <h5 class="my-3">课题简介</h5>
+    <div class="px-5 py-3 border rounded">
+        <%- subject.introduction %>
+    </div>
+</div>
+
+<div>
+    <h5 class="my-3">相关资料</h5>
+    <% if (subject.materials) { %>
+    <ul class="list-group list-group-flush mx-5">
+        <% for( let index = 0; index < subject.materials.length; index++ ) { %>
+        <a href="<%= subject.materials[index].url %>" class="list-group-item"
+            download><small><%= subject.materials[index].filename %></small></a>
+        <% } %>
+    </ul>
+    <% } else { %>
+    <div class="d-flex justify-content-center" style="height: 250px">
+        <h1 class="text-muted align-self-center">暂时没有资料</h1>
+    </div>
+    <% } %>
+</div>
+<div class="d-flex justify-content-around font-italic p-3">
+    <h4>发布时间：<%= subject.submitTime %></h4>
+    <h4>最后修改：<%= subject.lastModifiedTime %></h4>
+</div>
+<div class="mb-3">
+    <button id="subject_choose" type="button" class="btn btn-primary w-25 float-right" data-toggle="modal" data-target="#subject_check_modal">选择此课题</button>
+</div>
+<div id="subject_check_modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">请输入密码进行确认</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST">
+                    <div class="form-group form-row">
+                        <input name="number" type="hidden" value="<%= subject.number %>">
+                        <input name="check" id="subject_check_pw" type="password" class="form-control" placeholder="请输入密码"
+                            required>
+                    </div>
+                    <div class="form-group form-row justify-content-around">
+                        <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary col-3" id="subject_check_submit">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

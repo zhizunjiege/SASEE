@@ -161,7 +161,31 @@ app.get('/views', (req, res) => {
             });
             break;
         case 'subjectContent':
-            res.render('subjectContent', null);
+            res.render('subjectContent', {
+                subject: {
+                    number:3,
+                    title: '基于那啥做那啥',
+                    derection: '模式识别',
+                    capacity: 5,
+                    chosen: 3,
+                    introduction: '<div><h3 style="text-align: center;">关于毕业设计选题系统开放的通知<span style="text-decoration-line: line-through;">​</span></h3><div><span style="text-decoration-line: line-through;">致3系全体师生：</span>​</div></div>',
+                    materials: [
+                        {
+                            filename: '就那啥做那啥的文件.html',
+                            url: '/doc/notice.html'
+                        }
+                    ],
+                    submitTime:'2019/7/8',
+                    lastModifiedTime:'2019/7/16'
+                },
+                teacher: {
+                    name: '某某某',
+                    gender: '女',
+                    pro: '讲师',
+                    field: '超电磁炮',
+                    mail: '88888888@buaa.edu.cn'
+                }
+            });
             break;
         default:
             break;
