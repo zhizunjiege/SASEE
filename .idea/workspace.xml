@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d6dcc313-6652-41e3-9258-9bef4366321a" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/action.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/action.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/demo.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/demo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/sql.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/sql.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -21,8 +21,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="13" column="16" lean-forward="true" selection-start-line="13" selection-start-column="16" selection-end-line="13" selection-end-column="16" />
+            <state relative-caret-position="569">
+              <caret line="35" column="31" lean-forward="true" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
               <folding>
                 <element signature="n#style#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
@@ -33,22 +33,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/routes/action.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1242">
-              <caret line="64" column="26" lean-forward="true" selection-start-line="64" selection-start-column="26" selection-end-line="64" selection-end-column="26" />
-              <folding>
-                <element signature="n#!!block;n#login_in#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/demo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="106" />
+            <state relative-caret-position="454">
+              <caret line="22" selection-start-line="22" selection-end-line="22" />
             </state>
           </provider>
         </entry>
@@ -72,8 +60,9 @@
         <option value="$PROJECT_DIR$/sql.js" />
         <option value="$PROJECT_DIR$/action.js" />
         <option value="$PROJECT_DIR$/original.js" />
-        <option value="$PROJECT_DIR$/routes/demo.js" />
         <option value="$PROJECT_DIR$/routes/action.js" />
+        <option value="$PROJECT_DIR$/routes/sql.js" />
+        <option value="$PROJECT_DIR$/routes/demo.js" />
         <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
@@ -85,7 +74,7 @@
     <auto-save>true</auto-save>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="953" />
+    <option name="x" value="-7" />
     <option name="width" value="974" />
     <option name="height" value="1041" />
   </component>
@@ -94,7 +83,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -127,6 +115,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -198,12 +187,13 @@
       <workItem from="1563361995067" duration="4240000" />
       <workItem from="1563438505045" duration="3819000" />
       <workItem from="1563442340275" duration="2078000" />
-      <workItem from="1563444443940" duration="2368000" />
+      <workItem from="1563444443940" duration="6537000" />
+      <workItem from="1563511213284" duration="4754000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34160000" />
+    <option name="totallyTimeSpent" value="43083000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -216,7 +206,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1050" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16332982" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -261,21 +250,8 @@
     <entry file="file://$PROJECT_DIR$/sql.js" />
     <entry file="file://$PROJECT_DIR$/action.js" />
     <entry file="file://$PROJECT_DIR$/original.js" />
-    <entry file="file://$PROJECT_DIR$/routes/sql.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/doc/notice.html">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/json/notice.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/demo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="106" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/action.js">
       <provider selected="true" editor-type-id="text-editor">
@@ -287,10 +263,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/json/notice.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="51" selection-start-column="51" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/sql.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="868">
+          <caret line="40" column="22" selection-start-line="40" selection-start-column="22" selection-end-line="40" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/demo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="454">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="13" column="16" lean-forward="true" selection-start-line="13" selection-start-column="16" selection-end-line="13" selection-end-column="16" />
+        <state relative-caret-position="569">
+          <caret line="35" column="31" lean-forward="true" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
           <folding>
             <element signature="n#style#0;n#h3#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#span#0;n#h3#0;n#div#0;n#!!top" expanded="true" />

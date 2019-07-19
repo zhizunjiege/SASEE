@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 var action = require("./routes/action.js");
+var mysql = require("./routes/sql")
 
 //view uses html
 app.set('views', __dirname + '/views');
@@ -26,22 +27,32 @@ app.post('/login', function (req, res) {
     var account = req.body.account;
     var password = req.body.password;
     if (account == password) {
-        action.get_new(NOTICE_JSON,3)
-            .then((data) => {
-                res.render('student', {
-                    user: {
-                        name: '333',
-                        gender: 'coder_chen',
-                        identity: req.query.identity ? '教师' : '学生',
-                    },
-                    news: {
-                        num: 34,
-                        contents: data
-                    }
-                });
-
-            }).catch(console.error);
-
+        var sql = "SELECT * FROM notice order by id DESC limit ?"
+        var num = 3
+        var arr = new Array(num)
+        mysql.query(sql,num,function (err, data) {
+            if(err)console.log(err);
+            data = JSON.parse(JSON.stringify(data))
+           // console.log(data)
+            for (var i=0;i<num;i++) {
+                delete data[i].id;
+                delete data[i].url;
+                data[i].top = true;
+                arr[i] = data[i]
+            }
+            console.log(arr)
+        })
+        res.render('student', {
+            user: {
+                name: '333',
+                gender: 'coder_chen',
+                identity: req.query.identity ? '教师' : '学生',
+            },
+            news: {
+                num: 34,
+                contents: arr
+            }
+        });
     }
 
 });
