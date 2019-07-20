@@ -32,24 +32,24 @@ app.post('/login', function (req, res) {
         var sql3 = "SELECT COUNT(id) AS total FROM notice where top = 1"
         var num2 = 3
         const MAX_NUM = 10
-        mysql.query(sql3,[],function (err, data) {
-            if(err)console.log(err)
+        mysql.query(sql3, [], function (err, data) {
+            if (err) console.log(err)
             num = data[0].total
-            mysql.query(sql,num,function (err, data) {
-                if(err)console.log(err);
+            mysql.query(sql, num, function (err, data) {
+                if (err) console.log(err);
                 data = JSON.parse(JSON.stringify(data))
                 var arr = new Array(num)
-                for (var i=0;i<num;i++) {
+                for (var i = 0; i < num; i++) {
                     delete data[i].id;
                     //delete data[i].title;
                     delete data[i].url;
                     arr[i] = data[i]
                 }
                 //console.log(arr)
-                if (num <= MAX_NUM) mysql.query(sql2,num2,function (err, data) {
-                    if(err)console.log(err);
+                if (num <= MAX_NUM) mysql.query(sql2, num2, function (err, data) {
+                    if (err) console.log(err);
                     data = JSON.parse(JSON.stringify(data))
-                    for (var i=0;i<num2;i++) {
+                    for (var i = 0; i < num2; i++) {
                         delete data[i].id;
                         //delete data[i].title;
                         delete data[i].url;
@@ -66,7 +66,7 @@ app.post('/login', function (req, res) {
                             num: 34,
                             contents: arr
                         }
-                    });return;
+                    }); return;
                 })
             })
         })
@@ -148,7 +148,7 @@ app.get('/views', (req, res) => {
         case 'subjectContent':
             res.render('subjectContent', {
                 subject: {
-                    number:3,
+                    number: 3,
                     title: '基于那啥做那啥',
                     derection: '模式识别',
                     capacity: 5,
@@ -160,8 +160,8 @@ app.get('/views', (req, res) => {
                             url: '/doc/notice.html'
                         }
                     ],
-                    submitTime:'2019/7/8',
-                    lastModifiedTime:'2019/7/16'
+                    submitTime: '2019/7/8',
+                    lastModifiedTime: '2019/7/16'
                 },
                 teacher: {
                     name: '某某某',
@@ -172,9 +172,9 @@ app.get('/views', (req, res) => {
                 }
             });
             break;
-            case 'mySubject':
-                res.render('mySubject',null);
-                break;
+        case 'mySubject':
+            res.render('mySubject', null);
+            break;
         default:
             break;
     }

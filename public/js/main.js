@@ -3,6 +3,7 @@
     const URL_VIEW = '/views';
     const URL_NEWS_CONTENT = '/doc/notice.html';
     const URL_REQUEST = '/request';
+    const URL_UPLOAD = '/upload';
     //const URL_SUBJECT_CONTENT='/views';
 
     $(function ($) {
@@ -54,34 +55,38 @@
         };
 
         //点击news
-        function newsContentToggle() {
-            //$('#contents_title').text('通知');
-            $('#contents_header').children().toggle();
-            $('#news').children().toggle();
+        function contentBarToggle() {
+            $('#contents_back').toggle();
+            $('#contents_title').toggle();
         };
-        function subjectContentToggle() {
-            //$('#contents_title').text('课题');
-            $('#contents_header').children().toggle();
-            $('#bysj_xt').children().toggle();
+        function newsToggle() {
+            contentBarToggle();
+            $('#news_content').toggle();
+            $('#news_list').toggle();
+        };
+        function subjectToggle() {
+            contentBarToggle();
+            $('#subject_content').toggle();
+            $('#subject_list').toggle();
         }
         function loadNewsContent(e) {
-            $('#news_content').load(URL_NEWS_CONTENT, 'type=newsContent&' + 'num=' + $(e.currentTarget).index(), newsContentToggle);
+            document.getElementById('contents_back').onclick = newsToggle;
+            $('#news_content').load(URL_NEWS_CONTENT, 'type=newsContent&' + 'num=' + $(e.currentTarget).index(), newsToggle);
         };
         function loadSubjectContent(e) {
-            $('#subject_content').load(URL_VIEW, 'type=subjectContent&' + 'num=' + $(e.currentTarget).index(), ()=>{
-                subjectContentToggle();
-                $('#subject_check_submit').click(function(e){
+            document.getElementById('contents_back').onclick = subjectToggle;
+            $('#subject_content').load(URL_VIEW, 'type=subjectContent&' + 'num=' + $(e.currentTarget).index(), () => {
+                subjectToggle();
+                $('#subject_check_submit').click(function (e) {
                     e.preventDefault();
-                    this.form.action=URL_REQUEST;
+                    this.form.action = URL_REQUEST;
                     this.form.submit();
                 });
             });
         };
         function clickToLoadContent(context, item, loadContent) {
             $(item, $(context)).click(loadContent);
-            //document.getElementById('contents_back').onclick=contentToggle;
         };
-
         instScroll(document, '.infinite-scroll-container', function () {
             if (this.loadCount + 2 <= $('#news_list').data().page) {
                 return URL_VIEW + '?type=newsList&nextPage=' + (this.loadCount + 2);
@@ -94,14 +99,15 @@
 
         //初始化各条目
         clickToLoadContent('#news_list', 'ul>li', loadNewsContent);
-        document.getElementById('contents_back').onclick = newsContentToggle;
         $('#navigator a[href="#news"]').click(() => {
             $('#contents_back').hide();
             $('#contents_title').show().text('通知');
-            document.getElementById('contents_back').onclick = newsContentToggle;
+            $('#news_content').hide();
+            $('#news_list').show();
         });
         $('#navigator a[href="#bysj_xt"]').click(() => {
-            document.getElementById('contents_back').onclick = subjectContentToggle;
+            $('#subject_content').hide();
+            $('#subject_list').show();
         });
         //封装加载其余框架的函数
         function loadFrame(e, type, callback) {
@@ -115,15 +121,13 @@
                     parent: '#contents',
                     toggle: true
                 }).load(URL_VIEW, 'type=' + type, callback);
-            } else {
-                $(href).children(':first').hide();
-                $(href).children(':last').show();
             }
         };
 
         //个人信息的加载
         $('#_toggle_user_info').click((e) => {
-            $('#contents_title').text('个人信息');
+            $('#contents_back').hide();
+            $('#contents_title').show().text('个人信息');
             loadFrame(e, 'userInfo', () => {
                 $('#modifyPW_submit').click(function (e) {
                     e.preventDefault();
@@ -157,12 +161,32 @@
         };
 
         function loadMySubject() {
-            console.log('load successed!');
-            
+            $.getScript('/js/wangEditor.min.js', () => {
+                var WE = window.wangEditor;
+                var editor = new WE('#editor');
+
+                editor.customConfig.uploadImgShowBase64 = true;
+
+                editor.create();
+
+                $('#editor_clear').click(() => {
+                    editor.txt.clear();
+                });
+                $('#editor_submit').click(() => {
+                    $.post(URL_UPLOAD,{
+                        type:'notice',
+                        data:editor.txt.html()
+                    },()=>{
+                        console.log('发送通知成功！');
+                        
+                    });
+                });
+            });
         };
 
         var arrayLoadCallback = [
-            loadSubject
+            loadSubject,
+            loadMySubject
         ];
         var arrayLoadType = [
             'subject',
