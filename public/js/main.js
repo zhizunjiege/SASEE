@@ -166,6 +166,7 @@
                 var editor = new WE('#editor');
 
                 editor.customConfig.uploadImgShowBase64 = true;
+                //editor.customConfig.uploadImgServer=URL_UPLOAD;
 
                 editor.create();
 
@@ -173,13 +174,22 @@
                     editor.txt.clear();
                 });
                 $('#editor_submit').click(() => {
-                    $.post(URL_UPLOAD,{
-                        type:'notice',
-                        data:editor.txt.html()
-                    },()=>{
-                        console.log('发送通知成功！');
+                    /*
+                    var myform=new FormData();
+                    myform.append('first',editor.txt.html());
+                    myform.append('type','notice');
+                    $.ajax({
+                        url:URL_UPLOAD,
+                        type:'POST',
+                        cache:false,
+                        data:myform,
+                        processData:false,
+                        contentType:'text/plain'
+                    }).done(()=>{
+                        console.log('successed!');
                         
                     });
+                    */
                 });
             });
         };

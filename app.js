@@ -179,6 +179,18 @@ app.get('/views', (req, res) => {
             break;
     }
 });
+app.post('/upload',(req,res)=>{
+    console.log(req);
+    //console.log(req.body);
+    var data='';
+    req.on('data',(buf)=>{
+        data+=buf;
+    });
+    req.on('end',()=>{
+        console.log(data);
+        
+    });
+});
 
 //404
 app.use(function (req, res) {
