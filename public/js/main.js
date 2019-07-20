@@ -156,12 +156,17 @@
             });
         };
 
+        function loadMySubject() {
+            console.log('load successed!');
+            
+        };
 
         var arrayLoadCallback = [
             loadSubject
         ];
         var arrayLoadType = [
-            'subject'
+            'subject',
+            'mySubject'
         ];
 
         //各个阶段的加载

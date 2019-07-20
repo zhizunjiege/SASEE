@@ -156,6 +156,9 @@ app.get('/views', (req, res) => {
                 }
             });
             break;
+            case 'mySubject':
+                res.render('mySubject',null);
+                break;
         default:
             break;
     }
