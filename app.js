@@ -41,18 +41,19 @@ app.post('/login', function (req, res) {
                 arr[i] = data[i]
             }
             console.log(arr)
+            res.render('student', {
+                user: {
+                    name: '333',
+                    gender: 'coder_chen',
+                    identity: req.query.identity ? '教师' : '学生',
+                },
+                news: {
+                    num: 34,
+                    contents: arr
+                }
+            });
         })
-        res.render('student', {
-            user: {
-                name: '333',
-                gender: 'coder_chen',
-                identity: req.query.identity ? '教师' : '学生',
-            },
-            news: {
-                num: 34,
-                contents: arr
-            }
-        });
+
     }
 
 });
