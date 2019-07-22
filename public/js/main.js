@@ -117,7 +117,7 @@
                     "id": href.substring(1),
                     "class": "collapse",
                     "data-parent": "#contents"
-                }).appendTo('#contents>div').collapse({
+                }).appendTo('#contents>div>div').collapse({
                     parent: '#contents',
                     toggle: true
                 }).load(URL_VIEW, 'type=' + type, callback);

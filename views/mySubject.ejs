@@ -1,4 +1,4 @@
-<nav id="mysubject_nav" class="nav nav-tabs nav-justified mt-3">
+<nav id="mysubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mysubject_notice">通知墙</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mysubject_progress">课题进度</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mysubject_teacher">教师资料</a>
@@ -6,11 +6,24 @@
 </nav>
 <div class="tab-content p-3">
     <div class="tab-pane fade show active" id="mysubject_notice">
-
-        <div id="editor">
+        <ul class="list-group mb-3">
+            <% for( let index = 0; index < notice.length; index++ ) { %>
+            <li class="list-group-item list-group-item-action">
+                <a href="#" class="float-left w-50 ellipsis">
+                    <% if (notice[index].top) { %>
+                    <span class="badge badge-pill badge-warning">置顶</span>
+                    <% } %>
+                    <%= notice[index].title %>
+                </a>
+                <span class="float-right"><%= notice[index].date %>
+                </span>
+            </li>
+            <% } %>
+        </ul>
+        <div id="editor" class="mb-3">
             <p>请在此处输入内容···</p>
         </div>
-        <div class="mt-3 d-flex justify-content-between">
+        <div class="d-flex justify-content-between">
             <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
             <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
         </div>
@@ -20,7 +33,6 @@
             <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_1">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
                     <span class="w-50 ellipsis">任务一:初步探讨</span>
-                    <!-- <span class="d-inline-block w-50 ellipsis"></span> -->
                     <span class="badge badge-pill badge-success">已完成</span>
                 </h5>
             </div>
@@ -36,7 +48,6 @@
             <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_2">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
                     <span class="w-50 ellipsis">任务二:设计初稿</span>
-                    <!-- <span class="d-inline-block w-50 ellipsis"></span> -->
                     <span class="badge badge-pill badge-danger">不及格</span>
                 </h5>
             </div>
@@ -52,7 +63,6 @@
             <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_3">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
                     <span class="w-50 ellipsis">任务三:最终成品</span>
-                    <!-- <span class="d-inline-block w-50 ellipsis"></span> -->
                     <span class="badge badge-pill badge-warning">未完成</span>
                 </h5>
             </div>
@@ -64,7 +74,7 @@
             </div>
         </div>
 
-        <div class="progress mt-3">
+        <div class="progress mt-5">
             <!-- progress-bar-striped progress-bar-animated -->
             <div class="progress-bar" style="width: 33.3%">已完成</div>
             <div class="progress-bar bg-danger" style="width: 33.3%">不及格</div>
@@ -72,12 +82,85 @@
         </div>
     </div>
     <div class="tab-pane fade" id="mysubject_teacher">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cupiditate odio vero itaque suscipit tempora
-        doloremque, dolores laborum maiores similique autem repellendus quibusdam cumque dicta laudantium molestiae
-        nesciunt quo, eveniet fugit.
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" colspan="6">基本资料</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                <tr>
+                    <th>姓名</th>
+                    <td><%= teacher.name %></td>
+                    <th>性别</th>
+                    <td><%= teacher.gender %></td>
+                    <th>职称</th>
+                    <td><%= teacher.pro %></td>
+                </tr>
+                <tr>
+                    <th>研究方向</th>
+                    <td colspan="2"><%= teacher.field %></td>
+                    <th>办公地点</th>
+                    <td colspan="2"><%= teacher.office %></td>
+                </tr>
+                <tr>
+                    <th>联系邮箱</th>
+                    <td colspan="2"><%= teacher.mail %></td>
+                    <th>联系电话</th>
+                    <td colspan="2"><%= teacher.tele %></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div class="tab-pane fade" id="mysubject_file">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab eveniet iure officia sint eligendi id, atque eos non
-        illum repudiandae tempore blanditiis incidunt ut consectetur corrupti magni labore, autem soluta!
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <header class="card-header">
+                        <h5 class="mb-0 text-left">下载文件</h5>
+                    </header>
+                    <div class="card-body">
+                        <% for( let i = 0; i < downFiles.length; i++ ) { %>
+                        <p class="card-title"><%= downFiles[i].date %></p>
+                        <ul class="list-group list-group-flush <%= i==downFiles.length-1?'':'mb-3' _%>">
+                            <% for( let j = 0; j < downFiles[i].file.length; j++ ) { %>
+                            <a href="<%= downFiles[i].file[j].url %>" class="list-group-item"
+                                download><small><%= downFiles[i].file[j].name %></small></a>
+                            <% } %>
+                        </ul>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="file_upload" class="form-row align-items-center justify-content-between">
+                            <div class="custom-file col-8">
+                                <input type="file" id="file_upload_input" class="custom-file-input" required>
+                                <label for="file_upload_input" class="custom-file-label">选择文件</label>
+                                <small class="form-text text-muted">请将所有文件打包压缩上传，不超过5M</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary col-3">上传</button>
+                        </form>
+                        <% for( let i = 0; i < upFiles.length; i++ ) { %>
+                        <p class="card-title"><%= upFiles[i].date %></p>
+                        <ul class="list-group list-group-flush mb-3">
+                            <% for( let j = 0; j < upFiles[i].file.length; j++ ) { %>
+                            <a href="#" class="list-group-item">
+                                <small><%= upFiles[i].file[j] %></small></a>
+                            <% } %>
+                        </ul>
+                        <% } %>
+                    </div>
+                    <footer class="card-footer">
+                        <h5 class="mb-0 text-right">上传文件</h5>
+                    </footer>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<!-- <script type="text/javascript">
+ alert('succeeded!')
+</script> -->

@@ -18,7 +18,8 @@
         <div class="col-2 dropdown">
             <div id="account_info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around"
                 data-toggle="dropdown">
-                <img src=<%= '../pictures/'+user.gender+'.png' %> class="float-left rounded-circle" alt="profile" width="48px">
+                <img src=<%= '../pictures/'+user.gender+'.png' %> class="float-left rounded-circle" alt="profile"
+                    width="48px">
                 <div>
                     <div class="h5 my-0"><%= user.name %></div>
                     <span class="badge badge-pill badge-info"><%= user.identity %></span>
@@ -89,50 +90,53 @@
 
         <div class="aside invisible">占位</div>
 
-        <div id="contents" class="mt-3 px-3">
+        <div id="contents" class="p-3">
             <div class="card">
                 <header id="contents_header" class="card-header">
                     <button id="contents_back" class="btn" style="display: none"><span
                             class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
-                    <h3 id="contents_title" class="text-center">通知</h3>
+                    <h3 id="contents_title" class="mb-0 text-center">通知</h3>
                 </header>
 
-                <div id="news" class="collapse show" data-parent="#contents">
-                    <div id="news_content" class="col-10 mx-auto mt-1" style="display: none"></div>
-                    <% var pageNum=Math.ceil(news.num/10)
+                <div id="contents_body">
+                    <div id="news" class="collapse show" data-parent="#contents">
+                        <div id="news_content" class="col-10 mx-auto scroll-container" style="display: none"></div>
+                        <% var pageNum=Math.ceil(news.num/10)
                     if (pageNum) { %>
-                    <div id="news_list" data-num=<%= news.num %> data-page=<%= pageNum %>>
-                        <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container">
-                            <% for( let index = 0; index < news.contents.length; index++ ) { %>
-                            <li class="list-group-item list-group-item-action">
-                                <a href="#" class="float-left">
-                                    <% if (news.contents[index].top) { %>
-                                    <span class="badge badge-pill badge-warning">置顶</span>
-                                    <% } %>
-                                    <%= news.contents[index].title %>
-                                </a>
-                                <span
-                                    class="float-right"><%= news.contents[index].publisher+'--'+news.contents[index].category+'--'+news.contents[index].date %>
-                                </span>
-                            </li>
-                            <% } %>
-                        </ul>
-                        <div class="text-center card-footer infinite-scroll-status" style="display:none">
-                            <span class="infinite-scroll-request">加载中···</span>
-                            <span class="infinite-scroll-last">没有啦</span>
-                            <span class="text-warning infinite-scroll-error">出错了</span>
+                        <div id="news_list" class="scroll-container" data-num=<%= news.num %> data-page=<%= pageNum %>>
+                            <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container">
+                                <% for( let index = 0; index < news.contents.length; index++ ) { %>
+                                <li class="list-group-item list-group-item-action">
+                                    <a href="#" class="float-left w-50 ellipsis">
+                                        <% if (news.contents[index].top) { %>
+                                        <span class="badge badge-pill badge-warning">置顶</span>
+                                        <% } %>
+                                        <%= news.contents[index].title %>
+                                    </a>
+                                    <span
+                                        class="float-right"><%= news.contents[index].publisher+'--'+news.contents[index].category+'--'+news.contents[index].date %>
+                                    </span>
+                                </li>
+                                <% } %>
+                            </ul>
+                            <div class="text-center card-footer infinite-scroll-status" style="display:none">
+                                <span class="infinite-scroll-request">加载中···</span>
+                                <span class="infinite-scroll-last">没有啦</span>
+                                <span class="text-warning infinite-scroll-error">出错了</span>
+                            </div>
+                            <div class="row justify-content-center">
+                                <button class="btn btn-secondary col-3 my-4 infinite-scroll-button">
+                                    <h5 class="mb-0">更多···</h5>
+                                </button>
+                            </div>
                         </div>
-                        <div class="row justify-content-center">
-                            <button class="btn btn-secondary col-3 my-4 infinite-scroll-button"><h5 class="my-1">更多···</h5></button>
+                        <% } else { %>
+                        <div class="d-flex justify-content-center" style="height: 250px">
+                            <h1 class="text-muted align-self-center">暂时没有通知</h1>
                         </div>
+                        <% }  %>
                     </div>
-                    <% } else { %>
-                    <div class="d-flex justify-content-center" style="height: 250px">
-                        <h1 class="text-muted align-self-center">暂时没有通知</h1>
-                    </div>
-                    <% }  %>
                 </div>
-
             </div>
         </div>
 

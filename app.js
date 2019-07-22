@@ -24,7 +24,7 @@ app.get('/', function (req, res) {
     res.render('login', { title: 'paint title' });
 });
 app.post('/login', function (req, res) {
-    login(req,res)
+    login(req, res)
 });
 
 //动态加载的代码
@@ -44,7 +44,7 @@ app.get('/views', (req, res) => {
                         title: '系统开通',
                         publisher: '管理员',
                         category: '毕业设计',
-                        date: '2019/7/13'
+                        date: '2019/07/13'
                     })
                 }
             });
@@ -77,24 +77,24 @@ app.get('/views', (req, res) => {
             res.render('subject', {
                 num: 23,
                 contents: (new Array(14)).fill({
-                    title: '基于FPGA的无线雷达矩阵但是访华时',
-                    derection: '探测制导',
+                    title: '做个什么呢我也不太清楚',
+                    derection: '301',
                     chosen: 5,
                     capacity: 7,
-                    publisher: '管理员',
-                    date: '2019/7/16'
+                    publisher: '某老师',
+                    date: '2019/07/16'
                 })
             });
             break;
         case 'subjectList':
             res.render('subjectList', {
                 contents: (new Array(5)).fill({
-                    title: '基于FPGA的无线雷达矩阵',
-                    derection: '探测制导',
+                    title: '我也不知道要做什么',
+                    derection: '302',
                     chosen: 5,
                     capacity: 7,
-                    publisher: '我',
-                    date: '2019/7/16'
+                    publisher: '某某老师',
+                    date: '2019/07/16'
                 })
             });
             break;
@@ -113,8 +113,8 @@ app.get('/views', (req, res) => {
                             url: '/doc/notice.html'
                         }
                     ],
-                    submitTime: '2019/7/8',
-                    lastModifiedTime: '2019/7/16'
+                    submitTime: '2019/07/08',
+                    lastModifiedTime: '2019/07/16'
                 },
                 teacher: {
                     name: '某某某',
@@ -126,22 +126,77 @@ app.get('/views', (req, res) => {
             });
             break;
         case 'mySubject':
-            res.render('mySubject', null);
+            res.render('mySubject', {
+                notice: new Array(5).fill({
+                    top: false,
+                    title: '准备开始开发了啊',
+                    date: '2019/07/09'
+                }),
+                teacher: {
+                    name: '某某某',
+                    gender: '女',
+                    pro: '讲师',
+                    field: '超电磁炮',
+                    office:'新主楼F-407',
+                    mail: '88888888@buaa.edu.cn',
+                    tele:'166-6666-6666'
+                },
+                downFiles:[
+                    {
+                        date:'2019/11/20',
+                        file:[
+                            {
+                                name:'可下载文件003.doc',
+                                url:'/doc/notice.html'
+                            },{
+                                name:'可下载文件004.doc',
+                                url:'/doc/notice.html'
+                            }
+                        ]
+                    },{
+                        date:'2019/10/24',
+                        file:[
+                            {
+                                name:'可下载文件001.doc',
+                                url:'/doc/notice.html'
+                            },{
+                                name:'可下载文件002.doc',
+                                url:'/doc/notice.html'
+                            }
+                        ]
+                    }
+                ],
+                upFiles:[
+                    {
+                        date:'2019/12/10',
+                        file:[
+                            '上传的文件003.doc',
+                            '上传的文件004.doc'
+                        ]
+                    },{
+                        date:'2019/10/28',
+                        file:[
+                            '上传的文件001.doc',
+                            '上传的文件002.doc'
+                        ]
+                    }
+                ]
+            });
             break;
         default:
             break;
     }
 });
-app.post('/upload',(req,res)=>{
+app.post('/upload', (req, res) => {
     console.log(req);
     //console.log(req.body);
-    var data='';
-    req.on('data',(buf)=>{
-        data+=buf;
+    var data = '';
+    req.on('data', (buf) => {
+        data += buf;
     });
-    req.on('end',()=>{
+    req.on('end', () => {
         console.log(data);
-        
+
     });
 });
 
