@@ -128,14 +128,37 @@ app.get('/views', (req, res) => {
         case 'mySubject':
             res.render('mySubject', {
                 notice: new Array(5).fill({
-                    top: false,
+                    top: true,
                     title: '准备开始开发了啊',
-                    date: '2019/07/09'
+                    date: '2019/07/09',
+                    content:'准备开始完成任务'
                 }),
+                asignment:[
+                    {
+                        title:'初步探讨',
+                        deadline:'2019/11/13-12:00',
+                        status:'已完成',
+                        description:'本次任务的目的是完成初步的探讨····',
+                        score:'98'
+                    },{
+                        title:'设计初稿',
+                        deadline:'2019/11/23-08:00',
+                        status:'不及格',
+                        description:'本次任务的目的是进行进一步的设计，并提交设计初稿····',
+                        score:'57'
+                    },{
+                        title:'最终成品',
+                        deadline:'2019/12/03-00:00',
+                        status:'未完成',
+                        description:'本次任务的目的是完成最后的组装，形成最终成品····',
+                        score:'暂无'
+                    }
+                ],
                 teacher: {
+                    profile:'cai.jpg',
                     name: '某某某',
                     gender: '女',
-                    pro: '讲师',
+                    proTitle: '讲师',
                     field: '超电磁炮',
                     office:'新主楼F-407',
                     mail: '88888888@buaa.edu.cn',

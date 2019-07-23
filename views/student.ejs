@@ -16,7 +16,7 @@
             <h3 class="mb-0 ml-5">自动化科学与电气工程学院</h3>
         </div>
         <div class="col-2 dropdown">
-            <div id="account_info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around"
+            <div id="account_info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around point"
                 data-toggle="dropdown">
                 <img src=<%= '../pictures/'+user.gender+'.png' %> class="float-left rounded-circle" alt="profile"
                     width="48px">
@@ -101,7 +101,7 @@
                 <div id="contents_body">
                     <div id="news" class="collapse show" data-parent="#contents">
                         <div id="news_content" class="col-10 mx-auto scroll-container" style="display: none"></div>
-                        <% var pageNum=Math.ceil(news.num/10)
+                        <% let pageNum=Math.ceil(news.num/10)
                     if (pageNum) { %>
                         <div id="news_list" class="scroll-container" data-num=<%= news.num %> data-page=<%= pageNum %>>
                             <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container">

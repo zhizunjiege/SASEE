@@ -1,116 +1,128 @@
 <nav id="mysubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mysubject_notice">通知墙</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mysubject_progress">课题进度</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mysubject_asignment">课题进度</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mysubject_teacher">教师资料</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mysubject_file">文件</a>
 </nav>
 <div class="tab-content p-3">
     <div class="tab-pane fade show active" id="mysubject_notice">
-        <ul class="list-group mb-3">
-            <% for( let index = 0; index < notice.length; index++ ) { %>
-            <li class="list-group-item list-group-item-action">
-                <a href="#" class="float-left w-50 ellipsis">
-                    <% if (notice[index].top) { %>
-                    <span class="badge badge-pill badge-warning">置顶</span>
+        <% if (notice.length) { %>
+        <div class="container-fluid">
+            <div class="row">
+                <nav class="col list-group nav nav-pills flex-column">
+                    <% for( let index = 0; index < notice.length; index++ ) { %>
+                    <a href="#mynotice_<%= index %>"
+                        class="list-group-item list-group-item-action nav-link <%= index?'':'active' _%>"
+                        data-toggle="pill">
+                        <span class="float-left w-50 ellipsis">
+                            <% if (notice[index].top) { %>
+                            <span class="badge badge-pill badge-warning">置顶</span>
+                            <% } %><%= notice[index].title %></span>
+                        <span class="float-right"><%= notice[index].date %></span>
+                    </a>
                     <% } %>
-                    <%= notice[index].title %>
-                </a>
-                <span class="float-right"><%= notice[index].date %>
-                </span>
-            </li>
-            <% } %>
-        </ul>
-        <div id="editor" class="mb-3">
+                </nav>
+                <div class="col tab-content border rounded p-3">
+                    <% for( let index = 0; index < notice.length; index++ ) { %>
+                    <div class="tab-pane fade <%= index?'':'show active' _%>" id="mynotice_<%= index %>">
+                        <%= notice[index].content %></div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="d-flex justify-content-center" style="height: 250px">
+            <h1 class="text-muted align-self-center">暂无通知</h1>
+        </div>
+        <% } %>
+        <!-- <div id="editor" class="mb-3">
             <p>请在此处输入内容···</p>
         </div>
         <div class="d-flex justify-content-between">
             <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
             <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
-        </div>
+        </div> -->
     </div>
-    <div class="tab-pane fade" id="mysubject_progress">
+    <div class="tab-pane fade" id="mysubject_asignment">
+        <% if (asignment.length) { 
+        for( let index = 0; index < asignment.length; index++ ) { let color=asignment[index].status=='已完成'
+            ?'primary':(asignment[index].status=='不及格' ?'danger':'warning') %>
         <div class="card">
-            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_1">
+            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_<%= index+1 %>">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
-                    <span class="w-50 ellipsis">任务一:初步探讨</span>
-                    <span class="badge badge-pill badge-success">已完成</span>
+                    <span class="w-50 ellipsis">任务<%= index+1 %>:<%= asignment[index].title %></span>
+                    <span>截止日期：<%= asignment[index].deadline %></span>
+                    <span class="badge badge-pill badge-<%= color %>"><%= asignment[index].status %></span>
                 </h5>
             </div>
-            <div class="collapse" id="asign_1" data-parent="#mysubject_progress">
+            <div class="collapse" id="asign_<%= index+1 %>" data-parent="#mysubject_asignment">
                 <div class="card-body">
-                    <p>本次任务的目的是完成初步的探讨····</p>
-                    <p class="h4 mb-0 text-right">评分：98</p>
+                    <div><%= asignment[index].description %></div>
+                    <p class="h4 mb-0 text-right">评分：<%= asignment[index].score %></p>
                 </div>
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_2">
-                <h5 class="mb-0 py-2 d-flex justify-content-between">
-                    <span class="w-50 ellipsis">任务二:设计初稿</span>
-                    <span class="badge badge-pill badge-danger">不及格</span>
-                </h5>
-            </div>
-            <div class="collapse" id="asign_2" data-parent="#mysubject_progress">
-                <div class="card-body">
-                    <p>本次任务的目的是进行进一步的设计，并提交设计初稿····</p>
-                    <p class="h4 mb-0 text-right">评分：57</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_3">
-                <h5 class="mb-0 py-2 d-flex justify-content-between">
-                    <span class="w-50 ellipsis">任务三:最终成品</span>
-                    <span class="badge badge-pill badge-warning">未完成</span>
-                </h5>
-            </div>
-            <div class="collapse" id="asign_3" data-parent="#mysubject_progress">
-                <div class="card-body">
-                    <p>本次任务的目的是完成最后的组装，形成最终成品····</p>
-                    <p class="h4 mb-0 text-right">评分：暂无</p>
-                </div>
-            </div>
-        </div>
+        <% } %>
 
         <div class="progress mt-5">
             <!-- progress-bar-striped progress-bar-animated -->
-            <div class="progress-bar" style="width: 33.3%">已完成</div>
-            <div class="progress-bar bg-danger" style="width: 33.3%">不及格</div>
-            <div class="progress-bar bg-warning" style="width: 33.4%">未完成</div>
+            <% for( let index = 0; index < asignment.length; index++ ) { 
+                let color=asignment[index].status=='已完成'?'primary':(asignment[index].status=='不及格'?'danger':'warning') %>
+            <div class="progress-bar bg-<%= color %>" style="width: <%= 100/asignment.length+'%' %>">
+                <%= asignment[index].status %></div>
+            <% } %>
         </div>
+        <% } else { %>
+        <div class="d-flex justify-content-center" style="height: 250px">
+            <h1 class="text-muted align-self-center">暂无任务</h1>
+        </div>
+        <% } %>
     </div>
     <div class="tab-pane fade" id="mysubject_teacher">
-        <table class="table table-bordered">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col" colspan="6">基本资料</th>
-                </tr>
-            </thead>
-            <tbody class="text-center">
-                <tr>
-                    <th>姓名</th>
-                    <td><%= teacher.name %></td>
-                    <th>性别</th>
-                    <td><%= teacher.gender %></td>
-                    <th>职称</th>
-                    <td><%= teacher.pro %></td>
-                </tr>
-                <tr>
-                    <th>研究方向</th>
-                    <td colspan="2"><%= teacher.field %></td>
-                    <th>办公地点</th>
-                    <td colspan="2"><%= teacher.office %></td>
-                </tr>
-                <tr>
-                    <th>联系邮箱</th>
-                    <td colspan="2"><%= teacher.mail %></td>
-                    <th>联系电话</th>
-                    <td colspan="2"><%= teacher.tele %></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="row justify-content-center mb-1">
+            <div class="col-2">
+                <img src="/pictures/<%= teacher.profile %>" alt="头像" class="img-thumbnail float-right"
+                    style="height:200px">
+            </div>
+            <div class="col-10">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" colspan="6">基本资料</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr>
+                            <th>姓名</th>
+                            <td><%= teacher.name %></td>
+                            <th>性别</th>
+                            <td><%= teacher.gender %></td>
+                            <th>职称</th>
+                            <td><%= teacher.proTitle %></td>
+                        </tr>
+                        <tr>
+                            <th>研究方向</th>
+                            <td colspan="2"><%= teacher.field %></td>
+                            <th>办公地点</th>
+                            <td colspan="2"><%= teacher.office %></td>
+                        </tr>
+                        <tr>
+                            <th>联系邮箱</th>
+                            <td colspan="2"><%= teacher.mail %></td>
+                            <th>联系电话</th>
+                            <td colspan="2"><%= teacher.tele %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <h5>个人简介</h5>
+            <div class="p-3 border rounded">
+                我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。
+            </div>
+            <!-- <pre></pre> -->
+        </div>
     </div>
     <div class="tab-pane fade" id="mysubject_file">
         <div class="row">
@@ -120,7 +132,8 @@
                         <h5 class="mb-0 text-left">下载文件</h5>
                     </header>
                     <div class="card-body">
-                        <% for( let i = 0; i < downFiles.length; i++ ) { %>
+                        <% if (downFiles.length) { 
+                        for( let i = 0; i < downFiles.length; i++ ) { %>
                         <p class="card-title"><%= downFiles[i].date %></p>
                         <ul class="list-group list-group-flush <%= i==downFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < downFiles[i].file.length; j++ ) { %>
@@ -129,13 +142,19 @@
                             <% } %>
                         </ul>
                         <% } %>
+                        <% } else { %>
+                        <div class="d-flex justify-content-center" style="height: 150px">
+                            <h3 class="text-muted align-self-center">暂无可下载文件</h3>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <% for( let i = 0; i < upFiles.length; i++ ) { %>
+                        <% if (upFiles.length) { 
+                        for( let i = 0; i < upFiles.length; i++ ) { %>
                         <p class="card-title"><%= upFiles[i].date %></p>
                         <ul class="list-group list-group-flush <%= i==upFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < upFiles[i].file.length; j++ ) { %>
@@ -144,6 +163,11 @@
                             </a>
                             <% } %>
                         </ul>
+                        <% } %>
+                        <% } else { %>
+                        <div class="d-flex justify-content-center" style="height: 150px">
+                            <h3 class="text-muted align-self-center">未上传文件</h3>
+                        </div>
                         <% } %>
                     </div>
                     <footer class="card-footer dropup d-flex align-items-center justify-content-end">
@@ -175,8 +199,8 @@
                 <form action="/upload" method="POST" class="text-center">
                     <input type="text" name="file_edit" id="file_edit" class="d-none" value="new">
                     <div class="form-group">
-                        <input type="password" name="file_checkPW" id="file_checkPW" class="form-control" placeholder="请输入密码验证身份"
-                            required>
+                        <input type="password" name="file_checkPW" id="file_checkPW" class="form-control"
+                            placeholder="请输入密码验证身份" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
                         <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
@@ -188,7 +212,7 @@
     </div>
 </div>
 
-<div id="form_material" class="d-none">
+<div id="form_materials" class="d-none">
     <div id="file_new" class="form-group">
         <div class="custom-file">
             <input type="file" name="file_new" id="file_new_input" class="custom-file-input" required>

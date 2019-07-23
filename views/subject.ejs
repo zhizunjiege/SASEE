@@ -15,7 +15,7 @@ var pageNum=Math.ceil(num/10);
         </thead>
         <tbody class="infinite-scroll-container-2">
             <% for( let index = 0; index < contents.length; index++ ) { %>
-            <tr class="infinite-scroll-item">
+            <tr class="infinite-scroll-item point">
                 <td class="text-left"><a href="#"><%= contents[index].title %></a></td>
                 <td><%= contents[index].derection %></td>
                 <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>

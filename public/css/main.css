@@ -1,4 +1,4 @@
-aside{
+#navigator{
     position:fixed;
     left:0;
     bottom:0;
@@ -17,7 +17,7 @@ aside{
 a:hover{
     text-decoration: none;
 }
-.list-group-item-action:focus,.list-group-item-action:hover,a:hover,td:hover,#account_info:hover{
+a:hover,.list-group-item-action:focus,.list-group-item-action:hover,.point:hover{
     cursor: pointer;
 }
 
