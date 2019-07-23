@@ -135,32 +135,80 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <form id="file_upload" class="form-row align-items-center justify-content-between">
-                            <div class="custom-file col-8">
-                                <input type="file" id="file_upload_input" class="custom-file-input" required>
-                                <label for="file_upload_input" class="custom-file-label">选择文件</label>
-                                <small class="form-text text-muted">请将所有文件打包压缩上传，不超过5M</small>
-                            </div>
-                            <button type="submit" class="btn btn-primary col-3">上传</button>
-                        </form>
                         <% for( let i = 0; i < upFiles.length; i++ ) { %>
                         <p class="card-title"><%= upFiles[i].date %></p>
-                        <ul class="list-group list-group-flush mb-3">
+                        <ul class="list-group list-group-flush <%= i==upFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < upFiles[i].file.length; j++ ) { %>
                             <a href="#" class="list-group-item">
-                                <small><%= upFiles[i].file[j] %></small></a>
+                                <small><%= upFiles[i].file[j] %></small>
+                            </a>
                             <% } %>
                         </ul>
                         <% } %>
                     </div>
-                    <footer class="card-footer">
-                        <h5 class="mb-0 text-right">上传文件</h5>
+                    <footer class="card-footer dropup d-flex align-items-center justify-content-end">
+                        <a id="fileEdit" class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <h5 class="mb-0 d-inline-block">文件操作</h5>
+                        </a>
+                        <ul class="dropdown-menu text-center w-25">
+                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">上传</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">替换</a>
+                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">删除</a>
+                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">重命名</a>
+                        </ul>
                     </footer>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div id="file_modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">文件操作</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="/upload" method="POST" class="text-center">
+                    <input type="text" name="file_edit" id="file_edit" class="d-none" value="new">
+                    <div class="form-group">
+                        <input type="password" name="file_checkPW" id="file_checkPW" class="form-control" placeholder="请输入密码验证身份"
+                            required>
+                    </div>
+                    <div class="form-group form-row justify-content-around">
+                        <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                        <button type="submit" id="file_submit" class="btn btn-primary col-3">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form_material" class="d-none">
+    <div id="file_new" class="form-group">
+        <div class="custom-file">
+            <input type="file" name="file_new" id="file_new_input" class="custom-file-input" required>
+            <label for="file_new_input" class="custom-file-label text-left"><small
+                    class="form-text text-muted">请上传压缩包，且不超过5M</small></label>
+        </div>
+    </div>
+    <div id="file_select" class="form-group">
+        <select class="custom-select" required>
+            <option value="1">2019/10/24--第1个文件.rar</option>
+            <option value="2">2019/10/24--第2个文件.rar</option>
+            <option value="3">2019/12/10--第3个文件.rar</option>
+            <option value="4">2019/12/10--第4个文件.rar</option>
+        </select>
+    </div>
+    <div id="file_rename" class="form-group">
+        <input type="text" name="file_rename" class="form-control" placeholder="请输入新文件名" required>
+    </div>
+</div>
+
 <!-- <script type="text/javascript">
  alert('succeeded!')
 </script> -->

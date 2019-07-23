@@ -169,15 +169,17 @@ app.get('/views', (req, res) => {
                 upFiles:[
                     {
                         date:'2019/12/10',
+                        editable:true,
                         file:[
-                            '上传的文件003.doc',
-                            '上传的文件004.doc'
+                            '上传的文件003.rar',
+                            '上传的文件004.rar'
                         ]
                     },{
                         date:'2019/10/28',
+                        editable:false,
                         file:[
-                            '上传的文件001.doc',
-                            '上传的文件002.doc'
+                            '上传的文件001.zip',
+                            '上传的文件002.zip'
                         ]
                     }
                 ]
