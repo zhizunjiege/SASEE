@@ -208,6 +208,9 @@ app.get('/views', (req, res) => {
                 ]
             });
             break;
+            case 'password':
+                res.render('password',null);
+                break;
         default:
             break;
     }
