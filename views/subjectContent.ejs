@@ -77,7 +77,8 @@
     <h4>最后修改：<%= subject.lastModifiedTime %></h4>
 </div>
 <div class="mb-3 d-flex justify-content-end">
-    <button id="subject_choose" type="button" class="btn btn-primary w-25" data-toggle="modal" data-target="#subject_check_modal">选择此课题</button>
+    <button id="subject_choose" type="button" class="btn btn-primary w-25" data-toggle="modal"
+        data-target="#subject_check_modal">选择此课题</button>
 </div>
 <div id="subject_check_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -90,8 +91,8 @@
                 <form action="" method="POST">
                     <div class="form-group form-row">
                         <input name="number" type="hidden" value="<%= subject.number %>">
-                        <input name="check" id="subject_check_pw" type="password" class="form-control" placeholder="请输入密码"
-                            required>
+                        <input name="check" id="subject_check_pw" type="password" class="form-control"
+                            placeholder="请输入密码" pattern="\w{8,16}" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
                         <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
@@ -102,3 +103,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function ($,SASEE) {
+        $('#subject_check_submit').click(function (e) {
+            e.preventDefault();
+            this.form.action = SASEE.URL_REQUEST;
+            this.form.submit();
+        });
+    })(window.jQuery,window.SASEE);
+</script>

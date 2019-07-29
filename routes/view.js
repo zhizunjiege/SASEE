@@ -103,7 +103,7 @@ function view(req, res) {
                     date: '2019/07/09',
                     content:'准备开始完成任务'
                 }),
-                asignment:[
+                assignment:[
                     {
                         title:'初步探讨',
                         deadline:'2019/11/13-12:00',
@@ -132,7 +132,8 @@ function view(req, res) {
                     field: '超电磁炮',
                     office:'新主楼F-407',
                     mail: '88888888@buaa.edu.cn',
-                    tele:'166-6666-6666'
+                    tele:'166-6666-6666',
+                    resume:'我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'
                 },
                 downFiles:[
                     {

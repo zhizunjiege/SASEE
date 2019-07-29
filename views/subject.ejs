@@ -15,7 +15,7 @@ var pageNum=Math.ceil(num/10);
         </thead>
         <tbody class="infinite-scroll-container-2">
             <% for( let index = 0; index < contents.length; index++ ) { %>
-            <tr class="infinite-scroll-item point">
+            <tr class="infinite-scroll-item-2 point">
                 <td class="text-left"><a href="#"><%= contents[index].title %></a></td>
                 <td><%= contents[index].derection %></td>
                 <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>
@@ -30,8 +30,22 @@ var pageNum=Math.ceil(num/10);
         <span class="infinite-scroll-last">没有啦</span>
         <span class="text-warning infinite-scroll-error">出错了</span>
     </div>
-    
+
 </div>
+
+<script>
+    (function ($, SASEE) {
+        $('.infinite-scroll-item-2').click(SASEE.loadSubjectContent);
+        SASEE.instScroll('.infinite-scroll-container-2', function () {
+            if (this.loadCount + 2 <= $('#subject_list').data().page) {
+                return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (this.loadCount + 2);
+            }
+        }, '.infinite-scroll-item-2', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
+            $(items).click(SASEE.loadSubjectContent);
+        });
+    })(window.jQuery, window.SASEE);
+</script>
+
 <% } else { %>
 <div class="d-flex justify-content-center" style="height: 250px">
     <h1 class="text-muted align-self-center">暂时没有课题</h1>
