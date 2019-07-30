@@ -1,5 +1,4 @@
 var express = require('express');
-var fs = require('fs');
 var ejs = require('ejs');
 var bodyParser = require('body-parser');
 var path = require('path');

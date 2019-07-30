@@ -73,3 +73,6 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
+# WebStorm ide
+.idea
