@@ -36,7 +36,7 @@ app.use(function (req, res) {
     NOTfound(req,res)
 });
 
-app.listen(3000, '0.0.0.0', function () {
+app.listen(3000, '::', function () {
     console.log('express is running on localhost:3000')
 
 });
