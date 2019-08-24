@@ -1,20 +1,21 @@
-var express = require('express');
-var ejs = require('ejs');
-var bodyParser = require('body-parser');
-var path = require('path');
-var bodyParser = require('body-parser');
-var app = express();
+const express = require('express');
+const ejs = require('ejs');
+const path = require('path');
+const bodyParser = require('body-parser');
+const cookieParser=require("cookie-parser");
+const app = express();
 
-var login = require("./routes/login")
-var view = require("./routes/view")
-var NOTfound = require("./routes/NOTfound")
-var upload = require("./routes/upload")
+const login = require("./routes/login");
+const view = require("./routes/view");
+const NOTfound = require("./routes/NOTfound");
+const upload = require("./routes/upload");
 //view uses html
 app.set('views', __dirname + '/views');
 app.engine('.ejs', ejs.__express);
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 
 app.get('/', function (req, res) {
