@@ -17,18 +17,20 @@
             <h3 class="mb-0 ml-5">自动化科学与电气工程学院</h3>
         </div>
         <div class="col-2 dropdown">
-            <div id="account_info" class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around point"
+            <div id="account_info"
+                class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around point"
                 data-toggle="dropdown">
-                <img src=<%= '../pictures/'+user.gender+'.png' %> class="float-left rounded-circle" alt="profile"
+                <img src=<%= '../pictures/'+user.profile %> class="float-left rounded-circle" alt="profile"
                     width="48px">
                 <div>
                     <div class="h5 my-0"><%= user.name %></div>
-                    <span class="badge badge-pill badge-info"><%= user.identity %></span>
+                    <% const identity=['学生','教师','管理员'] %>
+                    <span class="badge badge-pill badge-info"><%= identity[user.identity] %></span>
                 </div>
             </div>
             <ul class="dropdown-menu text-center w-75">
-                <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse">个人信息</a>
-                <a href="/request?type=logout" class="dropdown-item">退出登陆</a>
+                <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse" data-type="userInfo">个人信息</a>
+                <a href="/logout" class="dropdown-item">退出登陆</a>
             </ul>
         </div>
     </header>
@@ -38,7 +40,7 @@
             <dl class="list-group list-group-flush" id="accordion_nav">
                 <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
                 <dd class="list-group-item">
-                    <a data-toggle="collapse" href="#news"><span
+                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content" data-list="#news_list"><span
                             class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                 </dd>
@@ -48,15 +50,24 @@
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     <div id="bysj" class="collapse" data-parent="#accordion_nav">
                         <ul class="list-group list-group-flush">
+                            <% if(user.identity==2) { %>
+                            <a href="#bysj_ktsh" class="list-group-item list-group-item-action"
+                                data-toggle="collapse" data-type="subject" data-sub="true" data-content="#subject_content" data-list="#subject_list"><small>课题审核</small></a>
+                            <% } else { 
+                                    if(user.identity==1) { %>
+                            <a href="#bysj_fbkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse" data-type="subject"><small>发布课题</small></a>
+                            <% } else { %>
                             <a href="#bysj_xt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"><small>选题</small></a>
+                                data-toggle="collapse" data-type="subject" data-sub="true" data-content="#subject_content" data-list="#subject_list"><small>选题</small></a>
+                            <% } %>
                             <a href="#bysj_wdkt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"><small>我的课题</small></a>
+                                data-toggle="collapse" data-type="mySubject"><small>我的课题</small></a>
+                            <% } %>
                         </ul>
                     </div>
-
                 </dd>
-                <dd class="list-group-item">
+                <!-- <dd class="list-group-item">
                     <a class="" data-toggle="collapse" href="#scsx"><span
                             class="glyphicon glyphicon-fire mr-2"></span>生产实习<span
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
@@ -85,7 +96,7 @@
                                 data-toggle="collapse"><small>资料提交</small></a>
                         </ul>
                     </div>
-                </dd>
+                </dd> -->
             </dl>
         </aside>
 

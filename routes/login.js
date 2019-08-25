@@ -1,5 +1,5 @@
 var mysql = require("./sql")
-function login(req,res) {
+function login(req, res) {
     var account = req.body.account;
     var password = req.body.password;
     if (account == password) {
@@ -31,12 +31,13 @@ function login(req,res) {
                         delete data[i].url;
                         arr.push(data[i])
                     }
-                    console.log(arr)
-                    res.render('student', {
+                    console.log(arr);
+                    var id = req.body.identity;
+                    res.render('user', {
                         user: {
                             name: '333',
-                            gender: 'coder_chen',
-                            identity: req.query.identity ? '教师' : '学生',
+                            profile: 'coder_chen.png',
+                            identity: id
                         },
                         news: {
                             num: 34,

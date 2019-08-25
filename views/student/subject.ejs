@@ -35,13 +35,19 @@ var pageNum=Math.ceil(num/10);
 
 <script>
     (function ($, SASEE) {
-        $('.infinite-scroll-item-2').click(SASEE.loadSubjectContent);
+        function _loadSubjectContent(e){
+            SASEE._loadContent(e, '#subject_content', 'subjectContent', (e) => {
+                SASEE._contentBarToggle();
+                SASEE._subjectToggle('#subject_content', '#subject_list');
+            })
+        }
+        $('.infinite-scroll-item-2').click(_loadSubjectContent);
         SASEE.instScroll('.infinite-scroll-container-2', function () {
             if (this.loadCount + 2 <= $('#subject_list').data().page) {
                 return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (this.loadCount + 2);
             }
         }, '.infinite-scroll-item-2', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
-            $(items).click(SASEE.loadSubjectContent);
+            $(items).click(_loadSubjectContent);
         });
     })(window.jQuery, window.SASEE);
 </script>

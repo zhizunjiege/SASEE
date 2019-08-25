@@ -21,7 +21,7 @@ function view(req, res) {
             console.log(req.query.nextPage);
             break;
         case 'userInfo':
-            res.render('userInfo', {
+            res.render('student/userInfo', {
                 account: 17375433,
                 status: {
                     specialty: '自动化',
@@ -44,7 +44,7 @@ function view(req, res) {
             });
             break;
         case 'subject':
-            res.render('subject', {
+            res.render('student/subject', {
                 num: 23,
                 contents: (new Array(14)).fill({
                     title: '做个什么呢我也不太清楚',
@@ -57,7 +57,7 @@ function view(req, res) {
             });
             break;
         case 'subjectList':
-            res.render('subjectList', {
+            res.render('student/subjectList', {
                 contents: (new Array(5)).fill({
                     title: '我也不知道要做什么',
                     derection: '302',
@@ -69,7 +69,7 @@ function view(req, res) {
             });
             break;
         case 'subjectContent':
-            res.render('subjectContent', {
+            res.render('student/subjectContent', {
                 subject: {
                     number: 3,
                     title: '基于那啥做那啥',
@@ -96,7 +96,7 @@ function view(req, res) {
             });
             break;
         case 'mySubject':
-            res.render('mySubject', {
+            res.render('student/mySubject', {
                 notice: new Array(5).fill({
                     top: true,
                     title: '准备开始开发了啊',
