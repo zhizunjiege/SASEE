@@ -1,7 +1,7 @@
 <nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_assignment">课题进度</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">教师资料</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">学生资料</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_file">文件</a>
 </nav>
 <div class="tab-content p-3">
@@ -36,17 +36,17 @@
         </div>
         <% } %>
         <!-- <div id="editor" class="mb-3">
-            <p>请在此处输入内容···</p>
-        </div>
-        <div class="d-flex justify-content-between">
-            <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
-            <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
-        </div> -->
+                <p>请在此处输入内容···</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
+                <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
+            </div> -->
     </div>
     <div class="tab-pane fade" id="mySubject_assignment">
         <% if (assignment.length) { 
-        for( let index = 0; index < assignment.length; index++ ) { let color=assignment[index].status=='已完成'
-            ?'primary':(assignment[index].status=='不及格' ?'danger':'warning') %>
+            for( let index = 0; index < assignment.length; index++ ) { let color=assignment[index].status=='已完成'
+                ?'primary':(assignment[index].status=='不及格' ?'danger':'warning') %>
         <div class="card">
             <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_<%= index+1 %>">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
@@ -67,7 +67,7 @@
         <div class="progress mt-5">
             <!-- progress-bar-striped progress-bar-animated -->
             <% for( let index = 0; index < assignment.length; index++ ) { 
-                let color=assignment[index].status=='已完成'?'primary':(assignment[index].status=='不及格'?'danger':'warning') %>
+                    let color=assignment[index].status=='已完成'?'primary':(assignment[index].status=='不及格'?'danger':'warning') %>
             <div class="progress-bar bg-<%= color %>" style="width: <%= 100/assignment.length+'%' %>">
                 <%= assignment[index].status %></div>
             <% } %>
@@ -133,7 +133,7 @@
                     </header>
                     <div class="card-body">
                         <% if (downFiles.length) { 
-                        for( let i = 0; i < downFiles.length; i++ ) { %>
+                            for( let i = 0; i < downFiles.length; i++ ) { %>
                         <p class="card-title"><%= downFiles[i].date %></p>
                         <ul class="list-group list-group-flush <%= i==downFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < downFiles[i].file.length; j++ ) { %>
@@ -154,7 +154,7 @@
                 <div class="card">
                     <div class="card-body">
                         <% if (upFiles.length) { 
-                        for( let i = 0; i < upFiles.length; i++ ) { %>
+                            for( let i = 0; i < upFiles.length; i++ ) { %>
                         <p class="card-title"><%= upFiles[i].date %></p>
                         <ul class="list-group list-group-flush <%= i==upFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < upFiles[i].file.length; j++ ) { %>
@@ -220,12 +220,12 @@
         <select class="custom-select" required>
             <option value="placeholder" selected disabled>请选择一个文件</option>
             <% for( let i = 0; i < upFiles.length; i++ ) { 
-                for( let j = 0; j < upFiles[i].file.length; j++ ) { 
-                    if (upFiles[i].editable) { %>
+                    for( let j = 0; j < upFiles[i].file.length; j++ ) { 
+                        if (upFiles[i].editable) { %>
             <option value="<%= upFiles[i].file[j] %>"><%= upFiles[i].date+'--'+upFiles[i].file[j] %></option>
             <% }
-            }
-            } %>
+                }
+                } %>
         </select>
     </div>
     <div id="file_rename" class="form-group">
@@ -275,6 +275,6 @@
 
         SASEE.fileUpload('#file_form');
         SASEE.fileCheck('#file_new_input');
-    
+
     })(window.jQuery, window.SASEE);
 </script>

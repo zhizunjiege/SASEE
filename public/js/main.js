@@ -6,9 +6,25 @@
         URL_UPLOAD: '/upload',
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
-    var SASEE = window.SASEE;
+    const SASEE = window.SASEE;
 
-    //封装infinite-scroll函数
+    SASEE._contentBarToggle = () => {
+        $('#contents_back').toggle();
+        $('#contents_title').toggle();
+    };
+    SASEE._subjectToggle = (content, list, flag) => {
+        if (flag) {
+            $(content).hide();
+            $(list).show();
+        } else {
+            $(content).toggle();
+            $(list).toggle();
+        }
+    };
+    SASEE._loadContent = (e, content, type, callback) => {
+        document.getElementById('contents_back').onclick = callback;
+        $(content).load(SASEE.URL_VIEW, 'type=' + type + '&num=' + $(e.currentTarget).index(), callback);
+    };
     SASEE.instScroll = (container, path, append, scrollThreshold, elementScroll, loadOnScroll, status, button, loadCallback, appendCallback) => {
         var $infiniteScrollObj = $(container).infiniteScroll({
             path: path,
@@ -53,30 +69,88 @@
         //$infiniteScrollObj.on('error.infiniteScroll', log);
         //$infiniteScrollObj.on('last.infiniteScroll', log);
     };
-    SASEE._contentBarToggle = () => {
-        $('#contents_back').toggle();
-        $('#contents_title').toggle();
-    }
-    SASEE._subjectToggle = (content, list, flag) => {
-        if (flag) {
-            $(content).hide();
-            $(list).show();
-        } else {
-            $(content).toggle();
-            $(list).toggle();
+    SASEE.instEditor = (container) => {
+        if (typeof window.wangEditor == undefined) {
+            $.getScript('/js/wangEditor.min.js').done(() => {
+                const WE = window.wangEditor;
+                const editor = new WE('#editor');
+
+                editor.customConfig.uploadImgShowBase64 = true;
+                //editor.customConfig.uploadImgServer=SASEE.URL_UPLOAD;
+
+                editor.create();
+
+                $('#editor_clear').click(() => {
+                    editor.txt.clear();
+                });
+                $('#editor_submit').click(() => {
+                    var myform = new FormData();
+                    myform.append('content', editor.txt.html());
+                    myform.append('type', 'notice');
+                    $.ajax({
+                        url: SASEE.URL_UPLOAD,
+                        type: 'POST',
+                        cache: false,
+                        data: myform,
+                        processData: false,
+                        contentType: 'text/plain'
+                    }).done(() => {
+                        console.log('successed!');
+                    });
+                });
+            });
+        } else if ($('#editor')[0].parentNode != $(container)[0]) {
+
         }
-    }
-    SASEE._loadContent = (e, content, type, callback) => {
-        document.getElementById('contents_back').onclick = callback;
-        $(content).load(SASEE.URL_VIEW, 'type=' + type + '&num=' + $(e.currentTarget).index(), callback);
-    }
+    };
+
+    SASEE.fileUpload = (selector) => {
+        var $fileForm = $(selector);
+        $fileForm.submit((e) => {
+            e.preventDefault();
+            var formData = new FormData($fileForm[0]);
+            $.ajax({
+                url: SASEE.URL_UPLOAD,
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(() => {
+                console.log('done!');
+
+            }).fail(() => {
+                console.log('failed!');
+
+            });
+        });
+    };
+    SASEE.fileCheck = (selector) => {
+        var $file = $(selector);
+        $file.change((e) => {
+            let file = $file[0].files[0];
+            let regexpStr = /\.(?:zip|rar|7z)$/;
+            if (!regexpStr.test(file.name)) {
+                $file[0].value = '';
+                alert('仅支持zip，rar和7z格式！');
+            } else if (file.size > SASEE.FILE_MAXSIZE) {
+                $file[0].value = '';
+                alert('文件大小不能超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!');
+            } else {
+                $file.next().find('small').text(file.name);
+            }
+        });
+    };
 
     $(function ($) {
         //初始化
         function _loadFrame($target) {
             let href = $target.attr('href');
-            let type = $target.data('type') || '';
+            let data = $target[0].dataset;
+            let type = data.type ? 'type=' + data.type : '',
+                num = data.num ? 'num=' + data.num : '';
             if (!$(href).length) {
+                let queryStr = type+'&'+num;
                 $('<div>', {
                     "id": href.substring(1),
                     "class": "collapse",
@@ -84,7 +158,7 @@
                 }).appendTo('#contents>div>div').collapse({
                     parent: '#contents',
                     toggle: true
-                }).load(SASEE.URL_VIEW, 'type=' + type);
+                }).load(SASEE.URL_VIEW, queryStr);
             }
         }
         function _loadNewsContent(e) {

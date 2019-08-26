@@ -44,11 +44,11 @@ function view(req, res) {
             });
             break;
         case 'subject':
-            res.render('student/subject', {
+            res.render('teacher/subject', {
                 num: 23,
                 contents: (new Array(14)).fill({
                     title: '做个什么呢我也不太清楚',
-                    derection: '301',
+                    direction: '301',
                     chosen: 5,
                     capacity: 7,
                     publisher: '某老师',
@@ -60,7 +60,7 @@ function view(req, res) {
             res.render('student/subjectList', {
                 contents: (new Array(5)).fill({
                     title: '我也不知道要做什么',
-                    derection: '302',
+                    direction: '302',
                     chosen: 5,
                     capacity: 7,
                     publisher: '某某老师',
@@ -73,7 +73,7 @@ function view(req, res) {
                 subject: {
                     number: 3,
                     title: '基于那啥做那啥',
-                    derection: '模式识别',
+                    direction: '模式识别',
                     capacity: 5,
                     chosen: 3,
                     introduction: '<div><h3 style="text-align: center;">关于毕业设计选题系统开放的通知<span style="text-decoration-line: line-through;">​</span></h3><div><span style="text-decoration-line: line-through;">致3系全体师生：</span>​</div></div>',
@@ -96,7 +96,7 @@ function view(req, res) {
             });
             break;
         case 'mySubject':
-            res.render('student/mySubject', {
+            res.render('teacher/mySubject', {
                 notice: new Array(5).fill({
                     top: true,
                     title: '准备开始开发了啊',

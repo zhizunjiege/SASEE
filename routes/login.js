@@ -42,6 +42,9 @@ function login(req, res) {
                         news: {
                             num: 34,
                             contents: arr
+                        },
+                        teacher:{
+                            used:[true,false,false]
                         }
                     }); return;
                 })

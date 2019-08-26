@@ -29,7 +29,8 @@
                 </div>
             </div>
             <ul class="dropdown-menu text-center w-75">
-                <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse" data-type="userInfo">个人信息</a>
+                <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse"
+                    data-type="userInfo">个人信息</a>
                 <a href="/logout" class="dropdown-item">退出登陆</a>
             </ul>
         </div>
@@ -40,8 +41,8 @@
             <dl class="list-group list-group-flush" id="accordion_nav">
                 <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
                 <dd class="list-group-item">
-                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content" data-list="#news_list"><span
-                            class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
+                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
+                        data-list="#news_list"><span class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                 </dd>
                 <dd class="list-group-item">
@@ -51,19 +52,24 @@
                     <div id="bysj" class="collapse" data-parent="#accordion_nav">
                         <ul class="list-group list-group-flush">
                             <% if(user.identity==2) { %>
-                            <a href="#bysj_ktsh" class="list-group-item list-group-item-action"
-                                data-toggle="collapse" data-type="subject" data-sub="true" data-content="#subject_content" data-list="#subject_list"><small>课题审核</small></a>
+                            <a href="#bysj_ktsh" class="list-group-item list-group-item-action" data-toggle="collapse"
+                                data-type="subject" data-sub="true" data-content="#subject_content"
+                                data-list="#subject_list"><small>课题审核</small></a>
                             <% } else { 
-                                    if(user.identity==1) { %>
-                            <a href="#bysj_fbkt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse" data-type="subject"><small>发布课题</small></a>
-                            <% } else { %>
-                            <a href="#bysj_xt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse" data-type="subject" data-sub="true" data-content="#subject_content" data-list="#subject_list"><small>选题</small></a>
-                            <% } %>
-                            <a href="#bysj_wdkt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse" data-type="mySubject"><small>我的课题</small></a>
-                            <% } %>
+                                    if(user.identity==1) { 
+                                for( let index = 1; index <= teacher.used.length; index++ ) { %>
+                            <a href="#bysj_wdkt_<%= index %>" class="list-group-item list-group-item-action"
+                                data-toggle="collapse" data-type="<%= teacher.used[index-1]?'mySubject':'subject' %>"
+                                data-num="<%= index %>"><small>课题<%= index %></small></a>
+                            <% } 
+                             } else { %>
+                            <a href="#bysj_xt" class="list-group-item list-group-item-action" data-toggle="collapse"
+                                data-type="subject" data-sub="true" data-content="#subject_content"
+                                data-list="#subject_list"><small>选题</small></a>
+                            <a href="#bysj_wdkt" class="list-group-item list-group-item-action" data-toggle="collapse"
+                                data-type="mySubject"><small>我的课题</small></a>
+                            <% } 
+                         } %>
                         </ul>
                     </div>
                 </dd>
