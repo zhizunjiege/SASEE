@@ -7,7 +7,7 @@ const app = express();
 
 const login = require("./routes/login");
 const view = require("./routes/view");
-const NOTfound = require("./routes/NOTfound");
+const NotFound = require("./routes/NotFound");
 const upload = require("./routes/upload");
 //view uses html
 app.set('views', __dirname + '/views');
@@ -34,7 +34,7 @@ app.post('/upload',(req,res)=>{
 
 //404
 app.use(function (req, res) {
-    NOTfound(req,res)
+    NotFound(req,res)
 });
 
 app.listen(3000, '::', function () {
