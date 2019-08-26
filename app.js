@@ -21,13 +21,20 @@ app.use(cookieParser());
 app.get('/', function (req, res) {
     res.render('login', { title: 'paint title' });
 });
+
 app.post('/login', function (req, res) {
-    login(req,res)
+    login(req,res);
+    console.log(req.cookies);
 });
 
 app.get('/views', (req, res) => {
     view(req,res)
 });
+
+app.get('/cookie', (req, res) => {
+    res.send(req.cookies)
+});
+
 app.post('/upload',(req,res)=>{
     upload(req,res)
 });
