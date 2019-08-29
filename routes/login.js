@@ -44,7 +44,7 @@ function login(req,res) {
                         res.render('user', {
                             user: {
                                 name: data[0].name,
-                                gender: 'coder_chen',
+                                profile: 'coder_chen.png',
                                 identity: id,
                             },
                             news: {

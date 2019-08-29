@@ -49,7 +49,7 @@ function get(url, num) {
             return resolve(final.data);
         });
     });
-};
+}
 
 function login_in(url, a, b) {
     fs.readFile(url,function (err, obj) {

@@ -61,7 +61,7 @@ function view(req, res) {
             });
             break;
         case 'subject':
-            res.render('dean/subject', {
+            res.render('student/subject', {
                 num: 23,
                 contents: (new Array(14)).fill({
                     title: '做个什么呢我也不太清楚总之先取个长标题吧',
@@ -115,7 +115,7 @@ function view(req, res) {
             });
             break;
         case 'mySubject':
-            res.render('teacher/mySubject', {
+            res.render('student/mySubject', {
                 notice: new Array(5).fill({
                     top: true,
                     title: '准备开始开发了啊',
