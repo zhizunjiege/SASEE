@@ -42,6 +42,8 @@ function login(req,res) {
                         res.cookie("data",data[0],{maxAge: cookies_time, httpOnly:true});
                         res.render('user', {
                             user: {
+                                account:32423524,
+                                direction:301,
                                 name: data[0].name,
                                 profile: data[0].profile,
                                 identity: data[0].identity,
@@ -49,7 +51,13 @@ function login(req,res) {
                             news: {
                                 num: 34,
                                 contents: arr
-                            }
+                            },
+                            groups:(new Array(3).fill({
+                                full:false,
+                                chosen:5,
+                                capacity:23,
+                                teacher:'某某、某某某'
+                            }))
                         });
                     })
 

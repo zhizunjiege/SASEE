@@ -8,31 +8,16 @@
     <link rel="icon" href="/pictures/favicon.ico">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    <title>毕业设计选题系统</title>
+    <title>综合实验</title>
 </head>
 
 <body class="container-fluid">
-    <header class="row bg-primary text-light justify-content-between fixed-top">
-        <div class="col-6 d-flex align-items-center">
+    <header class="row bg-primary text-light justify-content-between fixed-top" style="height: 64px">
+        <div class="col-8 d-flex align-items-center">
             <h3 class="mb-0 ml-5">自动化科学与电气工程学院</h3>
         </div>
-        <div class="col-2 dropdown">
-            <div id="account_info"
-                class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around point"
-                data-toggle="dropdown">
-                <img src=<%= '../pictures/'+user.profile %> class="float-left rounded-circle" alt="profile"
-                    width="48px">
-                <div>
-                    <div class="h5 my-0"><%= user.name %></div>
-                    <% const identity=['学生','教师','系主任'] %>
-                    <span class="badge badge-pill badge-info"><%= identity[user.identity] %></span>
-                </div>
-            </div>
-            <ul class="dropdown-menu text-center w-75">
-                <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse"
-                    data-type="userInfo">个人信息</a>
-                <a href="/logout" class="dropdown-item">退出登陆</a>
-            </ul>
+        <div class="col-4 d-flex align-items-center justify-content-around">
+            <span>姓名：<%= user.name %></span><span>方向：<%= user.direction %></span>
         </div>
     </header>
 
@@ -46,53 +31,16 @@
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                 </dd>
                 <dd class="list-group-item">
-                    <a data-toggle="collapse" href="#bysj"><span
-                            class="glyphicon glyphicon-eye-open mr-2"></span>毕业设计<span
-                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
-                    <div id="bysj" class="collapse" data-parent="#accordion_nav">
-                        <ul class="list-group list-group-flush">
-                            <% let hrefArray=['xt','wdkt','ktsh'],contentArray=['选题','我的课题','课题审核']; %>
-                            <a href="#bysj_<%= hrefArray[user.identity] %>"
-                                class="list-group-item list-group-item-action" data-toggle="collapse"
-                                data-type="subject" data-sub="true" data-content="#subject_content"
-                                data-list="#subject_list"><small><%= contentArray[user.identity] %></small></a>
-                            <% if(!user.identity) { %>
-                            <a href="#bysj_wdkt" class="list-group-item list-group-item-action" data-toggle="collapse"
-                                data-type="mySubject"><small>我的课题</small></a>
-                            <% } %>
-                        </ul>
-                    </div>
-                </dd>
-                <!-- <dd class="list-group-item">
-                    <a class="" data-toggle="collapse" href="#scsx"><span
-                            class="glyphicon glyphicon-fire mr-2"></span>生产实习<span
-                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
-                    <div id="scsx" class="collapse" data-parent="#accordion_nav">
-                        <ul class="list-group list-group-flush">
-                            <a href="#scsx_xyqk" class="list-group-item list-group-item-action"><small>学业情况</small></a>
-                            <a href="#scsx_kxkt" class="list-group-item list-group-item-action"><small>可选课题</small></a>
-                            <a href="#scsx_wdkt" class="list-group-item list-group-item-action"><small>我的课题</small></a>
-                            <a href="#scsx_zltj" class="list-group-item list-group-item-action"><small>资料提交</small></a>
-                        </ul>
-                    </div>
-                </dd>
-                <dd class="list-group-item">
-                    <a class="" data-toggle="collapse" href="#zhsy"><span
-                            class="glyphicon glyphicon-leaf mr-2"></span>综合实验<span
+                    <a data-toggle="collapse" href="#zhsy"><span
+                            class="glyphicon glyphicon-eye-open mr-2"></span>综合实验<span
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     <div id="zhsy" class="collapse" data-parent="#accordion_nav">
                         <ul class="list-group list-group-flush">
-                            <a href="#zhsy-xyqk" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"><small>学业情况</small></a>
-                            <a href="#zhsy-kxkt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"><small>可选课题</small></a>
-                            <a href="#zhsy-wdkt" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"><small>我的课题</small></a>
-                            <a href="#zhsy-zltj" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"><small>资料提交</small></a>
+                            <a href="#zhsy_xzfz" class="list-group-item list-group-item-action" data-toggle="collapse"
+                                data-type="chooseGroup"><small>选择分组</small></a>
                         </ul>
                     </div>
-                </dd> -->
+                </dd>
             </dl>
         </aside>
 
@@ -101,48 +49,33 @@
         <div id="contents" class="p-3">
             <div class="card">
                 <header id="contents_header" class="card-header">
-                    <button id="contents_back" class="btn" style="display: none"><span
-                            class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
                     <h3 id="contents_title" class="mb-0 text-center">通知</h3>
                 </header>
 
                 <div id="contents_body">
-                    <div id="news" class="collapse show" data-parent="#contents">
-                        <% let pageNum=Math.ceil(news.num/10)
-                    if (pageNum) { %>
-                        <div id="news_content" class="col-10 mx-auto scroll-container" style="display: none"></div>
-                        <div id="news_list" class="scroll-container" data-num=<%= news.num %> data-page=<%= pageNum %>>
-                            <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container-1">
-                                <% for( let index = 0; index < news.contents.length; index++ ) { %>
-                                <li class="list-group-item list-group-item-action">
-                                    <a href="#" class="float-left w-50 ellipsis">
-                                        <% if (news.contents[index].top) { %>
-                                        <span class="badge badge-pill badge-warning">置顶</span>
+                    <div id="news" class="collapse show" data-parent="#contents"></div>
+                    <div id="zhsy_xzfz" class="collapse" data-parent="#contents">
+                        <div class="container">
+                            <div class="row align-items-center justify-content-center" style="height:680px">
+                                <div class="col-4">
+                                    <form action="/choose" method="POST">
+                                        <input type="hidden" value="<%= user.account %>">
+                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="group"
+                                                id="group_<%= index %>" value="0"
+                                                <%= groups[index].full?'disabled':'' %>>
+                                            <label class="form-check-label"
+                                                for="group_<%= index %>"><%= '第'+(index+1)+'组     已选/可选：'+groups[index].chosen+'/'+groups[index].capacity+'      老师：'+groups[index].teacher %></label>
+                                        </div>
                                         <% } %>
-                                        <%= news.contents[index].title %>
-                                    </a>
-                                    <span
-                                        class="float-right"><%= news.contents[index].publisher+'--'+news.contents[index].category+'--'+news.contents[index].date %>
-                                    </span>
-                                </li>
-                                <% } %>
-                            </ul>
-                            <div class="text-center card-footer infinite-scroll-status-1" style="display:none">
-                                <span class="infinite-scroll-request">加载中···</span>
-                                <span class="infinite-scroll-last">没有啦</span>
-                                <span class="text-warning infinite-scroll-error">出错了</span>
-                            </div>
-                            <div class="row justify-content-center">
-                                <button class="btn btn-secondary col-3 my-4 infinite-scroll-button-1">
-                                    <h5 class="mb-0">更多···</h5>
-                                </button>
+                                        <div class="form-row justify-content-end align-items-center">
+                                            <button class="btn btn-primary w-50" type="submit">提交</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                        <% } else { %>
-                        <div class="d-flex justify-content-center" style="height: 250px">
-                            <h1 class="text-muted align-self-center">暂时没有通知</h1>
-                        </div>
-                        <% }  %>
                     </div>
                 </div>
             </div>
@@ -156,8 +89,14 @@
 
     <script src="/bootstrap/others/jquery-3.4.0.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/infinite-scroll.pkgd.min.js"></script>
-    <script src="/js/main.js"></script>
+    <script>
+        $('a[href="#zhsy_xzfz"]').click(() => {
+            $('#contents_title').text('选择分组');
+        });
+        $('a[href="#news"]').click(() => {
+            $('#contents_title').text('通知公告');
+        });
+    </script>
 </body>
 
 </html>

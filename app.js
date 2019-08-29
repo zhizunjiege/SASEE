@@ -39,6 +39,11 @@ app.post('/upload',(req,res)=>{
     upload(req,res)
 });
 
+app.post('/choose',(req,res)=>{
+    console.log('选择');
+    res.end('选择成功！');
+});
+
 //404
 app.use(function (req, res) {
     NotFound(req,res)
