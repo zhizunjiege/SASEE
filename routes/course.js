@@ -8,12 +8,12 @@ const aim_table = 'course2017';
 let new_course = function () {
     // write data into database
     var data = {
-        course_id: 1,
+        course_id: 2,
         course_name: "first",
         course_category: 403,
         course_teacher: "diracle",
-        preselected_list: [null],
-        final_list: [null],
+        preselected_list: '[]',
+        final_list: '[]',
         capacity: 4
     };
     let sql = "INSERT INTO course2017 SET ?";

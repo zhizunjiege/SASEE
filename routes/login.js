@@ -40,12 +40,11 @@ function login(req,res) {
                         if (err) console.log(err);
                         data = JSON.parse(JSON.stringify(data));
                         res.cookie("data",data[0],{maxAge: cookies_time, httpOnly:true});
-                        var id = Number(req.body.identity);
                         res.render('user', {
                             user: {
                                 name: data[0].name,
-                                profile: 'coder_chen.png',
-                                identity: id,
+                                profile: data[0].profile,
+                                identity: data[0].identity,
                             },
                             news: {
                                 num: 34,
