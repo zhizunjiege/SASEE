@@ -1,5 +1,6 @@
 var action = require("./action")
 var mysql = require("./sql")
+const SqlString = require('sqlstring');
 
 //let sql = "INSERT INTO student SET ?";
 //let info = {mail: "11234@qq.com"};
@@ -9,6 +10,9 @@ var mysql = require("./sql")
 //    if (err) console.log(err);
 //    console.log(data);
 //});
-s0 = '[]';
-data = JSON.parse(s);
-s1 = data.push()
+const encrypt = require("./encrypt");
+val = 'hello';
+val_ = encrypt.sign(val, 'sasee');
+console.log(val_)
+got = encrypt.unsign(val_, 'sasee');
+console.log('got', got)

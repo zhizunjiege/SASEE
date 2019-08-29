@@ -68,13 +68,13 @@
                         <div class="container">
                             <div class="row align-items-center justify-content-center" style="height:680px">
                                 <div class="col-4">
-                                    <form action="" method="POST" id="form">
+                                    <form action="/choose" method="POST" id="form">
                                         <input type="hidden" value="<%= user.account %>" name="account">
                                         <input type="hidden" value="<%= user.direction %>" name="direction">
                                         <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <div class="form-check mb-3">
                                             <input class="form-check-input" type="radio" name="group"
-                                                id="group_<%= index %>" value="0"
+                                                id="group_<%= index %>" value="<%= index %>"
                                                 <%= groups[index].chosen==groups[index].capacity?'disabled':'' %>>
                                             <label class="form-check-label"
                                                 for="group_<%= index %>"><%= '第'+(index+1)+'组     已选/可选：'+groups[index].chosen+'/'+groups[index].capacity+'      老师：'+groups[index].teacher %></label>
@@ -137,18 +137,20 @@
             $('a[href="#news"]').click(() => {
                 $('#contents_title').text('通知公告');
             });
-
             let $form = $('#form');
             $form.submit((e) => {
-                e.preventDefault();
-                var formData = new FormData($form[0]);
+                e.preventDefault();console.log($form[0]);
+                let data={
+                    account:$form[0].account.value,
+                    direction:$form[0].direction.value,
+                    group:$form[0].group.value
+                };
+                console.log(data);
                 $.ajax({
-                    url: '/choose',
+                    url:'/choose',
                     type: 'POST',
                     cache: false,
-                    data: formData,
-                    processData: false,
-                    contentType: false
+                    data: data
                 }).done((data) => {
                     console.log(data);
                     flag = Number(data);
@@ -160,6 +162,7 @@
                 }).fail(() => {
                     console.log('failed!');
                 });
+
             });
         })();
     </script>

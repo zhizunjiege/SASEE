@@ -1,30 +1,30 @@
 const mysql = require("./sql");
 const SqlString = require('sqlstring');
-const aim_table = 'course2017';
 
 
+let group = [
+    ['王', 'duan'],
+    ['yu', 'tao'],
+    ['qian', 'wu'],
+    ['wang', 'xie'],
+    ['chen', 'zhao'],
+    ['li', 'du']
+]
 
 
-let new_course = function () {
-    // write data into database
-    var data = {
-        course_id: 2,
-        course_name: "first",
-        course_category: 403,
-        course_teacher: "diracle",
-        preselected_list: '[]',
-        final_list: '[]',
-        capacity: 4
-    };
-    let sql = "INSERT INTO course2017 SET ?";
-    var sql_ = SqlString.format('INSERT INTO course2017 SET ?', data)
+let select_course = function (group_id, info) {
+    info.group = group_id;
+    info.teacher = group[info.category][group_id];
+    id = info.category.toString() + group_id.toString()
+    let sql_ = SqlString.format('INSERT INTO result SET ?', info);
     mysql.query(sql_, [],function (err, data) {
         if (err) console.log(err);
+        let sql = "UPDATE groups SET chosen = chosen + 1 WHERE id = ?"
+        mysql.query(sql, id, function (err, data) {
+            if(err) console.log(err);
+            res.end(1);
+        })
     })
-};
-
-let select_course = function (course_id, account) {
-    // update preselected list
 };
 
 let draw_slots = function () {
@@ -37,14 +37,18 @@ let left_course = function () {
     // return category course
 };
 
-let show_course = function (category, phase) {
+let show_course = function (category, phase=1) {
     if (phase == 1) {
-
+        let sql = "SELECT COUNT(category) AS selected FROM result where category = ?";
+        mysql.query(sql, category, function (err,data) {
+            if (err) console.log(err);
+            return data[0].selected
+        })
     }
 };
 
 let drop_course = function (course_id, account) {
 
 };
-
-new_course();
+exports.select_course = select_course;
+exports.show_course = show_course;

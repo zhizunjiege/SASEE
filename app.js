@@ -3,8 +3,10 @@ const ejs = require('ejs');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser=require("cookie-parser");
+const SqlString = require('sqlstring');
 const app = express();
 
+const mysql = require("./routes/sql");
 const login = require("./routes/login");
 const view = require("./routes/view");
 const NotFound = require("./routes/NotFound");
@@ -24,7 +26,6 @@ app.get('/', function (req, res) {
 
 app.post('/login', function (req, res) {
     login(req,res);
-    console.log(req.cookies);
 });
 
 app.get('/views', (req, res) => {
@@ -40,8 +41,24 @@ app.post('/upload',(req,res)=>{
 });
 
 app.post('/choose',(req,res)=>{
-    console.log('选择');
-    res.end('选择成功！');
+    let info = {};
+    info.account = req.body.account;
+    info.category = req.body.direction;
+    //info.category = req.body.category;
+    info.group = req.body.group;
+    console.log('info',info);
+    // console.log('body',req)
+    //info.teacher = group[info.category][group_id];
+    id = info.category.toString() + info.group.toString()
+    let sql_ = SqlString.format('INSERT INTO result SET ?', info);
+    mysql.query(sql_, [],function (err, data) {
+        if (err) console.log(err)//res.end(0);
+        let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?"
+        mysql.query(sql, id, function (err, data) {
+            if(err) console.log(err)//res.end(0);
+            else res.end('1');
+        })
+    })
 });
 
 //404
