@@ -53,18 +53,29 @@
                 </header>
 
                 <div id="contents_body">
-                    <div id="news" class="collapse show" data-parent="#contents"></div>
+                    <div id="news" class="collapse show" data-parent="#contents">
+                        <div id="editor_container">
+                            <div id="editor" class="mb-3">
+                                <p>请在此处输入内容···</p>
+                            </div>
+                            <div class="d-flex justify-content-around">
+                                <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
+                                <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
+                            </div>
+                        </div>
+                    </div>
                     <div id="zhsy_xzfz" class="collapse" data-parent="#contents">
                         <div class="container">
                             <div class="row align-items-center justify-content-center" style="height:680px">
                                 <div class="col-4">
-                                    <form action="/choose" method="POST">
-                                        <input type="hidden" value="<%= user.account %>">
+                                    <form action="" method="POST" id="form">
+                                        <input type="hidden" value="<%= user.account %>" name="account">
+                                        <input type="hidden" value="<%= user.direction %>" name="direction">
                                         <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <div class="form-check mb-3">
                                             <input class="form-check-input" type="radio" name="group"
                                                 id="group_<%= index %>" value="0"
-                                                <%= groups[index].full?'disabled':'' %>>
+                                                <%= groups[index].chosen==groups[index].capacity?'disabled':'' %>>
                                             <label class="form-check-label"
                                                 for="group_<%= index %>"><%= '第'+(index+1)+'组     已选/可选：'+groups[index].chosen+'/'+groups[index].capacity+'      老师：'+groups[index].teacher %></label>
                                         </div>
@@ -90,12 +101,67 @@
     <script src="/bootstrap/others/jquery-3.4.0.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
-        $('a[href="#zhsy_xzfz"]').click(() => {
-            $('#contents_title').text('选择分组');
-        });
-        $('a[href="#news"]').click(() => {
-            $('#contents_title').text('通知公告');
-        });
+        (function () {
+            $.getScript('/js/wangEditor.min.js').done(() => {
+                const WE = window.wangEditor;
+                const editor = new WE('#editor');
+
+                editor.customConfig.uploadImgShowBase64 = true;
+                //editor.customConfig.uploadImgServer=SASEE.URL_UPLOAD;
+
+                editor.create();
+
+                $('#editor_clear').click(() => {
+                    editor.txt.clear();
+                });
+                $('#editor_submit').click(() => {
+                    var myform = new FormData();
+                    myform.append('content', editor.txt.html());
+                    myform.append('type', 'notice');
+                    $.ajax({
+                        url: '/upload',
+                        type: 'POST',
+                        cache: false,
+                        data: myform,
+                        processData: false,
+                        contentType: 'text/plain'
+                    }).done(() => {
+                        console.log('successed!');
+                    });
+                });
+            });
+
+            $('a[href="#zhsy_xzfz"]').click(() => {
+                $('#contents_title').text('选择分组');
+            });
+            $('a[href="#news"]').click(() => {
+                $('#contents_title').text('通知公告');
+            });
+
+            let $form = $('#form');
+            $form.submit((e) => {
+                e.preventDefault();
+                var formData = new FormData($form[0]);
+                $.ajax({
+                    url: '/choose',
+                    type: 'POST',
+                    cache: false,
+                    data: formData,
+                    processData: false,
+                    contentType: false
+                }).done((data) => {
+                    console.log(data);
+                    flag = Number(data);
+                    if (flag) {
+                        alert('选择分组成功！');
+                    } else {
+                        alert('该分组已满，请重新选择！');
+                    }
+                }).fail(() => {
+                    console.log('failed!');
+                });
+            });
+        })();
     </script>
 </body>
 
