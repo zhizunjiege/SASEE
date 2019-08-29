@@ -41,16 +41,25 @@ app.post('/upload',(req,res)=>{
 });
 
 app.post('/choose',(req,res)=>{
+    let group_term = [
+        ['王', 'duan'],
+        ['yu', 'tao'],
+        ['qian', 'wu'],
+        ['wang', 'xie'],
+        ['chen', 'zhao'],
+        ['lao', 'du']
+    ];
     let info = {};
-    info.account = req.body.account;
-    info.category = req.body.direction;
-    //info.category = req.body.category;
-    info.group = req.body.group;
+    let account = req.body.account;
+    let category = req.body.direction;
+    let group = req.body.group;
+    info.teacher = group_term[category][group];
+    info.group = group;
+
     console.log('info',info);
-    // console.log('body',req)
-    //info.teacher = group[info.category][group_id];
-    id = info.category.toString() + info.group.toString()
-    let sql_ = SqlString.format('INSERT INTO result SET ?', info);
+
+    id = category.toString() + group.toString()
+    let sql_ = SqlString.format('UPDATE final  SET ? WHERE account = ?', [info, account]);
     mysql.query(sql_, [],function (err, data) {
         if (err) console.log(err)//res.end(0);
         let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?"
