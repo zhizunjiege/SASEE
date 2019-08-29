@@ -24,7 +24,7 @@
                     width="48px">
                 <div>
                     <div class="h5 my-0"><%= user.name %></div>
-                    <% const identity=['学生','教师','管理员'] %>
+                    <% const identity=['学生','教师','系主任'] %>
                     <span class="badge badge-pill badge-info"><%= identity[user.identity] %></span>
                 </div>
             </div>
@@ -51,25 +51,15 @@
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     <div id="bysj" class="collapse" data-parent="#accordion_nav">
                         <ul class="list-group list-group-flush">
-                            <% if(user.identity==2) { %>
-                            <a href="#bysj_ktsh" class="list-group-item list-group-item-action" data-toggle="collapse"
+                            <% let hrefArray=['xt','wdkt','ktsh'],contentArray=['选题','我的课题','课题审核']; %>
+                            <a href="#bysj_<%= hrefArray[user.identity] %>"
+                                class="list-group-item list-group-item-action" data-toggle="collapse"
                                 data-type="subject" data-sub="true" data-content="#subject_content"
-                                data-list="#subject_list"><small>课题审核</small></a>
-                            <% } else { 
-                                    if(user.identity==1) { 
-                                for( let index = 1; index <= teacher.used.length; index++ ) { %>
-                            <a href="#bysj_wdkt_<%= index %>" class="list-group-item list-group-item-action"
-                                data-toggle="collapse" data-type="<%= teacher.used[index-1]?'mySubject':'subject' %>"
-                                data-num="<%= index %>"><small>课题<%= index %></small></a>
-                            <% } 
-                             } else { %>
-                            <a href="#bysj_xt" class="list-group-item list-group-item-action" data-toggle="collapse"
-                                data-type="subject" data-sub="true" data-content="#subject_content"
-                                data-list="#subject_list"><small>选题</small></a>
+                                data-list="#subject_list"><small><%= contentArray[user.identity] %></small></a>
+                            <% if(!user.identity) { %>
                             <a href="#bysj_wdkt" class="list-group-item list-group-item-action" data-toggle="collapse"
                                 data-type="mySubject"><small>我的课题</small></a>
-                            <% } 
-                         } %>
+                            <% } %>
                         </ul>
                     </div>
                 </dd>

@@ -1,7 +1,7 @@
 <nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_assignment">课题进度</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">教师资料</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_assignment">任务进度</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">教师信息</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_file">文件</a>
 </nav>
 <div class="tab-content p-3">
@@ -9,12 +9,12 @@
         <% if (notice.length) { %>
         <div class="container-fluid">
             <div class="row">
-                <nav class="col list-group nav nav-pills flex-column">
+                <nav class="col-4 list-group nav nav-pills flex-column">
                     <% for( let index = 0; index < notice.length; index++ ) { %>
                     <a href="#myNotice_<%= index %>"
                         class="list-group-item list-group-item-action nav-link <%= index?'':'active' _%>"
                         data-toggle="pill">
-                        <span class="float-left w-50 ellipsis">
+                        <span class="w-50 ellipsis">
                             <% if (notice[index].top) { %>
                             <span class="badge badge-pill badge-warning">置顶</span>
                             <% } %><%= notice[index].title %></span>
@@ -22,7 +22,7 @@
                     </a>
                     <% } %>
                 </nav>
-                <div class="col tab-content border rounded p-3">
+                <div class="col-8 tab-content border rounded p-3">
                     <% for( let index = 0; index < notice.length; index++ ) { %>
                     <div class="tab-pane fade <%= index?'':'show active' _%>" id="myNotice_<%= index %>">
                         <%= notice[index].content %></div>
@@ -35,30 +35,24 @@
             <h1 class="text-muted align-self-center">暂无通知</h1>
         </div>
         <% } %>
-        <!-- <div id="editor" class="mb-3">
-            <p>请在此处输入内容···</p>
-        </div>
-        <div class="d-flex justify-content-between">
-            <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
-            <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
-        </div> -->
     </div>
     <div class="tab-pane fade" id="mySubject_assignment">
-        <% if (assignment.length) { 
-        for( let index = 0; index < assignment.length; index++ ) { let color=assignment[index].status=='已完成'
-            ?'primary':(assignment[index].status=='不及格' ?'danger':'warning') %>
+        <% let colorArray=['primary','danger','warning'],statusArray=['已完成','不合格','未完成']; 
+        if (assignment.length) { 
+        for( let index = 0; index < assignment.length; index++ ) { %>
         <div class="card">
-            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#asign_<%= index+1 %>">
+            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#assign_<%= index+1 %>">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
                     <span class="w-50 ellipsis">任务<%= index+1 %>:<%= assignment[index].title %></span>
                     <span>截止日期：<%= assignment[index].deadline %></span>
-                    <span class="badge badge-pill badge-<%= color %>"><%= assignment[index].status %></span>
+                    <span
+                        class="badge badge-pill badge-<%= colorArray[assignment[index].status] %>"><%= statusArray[assignment[index].status] %></span>
                 </h5>
             </div>
-            <div class="collapse" id="asign_<%= index+1 %>" data-parent="#mySubject_assignment">
+            <div class="collapse" id="assign_<%= index+1 %>" data-parent="#mySubject_assignment">
                 <div class="card-body">
                     <div><%= assignment[index].description %></div>
-                    <p class="h4 mb-0 text-right">评分：<%= assignment[index].score %></p>
+                    <p class="h4 mb-0 text-right">评分：<%= assignment[index].score||'暂无' %></p>
                 </div>
             </div>
         </div>
@@ -66,10 +60,10 @@
 
         <div class="progress mt-5">
             <!-- progress-bar-striped progress-bar-animated -->
-            <% for( let index = 0; index < assignment.length; index++ ) { 
-                let color=assignment[index].status=='已完成'?'primary':(assignment[index].status=='不及格'?'danger':'warning') %>
-            <div class="progress-bar bg-<%= color %>" style="width: <%= 100/assignment.length+'%' %>">
-                <%= assignment[index].status %></div>
+            <% for( let j = 0; j < assignment.length; j++ ) { %>
+            <div class="progress-bar bg-<%= colorArray[assignment[j].status] %>"
+                style="width: <%= 100/assignment.length+'%' %>">
+                <%= statusArray[assignment[j].status] %></div>
             <% } %>
         </div>
         <% } else { %>
@@ -86,31 +80,30 @@
             </div>
             <div class="col-10">
                 <table class="table table-bordered">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col" colspan="6">基本资料</th>
-                        </tr>
-                    </thead>
                     <tbody class="text-center">
                         <tr>
                             <th>姓名</th>
                             <td><%= teacher.name %></td>
                             <th>性别</th>
                             <td><%= teacher.gender %></td>
+                        </tr>
+                        <tr>
+                            <th>方向</th>
+                            <td><%= teacher.direction %></td>
                             <th>职称</th>
                             <td><%= teacher.proTitle %></td>
                         </tr>
                         <tr>
-                            <th>研究方向</th>
-                            <td colspan="2"><%= teacher.field %></td>
+                            <th>研究领域</th>
+                            <td><%= teacher.field %></td>
                             <th>办公地点</th>
-                            <td colspan="2"><%= teacher.office %></td>
+                            <td><%= teacher.office %></td>
                         </tr>
                         <tr>
                             <th>联系邮箱</th>
-                            <td colspan="2"><%= teacher.mail %></td>
+                            <td><%= teacher.email %></td>
                             <th>联系电话</th>
-                            <td colspan="2"><%= teacher.tele %></td>
+                            <td><%= teacher.tele %></td>
                         </tr>
                     </tbody>
                 </table>
@@ -137,8 +130,8 @@
                         <p class="card-title"><%= downFiles[i].date %></p>
                         <ul class="list-group list-group-flush <%= i==downFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < downFiles[i].file.length; j++ ) { %>
-                            <a href="<%= downFiles[i].file[j].url %>" class="list-group-item"
-                                download><small><%= downFiles[i].file[j].name %></small></a>
+                            <a href="<%= downFiles[i].file[j].url %>" class="list-group-item" download><small
+                                    class="w-100 ellipsis"><%= downFiles[i].file[j].name %></small></a>
                             <% } %>
                         </ul>
                         <% } %>
@@ -159,7 +152,7 @@
                         <ul class="list-group list-group-flush <%= i==upFiles.length-1?'':'mb-3' _%>">
                             <% for( let j = 0; j < upFiles[i].file.length; j++ ) { %>
                             <a href="#" class="list-group-item">
-                                <small><%= upFiles[i].file[j] %></small>
+                                <small class="w-100 ellipsis"><%= upFiles[i].file[j] %></small>
                             </a>
                             <% } %>
                         </ul>
@@ -275,6 +268,6 @@
 
         SASEE.fileUpload('#file_form');
         SASEE.fileCheck('#file_new_input');
-    
+
     })(window.jQuery, window.SASEE);
 </script>

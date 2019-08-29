@@ -32,7 +32,7 @@ function login(req, res) {
                         arr.push(data[i])
                     }
                     console.log(arr);
-                    var id = req.body.identity;
+                    var id = Number(req.body.identity);
                     res.render('user', {
                         user: {
                             name: '333',
@@ -42,9 +42,6 @@ function login(req, res) {
                         news: {
                             num: 34,
                             contents: arr
-                        },
-                        teacher:{
-                            used:[true,false,false]
                         }
                     }); return;
                 })

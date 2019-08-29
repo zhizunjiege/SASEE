@@ -78,9 +78,11 @@
     <h4>发布时间：<%= subject.submitTime %></h4>
     <h4>最后修改：<%= subject.lastModifiedTime %></h4>
 </div>
-<div class="mb-3 d-flex justify-content-end">
-    <button type="button" class="btn btn-primary w-25" data-toggle="modal"
-        data-target="#subject_check_modal">选择此课题</button>
+<div class="mb-3 d-flex justify-content-around">
+    <button id="subject_fail" type="button" class="btn btn-secondary w-25" data-toggle="modal"
+        data-target="#subject_check_modal">打回</button>
+    <button id="subject_pass" type="button" class="btn btn-primary w-25" data-toggle="modal"
+        data-target="#subject_check_modal">通过</button>
 </div>
 <div id="subject_check_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -91,6 +93,7 @@
             </div>
             <div class="modal-body">
                 <form action="" method="POST">
+                    <input type="hidden" value="">
                     <div class="form-group form-row">
                         <input name="number" type="hidden" value="<%= subject.number %>">
                         <input name="check" id="subject_check_pw" type="password" class="form-control"
@@ -108,6 +111,12 @@
 
 <script>
     (function ($, SASEE) {
+        $('#subject_pass').click(()=>{
+            $('#subject_check_modal input[type=hidden]').val('pass');
+        });
+        $('#subject_fail').click(()=>{
+            $('#subject_check_modal input[type=hidden]').val('fail');
+        });
         $('#subject_check_submit').click(function (e) {
             e.preventDefault();
             this.form.action = SASEE.URL_REQUEST;

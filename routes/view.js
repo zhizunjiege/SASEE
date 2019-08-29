@@ -21,11 +21,12 @@ function view(req, res) {
             console.log(req.query.nextPage);
             break;
         case 'userInfo':
-            res.render('student/userInfo', {
-                account: 17375433,
+            res.render('teacher/userInfo', {
+                /* account: 17375433,
+                email: '7983479832@qq.com',
                 status: {
                     specialty: '自动化',
-                    subject: '模式识别',
+                    direction: '模式识别',
                     class: '170326',
                     stuNum: '17375433',
                     name: '陈智杰',
@@ -40,16 +41,33 @@ function view(req, res) {
                     bysj: true,
                     scsx: true,
                     zhsy: false
-                }
+                } */
+                account:34442525,
+                profile: 'cai.jpg',
+                name: '某某某',
+                gender: '女',
+                proTitle: '讲师',
+                direction:301,
+                field: '超电磁炮',
+                office: '新主楼F-407',
+                email: '88888888@buaa.edu.cn',
+                tele: '166-6666-6666',
+                resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'
+            });
+            break;
+        case 'submitSubject':
+            res.render('teacher/submitSubject', {
+                ability: true
             });
             break;
         case 'subject':
-            res.render('teacher/subject', {
+            res.render('dean/subject', {
                 num: 23,
                 contents: (new Array(14)).fill({
-                    title: '做个什么呢我也不太清楚',
+                    title: '做个什么呢我也不太清楚总之先取个长标题吧',
+                    introduction: '反正就是简要介绍一下这个项目我把这段为你在大撒上了飞机的副书记绿色空间访客数量的v将来肯定v你',
                     direction: '301',
-                    chosen: 5,
+                    chosen: 3,
                     capacity: 7,
                     publisher: '某老师',
                     date: '2019/07/16'
@@ -69,11 +87,11 @@ function view(req, res) {
             });
             break;
         case 'subjectContent':
-            res.render('student/subjectContent', {
+            res.render('dean/subjectContent', {
                 subject: {
                     number: 3,
                     title: '基于那啥做那啥',
-                    direction: '模式识别',
+                    direction: 307,
                     capacity: 5,
                     chosen: 3,
                     introduction: '<div><h3 style="text-align: center;">关于毕业设计选题系统开放的通知<span style="text-decoration-line: line-through;">​</span></h3><div><span style="text-decoration-line: line-through;">致3系全体师生：</span>​</div></div>',
@@ -89,9 +107,10 @@ function view(req, res) {
                 teacher: {
                     name: '某某某',
                     gender: '女',
-                    pro: '讲师',
+                    proTitle: '讲师',
+                    direction:307,
                     field: '超电磁炮',
-                    mail: '88888888@buaa.edu.cn'
+                    email: '88888888@buaa.edu.cn'
                 }
             });
             break;
@@ -101,77 +120,135 @@ function view(req, res) {
                     top: true,
                     title: '准备开始开发了啊',
                     date: '2019/07/09',
-                    content:'准备开始完成任务'
+                    content: '准备开始完成任务'
                 }),
-                assignment:[
+                assignment: [
                     {
-                        title:'初步探讨',
-                        deadline:'2019/11/13-12:00',
-                        status:'已完成',
-                        description:'本次任务的目的是完成初步的探讨····',
-                        score:'98'
-                    },{
-                        title:'设计初稿',
-                        deadline:'2019/11/23-08:00',
-                        status:'不及格',
-                        description:'本次任务的目的是进行进一步的设计，并提交设计初稿····',
-                        score:'57'
-                    },{
-                        title:'最终成品',
-                        deadline:'2019/12/03-00:00',
-                        status:'未完成',
-                        description:'本次任务的目的是完成最后的组装，形成最终成品····',
-                        score:'暂无'
+                        title: '初步探讨',
+                        deadline: '2019/11/13-12:00',
+                        description: '本次任务的目的是完成初步的探讨····',
+                        member: [{
+                            name: '小红',
+                            status: 0,
+                            score: 98
+                        }, {
+                            name: '小明',
+                            status: 0,
+                            score: 100
+                        }, {
+                            name: '小刚',
+                            status: 0,
+                            score: 93
+                        }]
+                    }, {
+                        title: '设计初稿',
+                        deadline: '2019/11/23-08:00',
+                        description: '本次任务的目的是进行进一步的设计，并提交设计初稿····',
+                        member: [{
+                            name: '小红',
+                            status: 2,
+                            score: 38
+                        }, {
+                            name: '小明',
+                            status: 2,
+                            score: 40
+                        }, {
+                            name: '小刚',
+                            status: 2,
+                            score: 53
+                        }]
+                    }, {
+                        title: '最终成品',
+                        deadline: '2019/12/03-00:00',
+                        description: '本次任务的目的是完成最后的组装，形成最终成品····',
+                        member: [{
+                            name: '小红',
+                            status: 1,
+                            score: undefined
+                        }, {
+                            name: '小明',
+                            status: 1,
+                            score: undefined
+                        }, {
+                            name: '小刚',
+                            status: 1,
+                            score: undefined
+                        }]
                     }
                 ],
                 teacher: {
-                    profile:'cai.jpg',
+                    profile: 'cai.jpg',
                     name: '某某某',
                     gender: '女',
                     proTitle: '讲师',
+                    direction:301,
                     field: '超电磁炮',
-                    office:'新主楼F-407',
-                    mail: '88888888@buaa.edu.cn',
-                    tele:'166-6666-6666',
-                    resume:'我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'
+                    office: '新主楼F-407',
+                    email: '88888888@buaa.edu.cn',
+                    tele: '166-6666-6666',
+                    resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'
                 },
-                downFiles:[
+                student: (new Array(3)).fill({
+                    email: '7983479832@qq.com',
+                    status: {
+                        specialty: '自动化',
+                        direction: '模式识别',
+                        class: '170326',
+                        stuNum: '17375433',
+                        name: '陈智杰',
+                        gender: '男'
+                    },
+                    academic: {
+                        gpa: 3.77,
+                        weightAver: 91,
+                        average: 89
+                    }
+                }),
+                downFiles: [
                     {
-                        date:'2019/11/20',
-                        file:[
+                        date: '2019/11/20',
+                        file: [
                             {
-                                name:'可下载文件003.doc',
-                                url:'/doc/notice.html'
-                            },{
-                                name:'可下载文件004.doc',
-                                url:'/doc/notice.html'
+                                name: '可下载文件003.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小红'
+                            }, {
+                                name: '可下载文件004.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小明'
                             }
                         ]
-                    },{
-                        date:'2019/10/24',
-                        file:[
+                    }, {
+                        date: '2019/10/24',
+                        file: [
                             {
-                                name:'可下载文件001.doc',
-                                url:'/doc/notice.html'
-                            },{
-                                name:'可下载文件002.doc',
-                                url:'/doc/notice.html'
+                                name: '可下载文件001.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小明'
+                            }, {
+                                name: '可下载文件002.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小红'
+                            }, {
+                                name: '可下载文件002.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小刚'
                             }
                         ]
                     }
                 ],
-                upFiles:[
+                upFiles: [
                     {
-                        date:'2019/12/10',
-                        editable:true,
-                        file:[
+                        date: '2019/12/10',
+                        editable: true,
+                        file: [
                             '上传的文件003.rar',
                             '上传的文件004.rar'
                         ]
-                    },{
-                        date:'2019/10/28',
-                        editable:false,
-                        file:[
+                    }, {
+                        date: '2019/10/28',
+                        editable: false,
+                        file: [
                             '上传的文件001.zip',
                             '上传的文件002.zip'
                         ]
@@ -180,7 +257,7 @@ function view(req, res) {
             });
             break;
         case 'password':
-            res.render('password',null);
+            res.render('password', null);
             break;
         default:
             break;

@@ -21,7 +21,7 @@ a:hover,.list-group-item-action:focus,.list-group-item-action:hover,.point:hover
     cursor: pointer;
 }
 
-table{
+.table-fixed{
     table-layout: fixed;
 }
 
@@ -36,7 +36,7 @@ td,.ellipsis{
 } */
 .scroll-container,#contents_body{
     overflow-y: scroll;
-    height:600px;
+    height:680px;
 }
 /* #contents>div>div{
     overflow-y: auto;

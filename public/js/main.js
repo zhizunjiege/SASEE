@@ -70,7 +70,9 @@
         //$infiniteScrollObj.on('last.infiniteScroll', log);
     };
     SASEE.instEditor = (container) => {
-        if (typeof window.wangEditor == undefined) {
+        if (typeof window.wangEditor == 'undefined') {
+            console.log('ggg');
+            
             $.getScript('/js/wangEditor.min.js').done(() => {
                 const WE = window.wangEditor;
                 const editor = new WE('#editor');
@@ -99,9 +101,13 @@
                     });
                 });
             });
-        } else if ($('#editor')[0].parentNode != $(container)[0]) {
-
         }
+        if ($('#editor_container')[0].parentNode != $(container)[0]) {
+            $(container).append($('#editor_container'));
+            console.log('fff');
+        }
+        console.log('ddd');
+        
     };
 
     SASEE.fileUpload = (selector) => {
@@ -147,10 +153,9 @@
         function _loadFrame($target) {
             let href = $target.attr('href');
             let data = $target[0].dataset;
-            let type = data.type ? 'type=' + data.type : '',
-                num = data.num ? 'num=' + data.num : '';
+            let type = data.type ? 'type=' + data.type : '';
             if (!$(href).length) {
-                let queryStr = type+'&'+num;
+                let queryStr = type;
                 $('<div>', {
                     "id": href.substring(1),
                     "class": "collapse",
@@ -190,5 +195,3 @@
         });
     });
 })(window.jQuery);
-
-
