@@ -12,11 +12,11 @@
 </head>
 
 <body class="container-fluid">
-    <header class="row bg-primary text-light justify-content-between fixed-top" style="height: 64px">
-        <div class="col-8 d-flex align-items-center">
-            <h3 class="mb-0 ml-5">自动化科学与电气工程学院</h3>
+    <header class="row bg-primary text-light fixed-top" style="height: 64px">
+        <div class="col-12 col-sm-8 col-md-9 d-flex align-items-center">
+            <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
         </div>
-        <div class="col-4 d-flex align-items-center justify-content-around">
+        <div class="col-12 col-sm-4 col-md-3 d-flex align-items-center justify-content-around">
             <span>姓名：<%= user.name %></span><span>方向：<%= user.direction %></span>
         </div>
     </header>
@@ -49,7 +49,7 @@
         <div id="contents" class="p-3">
             <div class="card">
                 <header id="contents_header" class="card-header">
-                    <h3 id="contents_title" class="mb-0 text-center">通知</h3>
+                    <h3 id="contents_title" class="mb-0 text-center">通知公告</h3>
                 </header>
 
                 <div id="contents_body">
@@ -65,28 +65,45 @@
                         </div>
                     </div>
                     <div id="zhsy_xzfz" class="collapse" data-parent="#contents">
-                        <div class="container">
-                            <div class="row align-items-center justify-content-center" style="height:680px">
-                                <div class="col-8">
+                        <div class="container d-flex align-items-center" style="height:660px">
+                            <div class="row">
+                                <h4 class="col-6 text-center">分组选择</h4>
+                                <h4 class="col-6 text-center">课题简介</h4>
+                                <div class="col-6">
                                     <form action="/choose" method="POST" id="form">
                                         <input type="hidden" value="<%= user.account %>" name="account">
                                         <input type="hidden" value="<%= user.direction %>" name="direction">
                                         <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <div class="form-row">
-                                        <div class="form-check mb-5 col-8">
-                                            <input class="form-check-input" type="radio" name="group"
-                                                id="group_<%= index %>" value="<%= index %>"
-                                                <%= groups[index].chosen==groups[index].capacity?'disabled':'' %>>
-                                            <label class="form-check-label"
-                                                for="group_<%= index %>"><%= '第'+(index+1)+'组     已选/可选：'+groups[index].chosen+'/'+groups[index].capacity+'      老师：'+groups[index].teacher %></label>
+                                            <div class="form-check mb-5 col-8 mx-auto">
+                                                <input class="form-check-input" type="radio" name="group"
+                                                    id="group_<%= index %>" value="<%= index %>"
+                                                    <%= groups[index].chosen==groups[index].capacity?'disabled':'' %>>
+                                                <label class="form-check-label"
+                                                    for="group_<%= index %>"><%= '第'+(index+1)+'组     已选/容量：'+groups[index].chosen+'/'+groups[index].capacity+'      老师：'+groups[index].teacher %></label>
+                                            </div>
                                         </div>
-                                            <a href="/file/<%= groups[index].file %>" class="col-4 ellipsis" download>附件：<%= groups[index].file %></a>
-                                </div>
                                         <% } %>
                                         <div class="form-row justify-content-center align-items-center">
                                             <button class="btn btn-primary w-50" type="submit">提交</button>
                                         </div>
                                     </form>
+                                </div>
+                                <div class="col-6 row">
+                                    <nav class="col-4 list-group nav nav-pills flex-column">
+                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+                                        <a href="#description_<%= index %>"
+                                            class="w-100 list-group-item list-group-item-action nav-link<%= index?'':' active' %>"
+                                            data-toggle="pill">第<%= index+1 %>组</a>
+                                        <% } %>
+                                    </nav>
+                                    <div class="col-8 tab-content border rounded p-3">
+                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+                                        <div class="tab-pane fade<%= index?'':' show active' %>"
+                                            id="description_<%= index %>">
+                                            <%= groups[index].description %></div>
+                                        <% } %>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -142,30 +159,23 @@
             });
             let $form = $('#form');
             $form.submit((e) => {
-                e.preventDefault();console.log($form[0]);
-                let data={
-                    account:$form[0].account.value,
-                    direction:$form[0].direction.value,
-                    group:$form[0].group.value
-                };
-                console.log(data);
-                $.ajax({
-                    url:'/choose',
-                    type: 'POST',
-                    cache: false,
-                    data: data
+                e.preventDefault();
+                $.post('/choose', {
+                    account: $form[0].account.value,
+                    direction: $form[0].direction.value,
+                    group: $form[0].group.value
                 }).done((data) => {
-                    console.log(data);
-                    flag = Number(data);
-                    if (flag) {
+                    let status = Number(data);
+                    if (isNaN(status)) {
+                        alert('出现故障，请稍后重试！');
+                    } else if (status == 0) {
                         alert('选择分组成功！');
                     } else {
                         alert('该分组已满，请重新选择！');
                     }
                 }).fail(() => {
-                    console.log('failed!');
+                    alert('网络故障，请稍后重试！');
                 });
-
             });
         })();
     </script>
