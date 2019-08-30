@@ -46,7 +46,7 @@
                 </dl>
             </div>
             <div class="page-2 container" style="z-index:1200">
-                <div class="row text-center">
+                <div class="row py-3 bg-light text-center">
                     <div class="col-4">
                         <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
                             data-list="#news_list">
@@ -91,18 +91,19 @@
                             <div class="row mt-5">
                                 <div class="col-12 col-md-6 mb-3">
                                     <h4 class="text-center">课程简介</h4>
-                                    <ul class="nav nav-pills mb-3 d-flex justify-content-around">
+                                    <nav class="nav nav-pills mb-3 d-flex justify-content-around">
                                         <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <a href="#description_<%= index %>"
                                             class="nav-item nav-link<%= index?'':' active' %>"
                                             data-toggle="pill">第<%= index+1 %>组</a>
                                         <% } %>
-                                    </ul>
+                                    </nav>
                                     <div class="tab-content border rounded p-3">
                                         <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <div class="tab-pane fade<%= index?'':' show active' %>"
                                             id="description_<%= index %>">
-                                            <%= groups[index].description %>
+                                            <pre><%= groups[index].description %></pre>
+                                            <pre class="mb-0 text-primary"><%= groups[index].time %></pre>
                                         </div>
                                         <% } %>
                                     </div>

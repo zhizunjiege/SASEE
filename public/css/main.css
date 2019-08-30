@@ -10,7 +10,6 @@
 #navigator {
     position: fixed;
     bottom: 0;
-    height: 60px;
     width: 100%;
 }
 .page-1{
@@ -21,15 +20,15 @@
 }
 @media (min-width: 992px) {
     .aside {
-        width: 22%;
+        width: 24%;
     }
     #contents {
-        width: 78%;
+        width: 76%;
     }
     #navigator {
-        width: 22%;
+        width: 24%;
         left: 0;
-        bottom: 0;
+        bottom: 24px;
         top: 65px;
     }
     .page-1{
@@ -42,15 +41,27 @@
 
 @media (min-width: 1200px) {
     .aside {
-        width: 18%;
+        width: 20%;
     }
     #contents {
-        width: 82%;
+        width: 80%;
     }
     #navigator {
-        width: 18%;
+        width: 20%;
     }
 }
+@media (min-width: 1450px) {
+    .aside {
+        width: 16%;
+    }
+    #contents {
+        width: 84%;
+    }
+    #navigator {
+        width: 16%;
+    }
+}
+
 
 #account_info:hover {
     background-color: blue;
