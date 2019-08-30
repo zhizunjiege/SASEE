@@ -36,7 +36,7 @@ td,.ellipsis{
 } */
 .scroll-container,#contents_body{
     overflow-y: scroll;
-    height:680px;
+    height:660px;
 }
 /* #contents>div>div{
     overflow-y: auto;

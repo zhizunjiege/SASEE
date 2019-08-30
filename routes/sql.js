@@ -1,11 +1,11 @@
 var mysql=require("mysql");
 var pool = mysql.createPool({
-    host: '2617b7l179.wicp.vip',
+    host: '127.0.0.1',
     user: 'root',
     multipleStatements:true, //配置true一次可以执行多条语句
     password: 'mysql',
     database: 'app',
-    port: 10839
+    port: 3306
 });
 
 var query=function(sql,params,callback){

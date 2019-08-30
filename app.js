@@ -59,14 +59,20 @@ app.post('/choose',(req,res)=>{
     console.log('info',info);
 
     id = category.toString() + group.toString()
-    let sql_ = SqlString.format('UPDATE final  SET ? WHERE account = ?', [info, account]);
-    mysql.query(sql_, [],function (err, data) {
-        if (err) console.log(err)//res.end(0);
-        let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?"
-        mysql.query(sql, id, function (err, data) {
-            if(err) console.log(err)//res.end(0);
-            else res.end('1');
+    let choose_sql = SqlString.format('UPDATE final  SET ? WHERE account = ?', [info, account]);
+    let find_sql = "SELECT * FROM final WHERE account = ?";
+    mysql.query(find_sql, account, function (err, data) {
+        if(err) res.end();
+        else if (data[0].group > -1)
+            {res.end('你已经选过课程了');console.log('already chosen')}
+            else mysql.query(choose_sql, [],function (err, data) {
+                    if (err) console.log(err)//res.end(0);
+                    let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?"
+                    mysql.query(sql, id, function (err, data) {
+                        if(err) console.log(err)//res.end(0);
+                            else res.end('1');
         })
+    })
     })
 });
 

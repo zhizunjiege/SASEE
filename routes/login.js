@@ -4,7 +4,7 @@ const mysql = require("./sql");
 function login(req,res) {
     const account = req.body.account;
     const password = req.body.password;
-    let login_sql = "SELECT * FROM student2016 WHERE account = ?";
+    let login_sql = "SELECT * FROM final WHERE account = ?";
     mysql.query(login_sql, account, function (err, data) {
         if (err) res.end('账号或密码错误，请返回重试');
         const result1 = JSON.parse(JSON.stringify(data));
