@@ -62,6 +62,10 @@
     }
 }
 
+.dropdown-menu{
+    min-width: 100%;
+    text-align: center;
+}
 
 #account_info:hover {
     background-color: blue;
