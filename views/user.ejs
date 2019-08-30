@@ -13,35 +13,57 @@
 
 <body class="container-fluid">
     <header class="row bg-primary text-light fixed-top" style="height: 64px">
-        <div class="col-12 col-sm-8 col-md-9 d-flex align-items-center">
+        <div class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex align-items-center">
             <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
         </div>
-        <div class="col-12 col-sm-4 col-md-3 d-flex align-items-center justify-content-around">
-            <span>姓名：<%= user.name %></span><span>方向：<%= user.direction %></span>
+        <div class="col-12 col-md-5 col-lg-4 col-xl-3 d-flex align-items-center justify-content-around">
+            <span>姓名：<%= user.name %></span><span>方向：<%= user.direction %></span><span>已选分组：<%= user.group>=0?user.group:'暂无' %></span>
         </div>
     </header>
 
     <div class="row">
-        <aside id="navigator" class="aside border-right border-light">
-            <dl class="list-group list-group-flush" id="accordion_nav">
-                <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
-                <dd class="list-group-item">
-                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
-                        data-list="#news_list"><span class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
-                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
-                </dd>
-                <dd class="list-group-item">
-                    <a data-toggle="collapse" href="#zhsy"><span
-                            class="glyphicon glyphicon-eye-open mr-2"></span>课程设计与综合实验<span
-                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
-                    <div id="zhsy" class="collapse" data-parent="#accordion_nav">
-                        <ul class="list-group list-group-flush">
-                            <a href="#zhsy_xzfz" class="list-group-item list-group-item-action" data-toggle="collapse"
+        <aside id="navigator" class="border-right border-light" style="z-index:1200">
+            <div class="page-1">
+                <dl class="list-group list-group-flush" id="accordion_nav">
+                    <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
+                    <dd class="list-group-item">
+                        <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
+                            data-list="#news_list"><span
+                                class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
+                                class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    </dd>
+                    <dd class="list-group-item">
+                        <a data-toggle="collapse" href="#zhsy"><span
+                                class="glyphicon glyphicon-eye-open mr-2"></span>课程设计与综合实验<span
+                                class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                        <div id="zhsy" class="collapse" data-parent="#accordion_nav">
+                            <ul class="list-group list-group-flush">
+                                <a href="#zhsy_xzfz" class="list-group-item list-group-item-action"
+                                    data-toggle="collapse" data-type="chooseGroup"><small>选择分组</small></a>
+                            </ul>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            <div class="page-2 container" style="z-index:1200">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
+                            data-list="#news_list">
+                            <h5>通知公告</h5>
+                        </a>
+                    </div>
+                    <div class="col-8 dropup">
+                        <a data-toggle="dropdown" href="#">
+                            <h5>课程设计与综合实验</h5>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <a href="#zhsy_xzfz" class="dropdown-item" data-toggle="collapse"
                                 data-type="chooseGroup"><small>选择分组</small></a>
                         </ul>
                     </div>
-                </dd>
-            </dl>
+                </div>
+            </div>
         </aside>
 
         <div class="aside invisible">占位</div>
@@ -65,11 +87,28 @@
                         </div>
                     </div>
                     <div id="zhsy_xzfz" class="collapse" data-parent="#contents">
-                        <div class="container d-flex align-items-center" style="height:660px">
-                            <div class="row">
-                                <h4 class="col-6 text-center">分组选择</h4>
-                                <h4 class="col-6 text-center">课题简介</h4>
-                                <div class="col-6">
+                        <div class="container" style="height:660px">
+                            <div class="row mt-5">
+                                <div class="col-12 col-md-6 mb-3">
+                                    <h4 class="text-center">课程简介</h4>
+                                    <ul class="nav nav-pills mb-3 d-flex justify-content-around">
+                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+                                        <a href="#description_<%= index %>"
+                                            class="nav-item nav-link<%= index?'':' active' %>"
+                                            data-toggle="pill">第<%= index+1 %>组</a>
+                                        <% } %>
+                                    </ul>
+                                    <div class="tab-content border rounded p-3">
+                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+                                        <div class="tab-pane fade<%= index?'':' show active' %>"
+                                            id="description_<%= index %>">
+                                            <%= groups[index].description %>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <h4 class="text-center">分组选择</h4>
                                     <form action="/choose" method="POST" id="form">
                                         <input type="hidden" value="<%= user.account %>" name="account">
                                         <input type="hidden" value="<%= user.direction %>" name="direction">
@@ -78,7 +117,7 @@
                                             <div class="form-check mb-5 col-8 mx-auto">
                                                 <input class="form-check-input" type="radio" name="group"
                                                     id="group_<%= index %>" value="<%= index %>"
-                                                    <%= groups[index].chosen==groups[index].capacity?'disabled':'' %>>
+                                                    <%= groups[index].chosen==groups[index].capacity? 'disabled': '' %>>
                                                 <label class="form-check-label"
                                                     for="group_<%= index %>"><%= '第'+(index+1)+'组     已选/容量：'+groups[index].chosen+'/'+groups[index].capacity+'      老师：'+groups[index].teacher %></label>
                                             </div>
@@ -89,22 +128,6 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="col-6 row">
-                                    <nav class="col-4 list-group nav nav-pills flex-column">
-                                        <% for( let index = 0; index < groups.length; index++ ) { %>
-                                        <a href="#description_<%= index %>"
-                                            class="w-100 list-group-item list-group-item-action nav-link<%= index?'':' active' %>"
-                                            data-toggle="pill">第<%= index+1 %>组</a>
-                                        <% } %>
-                                    </nav>
-                                    <div class="col-8 tab-content border rounded p-3">
-                                        <% for( let index = 0; index < groups.length; index++ ) { %>
-                                        <div class="tab-pane fade<%= index?'':' show active' %>"
-                                            id="description_<%= index %>">
-                                            <%= groups[index].description %></div>
-                                        <% } %>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -114,8 +137,8 @@
 
     </div>
 
-    <footer class="fixed-bottom text-right bg-info">
-        <p class="mr-3">北京航空航天大学</p>
+    <footer class="fixed-bottom text-right bg-info page-1">
+        <p class="mr-3 mb-0">北京航空航天大学</p>
     </footer>
 
     <script src="/bootstrap/others/jquery-3.4.0.js"></script>
@@ -170,8 +193,10 @@
                         alert('出现故障，请稍后重试！');
                     } else if (status == 0) {
                         alert('选择分组成功！');
-                    } else {
+                    } else if (status == 1) {
                         alert('该分组已满，请重新选择！');
+                    } else {
+                        alert('您已经选择该分组！');
                     }
                 }).fail(() => {
                     alert('网络故障，请稍后重试！');

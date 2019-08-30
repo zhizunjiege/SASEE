@@ -1,31 +1,74 @@
-#navigator{
-    position:fixed;
-    left:0;
-    bottom:0;
-    top: 65px;
+.aside {
+    width: 0;
 }
-.aside{
-    width:13%;
+
+#contents {
+    margin-top: 65px;
+    width: 100%;
 }
-#contents{
-    margin-top:65px;
-    width:87%;
+
+#navigator {
+    position: fixed;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
 }
-#account_info:hover{
-    background-color:blue;
+.page-1{
+    display:none;
 }
-a:hover{
+.page-2{
+    display:block;
+}
+@media (min-width: 992px) {
+    .aside {
+        width: 22%;
+    }
+    #contents {
+        width: 78%;
+    }
+    #navigator {
+        width: 22%;
+        left: 0;
+        bottom: 0;
+        top: 65px;
+    }
+    .page-1{
+        display:block;
+    }
+    .page-2{
+        display:none;
+    }
+}
+
+@media (min-width: 1200px) {
+    .aside {
+        width: 18%;
+    }
+    #contents {
+        width: 82%;
+    }
+    #navigator {
+        width: 18%;
+    }
+}
+
+#account_info:hover {
+    background-color: blue;
+}
+
+a:hover {
     text-decoration: none;
 }
-a:hover,.list-group-item-action:focus,.list-group-item-action:hover,.point:hover{
+
+a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:hover {
     cursor: pointer;
 }
 
-.table-fixed{
+.table-fixed {
     table-layout: fixed;
 }
 
-td,.ellipsis{
+td, .ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -34,12 +77,18 @@ td,.ellipsis{
 /* body{
     overflow-y: hidden;
 } */
-.scroll-container,#contents_body{
+
+.scroll-container, #contents_body {
     overflow-y: scroll;
-    height:660px;
+    height: 660px;
 }
+
 /* #contents>div>div{
     overflow-y: auto;
 } */
+
 /* 仅支持PC端Chrome */
-::-webkit-scrollbar {display:none}
+
+::-webkit-scrollbar {
+    display: none
+}
