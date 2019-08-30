@@ -74,7 +74,10 @@ a:hover {
 a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:hover {
     cursor: pointer;
 }
-
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
 .table-fixed {
     table-layout: fixed;
 }
