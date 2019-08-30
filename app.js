@@ -51,28 +51,63 @@ app.post('/choose',(req,res)=>{
     ];
     let info = {};
     let account = req.body.account;
-    let category = req.body.direction;
-    let group = req.body.group;
-    info.teacher = group_term[category][group];
-    info.group = group;
+    let selection = req.body.group;
 
-    console.log('info',info);
-
-    id = category.toString() + group.toString()
-    let choose_sql = SqlString.format('UPDATE final  SET ? WHERE account = ?', [info, account]);
     let find_sql = "SELECT * FROM final WHERE account = ?";
     mysql.query(find_sql, account, function (err, data) {
-        if(err) res.end();
-        else if (data[0].group > -1)
-            {res.end('你已经选过课程了');console.log('already chosen')}
-            else mysql.query(choose_sql, [],function (err, data) {
-                    if (err) console.log(err)//res.end(0);
-                    let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?"
-                    mysql.query(sql, id, function (err, data) {
-                        if(err) console.log(err)//res.end(0);
-                            else res.end('1');
-        })
-    })
+        if (err) return res.send('账号错误');
+        let group = data[0].group;
+        let category = data[0].category;
+
+        info.teacher = group_term[category][selection];
+        info.group = selection;
+
+        let choose_sql = SqlString.format('UPDATE final  SET ? WHERE account = ?', [info, account]);
+
+        let id = category.toString() + selection.toString();
+        console.log('group, selection', group, selection);
+        console.log(typeof(selection));
+        //if(selection == '') return console.log('none')//res.end('3')
+        if (group == -1) {
+                let pd = "SELECT * FROM g WHERE id = ?";
+                mysql.query(pd, id, function (err, data) {
+                    if (err) return res.send('请稍后尝试');
+                    let chosen = data[0].chosen;
+                    let capacity = data[0].capacity;
+                    if (chosen < capacity){
+                        let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?";
+                        mysql.query(sql, id, function (err, data) {
+                            if(err) return res.send('选课失败，请稍后重试');
+                            else {
+                                mysql.query(choose_sql, [], function (err, data) {
+                                    if (err) return res.send('选课失败，请返回重试');
+                                    res.end('0')
+                                    console.log('succeed')
+                                })
+                            }
+                        })
+                    } else return res.end('1')
+                })
+        }
+        else if (group == selection)
+            return res.end('2');
+        else {
+            let old_id = category.toString() + group.toString();
+            let clean_sql = "UPDATE g SET chosen = chosen - 1 WHERE id = ?";
+            mysql.query(clean_sql, old_id, function (err, data) {
+                if (err) return console.log(err);
+                console.log('cleaned')
+                let sql = "UPDATE g SET chosen = chosen + 1 WHERE id = ?";
+                mysql.query(sql, id, function (err, data) {
+                    if (err) return console.log(err);
+                    mysql.query(choose_sql, [], function (err, data) {
+                        if (err) return res.send('选课失败，请返回重试');
+                        else return res.end('0');
+                    })
+                })
+            });
+
+        }
     })
 });
 
