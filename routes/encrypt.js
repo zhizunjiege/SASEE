@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-exports.unsign = function(val, secret){
+exports.unsign = function (val, secret) {
     if ('string' != typeof val) throw new TypeError("Signed cookie string must be provided.");
     if ('string' != typeof secret) throw new TypeError("Secret string must be provided.");
     //加密后的cookie是这种类型的：hello.DGDUkGlIkCzPz+C0B064FNgHdEjox7ch8tOBGslZ5QI
@@ -11,7 +11,7 @@ exports.unsign = function(val, secret){
     //然后对传入的解密的val和刚才通过明文加密的结果进行对象，如果相同就是true，否则就是false
     return str;//sha1(mac) == sha1(val) ? str : false;
 };
-exports.sign = function(val, secret){
+exports.sign = function (val, secret) {
     if ('string' != typeof val) throw new TypeError("Cookie value must be provided as a string.");
     if ('string' != typeof secret) throw new TypeError("Secret string must be provided.");
     //最后加密过的字符串是中间包含一个点的字符串，是通过sha256来进行编码的

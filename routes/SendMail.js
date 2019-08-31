@@ -17,7 +17,7 @@ function send(to_addr, content) {
         html: '',
         attachments: []
     };
-    transporter.sendMail(mailOptions, function(err, info) {
+    transporter.sendMail(mailOptions, function (err, info) {
         if (err) {
             console.log(err);
             return;

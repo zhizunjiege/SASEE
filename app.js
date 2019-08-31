@@ -43,14 +43,14 @@ app.post('/upload', (req, res) => {
 app.post('/choose', (req, res) => {
     let info = {};
     let account = req.body.account;
-    let selection = req.body.group;
+    let selection = req.body.group || '';
 
     let find_sql = "SELECT * FROM final WHERE account = ?";
     mysql.query(find_sql, account, function (err, data) {
         if (err) return res.send('账号错误');
-        let group = data[0].group;
+        let group = data[0].gr;
         let category = data[0].category;
-        info.group = selection;
+        info.gr = selection;
 
         let choose_sql = SqlString.format('UPDATE final  SET ? WHERE account = ?', [info, account]);
 
@@ -75,7 +75,7 @@ app.post('/choose', (req, res) => {
                             mysql.query(choose_sql, [], function (err, data) {
                                 if (err) return res.send('选课失败，请返回重试');
                                 res.end('选择成功！')
-                                console.log('succeed')
+                                console.log('succeed ', account)
                             })
                         }
                     })
@@ -93,7 +93,10 @@ app.post('/choose', (req, res) => {
                     if (err) return console.log(err);
                     mysql.query(choose_sql, [], function (err, data) {
                         if (err) return res.send('选课失败，请返回重试');
-                        else return res.end('选择成功！');
+                        else {
+                            console.log('changed ', account);
+                            return res.end('选择成功！');
+                        }
                     })
                 })
             });

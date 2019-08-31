@@ -6,13 +6,9 @@ let account = [];
 let mail = [];
 
 SendMail(mail, verify_code);
-if (verify_code == submit()){
+if (verify_code == submit()) {
     bind(mail, account);
 }
-
-
-
-
 
 
 function submit() {
@@ -29,10 +25,9 @@ function bind(email, account) {
 }
 
 function createSixNum() {
-    let Num="";
-    for(let i=0;i<6;i++)
-    {
-        Num += Math.floor(Math.random()*10);
+    let Num = "";
+    for (let i = 0; i < 6; i++) {
+        Num += Math.floor(Math.random() * 10);
     }
     return Num;
 }

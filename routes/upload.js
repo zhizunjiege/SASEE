@@ -10,4 +10,5 @@ function up(req, res) {
 
     });
 }
+
 module.exports = up

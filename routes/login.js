@@ -52,7 +52,7 @@ function login(req, res) {
                         direction: result1[0].category,
                         name: result1[0].name,
                         profile: result1[0].profile,
-                        group: result1[0].group
+                        group: result1[0].gr
                     },
                     groups: result2
                 });

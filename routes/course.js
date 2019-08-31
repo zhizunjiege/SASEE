@@ -17,11 +17,11 @@ let select_course = function (group_id, info) {
     info.teacher = group[info.category][group_id];
     id = info.category.toString() + group_id.toString()
     let sql_ = SqlString.format('INSERT INTO result SET ?', info);
-    mysql.query(sql_, [],function (err, data) {
+    mysql.query(sql_, [], function (err, data) {
         if (err) console.log(err);
         let sql = "UPDATE groups SET chosen = chosen + 1 WHERE id = ?"
         mysql.query(sql, id, function (err, data) {
-            if(err) console.log(err);
+            if (err) console.log(err);
             res.end(1);
         })
     })
@@ -37,10 +37,10 @@ let left_course = function () {
     // return category course
 };
 
-let show_course = function (category, phase=1) {
+let show_course = function (category, phase = 1) {
     if (phase == 1) {
         let sql = "SELECT COUNT(category) AS selected FROM result where category = ?";
-        mysql.query(sql, category, function (err,data) {
+        mysql.query(sql, category, function (err, data) {
             if (err) console.log(err);
             return data[0].selected
         })
