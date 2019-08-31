@@ -12,200 +12,166 @@
 </head>
 
 <body class="container-fluid">
-    <header class="row bg-primary text-light fixed-top" style="height: 64px">
-        <div class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex align-items-center">
-            <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
-        </div>
-        <div class="col-12 col-md-5 col-lg-4 col-xl-3 d-flex align-items-center justify-content-around">
-            <span>姓名：<%= user.name %></span><span>方向：<%= user.direction %></span><span>已选分组：<%= user.group>=0?'第'+(Number(user.group)+1)+'组':'暂无' %></span>
-        </div>
-    </header>
+<header class="row bg-primary text-light fixed-top" style="height: 64px">
+    <div class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex align-items-center">
+        <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
+    </div>
+    <div class="col-12 col-md-5 col-lg-4 col-xl-3 d-flex align-items-center justify-content-around">
+        <span>姓名：<%= user.name %></span><span>方向：<%= user.direction %></span><span>已选分组：<%= user.group >= 0 ? '第' + (Number(user.group) + 1) + '组' : '暂无' %></span>
+    </div>
+</header>
 
-    <div class="row">
-        <aside id="navigator" class="border-right border-light" style="z-index:1200">
-            <div class="page-1">
-                <dl class="list-group list-group-flush" id="accordion_nav">
-                    <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
-                    <dd class="list-group-item">
-                        <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
-                            data-list="#news_list"><span
+<div class="row">
+    <aside id="navigator" class="border-right border-light" style="z-index:1200">
+        <div class="page-1">
+            <dl class="list-group list-group-flush" id="accordion_nav">
+                <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
+                <dd class="list-group-item">
+                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
+                       data-list="#news_list"><span
                                 class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
                                 class="glyphicon glyphicon-chevron-right float-right"></span></a>
-                    </dd>
-                    <dd class="list-group-item">
-                        <a data-toggle="collapse" href="#zhsy"><span
+                </dd>
+                <dd class="list-group-item">
+                    <a data-toggle="collapse" href="#zhsy"><span
                                 class="glyphicon glyphicon-eye-open mr-2"></span>课程设计与综合实验<span
                                 class="glyphicon glyphicon-chevron-right float-right"></span></a>
-                        <div id="zhsy" class="collapse" data-parent="#accordion_nav">
-                            <ul class="list-group list-group-flush">
-                                <a href="#zhsy_xzfz" class="list-group-item list-group-item-action"
-                                    data-toggle="collapse" data-type="chooseGroup"><small>选择分组</small></a>
-                            </ul>
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-            <div class="page-2 container-fluid" style="z-index:1200">
-                <div class="row no-gutters py-3 bg-light text-center">
-                    <div class="col-4">
-                        <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
-                            data-list="#news_list">
-                            <h5>通知公告</h5>
-                        </a>
-                    </div>
-                    <div class="col-8 dropup">
-                        <a data-toggle="dropdown" href="#">
-                            <h5>课程设计与综合实验</h5>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <a href="#zhsy_xzfz" class="dropdown-item" data-toggle="collapse"
-                                data-type="chooseGroup"><small>选择分组</small></a>
+                    <div id="zhsy" class="collapse" data-parent="#accordion_nav">
+                        <ul class="list-group list-group-flush">
+                            <a href="#zhsy_xzfz" class="list-group-item list-group-item-action"
+                               data-toggle="collapse" data-type="chooseGroup">
+                                <small>选择分组</small>
+                            </a>
                         </ul>
                     </div>
+                </dd>
+            </dl>
+        </div>
+        <div class="page-2 container-fluid" style="z-index:1200">
+            <div class="row no-gutters py-3 bg-light text-center">
+                <div class="col-4">
+                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
+                       data-list="#news_list">
+                        <h5>通知公告</h5>
+                    </a>
+                </div>
+                <div class="col-8 dropup">
+                    <a data-toggle="dropdown" href="#">
+                        <h5>课程设计与综合实验</h5>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <a href="#zhsy_xzfz" class="dropdown-item" data-toggle="collapse"
+                           data-type="chooseGroup">
+                            <small>选择分组</small>
+                        </a>
+                    </ul>
                 </div>
             </div>
-        </aside>
+        </div>
+    </aside>
 
-        <div class="aside invisible">占位</div>
+    <div class="aside invisible">占位</div>
 
-        <div id="contents" class="p-3">
-            <div class="card">
-                <header id="contents_header" class="card-header">
-                    <h3 id="contents_title" class="mb-0 text-center">通知公告</h3>
-                </header>
+    <div id="contents" class="p-3">
+        <div class="card">
+            <header id="contents_header" class="card-header">
+                <h3 id="contents_title" class="mb-0 text-center">通知公告</h3>
+            </header>
 
-                <div id="contents_body">
-                    <div id="news" class="collapse show" data-parent="#contents">
-                        <div id="editor_container">
-                            <div id="editor" class="mb-3">
-                                <p>请在此处输入内容···</p>
-                            </div>
-                            <div class="d-flex justify-content-around">
-                                <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
-                                <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="zhsy_xzfz" class="collapse" data-parent="#contents">
-                        <div class="container pt-5" style="height:660px">
-                            <div class="row">
-                                <div class="col-12 col-md-6 mb-3">
-                                    <h4 class="text-center">课程简介</h4>
-                                    <nav class="nav nav-pills mb-3 d-flex justify-content-around">
-                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+            <div id="contents_body">
+                <div id="news" class="collapse show p-3" data-parent="#contents">
+                    &nbsp; &nbsp; &nbsp; &nbsp;请同学们注意，账号是学号，密码是学号加上班级加身份证号后四位。例如，学号16036666，班级160326，后四位为3345，则密码为160366661603263345。</span>
+                    <span style="font-size: 1rem; color: rgb(139, 170, 74);">高工、港澳台及留学生不需要输入身份证后四位。</span></p><p>&nbsp;
+                        &nbsp; &nbsp; &nbsp;本次选择不进行抽签，即选即中。<br>&nbsp; &nbsp; &nbsp; &nbsp;选择分组的结果可以覆盖，以最后一次选择的结果为准。<br>&nbsp;
+                        &nbsp; &nbsp; &nbsp;各分组的上课时间与地点为<span style="color: rgb(139, 170, 74);">第一次</span>课程的时间与地点，后续课程安排由相应分组的老师进行发布，请同学们注意！<br>&nbsp;
+                        &nbsp; &nbsp; &nbsp;课设与综合实验选择的截至时间为<span style="color: rgb(139, 170, 74);">9月1号13：00</span>。<br>
+                    </p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp;温馨提醒：请同学们在系统关闭前登录系统查看自己的分组选择情况，如有问题，请联系导员，高工、港澳台及留学生同学请直接联系3系教务秘书。</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp;祝同学们选课愉快！</p>
+                </div>
+                <div id="zhsy_xzfz" class="collapse" data-parent="#contents">
+                    <div class="container pt-5" style="height:660px">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <h4 class="text-center">课程简介</h4>
+                                <nav class="nav nav-pills mb-3 d-flex justify-content-around">
+                                    <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <a href="#description_<%= index %>"
-                                            class="nav-item nav-link<%= index?'':' active' %>"
-                                            data-toggle="pill">第<%= index+1 %>组</a>
-                                        <% } %>
-                                    </nav>
-                                    <div class="tab-content border rounded p-3">
-                                        <% for( let index = 0; index < groups.length; index++ ) { %>
-                                        <div class="tab-pane fade<%= index?'':' show active' %>"
-                                            id="description_<%= index %>">
+                                           class="nav-item nav-link<%= index ? '' : ' active' %>"
+                                           data-toggle="pill">第<%= index + 1 %>组</a>
+                                    <% } %>
+                                </nav>
+                                <div class="tab-content border rounded p-3">
+                                    <% for( let index = 0; index < groups.length; index++ ) { %>
+                                        <div class="tab-pane fade<%= index ? '' : ' show active' %>"
+                                             id="description_<%= index %>">
                                             <pre><%= groups[index].description %></pre>
                                             <pre class="mb-0 text-primary"><%= groups[index].time %></pre>
                                         </div>
-                                        <% } %>
-                                    </div>
+                                    <% } %>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <h4 class="text-center">分组选择</h4>
-                                    <form action="/choose" method="POST" id="form">
-                                        <input type="hidden" value="<%= user.account %>" name="account">
-                                        <input type="hidden" value="<%= user.direction %>" name="direction">
-                                        <% for( let index = 0; index < groups.length; index++ ) { %>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <h4 class="text-center">分组选择</h4>
+                                <form action="/choose" method="POST" id="form">
+                                    <input type="hidden" value="<%= user.account %>" name="account">
+                                    <input type="hidden" value="<%= user.direction %>" name="direction">
+                                    <% for( let index = 0; index < groups.length; index++ ) { %>
                                         <div class="form-row">
                                             <div class="form-check mb-5 col-8 mx-auto">
                                                 <input class="form-check-input" type="radio" name="group"
-                                                    id="group_<%= index %>" value="<%= index %>"
-                                                    <%= groups[index].chosen==groups[index].capacity? 'disabled': '' %>>
+                                                       id="group_<%= index %>" value="<%= index %>"
+                                                        <%= groups[index].chosen == groups[index].capacity ? 'disabled' : '' %>>
                                                 <label class="form-check-label"
-                                                       for="group_<%= index %>"><span><%= '第'+(index+1)+'组' %></span><span>&emsp;&emsp;<%= '已选/容量：'+groups[index].chosen+'/'+groups[index].capacity %></span>
-                                                    <br><span><%= '老师：'+groups[index].teacher %></span></label>
+                                                       for="group_<%= index %>"><span><%= '第' + (index + 1) + '组' %></span><span>&emsp;&emsp;<%= '已选/容量：' + groups[index].chosen + '/' + groups[index].capacity %></span>
+                                                    <br><span><%= '老师：' + groups[index].teacher %></span></label>
                                             </div>
                                         </div>
-                                        <% } %>
-                                        <div class="form-row justify-content-center align-items-center">
-                                            <button class="btn btn-primary w-50" type="submit">提交</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                    <% } %>
+                                    <div class="form-row justify-content-center align-items-center">
+                                        <button class="btn btn-primary w-50" type="submit">提交</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <footer class="fixed-bottom text-right bg-info page-1">
-        <p class="mr-3 mb-0">北京航空航天大学</p>
-    </footer>
+</div>
 
-    <script src="/bootstrap/others/jquery-3.4.0.js"></script>
-    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script>
-        (function () {
-            $.getScript('/js/wangEditor.min.js').done(() => {
-                const WE = window.wangEditor;
-                const editor = new WE('#editor');
+<footer class="fixed-bottom text-right bg-info page-1">
+    <p class="mr-3 mb-0">北京航空航天大学</p>
+</footer>
 
-                editor.customConfig.uploadImgShowBase64 = true;
-                //editor.customConfig.uploadImgServer=SASEE.URL_UPLOAD;
+<script src="/bootstrap/others/jquery-3.4.0.js"></script>
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function () {
 
-                editor.create();
-
-                $('#editor_clear').click(() => {
-                    editor.txt.clear();
-                });
-                $('#editor_submit').click(() => {
-                    var myform = new FormData();
-                    myform.append('content', editor.txt.html());
-                    myform.append('type', 'notice');
-                    $.ajax({
-                        url: '/upload',
-                        type: 'POST',
-                        cache: false,
-                        data: myform,
-                        processData: false,
-                        contentType: 'text/plain'
-                    }).done(() => {
-                        console.log('successed!');
-                    });
-                });
+        $('a[href="#zhsy_xzfz"]').click(() => {
+            $('#contents_title').text('选择分组');
+        });
+        $('a[href="#news"]').click(() => {
+            $('#contents_title').text('通知公告');
+        });
+        let $form = $('#form');
+        $form.submit((e) => {
+            e.preventDefault();
+            $.post('/choose', {
+                account: $form[0].account.value,
+                direction: $form[0].direction.value,
+                group: $form[0].group.value
+            }).done((data) => {
+                alert(data);
+            }).fail(() => {
+                alert('网络故障，请稍后重试！');
             });
-
-            $('a[href="#zhsy_xzfz"]').click(() => {
-                $('#contents_title').text('选择分组');
-            });
-            $('a[href="#news"]').click(() => {
-                $('#contents_title').text('通知公告');
-            });
-            let $form = $('#form');
-            $form.submit((e) => {
-                e.preventDefault();
-                $.post('/choose', {
-                    account: $form[0].account.value,
-                    direction: $form[0].direction.value,
-                    group: $form[0].group.value
-                }).done((data) => {
-                    let status = Number(data);
-                    if (isNaN(status)) {
-                        alert('出现故障，请稍后重试！');
-                    } else if (status == 0) {
-                        alert('选择分组成功！');
-                    } else if (status == 1) {
-                        alert('该分组已满，请重新选择！');
-                    } else {
-                        alert('您已经选择该分组！');
-                    }
-                }).fail(() => {
-                    alert('网络故障，请稍后重试！');
-                });
-            });
-        })();
-    </script>
+        });
+    })();
+</script>
 </body>
 
 </html>
