@@ -42,12 +42,12 @@ function view(req, res) {
                     scsx: true,
                     zhsy: false
                 } */
-                account:34442525,
+                account: 34442525,
                 profile: 'cai.jpg',
                 name: '某某某',
                 gender: '女',
                 proTitle: '讲师',
-                direction:301,
+                direction: 301,
                 field: '超电磁炮',
                 office: '新主楼F-407',
                 email: '88888888@buaa.edu.cn',
@@ -108,7 +108,7 @@ function view(req, res) {
                     name: '某某某',
                     gender: '女',
                     proTitle: '讲师',
-                    direction:307,
+                    direction: 307,
                     field: '超电磁炮',
                     email: '88888888@buaa.edu.cn'
                 }
@@ -181,7 +181,7 @@ function view(req, res) {
                     name: '某某某',
                     gender: '女',
                     proTitle: '讲师',
-                    direction:301,
+                    direction: 301,
                     field: '超电磁炮',
                     office: '新主楼F-407',
                     email: '88888888@buaa.edu.cn',
@@ -263,4 +263,5 @@ function view(req, res) {
             break;
     }
 }
+
 module.exports = view

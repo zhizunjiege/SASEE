@@ -1,30 +1,25 @@
 const mysql = require("./sql");
 const SqlString = require('sqlstring');
-const aim_table = 'course2017';
 
 
+let group = [
+    ['王', 'duan'],
+    ['yu', 'tao'],
+    ['qian', 'wu'],
+    ['wang', 'xie'],
+    ['chen', 'zhao'],
+    ['li', 'du']
+]
 
 
-let new_course = function () {
-    // write data into database
-    var data = {
-        course_id: 2,
-        course_name: "first",
-        course_category: 403,
-        course_teacher: "diracle",
-        preselected_list: '[]',
-        final_list: '[]',
-        capacity: 4
-    };
-    let sql = "INSERT INTO course2017 SET ?";
-    var sql_ = SqlString.format('INSERT INTO course2017 SET ?', data)
+let select_course = function (group_id, info) {
+    info.group = group_id
+    info.teacher = group[info.category][group_id];
+    let sql_ = SqlString.format('INSERT INTO result SET ?', info);
     mysql.query(sql_, [],function (err, data) {
         if (err) console.log(err);
-    })
-};
 
-let select_course = function (course_id, account) {
-    // update preselected list
+    })
 };
 
 let draw_slots = function () {
@@ -39,7 +34,11 @@ let left_course = function () {
 
 let show_course = function (category, phase) {
     if (phase == 1) {
-
+        let sql = "SELECT COUNT(category) AS selected FROM result where category = ?";
+        mysql.query(sql, category, function (err,data) {
+            if (err) console.log(err);
+            return data[0].selected
+        })
     }
 };
 
@@ -47,4 +46,3 @@ let drop_course = function (course_id, account) {
 
 };
 
-new_course();
