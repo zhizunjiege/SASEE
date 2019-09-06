@@ -23,21 +23,6 @@ var query = function (sql, params, callback) {
     });
 };
 
-// const find = new Promise(function (sql, resolve, reject) {
-//     pool.getConnection(function(err,conn){
-//         if(err){
-//             reject(err);
-//         }else{
-//             conn.query(sql,params,function(none,vals,fields){
-//                 //释放连接
-//                 conn.release();
-//                 //事件驱动回调
-//                 resolve(none,vals,fields);
-//             });
-//         }
-//     });
-// });
-
 
 const find = function (sql, param) {
     return new Promise(function (resolve, reject) {

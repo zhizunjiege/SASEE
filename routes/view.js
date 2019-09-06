@@ -1,3 +1,5 @@
+const mysql = require("./sql");
+
 function view(req, res) {
     switch (req.query.type) {
         case 'newsContent':
@@ -21,39 +23,25 @@ function view(req, res) {
             console.log(req.query.nextPage);
             break;
         case 'userInfo':
-            res.render('teacher/userInfo', {
-                /* account: 17375433,
-                email: '7983479832@qq.com',
-                status: {
-                    specialty: '自动化',
-                    direction: '模式识别',
-                    class: '170326',
-                    stuNum: '17375433',
-                    name: '陈智杰',
-                    gender: '男'
-                },
-                academic: {
-                    gpa: 3.77,
-                    weightAver: 91,
-                    average: 89
-                },
-                qualification: {
-                    bysj: true,
-                    scsx: true,
-                    zhsy: false
-                } */
-                account: 34442525,
-                profile: 'cai.jpg',
-                name: '某某某',
-                gender: '女',
-                proTitle: '讲师',
-                direction: 301,
-                field: '超电磁炮',
-                office: '新主楼F-407',
-                email: '88888888@buaa.edu.cn',
-                tele: '166-6666-6666',
-                resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'
-            });
+            let find_teacher = "SELECT * FROM teacher WHERE account = ?"
+            mysql.find(find_teacher, 1).then(
+                teacher_info =>{
+                    res.render('teacher/userInfo', teacher_info[0])
+
+                        //{account: 34442525,
+                        // profile: 'cai.jpg',
+                        // name: '某某某',
+                        // gender: '女',
+                        // proTitle: '讲师',
+                        // direction: 301,
+                        // field: '超电磁炮',
+                        // office: '新主楼F-407',
+                        // email: '88888888@buaa.edu.cn',
+                        // tele: '166-6666-6666',
+                        // resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'});
+                }
+            );
+
             break;
         case 'submitSubject':
             res.render('teacher/submitSubject', {
