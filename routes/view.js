@@ -252,4 +252,4 @@ function view(req, res) {
     }
 }
 
-module.exports = view
+module.exports = view;

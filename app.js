@@ -9,7 +9,7 @@ const session = require('express-session');
 const login = require("./routes/login");
 const view = require("./routes/view");
 const NotFound = require("./routes/NotFound");
-const upload = require("./routes/upload");
+//const upload = require("./routes/upload");
 //view uses html
 app.set('views', __dirname + '/views');
 app.engine('.ejs', ejs.__express);
@@ -43,10 +43,23 @@ app.get('/cookie', (req, res) => {
     res.send(req.cookies)
 });
 
-app.post('/upload',(req,res)=>{
-    upload(req,res)
-});
+var multer  = require('multer')
+var upload = multer({ dest: 'upload/' });
 
+var multer = require('multer')
+var upload = multer().single('avatar')
+
+app.post('/upload', function (req, res) {
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            console.log(err)
+        } else if (err) {
+            console.log(err);
+        }
+
+        // 一切都好
+    })
+})
 //404
 app.use(function (req, res) {
     NotFound(req,res)

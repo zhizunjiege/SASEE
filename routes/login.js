@@ -32,7 +32,7 @@ function login(req, res) {
         }
     ).then(
        data => {
-           console.log(data)
+           console.log(data);
            let arr = new Array(total);
            for (let i = 0; i < total; i++) {
                delete data[i].id;
