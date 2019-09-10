@@ -1,5 +1,5 @@
-var action = require("./action")
-var mysql = require("./sql")
+var action = require("./action");
+var mysql = require("./sql");
 
 // console.log('here we go');
 // new Promise( resolve => {
@@ -26,4 +26,4 @@ mysql.find(find_teacher, 1).then(
     teacher_info => {
         console.log(teacher_info[0])
     }
-)
+);

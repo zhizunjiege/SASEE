@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const multer = require("multer");
 const app = express();
 const session = require('express-session');
-const upload = multer({dest:'upload/'});
+
 
 const login = require("./routes/login");
 const view = require("./routes/view");
@@ -40,11 +40,13 @@ app.get('/views', (req, res) => {
     view(req,res)
 });
 
-app.get('/cookie', (req, res) => {
-    res.send(req.cookies)
+app.get('/req', (req, res) => {
+    res.send(req)
 });
-
-
+// app.get('/upload', function (req, res) {
+//     res.render('index', {title: "Upload"})
+// })
+const upload = multer({dest:'upload/'});
 app.post('/upload-single',upload.single('my_file'),function (req, res) {
     upload_function(req, res);
 });
