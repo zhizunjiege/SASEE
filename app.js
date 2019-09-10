@@ -2,14 +2,15 @@ const express = require('express');
 const ejs = require('ejs');
 const path = require('path');
 const bodyParser = require('body-parser');
-const cookieParser=require("cookie-parser");
+const multer = require("multer");
 const app = express();
 const session = require('express-session');
+const upload = multer({dest:'upload/'});
 
 const login = require("./routes/login");
 const view = require("./routes/view");
 const NotFound = require("./routes/NotFound");
-//const upload = require("./routes/upload");
+const upload_function = require("./routes/upload");
 //view uses html
 app.set('views', __dirname + '/views');
 app.engine('.ejs', ejs.__express);
@@ -43,23 +44,10 @@ app.get('/cookie', (req, res) => {
     res.send(req.cookies)
 });
 
-var multer  = require('multer')
-var upload = multer({ dest: 'upload/' });
 
-var multer = require('multer')
-var upload = multer().single('avatar')
-
-app.post('/upload', function (req, res) {
-    upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-            console.log(err)
-        } else if (err) {
-            console.log(err);
-        }
-
-        // 一切都好
-    })
-})
+app.post('/upload-single',upload.single('my_file'),function (req, res) {
+    upload_function(req, res);
+});
 //404
 app.use(function (req, res) {
     NotFound(req,res)
