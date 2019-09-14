@@ -3,7 +3,7 @@
     window.SASEE = {
         URL_VIEW: '/views',
         URL_REQUEST: '/request',
-        URL_UPLOAD: '/upload',
+        URL_UPLOAD: '/upload-single',
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
     const SASEE = window.SASEE;

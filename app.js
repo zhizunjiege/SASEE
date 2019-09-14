@@ -47,7 +47,7 @@ app.get('/req', (req, res) => {
 //     res.render('index', {title: "Upload"})
 // })
 const upload = multer({dest:'upload/'});
-app.post('/upload-single',upload.single('my_file'),function (req, res) {
+app.post('/upload-single',upload.single('file_new'),function (req, res) {
     upload_function(req, res);
 });
 //404
