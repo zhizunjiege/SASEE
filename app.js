@@ -1,24 +1,28 @@
 const express = require('express');
-const ejs = require('ejs');
-const path = require('path');
-const bodyParser = require('body-parser');
-const multer = require("multer");
-const app = express();
-const session = require('express-session');
+const Router = express.Router;
+const app = Router();
+const student = Router();
+const teacher = Router();
+const dean = Router();
+const admin = Router();
 
+const path = require('path');
+const multer = require("multer");
+const session = require('express-session');
+const upload = multer({ dest: 'upload/' });
 
 const login = require("./routes/login");
-const view = require("./routes/view");
+const views = require("./routes/views");
 const NotFound = require("./routes/NotFound");
 const upload_function = require("./routes/upload");
-//view uses html
-app.set('views', __dirname + '/views');
-app.engine('.ejs', ejs.__express);
+
+app.set('views', __dirname + '/resourses');
 app.set('view engine', 'ejs');
+
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(session({
-    resave:false,//什么意思
+    resave: false,//什么意思
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
@@ -27,35 +31,34 @@ app.use(session({
     }
 }));
 
-
-app.get('/', function (req, res) {
-    res.render('login', { title: 'paint title' });
+app.get('/', (req, res) => {
+    res.render('/common/views/login');
 });
 
-app.post('/login', function (req, res) {
-    login(req,res);
+app.get('/password', (req, res) => {
+    res.render('/common/views/password');
 });
 
-app.get('/views', (req, res) => {
-    view(req,res)
-});
+(function () {
+    const file = Router();
+    file.post('/upload', upload.single('file_new'), upload_function);
 
-app.get('/req', (req, res) => {
-    res.send(req)
-});
-// app.get('/upload', function (req, res) {
-//     res.render('index', {title: "Upload"})
-// })
-const upload = multer({dest:'upload/'});
-app.post('/upload-single',upload.single('file_new'),function (req, res) {
-    upload_function(req, res);
-});
-//404
-app.use(function (req, res) {
-    NotFound(req,res)
-});
+    student.get('/', login);
+    student.get('/views', views.student);
+    student.post('/file',file);
+    //student.get('/download',download);
+    //student.post('/mail',mail);
+    //student.post('/password',password);
+    //student.post('/choose',choose);
+})();
 
-app.listen(3000, '::', function () {
+app.use('/student', student);
+app.use('/teacher', teacher);
+app.use('/dean', dean);
+app.use('/admin', admin);
+
+app.use(NotFound);
+
+app.listen(3000, '::', () => {
     console.log('express2 is running on localhost:3000')
-
 });

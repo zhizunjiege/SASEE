@@ -1,5 +1,174 @@
 const mysql = require("./sql");
 
+function student(req, res) {
+    let type = req.query.type;
+    let sql_query = '';
+    switch (type) {
+        case 'newsList':
+            //req.query.nextPage表示第几页
+            sql_query='SELECT * FROM notice ORDER BY top DESC,id DESC LIMIT 10 OFFSET '+(req.query.nextPage-1)*10;
+            console.log(req.query.nextPage);
+            break;
+        case 'userInfo':
+            sql_query = 'SELECT * FROM student WHERE account ='+req.session.account;
+            break;
+        case 'subject':
+        case 'subjectList':
+            sql_query='SELECT * FROM subject WHERE direction='+req.session.direction+' ORDER BY date DESC LIMIT 10 OFFSET '+(req.query.nextPage-1)*10;
+            break;
+        case 'subjectContent':
+            sql_query='SELECT * FROM subject WHERE id='+req.query.id;
+            break;
+        case 'mySubject':
+            res.render('student/mySubject', {
+                notice: new Array(5).fill({
+                    top: true,
+                    title: '准备开始开发了啊',
+                    date: '2019/07/09',
+                    content: '准备开始完成任务'
+                }),
+                assignment: [
+                    {
+                        title: '初步探讨',
+                        deadline: '2019/11/13-12:00',
+                        description: '本次任务的目的是完成初步的探讨····',
+                        member: [{
+                            name: '小红',
+                            status: 0,
+                            score: 98
+                        }, {
+                            name: '小明',
+                            status: 0,
+                            score: 100
+                        }, {
+                            name: '小刚',
+                            status: 0,
+                            score: 93
+                        }]
+                    }, {
+                        title: '设计初稿',
+                        deadline: '2019/11/23-08:00',
+                        description: '本次任务的目的是进行进一步的设计，并提交设计初稿····',
+                        member: [{
+                            name: '小红',
+                            status: 2,
+                            score: 38
+                        }, {
+                            name: '小明',
+                            status: 2,
+                            score: 40
+                        }, {
+                            name: '小刚',
+                            status: 2,
+                            score: 53
+                        }]
+                    }, {
+                        title: '最终成品',
+                        deadline: '2019/12/03-00:00',
+                        description: '本次任务的目的是完成最后的组装，形成最终成品····',
+                        member: [{
+                            name: '小红',
+                            status: 1,
+                            score: undefined
+                        }, {
+                            name: '小明',
+                            status: 1,
+                            score: undefined
+                        }, {
+                            name: '小刚',
+                            status: 1,
+                            score: undefined
+                        }]
+                    }
+                ],
+                teacher: {
+                    profile: 'cai.jpg',
+                    name: '某某某',
+                    gender: '女',
+                    proTitle: '讲师',
+                    direction: 301,
+                    field: '超电磁炮',
+                    office: '新主楼F-407',
+                    email: '88888888@buaa.edu.cn',
+                    tele: '166-6666-6666',
+                    resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'
+                },
+                student: (new Array(3)).fill({
+                    email: '7983479832@qq.com',
+                    status: {
+                        specialty: '自动化',
+                        direction: '模式识别',
+                        class: '170326',
+                        stuNum: '17375433',
+                        name: '陈智杰',
+                        gender: '男'
+                    },
+                    academic: {
+                        gpa: 3.77,
+                        weightAver: 91,
+                        average: 89
+                    }
+                }),
+                teacherFiles: [
+                    {
+                        date: '2019/11/20',
+                        file: [
+                            {
+                                name: '可下载文件003.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小红'
+                            }, {
+                                name: '可下载文件004.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小明'
+                            }
+                        ]
+                    }, {
+                        date: '2019/10/24',
+                        file: [
+                            {
+                                name: '可下载文件001.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小明'
+                            }, {
+                                name: '可下载文件002.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小红'
+                            }, {
+                                name: '可下载文件002.doc',
+                                url: '/doc/notice.html',
+                                uploader: '小刚'
+                            }
+                        ]
+                    }
+                ],
+                studentFiles: [
+                    {
+                        date: '2019/12/10',
+                        editable: true,
+                        file: [
+                            '上传的文件003.rar',
+                            '上传的文件004.rar'
+                        ]
+                    }, {
+                        date: '2019/10/28',
+                        editable: false,
+                        file: [
+                            '上传的文件001.zip',
+                            '上传的文件002.zip'
+                        ]
+                    }
+                ]
+            });
+            break;
+        default: break;
+    }
+    if(!sql_query){
+        mysql.find(sql_query).then(data=>res.render(type, data[0]));
+    }else{
+        console.log('查询语句为空！');
+    }
+}
 function view(req, res) {
     switch (req.query.type) {
         case 'newsContent':
@@ -25,20 +194,20 @@ function view(req, res) {
         case 'userInfo':
             let find_teacher = "SELECT * FROM teacher WHERE account = ?"
             mysql.find(find_teacher, 1).then(
-                teacher_info =>{
+                teacher_info => {
                     res.render('teacher/userInfo', teacher_info[0])
 
-                        //{account: 34442525,
-                        // profile: 'cai.jpg',
-                        // name: '某某某',
-                        // gender: '女',
-                        // proTitle: '讲师',
-                        // direction: 301,
-                        // field: '超电磁炮',
-                        // office: '新主楼F-407',
-                        // email: '88888888@buaa.edu.cn',
-                        // tele: '166-6666-6666',
-                        // resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'});
+                    //{account: 34442525,
+                    // profile: 'cai.jpg',
+                    // name: '某某某',
+                    // gender: '女',
+                    // proTitle: '讲师',
+                    // direction: 301,
+                    // field: '超电磁炮',
+                    // office: '新主楼F-407',
+                    // email: '88888888@buaa.edu.cn',
+                    // tele: '166-6666-6666',
+                    // resume: '我是练习时长两年的练习生，我喜欢唱、跳、coding和学习。'});
                 }
             );
 
@@ -243,9 +412,6 @@ function view(req, res) {
                     }
                 ]
             });
-            break;
-        case 'password':
-            res.render('password', null);
             break;
         default:
             break;
