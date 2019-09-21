@@ -6,26 +6,26 @@
 </nav>
 <div class="tab-content p-3">
     <div class="tab-pane fade show active" id="mySubject_notice">
-        <% if (notice.length) { %>
+        <% if (data[0].notice.length) { %>
         <div class="container-fluid">
             <div class="row">
                 <nav class="col-4 list-group nav nav-pills flex-column">
-                    <% for( let index = 0; index < notice.length; index++ ) { %>
+                    <% for( let index = 0; index < data[0].notice.length; index++ ) { %>
                     <a href="#myNotice_<%= index %>"
                         class="list-group-item list-group-item-action nav-link <%= index?'':'active' _%>"
                         data-toggle="pill">
                         <span class="w-50 ellipsis">
-                            <% if (notice[index].top) { %>
+                            <% if (data[0].notice[index].top) { %>
                             <span class="badge badge-pill badge-warning">置顶</span>
-                            <% } %><%= notice[index].title %></span>
-                        <span class="float-right"><%= notice[index].date %></span>
+                            <% } %><%= data[0].notice[index].title %></span>
+                        <span class="float-right"><%= data[0].notice[index].date %></span>
                     </a>
                     <% } %>
                 </nav>
                 <div class="col-8 tab-content border rounded p-3">
-                    <% for( let index = 0; index < notice.length; index++ ) { %>
+                    <% for( let index = 0; index < data[0].notice.length; index++ ) { %>
                     <div class="tab-pane fade <%= index?'':'show active' _%>" id="myNotice_<%= index %>">
-                        <%= notice[index].content %></div>
+                        <%= data[0].notice[index].content %></div>
                     <% } %>
                 </div>
             </div>
@@ -38,21 +38,21 @@
     </div>
     <div class="tab-pane fade" id="mySubject_assignment">
         <% let colorArray=['primary','danger','warning'],statusArray=['已完成','不合格','未完成']; 
-        if (assignment.length) { 
-        for( let index = 0; index < assignment.length; index++ ) { %>
+        if (data[0].assignment.length) { 
+        for( let index = 0; index < data[0].assignment.length; index++ ) { %>
         <div class="card">
             <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#assign_<%= index+1 %>">
                 <h5 class="mb-0 py-2 d-flex justify-content-between">
-                    <span class="w-50 ellipsis">任务<%= index+1 %>:<%= assignment[index].title %></span>
-                    <span>截止日期：<%= assignment[index].deadline %></span>
+                    <span class="w-50 ellipsis">任务<%= index+1 %>:<%= data[0].assignment[index].title %></span>
+                    <span>截止日期：<%= data[0].assignment[index].deadline %></span>
                     <span
-                        class="badge badge-pill badge-<%= colorArray[assignment[index].status] %>"><%= statusArray[assignment[index].status] %></span>
+                        class="badge badge-pill badge-<%= colorArray[data[0].assignment[index].status] %>"><%= statusArray[data[0].assignment[index].status] %></span>
                 </h5>
             </div>
             <div class="collapse" id="assign_<%= index+1 %>" data-parent="#mySubject_assignment">
                 <div class="card-body">
-                    <div><%= assignment[index].description %></div>
-                    <p class="h4 mb-0 text-right">评分：<%= assignment[index].score||'暂无' %></p>
+                    <div><%= data[0].assignment[index].description %></div>
+                    <p class="h4 mb-0 text-right">评分：<%= data[0].assignment[index].score||'暂无' %></p>
                 </div>
             </div>
         </div>
@@ -60,10 +60,10 @@
 
         <div class="progress mt-5">
             <!-- progress-bar-striped progress-bar-animated -->
-            <% for( let j = 0; j < assignment.length; j++ ) { %>
-            <div class="progress-bar bg-<%= colorArray[assignment[j].status] %>"
-                style="width: <%= 100/assignment.length+'%' %>">
-                <%= statusArray[assignment[j].status] %></div>
+            <% for( let j = 0; j < data[0].assignment.length; j++ ) { %>
+            <div class="progress-bar bg-<%= colorArray[data[0].assignment[j].status] %>"
+                style="width: <%= 100/data[0].assignment.length+'%' %>">
+                <%= statusArray[data[0].assignment[j].status] %></div>
             <% } %>
         </div>
         <% } else { %>
@@ -75,7 +75,7 @@
     <div class="tab-pane fade" id="mySubject_info">
         <div class="row justify-content-center mb-1">
             <div class="col-2">
-                <img src="/pictures/<%= teacher.profile %>" alt="头像" class="img-thumbnail float-right"
+                <img src="/pictures/<%= data[0].teacher.profile %>" alt="头像" class="img-thumbnail float-right"
                     style="height:200px">
             </div>
             <div class="col-10">
@@ -83,27 +83,27 @@
                     <tbody class="text-center">
                         <tr>
                             <th>姓名</th>
-                            <td><%= teacher.name %></td>
+                            <td><%= data[0].teacher.name %></td>
                             <th>性别</th>
-                            <td><%= teacher.gender %></td>
+                            <td><%= data[0].teacher.gender %></td>
                         </tr>
                         <tr>
                             <th>方向</th>
-                            <td><%= teacher.direction %></td>
+                            <td><%= data[0].teacher.department_des %></td>
                             <th>职称</th>
-                            <td><%= teacher.proTitle %></td>
+                            <td><%= data[0].teacher.proTitle %></td>
                         </tr>
                         <tr>
                             <th>研究领域</th>
-                            <td><%= teacher.field %></td>
+                            <td><%= data[0].teacher.field %></td>
                             <th>办公地点</th>
-                            <td><%= teacher.office %></td>
+                            <td><%= data[0].teacher.office %></td>
                         </tr>
                         <tr>
                             <th>联系邮箱</th>
-                            <td><%= teacher.email %></td>
+                            <td><%= data[0].teacher.email %></td>
                             <th>联系电话</th>
-                            <td><%= teacher.tele %></td>
+                            <td><%= data[0].teacher.tele %></td>
                         </tr>
                     </tbody>
                 </table>
@@ -112,7 +112,7 @@
         <div>
             <h5>个人简介</h5>
             <div class="p-3 border rounded">
-                <%= teacher.resume %>
+                <%= data[0].teacher.resume %>
             </div>
             <!-- <pre></pre> -->
         </div>
@@ -125,13 +125,13 @@
                         <h5 class="mb-0 text-left">下载文件</h5>
                     </header>
                     <div class="card-body">
-                        <% if (downFiles.length) { 
-                        for( let i = 0; i < downFiles.length; i++ ) { %>
-                        <p class="card-title"><%= downFiles[i].date %></p>
-                        <ul class="list-group list-group-flush <%= i==downFiles.length-1?'':'mb-3' _%>">
-                            <% for( let j = 0; j < downFiles[i].file.length; j++ ) { %>
-                            <a href="<%= downFiles[i].file[j].url %>" class="list-group-item" download><small
-                                    class="w-100 ellipsis"><%= downFiles[i].file[j].name %></small></a>
+                        <% if (data[0].teacherFiles.length) { 
+                        for( let i = 0; i < data[0].teacherFiles.length; i++ ) { %>
+                        <p class="card-title"><%= data[0].teacherFiles[i].date %></p>
+                        <ul class="list-group list-group-flush <%= i==data[0].teacherFiles.length-1?'':'mb-3' _%>">
+                            <% for( let j = 0; j < data[0].teacherFiles[i].file.length; j++ ) { %>
+                            <a href="<%= data[0].teacherFiles[i].file[j].url %>" class="list-group-item" download><small
+                                    class="w-100 ellipsis"><%= data[0].teacherFiles[i].file[j].name %></small></a>
                             <% } %>
                         </ul>
                         <% } %>
@@ -146,13 +146,13 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <% if (upFiles.length) { 
-                        for( let i = 0; i < upFiles.length; i++ ) { %>
-                        <p class="card-title"><%= upFiles[i].date %></p>
-                        <ul class="list-group list-group-flush <%= i==upFiles.length-1?'':'mb-3' _%>">
-                            <% for( let j = 0; j < upFiles[i].file.length; j++ ) { %>
+                        <% if (data[0].studentFiles.length) { 
+                        for( let i = 0; i < data[0].studentFiles.length; i++ ) { %>
+                        <p class="card-title"><%= data[0].studentFiles[i].date %></p>
+                        <ul class="list-group list-group-flush <%= i==data[0].studentFiles.length-1?'':'mb-3' _%>">
+                            <% for( let j = 0; j < data[0].studentFiles[i].file.length; j++ ) { %>
                             <a href="#" class="list-group-item">
-                                <small class="w-100 ellipsis"><%= upFiles[i].file[j] %></small>
+                                <small class="w-100 ellipsis"><%= data[0].studentFiles[i].file[j] %></small>
                             </a>
                             <% } %>
                         </ul>
@@ -170,7 +170,7 @@
                         <ul id="file_edit_menu" class="dropdown-menu text-center w-25">
                             <a href="#file_modal" class="dropdown-item" data-toggle="modal">上传</a>
                             <!-- <div class="dropdown-divider"></div> -->
-                            <% if (upFiles.length) { %>
+                            <% if (data[0].studentFiles.length) { %>
                             <a href="#file_modal" class="dropdown-item" data-toggle="modal">替换</a>
                             <a href="#file_modal" class="dropdown-item" data-toggle="modal">删除</a>
                             <a href="#file_modal" class="dropdown-item" data-toggle="modal">重命名</a>
@@ -208,14 +208,14 @@
 </div>
 
 <div id="form_materials" class="d-none">
-    <% if (upFiles.length) { %>
+    <% if (data[0].studentFiles.length) { %>
     <div id="file_select" class="form-group">
         <select class="custom-select" required>
             <option value="placeholder" selected disabled>请选择一个文件</option>
-            <% for( let i = 0; i < upFiles.length; i++ ) { 
-                for( let j = 0; j < upFiles[i].file.length; j++ ) { 
-                    if (upFiles[i].editable) { %>
-            <option value="<%= upFiles[i].file[j] %>"><%= upFiles[i].date+'--'+upFiles[i].file[j] %></option>
+            <% for( let i = 0; i < data[0].studentFiles.length; i++ ) { 
+                for( let j = 0; j < data[0].studentFiles[i].file.length; j++ ) { 
+                    if (data[0].studentFiles[i].editable) { %>
+            <option value="<%= data[0].studentFiles[i].file[j] %>"><%= data[0].studentFiles[i].date+'--'+data[0].studentFiles[i].file[j] %></option>
             <% }
             }
             } %>

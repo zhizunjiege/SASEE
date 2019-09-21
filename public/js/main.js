@@ -1,9 +1,14 @@
 'use strict';
 (function ($) {
     window.SASEE = {
-        URL_VIEW: '/views',
-        URL_REQUEST: '/request',
-        URL_UPLOAD: '/upload-single',
+        URL_VIEWS: './views',
+        URL_FILE: './file',
+        URL_UPLOAD: './upload',
+        URL_PW:'./password',
+        URL_CHOOSE:'./choose',
+        URL_DOWNLOAD:'./download',
+        URL_EMAIL:'./email',
+        URL_LOGOUT:'./logout',
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
     const SASEE = window.SASEE;
@@ -23,7 +28,7 @@
     };
     SASEE._loadContent = (e, content, type, callback) => {
         document.getElementById('contents_back').onclick = callback;
-        $(content).load(SASEE.URL_VIEW, 'type=' + type + '&num=' + $(e.currentTarget).index(), callback);
+        $(content).load(SASEE.URL_VIEWS, 'type=' + type + '&id=' + $(e.currentTarget).data('id'), callback);
     };
     SASEE.instScroll = (container, path, append, scrollThreshold, elementScroll, loadOnScroll, status, button, loadCallback, appendCallback) => {
         var $infiniteScrollObj = $(container).infiniteScroll({
@@ -71,7 +76,6 @@
     };
     SASEE.instEditor = (container) => {
         if (typeof window.wangEditor == 'undefined') {
-            console.log('ggg');
             
             $.getScript('/js/wangEditor.min.js').done(() => {
                 const WE = window.wangEditor;
@@ -104,10 +108,7 @@
         }
         if ($('#editor_container')[0].parentNode != $(container)[0]) {
             $(container).append($('#editor_container'));
-            console.log('fff');
         }
-        console.log('ddd');
-        
     };
 
     SASEE.fileUpload = (selector) => {
@@ -163,7 +164,7 @@
                 }).appendTo('#contents>div>div').collapse({
                     parent: '#contents',
                     toggle: true
-                }).load(SASEE.URL_VIEW, queryStr);
+                }).load(SASEE.URL_VIEWS, queryStr);
             }
         }
         function _loadNewsContent(e) {
@@ -175,8 +176,9 @@
 
         $('#news_list ul>li').click(_loadNewsContent);
         SASEE.instScroll('.infinite-scroll-container-1', function () {
-            if (this.loadCount + 2 <= $('#news_list').data().page) {
-                return SASEE.URL_VIEW + '?type=newsList&nextPage=' + (this.loadCount + 2);
+            let page=Number($('#news_list').data().page);
+            if (page) {
+                return SASEE.URL_VIEWS + '?type=newsList&nextPage=' + (page+1);
             }
         }, '.list-group-item', 400, '#news_list', false, '.infinite-scroll-status-1', '.infinite-scroll-button-1', null, (e, res, path, items) => {
             $(items).click(_loadNewsContent);

@@ -13,10 +13,10 @@
 
 <body class="container-fluid">
     <header class="row bg-primary text-light justify-content-between fixed-top">
-        <div class="col-6 d-flex align-items-center">
-            <h3 class="mb-0 ml-5">自动化科学与电气工程学院</h3>
+        <div class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex align-items-center">
+            <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
         </div>
-        <div class="col-2 dropdown">
+        <div class="col-12 col-md-5 col-lg-4 col-xl-3 dropdown">
             <div id="account_info"
                 class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around point"
                 data-toggle="dropdown">
@@ -24,14 +24,14 @@
                     width="48px">
                 <div>
                     <div class="h5 my-0"><%= user.name %></div>
-                    <% const identity=['学生','教师','系主任'] %>
+                    <% const identity={'student':'学生','teacher':'教师','dean':'系主任'} %>
                     <span class="badge badge-pill badge-info"><%= identity[user.identity] %></span>
                 </div>
             </div>
             <ul class="dropdown-menu text-center w-75">
                 <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse"
                     data-type="userInfo">个人信息</a>
-                <a href="/logout" class="dropdown-item">退出登陆</a>
+                <a href="./logout" class="dropdown-item">退出登陆</a>
             </ul>
         </div>
     </header>
@@ -51,12 +51,12 @@
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     <div id="bysj" class="collapse" data-parent="#accordion_nav">
                         <ul class="list-group list-group-flush">
-                            <% let hrefArray=['xt','wdkt','ktsh'],contentArray=['选题','我的课题','课题审核']; %>
+                            <% let hrefArray={'student':'xt','teacher':'wdkt','dean':'ktsh'},contentArray={'student':'选题','teacher':'我的课题','dean':'课题审核'}; %>
                             <a href="#bysj_<%= hrefArray[user.identity] %>"
                                 class="list-group-item list-group-item-action" data-toggle="collapse"
                                 data-type="subject" data-sub="true" data-content="#subject_content"
                                 data-list="#subject_list"><small><%= contentArray[user.identity] %></small></a>
-                            <% if(!user.identity) { %>
+                            <% if(user.identity=='student') { %>
                             <a href="#bysj_wdkt" class="list-group-item list-group-item-action" data-toggle="collapse"
                                 data-type="mySubject"><small>我的课题</small></a>
                             <% } %>
@@ -108,21 +108,20 @@
 
                 <div id="contents_body">
                     <div id="news" class="collapse show" data-parent="#contents">
-                        <% let pageNum=Math.ceil(news.num/10)
-                    if (pageNum) { %>
+                        <% if (news.length) { %>
                         <div id="news_content" class="col-10 mx-auto scroll-container" style="display: none"></div>
-                        <div id="news_list" class="scroll-container" data-num=<%= news.num %> data-page=<%= pageNum %>>
+                        <div id="news_list" class="scroll-container" data-page="1">
                             <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container-1">
-                                <% for( let index = 0; index < news.contents.length; index++ ) { %>
-                                <li class="list-group-item list-group-item-action">
+                                <% for( let index = 0; index < news.length; index++ ) { %>
+                                <li class="list-group-item list-group-item-action" data-id="<%= news[index].id %>">
                                     <a href="#" class="float-left w-50 ellipsis">
-                                        <% if (news.contents[index].top) { %>
+                                        <% if (news[index].top) { %>
                                         <span class="badge badge-pill badge-warning">置顶</span>
                                         <% } %>
-                                        <%= news.contents[index].title %>
+                                        <%= news[index].title %>
                                     </a>
                                     <span
-                                        class="float-right"><%= news.contents[index].publisher+'--'+news.contents[index].category+'--'+news.contents[index].date %>
+                                        class="float-right"><%= news[index].publisher+'--'+news[index].category+'--'+news[index].date %>
                                     </span>
                                 </li>
                                 <% } %>

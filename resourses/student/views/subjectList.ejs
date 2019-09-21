@@ -1,12 +1,12 @@
 <table>
     <tbody>
-        <% for( let index = 0; index < contents.length; index++ ) { %>
-        <tr class="infinite-scroll-item-2">
-            <td class="text-left"><a href="#"><%= contents[index].title %></a></td>
-            <td><%= contents[index].direction %></td>
-            <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>
-            <td><%= contents[index].publisher %></td>
-            <td><%= contents[index].date %></td>
+        <% for( let index = 0; index < data.length; index++ ) { %>
+        <tr class="infinite-scroll-item-2"  data-id="<%= data[index].id %>">
+            <td class="text-left"><a href="#"><%= data[index].title %></a></td>
+            <td><%= data[index].group %></td>
+            <td><%= data[index].chosen+'/'+data[index].capacity %></td>
+            <td><%= data[index].teacher %></td>
+            <td><%= data[index].submitTime %></td>
         </tr>
         <% } %>
     </tbody>

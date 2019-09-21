@@ -1,10 +1,10 @@
 const express = require('express');
 const Router = express.Router;
-const app = Router();
-const student = Router();
-const teacher = Router();
-const dean = Router();
-const admin = Router();
+const app = express();
+const student = express();
+const teacher = express();
+const dean = express();
+const admin = express();
 
 const path = require('path');
 const multer = require("multer");
@@ -18,6 +18,7 @@ const upload_function = require("./routes/upload");
 
 app.set('views', __dirname + '/resourses');
 app.set('view engine', 'ejs');
+app.set('strict routing',true);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
@@ -32,22 +33,25 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-    res.render('/common/views/login');
+    res.render('common/views/login');
 });
 
 app.get('/password', (req, res) => {
-    res.render('/common/views/password');
+    res.render('common/views/password');
 });
 
 (function () {
     const file = Router();
+    student.set('views',__dirname+'/resourses/student/views/');
+
     file.post('/upload', upload.single('file_new'), upload_function);
 
-    student.get('/', login);
+    student.post('/', login);
     student.get('/views', views.student);
     student.post('/file',file);
+    //student.get('/logout',logout);
     //student.get('/download',download);
-    //student.post('/mail',mail);
+    //student.post('/email',email);
     //student.post('/password',password);
     //student.post('/choose',choose);
 })();
@@ -60,5 +64,5 @@ app.use('/admin', admin);
 app.use(NotFound);
 
 app.listen(3000, '::', () => {
-    console.log('express2 is running on localhost:3000')
+    console.log('express is running on localhost:3000')
 });

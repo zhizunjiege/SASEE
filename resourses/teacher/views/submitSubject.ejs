@@ -12,7 +12,7 @@
                     <label class="col-3 col-form-label" for="subject_direction">方向</label>
                     <select class="custom-select form-control col-9" name="direction" id="subject_direction" required>
                         <option value="" selected disabled>请选择一个方向</option>
-                        <% for( let index = 301; index <= 308; index++ ) { %>
+                        <% for( let index = 1; index <= 5; index++ ) { %>
                         <option value="<%= index %>"><%= index %></option>
                         <% } %>              
                     </select>

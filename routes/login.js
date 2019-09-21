@@ -2,58 +2,27 @@ const mysql = require("./sql");
 
 
 function login(req, res) {
-    const account = req.body.account;
-    const password = req.body.password;
-    let login_sql = "SELECT * FROM student WHERE account = ?";
-    const top_sql = "SELECT * FROM notice where top = 1 order by id DESC ";
-    const nomal_sql = "SELECT * FROM notice where top = 0 order by id DESC limit ?";
-    const count_top = "SELECT COUNT(id) AS total FROM notice where top = 1";
-    let and_sql = "SELECT * FROM notice where top = 1 order by id DESC;SELECT * FROM notice where top = 0 order by id DESC limit ?";
-    let name,profile,identity;
-    let total = 0;
-    mysql.find(login_sql, account)
+    let account = Number(req.body.account),
+        password = req.body.password,
+        identity = req.body.identity;
+
+    //验证用户输入的代码
+
+    let sql_login = "SELECT name,gender,password FROM ?? user WHERE account = ?;SELECT * FROM news ORDER BY top DESC,date DESC LIMIT 10 OFFSET 0";
+    mysql.find(sql_login, [identity, account])
         .then(data => {
-                if (password === data[0].password) {
-                    req.session.account = account;
-                    name = data[0].name;
-                    profile = data[0].profile;
-                    identity = data[0].identity;
-
-                    return mysql.find(count_top, [])
-
-                }
+            let user = data[0][0],
+                news=data[1];
+            if (password === user.password) {
+                req.session.account = account;
+                user.profile =  (user.gender =='男' ? 'man' : 'woman') + '_' + identity + '.png';
+                user.identity = identity;
+                res.render(process.cwd() + '/resourses/common/views/user', {user,news})
             }
-        ).then(
-            data =>{
-                total = data[0].total;
-                return mysql.find(top_sql, 10-total);
-            },err=>{
-                console.log(err);
-        }
-    ).then(
-       data => {
-           console.log(data);
-           let arr = new Array(total);
-           for (let i = 0; i < total; i++) {
-               delete data[i].id;
-               //delete data[i].title;
-               delete data[i].url;
-               arr[i] = data[i]
-           }
-           res.render('user', {
-                   user: {
-                       name: name,
-                       profile: profile,
-                       identity: identity,
-                   },
-                   news: {
-                       num: 34,
-                       contents: arr
-                   }
-
-               }
-           )
-       })
+            else {
+                res.send('密码错误，请返回输入重试！');
+            }
+        });
 }
 
 module.exports = login;

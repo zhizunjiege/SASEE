@@ -5,62 +5,63 @@
         </tr>
         <tr>
             <th scope="row">账号</th>
-            <td><%= account %></td>
+            <td><%= data[0].account %></td>
             <th scope="row">密码</th>
             <td>········</td>
             <th scope="row">邮箱</th>
-            <td><%= email %></td>
+            <td><%= data[0].email %></td>
         </tr>
         <tr>
             <th scope="col" colspan="6">学籍信息</th>
         </tr>
         <tr>
-            <th scope="row">专业</th>
-            <td><%= status.specialty %></td>
-            <th scope="row">方向</th>
-            <td><%= status.direction %></td>
-            <th scope="row">小班</th>
-            <td><%= status.class %></td>
+            <th scope="row">学号</th>
+            <td><%= data[0].stuNum %></td>
+            <th scope="row">姓名</th>
+            <td><%= data[0].name %></td>
+            <th scope="row">性别</th>
+            <td><%= data[0].gender %></td>
         </tr>
         <tr>
-            <th scope="row">学号</th>
-            <td><%= status.stuNum %></td>
-            <th scope="row">姓名</th>
-            <td><%= status.name %></td>
-            <th scope="row">性别</th>
-            <td><%= status.gender %></td>
+            <th scope="row">专业</th>
+            <td><%= data[0].specialty_des %></td>
+            <th scope="row">方向</th>
+            <td><%= data[0].group_des %></td>
+            <th scope="row">小班</th>
+            <td><%= data[0].class %></td>
         </tr>
         <tr>
             <th scope="col" colspan="6">学业信息</th>
         </tr>
         <tr>
             <th scope="row">GPA</th>
-            <td><%= academic.gpa %></td>
+            <td><%= data[0].GPA %></td>
             <th scope="row">加权平均分</th>
-            <td><%= academic.weightAver %></td>
+            <td><%= data[0].WAS %></td>
             <th scope="row">算术平均分</th>
-            <td><%= academic.average %></td>
+            <td><%= data[0].AMS %></td>
         </tr>
         <tr>
             <th scope="col" colspan="6">资格审查</th>
         </tr>
-        <% var conv=(flag)=>flag?'有':'无';
-        var warn=(flag)=>flag?'':'text-warning' %>
+        <% var conv=(flag)=>flag>-1?'有':'无';
+        var warn=(flag)=>flag>-1?'':'text-warning' %>
         <tr>
             <th scope="row">毕业设计</th>
-            <td class="<%= warn(qualification.bysj) %>"><%= conv(qualification.bysj) %></td>
+            <td class="<%= warn(data[0].bysj) %>"><%= conv(data[0].bysj) %></td>
             <th scope="row">生产实习</th>
-            <td class="<%= warn(qualification.scsx) %>"><%= conv(qualification.scsx) %></td>
+            <td class="<%= warn(data[0].scsx) %>"><%= conv(data[0].scsx) %></td>
             <th scope="row">综合实验</th>
-            <td class="<%= warn(qualification.zhsy) %>"><%= conv(qualification.zhsy) %></td>
+            <td class="<%= warn(data[0].zhsy) %>"><%= conv(data[0].zhsy) %></td>
         </tr>
     </tbody>
 </table>
 <div class="d-flex justify-content-around">
-    <button id="edit_info" data-toggle="modal" data-target="#edit_info_modal" class="btn btn-primary w-25">绑定邮箱</button>
+    <button id="edit_email" data-toggle="modal" data-target="#edit_email_modal"
+        class="btn btn-primary w-25">绑定邮箱</button>
     <button id="modifyPW" data-toggle="modal" data-target="#modifyPW_modal" class="btn btn-primary w-25">修改密码</button>
 </div>
-<div id="edit_info_modal" class="modal fade" tabindex="-1">
+<div id="edit_email_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -68,7 +69,7 @@
                 <button class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <div class="modal-body">
-                <form action="" name="edit_info" id="edit_info_form" method="POST" class="text-center">
+                <form action="" name="edit_email" id="edit_email_form" method="POST" class="text-center">
                     <div class="form-group form-row">
                         <label for="email" class="col-4 col-form-label">邮箱：</label>
                         <input name="email" id="email" type="email" class="col-8 form-control" placeholder="请输入邮箱地址"
@@ -131,16 +132,20 @@
 <script>
     (function ($, SASEE) {
         const regexpStr = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
-        $('#pin_code_send').click(function () {
-            let email = this.form.email.value;
+        let $pin_code_send = $('#pin_code_send'),
+            $edit_email_form = $('#edit_email_form'),
+            $modifyPW_form = $('#modifyPW_form');
+
+        $pin_code_send.click(()=>{
+            let email = $pin_code_send[0].form.email.value;
             if (regexpStr.test(email)) {
-                $.get(SASEE.URL_REQUEST, {
+                $.get(SASEE.URL_EMAIL, {
                     type: 'sendPinCode',
                     email: email
                 }).done(() => {
-                    console.log(this);
+                    console.log($pin_code_send[0]);
                     let count = 60;
-                    this.setAttribute('disabled', true);
+                    $pin_code_send[0].setAttribute('disabled', true);
                     function countDown(target) {
                         if (count) {
                             target.value = String(count--) + 's';
@@ -152,20 +157,26 @@
                             target.removeAttribute('disabled')
                         }
                     }
-                    countDown(this);
+                    countDown($pin_code_send[0]);
                 });
-            }else{
+            } else {
                 alert('请输入有效的邮箱地址！');
             }
         });
 
-        $('#modifyPW_form').submit(function (e) {
+        $edit_email_form.submit((e)=>{
             e.preventDefault();
-            if (this.newPW.value == this.repeatPW.value) {
-                this.action = SASEE.URL_REQUEST;
-                this.submit();
+            $edit_email_form[0].action=SASEE.URL_EMAIL;
+            $edit_email_form[0].submit();
+        });
+
+        $modifyPW_form.submit((e)=>{
+            e.preventDefault();
+            if ($modifyPW_form[0].newPW.value == $modifyPW_form[0].repeatPW.value) {
+                $modifyPW_form[0].action = SASEE.URL_PW;
+                $modifyPW_form[0].submit();
             } else {
-                $(this.repeatPW).popover({
+                $($modifyPW_form[0].repeatPW).popover({
                     // selector: '#pw_repeat',
                     html: true,
                     content: '<h5 class="text-warning">密码不匹配！</h5>',
