@@ -55,7 +55,36 @@ app.get('/password', (req, res) => {
     //student.post('/password',password);
     //student.post('/choose',choose);
 })();
+(function () {
+    const file = Router();
+    teacher.set('views',__dirname+'/resourses/teacher/views/');
 
+    file.post('/upload', upload.single('file_new'), upload_function);
+
+    teacher.post('/', login);
+    teacher.get('/views', views.teacher);
+    teacher.post('/file',file);
+    //teacher.get('/logout',logout);
+    //teacher.get('/download',download);
+    //teacher.post('/email',email);
+    //teacher.post('/password',password);
+    //teacher.post('/choose',choose);
+})();
+(function () {
+    const file = Router();
+    dean.set('views',__dirname+'/resourses/dean/views/');
+
+    file.post('/upload', upload.single('file_new'), upload_function);
+
+    dean.post('/', login);
+    dean.get('/views', views.dean);
+    dean.post('/file',file);
+    //dean.get('/logout',logout);
+    //dean.get('/download',download);
+    //dean.post('/email',email);
+    //dean.post('/password',password);
+    //dean.post('/choose',choose);
+})();
 app.use('/student', student);
 app.use('/teacher', teacher);
 app.use('/dean', dean);

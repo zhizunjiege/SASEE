@@ -1,5 +1,6 @@
+<% let subject=data[0][0],teacher=data[1][0]; %>
 <header class="text-center text-info border-bottom border-secondary my-3">
-    <h3 class="mb-0"><%= data[0].title %></h3>
+    <h3 class="mb-0"><%= subject.title %></h3>
 </header>
 <div class="row text-center mb-3">
     <div class="col-5">
@@ -12,13 +13,13 @@
             <tbody>
                 <tr>
                     <th colspan="2">方向</th>
-                    <td colspan="2"><%= data[0].group_des %></td>
+                    <td colspan="2"><%= subject.group_des %></td>
                 </tr>
                 <tr>
                     <th>容量</th>
-                    <td><%= data[0].capacity %>人</td>
+                    <td><%= subject.capacity %>人</td>
                     <th>已选</th>
-                    <td><%= data[0].chosen %>人</td>
+                    <td><%= subject.chosen %>人</td>
                 </tr>
             </tbody>
         </table>
@@ -33,19 +34,19 @@
             <tbody>
                 <tr>
                     <th>姓名</th>
-                    <td><%= data[0].teacher.name %></td>
+                    <td><%= teacher.name %></td>
                     <th>性别</th>
-                    <td><%= data[0].teacher.gender %></td>
+                    <td><%= teacher.gender %></td>
                     <th>方向</th>
-                    <td><%= data[0].teacher.department %></td>
+                    <td><%= teacher.department_des %></td>
                     <th>职称</th>
-                    <td><%= data[0].teacher.proTitle %></td>
+                    <td><%= teacher.proTitle %></td>
                 </tr>
                 <tr>
                     <th>研究方向</th>
-                    <td colspan="3"><%= data[0].teacher.field %></td>
+                    <td colspan="3"><%= teacher.field %></td>
                     <th>联系邮箱</th>
-                    <td colspan="3"><%= data[0].teacher.email %></td>
+                    <td colspan="3"><%= teacher.email %></td>
                 </tr>
             </tbody>
         </table>
@@ -54,18 +55,18 @@
 <div class="mb-3">
     <h5>课题简介</h5>
     <div class="p-3 border rounded">
-        <%- data[0].introduction _%>
+        <%- subject.introduction _%>
     </div>
     <!-- <pre></pre> -->
 </div>
 
 <div class="mb-3">
     <h5>相关资料</h5>
-    <% if (data[0].materials) { %>
+    <% if (subject.materials) { %>
     <ul class="list-group list-group-flush">
-        <% for( let index = 0; index < data[0].materials.length; index++ ) { %>
-        <a href="<%= data[0].materials[index].url %>" class="list-group-item"
-            download><small><%= data[0].materials[index].filename %></small></a>
+        <% for( let index = 0; index < subject.materials.length; index++ ) { %>
+        <a href="<%= subject.materials[index].url %>" class="list-group-item"
+            download><small><%= subject.materials[index].name %></small></a>
         <% } %>
     </ul>
     <% } else { %>
@@ -75,8 +76,8 @@
     <% } %>
 </div>
 <div class="d-flex justify-content-around font-italic mb-3">
-    <h4>发布时间：<%= data[0].submitTime %></h4>
-    <h4>最后修改：<%= data[0].lastModifiedTime %></h4>
+    <h4>发布时间：<%= subject.submitTime %></h4>
+    <h4>最后修改：<%= subject.lastModifiedTime %></h4>
 </div>
 <div class="mb-3 d-flex justify-content-end">
     <button type="button" class="btn btn-primary w-25" data-toggle="modal"

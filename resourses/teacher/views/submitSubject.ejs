@@ -2,7 +2,7 @@
 <div class="container">
     <div class="row">
         <div class="col-6 mx-auto mt-3 text-center">
-            <form action="/request/fbkt" method="POST" id="subject_form">
+            <form action="" method="POST" id="subject_form">
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_title">名称</label>
                     <input class="form-control col-9" type="text" name="title" id="subject_title" placeholder="课题名称"
@@ -59,6 +59,12 @@
 </div>
 <script>
     (function ($, SASEE) {
+        let $subject_form=$('#subject_form');
+        $subject_form.submit((e)=>{
+            e.preventDefault();
+            $subject_form[0].action=SASEE.URL_SUBMIT;
+            $subject_form[0].submit();
+        });
         SASEE.fileUpload('#subject_form');
         SASEE.fileCheck('#subject_file');
     })(window.jQuery, window.SASEE);

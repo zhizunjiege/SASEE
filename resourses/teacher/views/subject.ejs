@@ -1,26 +1,29 @@
 <div id="subject_content" class="col-12 mx-auto scroll-container" style="display: none"></div>
 <div id="subject_list" class="px-3">
     <div class="card-deck">
-        <% for( let i = 0; i < contents.length; i++ ) { %>
-        <div class="card mt-4 list-group-item-action" data-type="<%= contents[i].title?'mySubject':'submitSubject' %>"">
-            <header class="card-header ellipsis">课题<%= i+1 %>:<%= contents[i].title||'暂无' %></header>
+        <% for( let i = 0; i < data.length; i++ ) { %>
+        <div class="card mt-4 list-group-item-action" data-type="<%= data[i].id?'mySubject':'submitSubject' %>" data-id="<%= data[i].id %>">
+            <header class="card-header ellipsis">课题<%= i+1 %>:<%= data[i].title||'暂无' %></header>
             <div class="card-body row">
                 <p class="card-text" style="height:100px;">
-                    <%= contents[i].introduction||'暂无' %></p>
+                    <%= data[i].introduction||'暂无' %></p>
                 <table class="table mb-0 text-center">
                     <tbody>
                         <tr>
                             <th>容量</th>
-                            <td><%= contents[i].capacity||'--' %></td>
+                            <td><%= data[i].capacity %></td>
                         </tr>
                         <tr>
                             <th>已选</th>
-                            <td><%= contents[i].chosen||'--' %></td>
+                            <td><%= data[i].chosen %></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="card-footer"><small class="text-muted"><%= contents[i].date||'----/--/--' %></small></div>
+            <div class="card-footer d-flex justify-content-between">
+                <small class="text-muted"><%= data[i].submitTime||'----/--/--' %></small>
+                <small class="text-muted"><%= data[i].lastModifiedTime||'----/--/--' %></small>
+            </div>
         </div>
         <% } %>
     </div>
