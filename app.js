@@ -9,7 +9,16 @@ const admin = express();
 const path = require('path');
 const multer = require("multer");
 const session = require('express-session');
-const upload = multer({ dest: 'upload/' });
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'upload/');
+        },
+        filename: (req, file, cb) => {
+            cb(null, file.originalname);
+        }
+    })
+});
 
 const login = require("./routes/login");
 const views = require("./routes/views");
@@ -18,12 +27,12 @@ const upload_function = require("./routes/upload");
 
 app.set('views', __dirname + '/resourses');
 app.set('view engine', 'ejs');
-app.set('strict routing',true);
+app.set('strict routing', true);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
-    resave: false,//什么意思
+    resave: false,//每次请求都保存session，即使session未更改
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
@@ -42,13 +51,13 @@ app.get('/password', (req, res) => {
 
 (function () {
     const file = Router();
-    student.set('views',__dirname+'/resourses/student/views/');
+    student.set('views', __dirname + '/resourses/student/views/');
 
     file.post('/upload', upload.single('file_new'), upload_function);
 
     student.post('/', login);
     student.get('/views', views.student);
-    student.post('/file',file);
+    student.use('/file', file);
     //student.get('/logout',logout);
     //student.get('/download',download);
     //student.post('/email',email);
@@ -57,13 +66,13 @@ app.get('/password', (req, res) => {
 })();
 (function () {
     const file = Router();
-    teacher.set('views',__dirname+'/resourses/teacher/views/');
+    teacher.set('views', __dirname + '/resourses/teacher/views/');
 
     file.post('/upload', upload.single('file_new'), upload_function);
 
     teacher.post('/', login);
     teacher.get('/views', views.teacher);
-    teacher.post('/file',file);
+    teacher.use('/file', file);
     //teacher.get('/logout',logout);
     //teacher.get('/download',download);
     //teacher.post('/email',email);
@@ -72,13 +81,13 @@ app.get('/password', (req, res) => {
 })();
 (function () {
     const file = Router();
-    dean.set('views',__dirname+'/resourses/dean/views/');
+    dean.set('views', __dirname + '/resourses/dean/views/');
 
     file.post('/upload', upload.single('file_new'), upload_function);
 
     dean.post('/', login);
     dean.get('/views', views.dean);
-    dean.post('/file',file);
+    dean.use('/file', file);
     //dean.get('/logout',logout);
     //dean.get('/download',download);
     //dean.post('/email',email);

@@ -2,10 +2,10 @@
     window.SASEE = {
         URL_VIEWS: './views',
         URL_FILE: './file',
-        URL_UPLOAD: './upload',
+        URL_UPLOAD: '/upload',
+        URL_DOWNLOAD: '/download',
         URL_PW: './password',
         URL_CHOOSE: './choose',
-        URL_DOWNLOAD: './download',
         URL_EMAIL: './email',
         URL_LOGOUT: './logout',
         URL_SUBMIT:'./submit',
@@ -94,7 +94,7 @@
                     myform.append('content', editor.txt.html());
                     myform.append('type', 'notice');
                     $.ajax({
-                        url: SASEE.URL_UPLOAD,
+                        url: SASEE.URL_FILE+SASEE.URL_UPLOAD,
                         type: 'POST',
                         cache: false,
                         data: myform,
@@ -117,7 +117,7 @@
             e.preventDefault();
             var formData = new FormData($fileForm[0]);
             $.ajax({
-                url: SASEE.URL_UPLOAD,
+                url: SASEE.URL_FILE+SASEE.URL_UPLOAD,
                 type: 'POST',
                 cache: false,
                 data: formData,

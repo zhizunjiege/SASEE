@@ -18,7 +18,7 @@ function student(req, res) {
     let file = req.query.type,
         nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
         account = Number(req.session.account) || 0,
-        direction = Number(req.session.direction) || 0,
+        group = Number(req.session.group) || 0,
         id = Number(req.query.id) || 0,
         sql_query = '',
         param;
@@ -40,7 +40,7 @@ function student(req, res) {
         case 'subject':
         case 'subjectList':
             sql_query = 'SELECT bysj.id,title,`group`,chosen,capacity,submitTime,t.name teacher FROM bysj,teacher t WHERE `group`=? AND bysj.teacher=t.id ORDER BY lastModifiedTime DESC LIMIT 10 OFFSET ?';
-            param = [direction, nextPageOffset];
+            param = [group, nextPageOffset];
             break;
         case 'subjectContent':
             sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT `name`,gender,proTitle,field,email,department_des FROM teacher t,bysj b WHERE b.id=? AND b.teacher=t.id';
@@ -59,7 +59,7 @@ function teacher(req, res) {
     let file = req.query.type,
         nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
         account = Number(req.session.account) || 0,
-        direction = Number(req.session.direction) || 0,
+        // group = Number(req.session.group) || 0,//teacher不需要group
         id = Number(req.query.id) || 0,
         sql_query = '',
         param;
@@ -83,7 +83,7 @@ function teacher(req, res) {
             param = account;
             break;
         case 'mySubject':
-            sql_query = 'SELECT notice,assignment,teacherFiles,studentFiles FROM bysj b WHERE b.id=?;SELECT specialty_des,`name`,gender,s.group_des,class,stuNum,GPA,email,WAS,AMS FROM student s,bysj b WHERE b.id=? AND s.id IN (b.stu1,b.stu2,b.stu3,b.stu4,b.stu5)';
+            sql_query = 'SELECT notice,assignment,teacherFiles,studentFiles FROM bysj b WHERE b.id=?;SELECT specialty_des,`name`,gender,s.group_des,class,stuNum,GPA,email,WAS,AMS FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_selected,CONCAT("",s.id))';
             param = [id, id];
             break;
         default: break;
@@ -95,7 +95,7 @@ function dean(req, res) {
     let file = req.query.type,
         nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
         account = Number(req.session.account) || 0,
-        direction = Number(req.session.direction) || 0,
+        group = Number(req.session.group) || 0,
         id = Number(req.query.id) || 0,
         sql_query = '',
         param;
@@ -117,7 +117,7 @@ function dean(req, res) {
         case 'subject':
         case 'subjectList':
             sql_query = 'SELECT bysj.id,title,`group`,chosen,capacity,submitTime,t.name teacher FROM bysj,teacher t WHERE `group`=? AND bysj.teacher=t.id ORDER BY lastModifiedTime DESC LIMIT 10 OFFSET ?';
-            param = [direction, nextPageOffset];
+            param = [group, nextPageOffset];
             break;
         case 'subjectContent':
             sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT `name`,gender,proTitle,field,email,department_des FROM teacher t,bysj b WHERE b.id=? AND b.teacher=t.id';
