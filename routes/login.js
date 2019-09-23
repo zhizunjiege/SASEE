@@ -11,6 +11,10 @@ function login(req, res) {
     let sql_login = "SELECT name,gender,password,`group` FROM ?? user WHERE account = ?;SELECT * FROM news ORDER BY top DESC,date DESC LIMIT 10 OFFSET 0";
     mysql.find(sql_login, [identity, account])
         .then(data => {
+            if(data[0].length==0){
+                res.send('账号不存在，请返回输入重试！');
+                return;
+            }
             let user = data[0][0],
                 news=data[1];
             if (password === user.password) {

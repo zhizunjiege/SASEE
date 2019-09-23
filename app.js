@@ -19,7 +19,7 @@ const upload = multer({
         }
     })
 });
-
+const period = require('./routes/period');
 const login = require("./routes/login");
 const views = require("./routes/views");
 const NotFound = require("./routes/NotFound");
@@ -28,6 +28,8 @@ const upload_function = require("./routes/upload");
 app.set('views', __dirname + '/resourses');
 app.set('view engine', 'ejs');
 app.set('strict routing', true);
+
+period.init();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
@@ -65,19 +67,23 @@ app.get('/password', (req, res) => {
     //student.post('/choose',choose);
 })();
 (function () {
-    const file = Router();
+    const subject = require('./routes/subject'),
+        routerFile = Router(),
+        routerSubject = Router();
     teacher.set('views', __dirname + '/resourses/teacher/views/');
 
-    file.post('/upload', upload.single('file_new'), upload_function);
+    routerFile.post('/upload', upload.single('file_new'), upload_function);
+    routerSubject.post('/submit', upload.single('file'), subject.submit);
 
     teacher.post('/', login);
     teacher.get('/views', views.teacher);
-    teacher.use('/file', file);
+    teacher.use('/file', period.permiss([9]), routerFile);
+    teacher.post('/subject', routerSubject);
+
     //teacher.get('/logout',logout);
     //teacher.get('/download',download);
     //teacher.post('/email',email);
     //teacher.post('/password',password);
-    //teacher.post('/choose',choose);
 })();
 (function () {
     const file = Router();

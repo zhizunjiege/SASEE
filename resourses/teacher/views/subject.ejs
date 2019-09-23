@@ -1,40 +1,45 @@
 <div id="subject_content" class="col-12 mx-auto scroll-container" style="display: none"></div>
 <div id="subject_list" class="px-3">
-    <div class="card-deck">
-        <% for( let i = 0; i < data.length; i++ ) { %>
-        <div class="card mt-4 list-group-item-action" data-type="<%= data[i].id?'mySubject':'submitSubject' %>" data-id="<%= data[i].id %>">
-            <header class="card-header ellipsis">课题<%= i+1 %>:<%= data[i].title||'暂无' %></header>
-            <div class="card-body row">
-                <p class="card-text" style="height:100px;">
-                    <%= data[i].introduction||'暂无' %></p>
-                <table class="table mb-0 text-center">
-                    <tbody>
-                        <tr>
-                            <th>容量</th>
-                            <td><%= data[i].capacity %></td>
-                        </tr>
-                        <tr>
-                            <th>已选</th>
-                            <td><%= data[i].chosen %></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="card-footer d-flex justify-content-between">
-                <small class="text-muted"><%= data[i].submitTime||'----/--/--' %></small>
-                <small class="text-muted"><%= data[i].lastModifiedTime||'----/--/--' %></small>
-            </div>
-        </div>
-        <% } %>
+    <div class="d-flex justify-content-around" id="card_container">
+        <% if(data.length){
+        for( let i = 0; i < data.length; i++ ) { %>
+        <%- include('subject-card',data[i]) %>
+        <% } } %>
     </div>
+    <% if (data.length<3) { %>
+    <div class="d-flex justify-content-center align-items-center" style="height: 250px">
+        <button class="btn btn-primary col-3" id="subject_submit">发布课题</button>
+    </div>
+    <% } %>
 </div>
 <script>
     (function ($, SASEE) {
-        $('.card-deck').children().click((e)=>{
-            SASEE._loadContent(e, '#subject_content', 'mySubject', (e) => {
-                SASEE._contentBarToggle();
-                SASEE._subjectToggle('#subject_content', '#subject_list');
-            })
+        let _toggle = (e) => {
+            SASEE._subjectToggle('#subject_content', '#subject_list');
+        };
+        let cb = (e, param) => {
+            SASEE._loadContent(e, '#subject_content', param, _toggle)
+        };
+        $('#card_container').children().click((e) => {
+            cb(e, {
+                type: 'mySubject',
+                id: $(e.currentTarget).data('id')
+            });
         });
+
+        let $subject_submit = $('#subject_submit');
+        if ($subject_submit.length) {
+            $subject_submit.click((e) => {
+                let $subject_form = $('#subject_form');
+                if ($subject_form.length > 0) {
+                    $subject_form[0].reset();
+                    _toggle();
+                } else {
+                    cb(e, {
+                        type: 'submitSubject'
+                    })
+                }
+            });
+        }
     })(window.jQuery, window.SASEE);
 </script>

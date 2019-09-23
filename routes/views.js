@@ -14,6 +14,10 @@ function _render(res, sql_query, param, file) {
     }
 }
 
+function common(req,res){
+
+}
+
 function student(req, res) {
     let file = req.query.type,
         nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
@@ -79,7 +83,7 @@ function teacher(req, res) {
             param = account;
             break;
         case 'subject':
-            sql_query = 'SELECT bysj.id,title,chosen,capacity,introduction,submitTime,lastModifiedTime FROM bysj,teacher t WHERE account=? AND bysj.id IN (t.bysj1,t.bysj2,t.bysj3)';
+            sql_query = 'SELECT b.id,title,chosen,capacity,introduction,submitTime,lastModifiedTime FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))';
             param = account;
             break;
         case 'mySubject':
@@ -132,4 +136,4 @@ function dean(req, res) {
 function admin(req, res) {
 
 }
-module.exports = { student, teacher, dean, admin };
+module.exports = {common, student, teacher, dean, admin };

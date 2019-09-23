@@ -1,14 +1,19 @@
 (function ($) {
     window.SASEE = {
         URL_VIEWS: './views',
+
         URL_FILE: './file',
         URL_UPLOAD: '/upload',
         URL_DOWNLOAD: '/download',
+
         URL_PW: './password',
         URL_CHOOSE: './choose',
         URL_EMAIL: './email',
         URL_LOGOUT: './logout',
-        URL_SUBMIT:'./submit',
+
+        URL_SUBJECT:'./subject',
+        URL_SUBMIT:'/submit',
+
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
     const SASEE = window.SASEE;
@@ -18,6 +23,7 @@
         $('#contents_title').toggle();
     };
     SASEE._subjectToggle = (content, list, flag) => {
+        SASEE._contentBarToggle();
         if (flag) {
             $(content).hide();
             $(list).show();
@@ -26,9 +32,9 @@
             $(list).toggle();
         }
     };
-    SASEE._loadContent = (e, content, type, callback) => {
+    SASEE._loadContent = (e, content, param, callback) => {
         document.getElementById('contents_back').onclick = callback;
-        $(content).load(SASEE.URL_VIEWS, 'type=' + type + '&id=' + $(e.currentTarget).data('id'), callback);
+        $(content).load(SASEE.URL_VIEWS, 'type=' + param.type + (param.id?'&id=' + param.id:''), callback);
     };
     SASEE.instScroll = (container, path, append, scrollThreshold, elementScroll, loadOnScroll, status, button, loadCallback, appendCallback) => {
         var $infiniteScrollObj = $(container).infiniteScroll({
@@ -111,25 +117,19 @@
         }
     };
 
-    SASEE.fileUpload = (selector) => {
+    SASEE.fileUpload = (selector,url,done,fail,always) => {
         var $fileForm = $(selector);
         $fileForm.submit((e) => {
             e.preventDefault();
             var formData = new FormData($fileForm[0]);
             $.ajax({
-                url: SASEE.URL_FILE+SASEE.URL_UPLOAD,
+                url: url,
                 type: 'POST',
                 cache: false,
                 data: formData,
                 processData: false,
                 contentType: false
-            }).done(() => {
-                console.log('done!');
-
-            }).fail(() => {
-                console.log('failed!');
-
-            });
+            }).done(done).fail(fail).always(always);
         });
     };
     SASEE.fileCheck = (selector) => {

@@ -1,4 +1,3 @@
-<% if (ability) { %>
 <div class="container">
     <div class="row">
         <div class="col-6 mx-auto mt-3 text-center">
@@ -9,12 +8,12 @@
                         required>
                 </div>
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_direction">方向</label>
-                    <select class="custom-select form-control col-9" name="direction" id="subject_direction" required>
+                    <label class="col-3 col-form-label" for="subject_group">方向</label>
+                    <select class="custom-select form-control col-9" name="group" id="subject_group" required>
                         <option value="" selected disabled>请选择一个方向</option>
                         <% for( let index = 1; index <= 5; index++ ) { %>
                         <option value="<%= index %>"><%= index %></option>
-                        <% } %>              
+                        <% } %>
                     </select>
                 </div>
                 <div class="form-group form-row">
@@ -22,18 +21,9 @@
                     <input class="form-control col-9" type="number" name="capacity" id="subject_capacity"
                         placeholder="可容纳人数" required>
                 </div>
-                <!-- <div class="form-group form-row">
-                    <div id="editor" class="mb-3">
-                        <p>请在此处输入内容···</p>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
-                        <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
-                    </div>
-                </div> -->
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_description">简介</label>
-                    <textarea name="description" id="subject_description" class="form-control col-9" rows="5"
+                    <label class="col-3 col-form-label" for="subject_introduction">简介</label>
+                    <textarea name="introduction" id="subject_introduction" class="form-control col-9" rows="5"
                         placeholder="请填写相关说明···" required></textarea>
                 </div>
                 <div class="form-group form-row">
@@ -59,18 +49,12 @@
 </div>
 <script>
     (function ($, SASEE) {
-        let $subject_form=$('#subject_form');
-        $subject_form.submit((e)=>{
-            e.preventDefault();
-            $subject_form[0].action=SASEE.URL_SUBMIT;
-            $subject_form[0].submit();
+        SASEE.fileUpload('#subject_form',SASEE.URL_SUBJECT+ SASEE.URL_SUBMIT, (data) => {
+            $('#card_container').append(data);
+            SASEE._subjectToggle('#subject_content', '#subject_list');
+        }, () => {
+            console.log('failed!');
         });
-        SASEE.fileUpload('#subject_form');
         SASEE.fileCheck('#subject_file');
     })(window.jQuery, window.SASEE);
 </script>
-<% } else { %>
-<div class="d-flex justify-content-center" style="height: 250px">
-    <h1 class="text-muted align-self-center">发布课题时间已过。</h1>
-</div>
-<% } %>

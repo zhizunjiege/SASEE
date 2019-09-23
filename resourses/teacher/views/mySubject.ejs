@@ -276,7 +276,11 @@
             $('#file_edit_type').val(fileEditType[index]);
         });
 
-        SASEE.fileUpload('#file_form');
+        SASEE.fileUpload('#file_form',SASEE.URL_FILE+SASEE.URL_UPLOAD,(data)=>{
+            alert(data);
+        },(err)=>{
+            alert(err);
+        });
         SASEE.fileCheck('#file_new_input');
 
         SASEE.instEditor('#myNotice');
