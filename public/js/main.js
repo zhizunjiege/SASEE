@@ -6,9 +6,8 @@
         function _loadFrame($target) {
             let href = $target.attr('href');
             let data = $target[0].dataset;
-            let type = data.type ? 'type=' + data.type : '';
+            let type = data.type ? '/' + data.type : '';
             if (!$(href).length) {
-                let queryStr = type;
                 $('<div>', {
                     "id": href.substring(1),
                     "class": "collapse",
@@ -16,25 +15,29 @@
                 }).appendTo('#contents>div>div').collapse({
                     parent: '#contents',
                     toggle: true
-                }).load(SASEE.URL_VIEWS, queryStr);
+                }).load(SASEE.URL_VIEWS+type);
             }
         }
         function _loadNewsContent(e) {
-            SASEE._loadContent(e, '#news_content', 'newsContent', (e) => {
-                SASEE._contentBarToggle();
+            SASEE._loadContent(e, '#news_content', {
+                type:'newsContent',
+                id:$(e.currentTarget).data('id')
+            }, (e) => {
                 SASEE._subjectToggle('#news_content', '#news_list');
             })
         }
 
         $('#news_list ul>li').click(_loadNewsContent);
-        SASEE.instScroll('.infinite-scroll-container-1', function () {
+
+        SASEE.instScroll('.infinite-scroll-container-1',  () =>{
             let page = Number($('#news_list').data().page);
             if (page) {
-                return SASEE.URL_VIEWS + '?type=newsList&nextPage=' + (page + 1);
+                return SASEE.URL_VIEWS + '/newsList?nextPage=' + (page + 1);
             }
         }, '.list-group-item', 400, '#news_list', false, '.infinite-scroll-status-1', '.infinite-scroll-button-1', null, (e, res, path, items) => {
             $(items).click(_loadNewsContent);
         });
+
         $('#_toggle_user_info,#navigator a[href="#news"],#navigator ul>a').each((index, element) => {
             var $element = $(element);
             $element.click((e) => {

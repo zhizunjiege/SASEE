@@ -6,13 +6,19 @@
         URL_UPLOAD: '/upload',
         URL_DOWNLOAD: '/download',
 
-        URL_PW: './password',
-        URL_CHOOSE: './choose',
         URL_EMAIL: './email',
-        URL_LOGOUT: './logout',
+        URL_PINCODE:'/sendPinCode',
+        URL_NOTICE:'/sendNotice',
 
-        URL_SUBJECT:'./subject',
-        URL_SUBMIT:'/submit',
+        URL_INFO:'./info',
+
+        URL_LOGOUT: './logout',
+        URL_PW: './password',
+
+        URL_SUBJECT: './subject',
+        URL_SUBMIT: '/submit',
+
+        URL_CHOOSE: './choose',
 
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
@@ -34,7 +40,7 @@
     };
     SASEE._loadContent = (e, content, param, callback) => {
         document.getElementById('contents_back').onclick = callback;
-        $(content).load(SASEE.URL_VIEWS, 'type=' + param.type + (param.id?'&id=' + param.id:''), callback);
+        $(content).load(SASEE.URL_VIEWS + '/' + param.type, param.id ? 'id=' + param.id : '', callback);
     };
     SASEE.instScroll = (container, path, append, scrollThreshold, elementScroll, loadOnScroll, status, button, loadCallback, appendCallback) => {
         var $infiniteScrollObj = $(container).infiniteScroll({
@@ -100,7 +106,7 @@
                     myform.append('content', editor.txt.html());
                     myform.append('type', 'notice');
                     $.ajax({
-                        url: SASEE.URL_FILE+SASEE.URL_UPLOAD,
+                        url: SASEE.URL_FILE + SASEE.URL_UPLOAD,
                         type: 'POST',
                         cache: false,
                         data: myform,
@@ -117,7 +123,7 @@
         }
     };
 
-    SASEE.fileUpload = (selector,url,done,fail,always) => {
+    SASEE.fileUpload = (selector, url, done, fail, always) => {
         var $fileForm = $(selector);
         $fileForm.submit((e) => {
             e.preventDefault();
@@ -148,4 +154,13 @@
             }
         });
     };
+
+    SASEE.formSubmit=(selector,url,done,fail,always)=>{
+        let $form = $(selector);
+        $form.submit((e) => {
+            e.preventDefault();
+            $.post(url,$form.serialize()).done(done).fail(fail).always(always);
+        });
+    };
+
 })(window.jQuery);

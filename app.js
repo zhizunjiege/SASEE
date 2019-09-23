@@ -24,6 +24,7 @@ const login = require("./routes/login");
 const views = require("./routes/views");
 const NotFound = require("./routes/NotFound");
 const upload_function = require("./routes/upload");
+const email = require('./routes/email');
 
 app.set('views', __dirname + '/resourses');
 app.set('view engine', 'ejs');
@@ -68,21 +69,30 @@ app.get('/password', (req, res) => {
 })();
 (function () {
     const subject = require('./routes/subject'),
-        routerFile = Router(),
-        routerSubject = Router();
+        fileRouter = Router(),
+        subjectRouter = Router(),
+        emailRouter = Router();
     teacher.set('views', __dirname + '/resourses/teacher/views/');
 
-    routerFile.post('/upload', upload.single('file_new'), upload_function);
-    routerSubject.post('/submit', upload.single('file'), subject.submit);
-
     teacher.post('/', login);
-    teacher.get('/views', views.teacher);
-    teacher.use('/file', period.permiss([9]), routerFile);
-    teacher.post('/subject', routerSubject);
+    teacher.use('/views', views.common(Router), views.teacher(Router, period.permiss));
+
+    fileRouter.post('/upload', upload.single('file_new'), upload_function);
+    teacher.use('/file', period.permiss([9]), fileRouter);
+
+    subjectRouter.post('/submit', period.permiss([1]), upload.single('file'), subject.submit);
+    subjectRouter.post('./modify', period.permiss([1, 3]), upload.single('file'), subject.modify);
+    teacher.use('/subject', subjectRouter);
+
+    emailRouter.get('/sendPinCode', email.sendPinCode);
+    emailRouter.post('/setEmailAddr',email.setEmailAddr);
+    teacher.use('/email', emailRouter);
+
+    teacher.post('/info', (req, res) => {
+        console.log(req.body);
+    });
 
     //teacher.get('/logout',logout);
-    //teacher.get('/download',download);
-    //teacher.post('/email',email);
     //teacher.post('/password',password);
 })();
 (function () {
