@@ -21,7 +21,6 @@ function upload(req, res) {
     let my_path = './upload/new/';
     mkdir(my_path);
 //重命名文件 加上文件后缀
-    //fs.renameSync('./upload/' + file.filename, './upload/' + file.originalname);
     let readableStream = fs.createReadStream('./upload/' + file.filename);
     let writeableStream = fs.createWriteStream(my_path + file.originalname);
 // 可以通过使用可读流的函数pipe()接入到可写流中
