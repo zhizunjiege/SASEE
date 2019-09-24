@@ -1,3 +1,4 @@
+<button id="modifyPW" data-toggle="modal" data-target="#modifyPW_modal" class="btn btn-primary w-25">修改密码</button>
 <div id="modifyPW_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -33,9 +34,9 @@
 </div>
 
 <script>
-    (function ($, SASEE) {        
+    (function ($, SASEE) {
         let $modifyPW_form = $('#modifyPW_form');
-        $modifyPW_form.submit((e)=>{
+        $modifyPW_form.submit((e) => {
             e.preventDefault();
             if ($modifyPW_form[0].newPW.value == $modifyPW_form[0].repeatPW.value) {
                 $modifyPW_form[0].action = SASEE.URL_PW;

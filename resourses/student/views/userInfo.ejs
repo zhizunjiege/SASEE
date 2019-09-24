@@ -57,10 +57,6 @@
     </tbody>
 </table>
 <div class="d-flex justify-content-around">
-    <button id="edit_email" data-toggle="modal" data-target="#edit_email_modal"
-        class="btn btn-primary w-25">绑定邮箱</button>
-    <button id="modifyPW" data-toggle="modal" data-target="#modifyPW_modal" class="btn btn-primary w-25">修改密码</button>
+    <%- include('../../common/views/setEmailAddr') %>
+    <%- include('../../common/views/modifyPW') %>
 </div>
-
-<%- include('../../common/views/setEmailAddr') %>
-<%- include('../../common/views/modifyPW') %>

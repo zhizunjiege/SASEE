@@ -1,3 +1,4 @@
+<button id="edit_email" data-toggle="modal" data-target="#edit_email_modal" class="btn btn-primary w-25">绑定邮箱</button>
 <div id="edit_email_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -63,11 +64,11 @@
                 alert('请输入有效的邮箱地址！');
             }
         });
-        
-        SASEE.formSubmit('#edit_email_form', SASEE.URL_EMAIL + '/setEmailAddr',(data)=>{
+
+        SASEE.formSubmit('#edit_email_form', SASEE.URL_EMAIL + '/setEmailAddr', (data) => {
             alert(data);
             $('#edit_email_modal').modal('hide');
-        },(data)=>{
+        }, (data) => {
             alert(data);
         });
     })(window.jQuery, window.SASEE);
