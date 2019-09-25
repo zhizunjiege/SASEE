@@ -1,4 +1,5 @@
-const mysql = require("./sql");
+let identity = "";
+const mysql = require("{}/sql".format(identity));
 const SendMail = require('./SendMail');
 //根据 新建、修改的不同，表单有差距，新建的话，没有id这一属性
 function change(account, category, content) {
