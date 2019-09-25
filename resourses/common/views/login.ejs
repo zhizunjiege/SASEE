@@ -22,8 +22,8 @@
     <!--将登陆信息提交到/login-->
     <div class="container" id="container">
         <div class="row align-items-center justify-content-center" id="row">
-            <div class="col-4">
-                <form action="/login" method="POST">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+                <form action="" method="POST">
                     <div class="form-group form-row">
                         <label class="col-3 col-form-label" for="account">账号：</label>
                         <input class="form-control col-9" type="number" name="account" id="account"
@@ -37,21 +37,21 @@
 
                     <div class="form-group form-row justify-content-around">
                         <div class="form-check form-check-inline">
-                            <input type="radio" name="identity" value="0" id="identity-s" class="form-check-input"
+                            <input type="radio" name="identity" value="student" id="identity-s" class="form-check-input"
                                 checked>
                             <label for="identity-s" class="form-check-label">Student</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="radio" name="identity" value="1" id="identity-t" class="form-check-input">
+                            <input type="radio" name="identity" value="teacher" id="identity-t" class="form-check-input">
                             <label for="identity-t" class="form-check-label">Teacher</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="radio" name="identity" value="2" id="identity-d" class="form-check-input">
+                            <input type="radio" name="identity" value="dean" id="identity-d" class="form-check-input">
                             <label for="identity-d" class="form-check-label">Dean</label>
                         </div>
                     </div>
                     <div class="form-row justify-content-between align-items-center mb-3">
-                        <a href="/views?type=password">忘记密码</a>
+                        <a href="/password">忘记密码</a>
                         <button class="btn btn-primary w-50" type="submit">登陆</button>
                     </div>
                 </form>
@@ -62,6 +62,20 @@
 
     <script src="/bootstrap/others/jquery-3.4.0.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function(){
+            var $form=$(document.forms[0]);
+            console.log($form);
+            
+            $form.submit((event)=>{
+                event.preventDefault();
+                $form[0].action='/'+$form[0].identity.value+'/';
+                $form[0].submit();
+            });
+            console.log($form);
+            
+        })();
+    </script>
 </body>
 
 </html>

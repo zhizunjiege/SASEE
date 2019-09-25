@@ -8,7 +8,9 @@ function change(account, category, content) {
     let max_id = "SELECT id FROM scheme where account = ? order by id DESC";
     mysql.find(max_id, account).then(scheme_data => {
         if (scheme_data.length === 0) IsNew = true;
-        generated = category.toString() + account.toString() + ((scheme_data.length === 0) ? '01' : (scheme_data[0].id + 1).toString());
+        //
+
+        generated = category.toString()  + ((scheme_data.length === 0) ? '01' : (scheme_data[0].id + 1).toString());
         console.log(generated);
     }, err => {
         console.log(err);
@@ -33,7 +35,7 @@ function display_teacher(account) {
 }
 
 function display_admin(category) {
-    let my_sub_scheme = "SELECT * FROM scheme WHERE category = ?"
+    let my_sub_scheme = "SELECT * FROM scheme WHERE category = ?";
     mysql.find(my_sub_scheme, category).then(sub => {
         console.log(sub);
     })

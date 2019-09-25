@@ -1,3 +1,4 @@
+<% let subject=data[0][0],teacher=data[1][0]; %>
 <header class="text-center text-info border-bottom border-secondary my-3">
     <h3 class="mb-0"><%= subject.title %></h3>
 </header>
@@ -12,7 +13,7 @@
             <tbody>
                 <tr>
                     <th colspan="2">方向</th>
-                    <td colspan="2"><%= subject.direction %></td>
+                    <td colspan="2"><%= subject.group_des %></td>
                 </tr>
                 <tr>
                     <th>容量</th>
@@ -37,7 +38,7 @@
                     <th>性别</th>
                     <td><%= teacher.gender %></td>
                     <th>方向</th>
-                    <td><%= teacher.direction %></td>
+                    <td><%= teacher.department_des %></td>
                     <th>职称</th>
                     <td><%= teacher.proTitle %></td>
                 </tr>
@@ -65,7 +66,7 @@
     <ul class="list-group list-group-flush">
         <% for( let index = 0; index < subject.materials.length; index++ ) { %>
         <a href="<%= subject.materials[index].url %>" class="list-group-item"
-            download><small><%= subject.materials[index].filename %></small></a>
+            download><small><%= subject.materials[index].name %></small></a>
         <% } %>
     </ul>
     <% } else { %>
@@ -90,15 +91,15 @@
                 <button class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <div class="modal-body">
-                <form action="" method="POST">
+                <form action="" id="subject_check_form" method="POST">
                     <div class="form-group form-row">
-                        <input name="number" type="hidden" value="<%= subject.number %>">
+                        <input name="number" type="hidden" value="<%= data.number %>">
                         <input name="check" id="subject_check_pw" type="password" class="form-control"
                             placeholder="请输入密码" pattern="\w{8,16}" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
                         <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary col-3" id="subject_check_submit">提交</button>
+                        <button type="submit" class="btn btn-primary col-3">提交</button>
                     </div>
                 </form>
             </div>
@@ -108,10 +109,11 @@
 
 <script>
     (function ($, SASEE) {
-        $('#subject_check_submit').click(function (e) {
+        let $subject_check_form=$('#subject_check_form');
+        $subject_check_form.submit((e)=>{
             e.preventDefault();
-            this.form.action = SASEE.URL_REQUEST;
-            this.form.submit();
+            $subject_check_form[0].action = SASEE.URL_CHOOSE;
+            $subject_check_form[0].submit();
         });
     })(window.jQuery, window.SASEE);
 </script>

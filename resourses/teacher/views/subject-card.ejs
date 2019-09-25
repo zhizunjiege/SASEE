@@ -1,0 +1,23 @@
+<div class="card w-25 mt-4 list-group-item-action" data-id="<%= id %>">
+    <header class="card-header ellipsis"><%= title||'暂无标题' %></header>
+    <div class="card-body row">
+        <p class="card-text" style="height:100px;">
+            <%= introduction||'暂无介绍' %></p>
+        <table class="table mb-0 text-center">
+            <tbody>
+                <tr>
+                    <th>容量</th>
+                    <td><%= capacity||0 %></td>
+                </tr>
+                <tr>
+                    <th>已选</th>
+                    <td><%= chosen||0 %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+        <small class="text-muted">发布于<%= submitTime||'----/--/--' %></small>
+        <small class="text-muted">修改于<%= lastModifiedTime||'----/--/--' %></small>
+    </div>
+</div>

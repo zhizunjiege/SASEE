@@ -1,8 +1,6 @@
-<% var subjectNum=num;
-var pageNum=Math.ceil(num/10);
- if (pageNum) { %>
+<% if (data.length) { %>
 <div id="subject_content" class="col-12 mx-auto scroll-container" style="display: none"></div>
-<div id="subject_list" class="scroll-container" data-num=<%= num %> data-page=<%= pageNum %>>
+<div id="subject_list" class="scroll-container" data-page="1">
     <table class="table table-hover text-center col-10 mx-auto table-fixed">
         <thead class="thead-light">
             <tr>
@@ -14,13 +12,13 @@ var pageNum=Math.ceil(num/10);
             </tr>
         </thead>
         <tbody class="infinite-scroll-container-2">
-            <% for( let index = 0; index < contents.length; index++ ) { %>
-            <tr class="infinite-scroll-item-2 point">
-                <td class="text-left"><a href="#"><%= contents[index].title %></a></td>
-                <td><%= contents[index].direction %></td>
-                <td><%= contents[index].chosen+'/'+contents[index].capacity %></td>
-                <td><%= contents[index].publisher %></td>
-                <td><%= contents[index].date %></td>
+            <% for( let index = 0; index < data.length; index++ ) { %>
+            <tr class="infinite-scroll-item-2 point" data-id="<%= data[index].id %>">
+                <td class="text-left"><a href="#"><%= data[index].title %></a></td>
+                <td><%= data[index].group %></td>
+                <td><%= data[index].chosen+'/'+data[index].capacity %></td>
+                <td><%= data[index].teacher %></td>
+                <td><%= data[index].submitTime %></td>
             </tr>
             <% } %>
         </tbody>
@@ -43,8 +41,9 @@ var pageNum=Math.ceil(num/10);
         }
         $('.infinite-scroll-item-2').click(_loadSubjectContent);
         SASEE.instScroll('.infinite-scroll-container-2', function () {
-            if (this.loadCount + 2 <= $('#subject_list').data().page) {
-                return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (this.loadCount + 2);
+            let page=Number($('#subject_list').data().page);
+            if (page) {
+                return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (page+1);
             }
         }, '.infinite-scroll-item-2', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
             $(items).click(_loadSubjectContent);

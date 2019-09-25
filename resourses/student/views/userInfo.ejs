@@ -1,0 +1,66 @@
+<table class="table table-bordered table-fixed text-center col-11 mx-auto">
+    <tbody>
+        <tr>
+            <th scope="col" colspan="6">账户信息</th>
+        </tr>
+        <tr>
+            <th scope="row">账号</th>
+            <td><%= data[0].account %></td>
+            <th scope="row">密码</th>
+            <td>········</td>
+            <th scope="row">邮箱</th>
+            <td><%= data[0].email %></td>
+        </tr>
+        <tr>
+            <th scope="col" colspan="6">学籍信息</th>
+        </tr>
+        <tr>
+            <th scope="row">学号</th>
+            <td><%= data[0].stuNum %></td>
+            <th scope="row">姓名</th>
+            <td><%= data[0].name %></td>
+            <th scope="row">性别</th>
+            <td><%= data[0].gender %></td>
+        </tr>
+        <tr>
+            <th scope="row">专业</th>
+            <td><%= data[0].specialty_des %></td>
+            <th scope="row">方向</th>
+            <td><%= data[0].group_des %></td>
+            <th scope="row">小班</th>
+            <td><%= data[0].class %></td>
+        </tr>
+        <tr>
+            <th scope="col" colspan="6">学业信息</th>
+        </tr>
+        <tr>
+            <th scope="row">GPA</th>
+            <td><%= data[0].GPA %></td>
+            <th scope="row">加权平均分</th>
+            <td><%= data[0].WAS %></td>
+            <th scope="row">算术平均分</th>
+            <td><%= data[0].AMS %></td>
+        </tr>
+        <tr>
+            <th scope="col" colspan="6">资格审查</th>
+        </tr>
+        <% var conv=(flag)=>flag>-1?'有':'无';
+        var warn=(flag)=>flag>-1?'':'text-warning' %>
+        <tr>
+            <th scope="row">毕业设计</th>
+            <td class="<%= warn(data[0].bysj) %>"><%= conv(data[0].bysj) %></td>
+            <th scope="row">生产实习</th>
+            <td class="<%= warn(data[0].scsx) %>"><%= conv(data[0].scsx) %></td>
+            <th scope="row">综合实验</th>
+            <td class="<%= warn(data[0].zhsy) %>"><%= conv(data[0].zhsy) %></td>
+        </tr>
+    </tbody>
+</table>
+<div class="d-flex justify-content-around">
+    <button id="edit_email" data-toggle="modal" data-target="#edit_email_modal"
+        class="btn btn-primary w-25">绑定邮箱</button>
+    <button id="modifyPW" data-toggle="modal" data-target="#modifyPW_modal" class="btn btn-primary w-25">修改密码</button>
+</div>
+
+<%- include('../../common/views/setEmailAddr') %>
+<%- include('../../common/views/modifyPW') %>
