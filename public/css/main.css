@@ -97,6 +97,14 @@ td, .ellipsis {
     height: 660px;
 }
 
+.alert{
+    position: fixed;
+    z-index: 2000;
+    left:50%;
+    top:25%;
+    transform: translate(-50%,-50%);
+}
+
 ::-webkit-scrollbar {
     display: none
 }

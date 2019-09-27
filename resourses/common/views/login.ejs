@@ -14,6 +14,14 @@
         #row {
             height: 100%;
         }
+
+        .alert {
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
     <title>登陆</title>
 </head>
@@ -42,7 +50,8 @@
                             <label for="identity-s" class="form-check-label">Student</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="radio" name="identity" value="teacher" id="identity-t" class="form-check-input">
+                            <input type="radio" name="identity" value="teacher" id="identity-t"
+                                class="form-check-input">
                             <label for="identity-t" class="form-check-label">Teacher</label>
                         </div>
                         <div class="form-check form-check-inline">
@@ -55,6 +64,7 @@
                         <button class="btn btn-primary w-50" type="submit">登陆</button>
                     </div>
                 </form>
+                <%- include('./alert') %>
             </div>
         </div>
 
@@ -63,17 +73,20 @@
     <script src="/bootstrap/others/jquery-3.4.0.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
-        (function(){
-            var $form=$(document.forms[0]);
-            console.log($form);
-            
-            $form.submit((event)=>{
-                event.preventDefault();
-                $form[0].action='/'+$form[0].identity.value+'/';
-                $form[0].submit();
+        (function () {
+            let $form = $(document.forms[0]);
+            $form.submit((e) => {
+                e.preventDefault();
+                $.post('/login', $form.serialize()).done((data, textStatus, xhr) => {
+                    window.location.href = xhr.getResponseHeader('Location');
+                }).fail(xhr => {
+                    $('.alert>span').text(xhr.responseText);
+                    $('.alert-modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                });
             });
-            console.log($form);
-            
         })();
     </script>
 </body>

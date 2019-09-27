@@ -9,18 +9,18 @@
             <div class="modal-body">
                 <form action="" name="modifyPW" id="modifyPW_form" method="POST" class="text-center">
                     <div class="form-group form-row">
-                        <label for="pw_old" class="col-4 col-form-label">旧密码：</label>
-                        <input name="oldPW" id="pw_old" type="password" class="col-8 form-control" pattern="\w{8,16}"
+                        <label for="oldPW" class="col-4 col-form-label">旧密码：</label>
+                        <input name="oldPW" id="oldPW" type="password" class="col-8 form-control" pattern="\w{8,16}"
                             placeholder="请输入旧密码" required>
                     </div>
                     <div class="form-group form-row">
-                        <label for="pw_new" class="col-4 col-form-label">新密码：</label>
-                        <input name="newPW" id="pw_new" type="password" class="col-8 form-control" pattern="\w{8,16}"
+                        <label for="newPW" class="col-4 col-form-label">新密码：</label>
+                        <input name="newPW" id="newPW" type="password" class="col-8 form-control" pattern="\w{8,16}"
                             placeholder="请输入新密码" required>
                     </div>
                     <div class="form-group form-row">
-                        <label for="pw_repeat" class="col-4 col-form-label">重复密码：</label>
-                        <input name="repeatPW" id="pw_repeat" type="password" class="col-8 form-control"
+                        <label for="repeaPW" class="col-4 col-form-label">重复密码：</label>
+                        <input name="repeatPW" id="repeaPW" type="password" class="col-8 form-control"
                             pattern="\w{8,16}" placeholder="请重新输入新密码" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
@@ -32,23 +32,44 @@
         </div>
     </div>
 </div>
-
+<div class="modal p-3" id="alert_modal">
+    <div class="alert alert-primary">
+        <h4 class="alert-heading">修改密码成功，请重新登陆！</h4>
+        <p>将在<strong id="jump_counter" class="px-1">5</strong>秒后自动跳转至登陆界面,点击<a href="/" class="alert-link">此处</a>立即跳转。</p>
+    </div>
+</div>
 <script>
     (function ($, SASEE) {
-        let $modifyPW_form = $('#modifyPW_form');
-        $modifyPW_form.submit((e) => {
-            e.preventDefault();
-            if ($modifyPW_form[0].newPW.value == $modifyPW_form[0].repeatPW.value) {
-                $modifyPW_form[0].action = SASEE.URL_PW;
-                $modifyPW_form[0].submit();
-            } else {
-                $($modifyPW_form[0].repeatPW).popover({
+        SASEE.formSubmit({
+            selector: '#modifyPW_form',
+            url: SASEE.URL_PW,
+            validate: $form => {
+                return $form[0].newPW.value == $form[0].repeatPW.value;
+            },
+            ifNotValid: $form => {
+                $($form[0].repeatPW).popover({
                     // selector: '#pw_repeat',
                     html: true,
                     content: '<h5 class="text-warning">密码不匹配！</h5>',
                     container: '#modifyPW_modal',
                     placement: 'top'
                 }).popover('toggle');
+            },
+            done: msg => {
+                SASEE.counter({
+                    count:5,
+                    doing:count=>{
+                        $('#jump_counter').text(count);
+                    },
+                    done:()=>{
+                        window.location.href = '/';
+                    }
+                });
+                $('#modifyPW_modal').modal('hide');
+                $('#alert_modal').modal({
+                    backdrop:'static',
+                    keyboard:false
+                });
             }
         });
     })(window.jQuery, window.SASEE);

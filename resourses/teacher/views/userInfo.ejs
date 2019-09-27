@@ -62,7 +62,7 @@
                             </div>
                             <div class="form-group form-row">
                                 <label for="office" class="col-4 col-form-label">办公地点：</label>
-                                <input name="fieldoffice" id="fieldoffice" type="text" class="col-8 form-control"
+                                <input name="office" id="office" type="text" class="col-8 form-control"
                                     placeholder="请输入办公地点" required>
                             </div>
                             <div class="form-group form-row">
@@ -90,6 +90,13 @@
 </div>
 <script>
     (function ($, SASEE) {
-        SASEE.formSubmit('#edit_info_form', SASEE.URL_INFO);
+        SASEE.formSubmit({
+            selector: '#edit_info_form',
+            url: SASEE.URL_INFO,
+            done:msg=>{
+                $('#edit_info_modal').modal('hide');
+                SASEE.requestDone(msg);
+            }
+        });
     })(window.jQuery, window.SASEE);
 </script>

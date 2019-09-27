@@ -40,36 +40,33 @@
         $pin_code_send.click(() => {
             let email = $pin_code_send[0].form.email.value;
             if (regexpStr.test(email)) {
-                $.get(SASEE.URL_EMAIL + '/sendPinCode', {
-                    email: email
-                }).done(() => {
-                    let count = 60;
-                    $pin_code_send[0].setAttribute('disabled', true);
-                    function countDown(target) {
-                        if (count) {
-                            target.innerText = String(count--) + 's';
-                            setTimeout(() => {
-                                countDown(target);
-                            }, 1000);
-                        } else {
-                            target.innerText = '发送验证码';
-                            target.removeAttribute('disabled')
+                $.get(SASEE.URL_EMAIL + '/sendPinCode', { email }).fail(SASEE.requestFail).done(() => {
+                    SASEE.counter({
+                        count: 60,
+                        doing: count => {
+                            $pin_code_send[0].setAttribute('disabled', true);
+                            $pin_code_send[0].innerText = String(count--) + 's';
+                        },
+                        done: () => {
+                            $pin_code_send[0].innerText = '发送验证码';
+                            $pin_code_send[0].removeAttribute('disabled');
                         }
-                    }
-                    countDown($pin_code_send[0]);
-                }).fail(() => {
-                    alert('验证码发送失败，请稍后重试！');
+                    })
                 });
             } else {
-                alert('请输入有效的邮箱地址！');
+                SASEE.alert({
+                    msg:'请输入有效的邮箱地址！'
+                });
             }
         });
 
-        SASEE.formSubmit('#edit_email_form', SASEE.URL_EMAIL + '/setEmailAddr', (data) => {
-            alert(data);
-            $('#edit_email_modal').modal('hide');
-        }, (data) => {
-            alert(data);
+        SASEE.formSubmit({
+            selector: '#edit_email_form',
+            url: SASEE.URL_EMAIL + '/setEmailAddr',
+            done: msg => {
+                $('#edit_email_modal').modal('hide');
+                SASEE.requestDone(msg);
+            }
         });
     })(window.jQuery, window.SASEE);
 </script>

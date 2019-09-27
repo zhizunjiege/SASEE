@@ -26,13 +26,22 @@ function update(req, res) {
 }
 
 function permiss(param) {
+    let periodSet = new Set();
     if (Array.isArray(param) && param.length > 0) {
-        const periodSet = new Set(param);
+        for (const iterator of param) {
+            if (Array.isArray(iterator)) {
+                for (let i = iterator[0]; i <= iterator[1]; i++) {
+                    periodSet.add(i);
+                }
+            } else {
+                periodSet.add(iterator);
+            }
+        }
         return (req, res, next) => {
             if (periodSet.has(STATE)) {
                 next();
-            }else{
-                res.send('现阶段无法进行该操作！').end();
+            } else {
+                res.status(403).send('现阶段无法进行该操作！');
             }
         };
     }

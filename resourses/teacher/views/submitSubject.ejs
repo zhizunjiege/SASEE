@@ -1,15 +1,17 @@
+<% let _data=data?data[0]:{id:'',title:'',group:'',capacity:'',introduction:'',materials:'请上传zip，rar或7z文件，不超过5M'} %>
 <div class="container">
     <div class="row">
         <div class="col-6 mx-auto mt-3 text-center">
             <form action="" method="POST" id="subject_form">
+                <input type="hidden" name="id" id="subject_id" value="<%= _data.id %>">
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_title">名称</label>
                     <input class="form-control col-9" type="text" name="title" id="subject_title" placeholder="课题名称"
-                        required>
+                        value="<%= _data.title %>" required>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_group">方向</label>
-                    <select class="custom-select form-control col-9" name="group" id="subject_group" required>
+                    <select class="custom-select form-control col-9" name="group" id="subject_group" value="<%= _data.group %>" required>
                         <option value="" selected disabled>请选择一个方向</option>
                         <% for( let index = 1; index <= 5; index++ ) { %>
                         <option value="<%= index %>"><%= index %></option>
@@ -19,19 +21,19 @@
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_capacity">容量</label>
                     <input class="form-control col-9" type="number" name="capacity" id="subject_capacity"
-                        placeholder="可容纳人数" required>
+                        placeholder="可容纳人数" value="<%= _data.capacity %>" required>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_introduction">简介</label>
                     <textarea name="introduction" id="subject_introduction" class="form-control col-9" rows="5"
-                        placeholder="请填写相关说明···" required></textarea>
+                        placeholder="请填写相关说明···" value="<%= _data.introduction %>" required></textarea>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_file">相关文件</label>
                     <div class="custom-file mb-3 col-9">
                         <input type="file" name="file" id="subject_file" class="custom-file-input" required>
                         <label for="subject_file" class="custom-file-label text-left"><small
-                                class="form-text text-muted">请上传zip，rar或7z文件，不超过5M</small></label>
+                                class="form-text text-muted"><%= _data.materials %></small></label>
                     </div>
                 </div>
                 <div class="form-group form-row mt-3">
@@ -49,12 +51,18 @@
 </div>
 <script>
     (function ($, SASEE) {
-        SASEE.fileUpload('#subject_form',SASEE.URL_SUBJECT+ SASEE.URL_SUBMIT, (data) => {
-            $('#card_container').append(data);
-            SASEE._subjectToggle('#subject_content', '#subject_list');
-        }, () => {
-            console.log('failed!');
+        SASEE.formSubmit({
+            file: true,
+            selector: '#subject_form',
+            url: SASEE.URL_SUBJECT + $('#subject_id').length?SASEE.URL_MODIFY:SASEE.URL_SUBMIT,
+            done: data => {
+                let $container = $('#card_container');
+                $container.append(data);
+                if ($container.children().length == 3) {
+                    $('#subject_submit').parent().remove();
+                }
+                SASEE._subjectToggle('#subject_content', '#subject_list');
+            }
         });
-        SASEE.fileCheck('#subject_file');
     })(window.jQuery, window.SASEE);
 </script>

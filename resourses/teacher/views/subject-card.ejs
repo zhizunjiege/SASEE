@@ -1,4 +1,5 @@
-<div class="card w-25 mt-4 list-group-item-action" data-id="<%= id %>">
+<% const stateObj={'-1':'','0':'modifySubject','1':'mySubject'} %>
+<div class="card w-25 mt-4 list-group-item-action" data-type="<%= stateObj[state] %>" data-id="<%= id %>">
     <header class="card-header ellipsis"><%= title||'暂无标题' %></header>
     <div class="card-body row">
         <p class="card-text" style="height:100px;">

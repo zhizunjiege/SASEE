@@ -21,10 +21,15 @@
             SASEE._loadContent(e, '#subject_content', param, _toggle)
         };
         $('#card_container').children().click((e) => {
-            cb(e, {
-                type: 'mySubject',
-                id: $(e.currentTarget).data('id')
-            });
+            let type = $(e.currentTarget).data('type'),
+                id = $(e.currentTarget).data('id');
+            if (type) {
+                cb(e, { type, id });
+            } else {
+                SASEE.alert({
+                    msg:'该课题已被否决，无法查看！'
+                })
+            }
         });
 
         let $subject_submit = $('#subject_submit');

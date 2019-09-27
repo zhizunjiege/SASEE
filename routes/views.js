@@ -1,7 +1,8 @@
-const mysql = require("./sql");
+const mysql = require("./sql"),
+    { paramIfValid } = require('./util');
 
 function _render(res, sql_query, param, file) {
-    if (sql_query) {
+    if (sql_query && paramIfValid(param)) {
         mysql.find(sql_query, param).then(data => {
             res.render(file, { data });
         });
@@ -70,29 +71,34 @@ function student(req, res) {
     _render(res, sql_query, param, file);
 }
 
-function teacher(Router, permiss) {
+function teacher(Router, period) {
     const teacherRouter = Router();
     teacherRouter.get('/userInfo', (req, res) => {
-        let account = Number(req.session.account) || 0,
+        let account = req.session.account,
             sql_query = 'SELECT * FROM teacher WHERE account =?',
             param = account;
-        _render(res, sql_query, param, req.path.substring(1));
+        _render(res, sql_query, param, 'userInfo');
     })
-    teacherRouter.get('/subject', permiss([1, 2, 3, 4, 5, 6, 7, 8, 9]), (req, res) => {
-        let account = Number(req.session.account) || 0,
-            sql_query = 'SELECT b.id,title,chosen,capacity,introduction,submitTime,lastModifiedTime FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
+    teacherRouter.get('/subject', period.permiss([[1, 9]]), (req, res) => {
+        let account = req.session.account,
+            sql_query = 'SELECT b.id,title,chosen,capacity,introduction,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
             param = account;
-        _render(res, sql_query, param, req.path.substring(1));
+        _render(res, sql_query, param, 'subject');
 
     });
-    teacherRouter.get('/mySubject', permiss([9]), (req, res) => {
-        let id = Number(req.query.id) || 0,
+    teacherRouter.get('/mySubject', period.permiss([9]), (req, res) => {
+        let id = req.query.id,
             sql_query = 'SELECT notice,assignment,teacherFiles,studentFiles FROM bysj b WHERE b.id=?;SELECT specialty_des,`name`,gender,s.group_des,class,stuNum,GPA,email,WAS,AMS FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_selected,CONCAT("",s.id))',
             param = [id, id];
-        _render(res, sql_query, param, req.path.substring(1));
+        _render(res, sql_query, param, 'mySubject');
     });
-    teacherRouter.get('/submitSubject', permiss([1, 3]), (req, res) => {
-        _render(res, null, null, req.path.substring(1));
+    teacherRouter.get('/submitSubject', period.permiss([1]), (req, res) => {
+        _render(res, null, null, 'submitSubject');
+    });
+    teacherRouter.get('/modifySubject', period.permiss([1, 3]), (req, res) => {
+        let id = req.query.id,
+            sql_query = 'SELECT id,title,`group`,capacity,introduction,materials FROM bysj WHERE id=?';
+        _render(res, sql_query, id, 'submitSubject');
     });
     return teacherRouter;
 }
