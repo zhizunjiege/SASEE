@@ -1,7 +1,7 @@
 const mysql = require('./sql');
 const { paramIfValid } = require('./util');
 
-module.exports = (fieldArray) => {
+function setGeneralInfo(fieldArray) {
     return (req, res) => {
         console.log(req.body);
         let param = {},
@@ -24,3 +24,20 @@ module.exports = (fieldArray) => {
         }
     }
 };
+
+function setEmailAddr(req, res) {
+    let { pinCode, identity, account } = req.session,
+        sql_update = 'UPDATE ?? SET email=? WHERE account=?';
+    if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
+        req.session.pinCode=null;
+        res.status(403).send('验证码已失效，请重试！');
+    } else if (req.body.pinCode == pinCode.code) {
+        mysql.find(sql_update, [identity, req.body.email, account]).then(() => {
+            res.status(200).send('已成功更新邮箱地址！');
+        });
+    } else {
+        res.status(403).send('验证码不匹配,请重试！');
+    }
+}
+
+module.exports = { setGeneralInfo, setEmailAddr };

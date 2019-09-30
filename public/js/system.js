@@ -7,23 +7,44 @@
         URL_DOWNLOAD: '/download',
 
         URL_EMAIL: './email',
-        URL_PINCODE: '/sendPinCode',
-        URL_NOTICE: '/sendNotice',
-
-        URL_INFO: './info',
-
-        URL_LOGOUT: './logout',
-        URL_PW: './password',
 
         URL_SUBJECT: './subject',
         URL_SUBMIT: '/submit',
-        URL_MODIFY:'/modify',
-
-        URL_CHOOSE: './choose',
+        URL_MODIFY: '/modify',
 
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
     const SASEE = window.SASEE;
+
+    $.fn.extend({
+        serializeObject: function () {
+            let dataObj = {},
+                dataArray = this.serializeArray();
+            for (const iterator of dataArray) {
+                let field = dataObj[iterator.name];
+                if (field) {
+                    if (Array.isArray(field)) {
+                        field.push(iterator.value);
+                    } else {
+                        dataObj[iterator.name] = [field, iterator.value];
+                    }
+                } else {
+                    dataObj[iterator.name] = iterator.value;
+                }
+            }
+            return dataObj;
+        }
+    });
+    $.extend({
+        json: function ({ url, data }) {
+            return $.ajax({
+                type: 'POST',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: 'application/json;charset=UTF-8'
+            })
+        }
+    });
 
     SASEE._contentBarToggle = () => {
         $('#contents_back').toggle();
@@ -39,9 +60,14 @@
             $(list).toggle();
         }
     };
-    SASEE._loadContent = (e, content, param, callback) => {
+    SASEE._loadContent = (content, param, callback) => {
         document.getElementById('contents_back').onclick = callback;
-        $(content).load(SASEE.URL_VIEWS + '/' + param.type, param.id ? 'id=' + param.id : '', callback);
+        $.get(SASEE.URL_VIEWS + '/' + param.type, {
+            id: param.id
+        }).done(html => {
+            $(content).html(html);
+            callback();
+        }).fail(SASEE.requestFail);
     };
     SASEE.instScroll = (container, path, append, scrollThreshold, elementScroll, loadOnScroll, status, button, loadCallback, appendCallback) => {
         var $infiniteScrollObj = $(container).infiniteScroll({
@@ -87,44 +113,44 @@
         //$infiniteScrollObj.on('error.infiniteScroll', log);
         //$infiniteScrollObj.on('last.infiniteScroll', log);
     };
-    SASEE.instEditor = (container) => {
-        if (typeof window.wangEditor == 'undefined') {
+    SASEE.instEditor = (container, full = false) => {
+        let editor = new window.wangEditor(container + ' .editor');
+        editor.customConfig.uploadImgShowBase64 = true;
+        editor.customConfig.zIndex = 1000;
 
-            $.getScript('/js/wangEditor.min.js').done(() => {
-                const WE = window.wangEditor;
-                const editor = new WE('#editor');
-
-                editor.customConfig.uploadImgShowBase64 = true;
-                //editor.customConfig.uploadImgServer=SASEE.URL_UPLOAD;
-
-                editor.create();
-
-                $('#editor_clear').click(() => {
-                    editor.txt.clear();
-                });
-                $('#editor_submit').click(() => {
-                    var myform = new FormData();
-                    myform.append('content', editor.txt.html());
-                    myform.append('type', 'notice');
-                    $.ajax({
-                        url: SASEE.URL_FILE + SASEE.URL_UPLOAD,
-                        type: 'POST',
-                        cache: false,
-                        data: myform,
-                        processData: false,
-                        contentType: 'text/plain'
-                    }).done(() => {
-                        console.log('successed!');
-                    });
-                });
-            });
-        }
-        if ($('#editor_container')[0].parentNode != $(container)[0]) {
-            $(container).append($('#editor_container'));
-        }
+        let featureBase = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'fontSize',  // 字号
+            'fontName',  // 字体
+            'italic',  // 斜体
+            'justify',  // 对齐方式
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'undo',  // 撤销
+            'redo'  // 重复
+        ], featureExtend = [
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'list',  // 列表
+            'table',  // 表格
+            'quote',  // 引用
+            'emoticon',  // 表情
+            'image',  // 插入图片
+            'video',  // 插入视频
+            'code',  // 插入代码
+        ];
+        editor.customConfig.menus = full ? featureBase.concat(featureExtend) : featureBase;
+        //editor.customConfig.uploadImgServer
+        editor.create();
+        $(container + ' .editor-clear').click(() => {
+            editor.txt.clear();
+        });
+        return editor;
     };
 
-    SASEE.alert = ({ msg, static = true, count = 0, buttonHide = false } = {}) => {
+    SASEE.alert = ({ msg = '网络错误，请稍后重试！', static = true, count = 0, buttonHide = false } = {}) => {
         $('.alert>span').text(msg);
         buttonHide && $('.alert>button').hide();
         $('.alert-modal').modal(static ? {
@@ -139,12 +165,12 @@
         });
     };
     SASEE.requestDone = msg => {
-        SASEE.alert({ 
-            msg:msg,
-            static:false,
-            count:2,
-            buttonHide:true
-         });
+        SASEE.alert({
+            msg: msg,
+            static: false,
+            count: 2,
+            buttonHide: true
+        });
     };
     SASEE.requestFail = xhr => {
         let location = xhr.getResponseHeader('Location'),
@@ -173,10 +199,10 @@
                 let regexpStr = /\.(?:zip|rar|7z)$/;
                 if (!regexpStr.test(file.name)) {
                     $file[0].value = '';
-                    alert('仅支持zip，rar和7z格式！');
+                    SASEE.alert({ msg: '仅支持zip，rar和7z格式！' });
                 } else if (file.size > SASEE.FILE_MAXSIZE) {
                     $file[0].value = '';
-                    alert('文件大小不能超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!');
+                    SASEE.alert({ msg: '文件大小不能超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!' });
                 } else {
                     $file.next().find('small').text(file.name);
                 }

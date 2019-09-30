@@ -11,10 +11,11 @@
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_group">方向</label>
-                    <select class="custom-select form-control col-9" name="group" id="subject_group" value="<%= _data.group %>" required>
-                        <option value="" selected disabled>请选择一个方向</option>
+                    <select class="custom-select form-control col-9" name="group" id="subject_group"
+                        value="<%= _data.group %>" <%= _data.group?'readonly':'' %> required>
+                        <option value="" <%= _data.group?'':'selected' %> disabled>请选择一个方向</option>
                         <% for( let index = 1; index <= 5; index++ ) { %>
-                        <option value="<%= index %>"><%= index %></option>
+                        <option value="<%= index %>" <%= _data.group==index?'selected':'' %>><%= index %></option>
                         <% } %>
                     </select>
                 </div>
@@ -26,12 +27,13 @@
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_introduction">简介</label>
                     <textarea name="introduction" id="subject_introduction" class="form-control col-9" rows="5"
-                        placeholder="请填写相关说明···" value="<%= _data.introduction %>" required></textarea>
+                        placeholder="请填写相关说明···" required><%= _data.introduction %></textarea>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_file">相关文件</label>
                     <div class="custom-file mb-3 col-9">
-                        <input type="file" name="file" id="subject_file" class="custom-file-input" required>
+                        <input type="file" name="file" id="subject_file" class="custom-file-input"
+                            <%= _data.materials?'':'required' %>>
                         <label for="subject_file" class="custom-file-label text-left"><small
                                 class="form-text text-muted"><%= _data.materials %></small></label>
                     </div>
@@ -51,13 +53,17 @@
 </div>
 <script>
     (function ($, SASEE) {
+        let $curSubject = $('#subject_id');
         SASEE.formSubmit({
             file: true,
             selector: '#subject_form',
-            url: SASEE.URL_SUBJECT + $('#subject_id').length?SASEE.URL_MODIFY:SASEE.URL_SUBMIT,
+            url: SASEE.URL_SUBJECT + ($curSubject[0].value ? SASEE.URL_MODIFY : SASEE.URL_SUBMIT),
             done: data => {
                 let $container = $('#card_container');
-                $container.append(data);
+                if ($curSubject[0].value) {
+                    $('#card_container>[data-id=' + $curSubject[0].value + ']').remove();
+                }
+                $(data).appendTo($container).click(SASEE._submitOrModify);
                 if ($container.children().length == 3) {
                     $('#subject_submit').parent().remove();
                 }

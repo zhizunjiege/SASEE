@@ -1,0 +1,60 @@
+<button data-toggle="modal" data-target="#sendEmail_modal" class="btn btn-primary w-25">发送邮件</button>
+<div id="sendEmail_modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">发送邮件</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="subject_sendEmail_form" method="POST">
+                    <% for( let index = 0; index < to.length; index++ ) { %>
+                    <div class="form-group custom-control custom-checkbox">
+                        <input type="checkbox" name="toAddr" class="custom-control-input" id="customCheck<%= index %>"
+                            value="<%= to[index].email %>" checked>
+                        <label class="custom-control-label"
+                            for="customCheck<%= index %>"><%= (to[index].name?to[index].name:'')+'--'+to[index].email %></input></label>
+                    </div>
+                    <% } %>
+                    <div class="form-group">
+                        <input type="text" name="title" class="form-control" placeholder="请输入邮件标题" required>
+                    </div>
+                    <div id="emailEditor">
+                        <div class="mb-3 editor">
+                            <p>请在此处输入内容···</p>
+                        </div>
+                        <div class="form-group form-row justify-content-around">
+                            <button type="reset" class="btn btn-secondary col-3 editor-clear"
+                                data-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-primary col-3">发送</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (($, SASEE) => {
+        let editor = SASEE.instEditor('#emailEditor'),
+            $form = $('#subject_sendEmail_form');
+        $form.submit(e => {
+            e.preventDefault();
+            let data = $form.serializeObject();
+            if (!data.toAddr) {
+                SASEE.alert({
+                    msg: '收件人不能为空，请选择至少一位收件人！'
+                })
+                return;
+            }
+            data.content = editor.txt.html();
+            $.json({
+                url: SASEE.URL_EMAIL + '/sendEmail',
+                data: data
+            }).done(msg => {
+                $('#sendEmail_modal').modal('hide');
+                SASEE.requestDone(msg);
+            }).fail(SASEE.requestFail);
+        });
+    })(window.jQuery, window.SASEE);
+</script>

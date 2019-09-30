@@ -1,11 +1,11 @@
 const fs = require("fs");
 
-function move(from,to,callback){
-    mkdir(to);
-    fs.rename(from,to,callback);
+function move(from, to, callback) {
+    _mkdir(to);
+    fs.rename(from, to, callback);
 }
 
-function mkdir(filepath) {
+function _mkdir(filepath) {
     const dirCache = {};
     const arr = filepath.split('/');
     let dir = arr[0];
@@ -18,20 +18,22 @@ function mkdir(filepath) {
     }
 }
 
-function deleteall(path) {
-    var files = [];
+function deleteAll(path, rmDir = true) {
+    let files = [];
     if (fs.existsSync(path)) {
         files = fs.readdirSync(path);
-        files.forEach(function (file, index) {
-            var curPath = path + "/" + file;
-            if (fs.statSync(curPath).isDirectory()) { // recurse
+        files.forEach((file, index) => {
+            let curPath = path + "/" + file;
+            if (fs.statSync(curPath).isDirectory()) {
                 deleteall(curPath);
-            } else { // delete file
+            } else {
                 fs.unlinkSync(curPath);
             }
         });
-        fs.rmdirSync(path);
+        if (rmDir) {
+            fs.rmdirSync(path);
+        }
     }
 };
 
-module.exports = { move };
+module.exports = { move, deleteAll,fs};

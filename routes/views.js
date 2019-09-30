@@ -4,10 +4,10 @@ const mysql = require("./sql"),
 function _render(res, sql_query, param, file) {
     if (sql_query && paramIfValid(param)) {
         mysql.find(sql_query, param).then(data => {
-            res.render(file, { data });
+            res.render(file, { data });        console.log(data);
         });
     } else if (file) {
-        res.render(file, {});
+        res.render(file, { data: '' });
     } else {
         res.end();
         console.log('页面渲染出错！');
@@ -24,7 +24,7 @@ function common(Router) {
         _render(res, sql_query, param, filePath + '/views/newsList');
     });
     commonRouter.get('/newsContent', (req, res) => {
-        let id = Number(req.query.id) || 0;
+        let id = req.query.id;
         _render(res, null, null, filePath + '/news/news_' + id);
     });
     return commonRouter;
@@ -86,12 +86,6 @@ function teacher(Router, period) {
         _render(res, sql_query, param, 'subject');
 
     });
-    teacherRouter.get('/mySubject', period.permiss([9]), (req, res) => {
-        let id = req.query.id,
-            sql_query = 'SELECT notice,assignment,teacherFiles,studentFiles FROM bysj b WHERE b.id=?;SELECT specialty_des,`name`,gender,s.group_des,class,stuNum,GPA,email,WAS,AMS FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_selected,CONCAT("",s.id))',
-            param = [id, id];
-        _render(res, sql_query, param, 'mySubject');
-    });
     teacherRouter.get('/submitSubject', period.permiss([1]), (req, res) => {
         _render(res, null, null, 'submitSubject');
     });
@@ -99,6 +93,12 @@ function teacher(Router, period) {
         let id = req.query.id,
             sql_query = 'SELECT id,title,`group`,capacity,introduction,materials FROM bysj WHERE id=?';
         _render(res, sql_query, id, 'submitSubject');
+    });
+    teacherRouter.get('/mySubject', period.permiss([9]), (req, res) => {
+        let id = req.query.id,
+            sql_query = 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_selected,CONCAT("",s.id))',
+            param = [id, id];
+        _render(res, sql_query, param, 'mySubject');
     });
     return teacherRouter;
 }
@@ -142,7 +142,5 @@ function dean(req, res) {
     _render(res, sql_query, param, file);
 }
 
-function admin(req, res) {
-
-}
+function admin(req, res) { }
 module.exports = { common, student, teacher, dean, admin };

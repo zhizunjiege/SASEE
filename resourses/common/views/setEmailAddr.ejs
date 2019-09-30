@@ -16,7 +16,7 @@
                     <div class="form-group form-row">
                         <label for="pin_code" class="col-4 col-form-label">验证码：</label>
                         <div class="input-group col-8 px-0">
-                            <input name="pin_code" id="pin_code" type="number" class="form-control" pattern="\d{4}"
+                            <input name="pinCode" id="pin_code" type="number" class="form-control" pattern="\d{4}"
                                 placeholder="请输入收到的验证码" required>
                             <div class="input-group-append">
                                 <button type="button" id="pin_code_send" class="btn btn-outline-primary">发送验证码</button>
@@ -40,12 +40,13 @@
         $pin_code_send.click(() => {
             let email = $pin_code_send[0].form.email.value;
             if (regexpStr.test(email)) {
-                $.get(SASEE.URL_EMAIL + '/sendPinCode', { email }).fail(SASEE.requestFail).done(() => {
+                $.get(SASEE.URL_EMAIL + '/sendPinCode', { email }).fail(SASEE.requestFail).done(msg => {
+                    SASEE.requestDone(msg);
                     SASEE.counter({
                         count: 60,
                         doing: count => {
                             $pin_code_send[0].setAttribute('disabled', true);
-                            $pin_code_send[0].innerText = String(count--) + 's';
+                            $pin_code_send[0].innerText = count + 's';
                         },
                         done: () => {
                             $pin_code_send[0].innerText = '发送验证码';

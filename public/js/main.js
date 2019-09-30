@@ -20,10 +20,10 @@
             }
         }
         function _loadNewsContent(e) {
-            SASEE._loadContent(e, '#news_content', {
+            SASEE._loadContent('#news_content', {
                 type: 'newsContent',
                 id: $(e.currentTarget).data('id')
-            }, (e) => {
+            }, () => {
                 SASEE._subjectToggle('#news_content', '#news_list');
             })
         }

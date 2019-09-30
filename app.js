@@ -1,5 +1,5 @@
 const CONSTANT = {
-    PATH_TMP: 'upload/',
+    PATH_TMP: './tmp/',
     PATH_FILES: 'resourses/common/files/',
     VIEWS_COMMON: '/resourses/common/views/',
     VIEWS_TEACHER: '/resourses/teacher/views/',
@@ -19,7 +19,7 @@ const express = require('express'),
 const path = require('path'),
     multer = require("multer"),
     session = require('express-session'),
-    upload = multer({
+    receive = multer({
         storage: multer.diskStorage({
             destination: (req, file, cb) => {
                 cb(null, CONSTANT.PATH_TMP);
@@ -28,14 +28,16 @@ const path = require('path'),
                 cb(null, file.originalname);
             }
         })
-    });
+    }).single('file');
 const period = require('./routes/period'),
     login = require("./routes/login"),
     views = require("./routes/views"),
     general = require("./routes/general"),
     password = require("./routes/password"),
     email = require('./routes/email'),
-    info = require('./routes/info');
+    info = require('./routes/info'),
+    upload = require('./routes/upload'),
+    download = require('./routes/download');
 
 app.set('views', __dirname + CONSTANT.VIEWS_COMMON);
 app.set('view engine', 'ejs');
@@ -45,12 +47,13 @@ period.init();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(session({
     resave: false,//每次请求都保存session，即使session未更改
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
-        maxAge: app.get('env') == 'development' ? 60 * 1000 : 5 * 60 * 1000,//设置cookie的过期时间为1分钟
+        maxAge: app.get('env') == 'development' ? 2 * 60 * 1000 : 10 * 60 * 1000,//设置cookie的过期时间
     }
 }));
 
@@ -62,9 +65,13 @@ app.get('/', (req, res) => {
     }
 });
 
-app.get('/password', (req, res) => {
+const pwRouter = Router();
+pwRouter.get('/', (req, res) => {
     res.render('password');
 });
+pwRouter.get('/sendPinCode', email._spcmw, email.sendPinCode);
+pwRouter.post('/retrieve', password.retrieve);
+app.use('/password', pwRouter);
 
 app.post('/login', login.authenticate);
 
@@ -81,7 +88,7 @@ app.use((req, res, next) => {
     const fileRouter = Router();
     student.set('views', __dirname + '/resourses/student/views/');
 
-    fileRouter.post('/upload', upload.single('file_new'));
+    fileRouter.post('/upload', receive);
 
     student.post('/', login.render);
     student.get('/views', views.student);
@@ -102,18 +109,22 @@ app.use((req, res, next) => {
     teacher.get('/', login.render);
     teacher.use('/views', views.common(Router), views.teacher(Router, period));
 
-    fileRouter.post('/upload', upload.single('file_new'));
+    fileRouter.post('/upload', receive, upload.teacher);
+    fileRouter.get('/download', download.teacher);
     teacher.use('/file', period.permiss([9]), fileRouter);
 
-    subjectRouter.post('/submit', period.permiss([1]), upload.single('file'), subject.submit);
-    subjectRouter.post('/modify', period.permiss([1, 3]), upload.single('file'), subject.modify);
+    subjectRouter.post('/submit', period.permiss([1]), receive, subject.submit);
+    subjectRouter.post('/modify', period.permiss([1, 3]), receive, subject.modify);
+    subjectRouter.post('/notice', period.permiss([9]), subject.notice);
+    subjectRouter.post('/mark', period.permiss([9]), subject.mark);
     teacher.use('/subject', subjectRouter);
 
     emailRouter.get('/sendPinCode', email.sendPinCode);
-    emailRouter.post('/setEmailAddr', email.setEmailAddr);
+    emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
+    emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
     teacher.use('/email', emailRouter);
 
-    teacher.post('/info', period.permiss([0]), info(['field', 'office', 'tele', 'resume']));
+    teacher.post('/info', period.permiss([0]), info.setGeneralInfo(['field', 'office', 'tele', 'resume']));
 
     teacher.get('/logout', general.logout);
     teacher.post('/password', password.modify);
@@ -122,7 +133,7 @@ app.use((req, res, next) => {
     const fileRouter = Router();
     dean.set('views', __dirname + '/resourses/dean/views/');
 
-    fileRouter.post('/upload', upload.single('file_new'));
+    fileRouter.post('/upload', receive);
 
     dean.post('/', login.render);
     dean.get('/views', views.dean);

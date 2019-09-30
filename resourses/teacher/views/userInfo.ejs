@@ -92,7 +92,7 @@
     (function ($, SASEE) {
         SASEE.formSubmit({
             selector: '#edit_info_form',
-            url: SASEE.URL_INFO,
+            url: './info',
             done:msg=>{
                 $('#edit_info_modal').modal('hide');
                 SASEE.requestDone(msg);
