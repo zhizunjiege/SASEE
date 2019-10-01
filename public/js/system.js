@@ -195,8 +195,7 @@
         if (file) {
             let $file = $('input[type=file]', selector);
             $file.change((e) => {
-                let file = $file[0].files[0];
-                let regexpStr = /\.(?:zip|rar|7z)$/;
+                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z)$/;
                 if (!regexpStr.test(file.name)) {
                     $file[0].value = '';
                     SASEE.alert({ msg: '仅支持zip，rar和7z格式！' });

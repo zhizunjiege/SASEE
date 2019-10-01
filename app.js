@@ -119,7 +119,7 @@ app.use((req, res, next) => {
     subjectRouter.post('/mark', period.permiss([9]), subject.mark);
     teacher.use('/subject', subjectRouter);
 
-    emailRouter.get('/sendPinCode', email.sendPinCode);
+    emailRouter.get('/sendPinCode', period.permiss([0]),email.sendPinCode);
     emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
     emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
     teacher.use('/email', emailRouter);

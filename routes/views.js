@@ -4,7 +4,7 @@ const mysql = require("./sql"),
 function _render(res, sql_query, param, file) {
     if (sql_query && paramIfValid(param)) {
         mysql.find(sql_query, param).then(data => {
-            res.render(file, { data });        console.log(data);
+            res.render(file, { data });
         });
     } else if (file) {
         res.render(file, { data: '' });
@@ -96,7 +96,7 @@ function teacher(Router, period) {
     });
     teacherRouter.get('/mySubject', period.permiss([9]), (req, res) => {
         let id = req.query.id,
-            sql_query = 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_selected,CONCAT("",s.id))',
+            sql_query = 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,CONCAT("",s.id))',
             param = [id, id];
         _render(res, sql_query, param, 'mySubject');
     });

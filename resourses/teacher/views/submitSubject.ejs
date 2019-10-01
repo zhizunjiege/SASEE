@@ -32,7 +32,7 @@
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_file">相关文件</label>
                     <div class="custom-file mb-3 col-9">
-                        <input type="file" name="file" id="subject_file" class="custom-file-input"
+                        <input type="file" name="file" id="subject_file" class="custom-file-input d-none"
                             <%= _data.materials?'':'required' %>>
                         <label for="subject_file" class="custom-file-label text-left"><small
                                 class="form-text text-muted"><%= _data.materials %></small></label>
@@ -63,7 +63,7 @@
                 if ($curSubject[0].value) {
                     $('#card_container>[data-id=' + $curSubject[0].value + ']').remove();
                 }
-                $(data).appendTo($container).click(SASEE._submitOrModify);
+                $(data).appendTo($container).click(SASEE._modifyOrView);
                 if ($container.children().length == 3) {
                     $('#subject_submit').parent().remove();
                 }

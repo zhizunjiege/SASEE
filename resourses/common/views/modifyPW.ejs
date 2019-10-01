@@ -38,12 +38,11 @@
         <p>将在<strong id="jump_counter" class="px-1">5</strong>秒后自动跳转至登陆界面,点击<a href="/" class="alert-link">此处</a>立即跳转。</p>
     </div>
 </div>
-<%- include('./alert') %>
 <script>
     (function ($, SASEE) {
         SASEE.formSubmit({
             selector: '#modifyPW_form',
-            url: SASEE.URL_PW,
+            url:'./password',
             validate: $form => {
                 return $form[0].newPW.value == $form[0].repeatPW.value;
             },

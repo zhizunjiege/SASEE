@@ -97,7 +97,7 @@ function mark(req, res) {
     delete req.body.id;
     let entries = Object.entries(req.body),
         paramArray = entries.reduce((ac, cur) => ac.concat(cur)),
-        sql_update = 'UPDATE student s SET score_bysj = CASE s.id' + ' WHEN ? THEN ?'.repeat(entries.length) + ' END WHERE JSON_CONTAINS((SELECT student_selected FROM bysj b WHERE b.id=?),CONCAT("",s.id))';
+        sql_update = 'UPDATE student s SET score_bysj = CASE s.id' + ' WHEN ? THEN ?'.repeat(entries.length) + ' END WHERE JSON_CONTAINS((SELECT student_final FROM bysj b WHERE b.id=?),CONCAT("",s.id))';
     paramArray.push(id);
     mysql.find(sql_update, paramArray).then(() => {
         res.send('评分成功！');

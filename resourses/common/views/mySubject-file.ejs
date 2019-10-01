@@ -28,9 +28,9 @@
     <div class="col">
         <div class="card">
             <div class="card-body">
-                <% if (up.length) { %>
-                <ul class="list-group list-group-flush">
-                    <% for( let i = 0; i < up.length; i++ ) { %>
+                <ul class="list-group list-group-flush" id="upFile_list">
+                    <% if (up.length) { 
+                          for( let i = 0; i < up.length; i++ ) { %>
                     <a href="#" class="list-group-item">
                         <small class="d-inline-block w-50 ellipsis"><%= up[i].name %></small>
                         <% if(isTeacher){ %>
@@ -38,13 +38,13 @@
                         <% } %>
                         <small class="float-right"><%= up[i].date %></small>
                     </a>
+                    <% } 
+                 } else { %>
+                    <div class="d-flex justify-content-center" style="height: 150px">
+                        <h3 class="text-muted align-self-center">未上传文件</h3>
+                    </div>
                     <% } %>
                 </ul>
-                <% } else { %>
-                <div class="d-flex justify-content-center" style="height: 150px">
-                    <h3 class="text-muted align-self-center">未上传文件</h3>
-                </div>
-                <% } %>
             </div>
             <footer class="card-footer d-flex align-items-center justify-content-end">
                 <a class="" data-toggle="modal" href="#file_modal">
@@ -67,7 +67,8 @@
                     <input type="hidden" name="id" value="<%= id %>">
                     <div class="form-group">
                         <div class="custom-file">
-                            <input type="file" name="file" class="custom-file-input" required>
+                            <input type="file" name="file" class="custom-file-input d-none" id="file_new_input"
+                                required>
                             <label for="file_new_input" class="custom-file-label text-left"><small
                                     class="form-text text-muted">请上传zip，rar或7z文件，不超过5M</small></label>
                         </div>
@@ -76,7 +77,7 @@
                         <input type="text" name="tag" class="form-control" placeholder="请为文件输入一个标签~" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
-                        <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                        <button type="reset" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
                         <button type="submit" class="btn btn-primary col-3">提交</button>
                     </div>
                 </form>
@@ -90,7 +91,19 @@
             file: true,
             selector: '#file_form',
             url: SASEE.URL_FILE + SASEE.URL_UPLOAD,
-            done: SASEE.requestDone
+            done: msg => {
+                let $form = $('#file_form'), $upFile_list = $('#upFile_list'),
+                    name = $form[0].file.value.match(/\\([^\\\s]+)$/)[1],
+                    tag = $form[0].tag.value;
+                SASEE.requestDone(msg);
+                $('#file_modal').modal('hide');
+                $upFile_list.find('div').remove();
+                $(`<a href="#" class="list-group-item">
+                    <small class="d-inline-block w-50 ellipsis">${name}</small>
+                    ${`<small class="ellipsis"><strong>Tag:</strong>${tag}</small>`}
+                    <small class="float-right">${new Date().toISOString().substr(0,10)}</small>
+                </a>`).prependTo($upFile_list);
+            }
         });
     })(window.jQuery, window.SASEE);
 </script>
