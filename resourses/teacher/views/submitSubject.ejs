@@ -7,7 +7,7 @@
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_title">名称</label>
                     <input class="form-control col-9" type="text" name="title" id="subject_title" placeholder="课题名称"
-                        value="<%= _data.title %>" required>
+                        value="<%= _data.title %>" maxlength="255" required>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_group">方向</label>
@@ -22,12 +22,12 @@
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_capacity">容量</label>
                     <input class="form-control col-9" type="number" name="capacity" id="subject_capacity"
-                        placeholder="可容纳人数" value="<%= _data.capacity %>" required>
+                        placeholder="可容纳人数" value="<%= _data.capacity %>" min="1" max="10" required>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_introduction">简介</label>
                     <textarea name="introduction" id="subject_introduction" class="form-control col-9" rows="5"
-                        placeholder="请填写相关说明···" required><%= _data.introduction %></textarea>
+                        placeholder="请填写相关说明···" maxlength="1023" required><%= _data.introduction %></textarea>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-3 col-form-label" for="subject_file">相关文件</label>

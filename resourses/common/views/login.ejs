@@ -35,12 +35,12 @@
                     <div class="form-group form-row">
                         <label class="col-3 col-form-label" for="account">账号：</label>
                         <input class="form-control col-9" type="number" name="account" id="account"
-                            placeholder="Your Account" required>
+                            placeholder="Your Account" min="16000000" max="99999999" required>
                     </div>
                     <div class="form-group form-row">
                         <label class="col-3 col-form-label" for="password">密码：</label>
                         <input class="form-control col-9" type="password" name="password" id="password"
-                            placeholder="Your Password" required>
+                            placeholder="Your Password" pattern="\w{8,16}" required>
                     </div>
 
                     <div class="form-group form-row justify-content-around">

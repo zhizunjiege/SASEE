@@ -34,7 +34,7 @@
                         </div>
                         <form action="" id="subject_notice_form" method="POST">
                             <div class="form-group">
-                                <input type="text" name="title" class="form-control" placeholder="请输入标题" required>
+                                <input type="text" name="title" class="form-control" placeholder="请输入标题" maxlength="255" required>
                             </div>
                             <div class="form-group form-row justify-content-between">
                                 <button class="btn btn-secondary px-5 editor-clear" type="reset">清空</button>
@@ -94,7 +94,7 @@
                                     <label for="mark_<%= student[index].id %>"
                                         class="col-4 col-form-label"><%= student[index].name %>:</label>
                                     <input name="<%= student[index].id %>" id="mark_<%= student[index].id %>"
-                                        type="number" class="col-8 form-control" placeholder="请输入分数" required>
+                                        type="number" class="col-8 form-control" placeholder="请输入分数" min="0" max="100" required>
                                 </div>
                                 <% } %>
                                 <div class="form-group form-row justify-content-around">
