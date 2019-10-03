@@ -37,7 +37,8 @@ const period = require('./routes/period'),
     email = require('./routes/email'),
     info = require('./routes/info'),
     upload = require('./routes/upload'),
-    download = require('./routes/download');
+    download = require('./routes/download'),
+    choose = require('./routes/choose');
 
 app.set('views', __dirname + CONSTANT.VIEWS_COMMON);
 app.set('view engine', 'ejs');
@@ -77,29 +78,40 @@ app.post('/login', login.authenticate);
 
 app.use((req, res, next) => {
     if (!req.session.account) {
-        res.location('/').status(403).send('登陆信息失效，请重新登陆！');
+        if (req.method.toLowerCase == 'post') {
+            res.location('/').status(403).send('登陆信息失效，请重新登陆！');
+        } else {
+            res.redirect('/');
+        }
     } else {
         req.APP_CONSTANT = CONSTANT;
         next();
     }
 });
 
-(function () {
-    const fileRouter = Router();
-    student.set('views', __dirname + '/resourses/student/views/');
+{
+    const emailRouter = Router(),
+        fileRouter = Router();
+    student.set('views', __dirname + CONSTANT.VIEWS_STUDENT);
 
-    fileRouter.post('/upload', receive);
+    student.get('/', login.render);
+    student.use('/views', views.common(Router), views.student(Router, period));
 
-    student.post('/', login.render);
-    student.get('/views', views.student);
-    student.use('/file', fileRouter);
-    //student.get('/logout',logout);
-    //student.get('/download',download);
-    //student.post('/email',email);
-    //student.post('/password',password);
-    //student.post('/choose',choose);
-})();
-(function () {
+    fileRouter.post('/upload', receive, upload);
+    fileRouter.get('/download', download);
+    student.use('/file', period.permiss([9]), fileRouter);
+
+    emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
+    emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
+    emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
+    student.use('/email', emailRouter);
+
+    student.post('/choose',period.permiss([5,8]), choose(period));
+
+    student.get('/logout', general.logout);
+    student.post('/password', password.modify);
+}
+{
     const subject = require('./routes/subject'),
         fileRouter = Router(),
         subjectRouter = Router(),
@@ -109,8 +121,8 @@ app.use((req, res, next) => {
     teacher.get('/', login.render);
     teacher.use('/views', views.common(Router), views.teacher(Router, period));
 
-    fileRouter.post('/upload', receive, upload.teacher);
-    fileRouter.get('/download', download.teacher);
+    fileRouter.post('/upload', receive, upload);
+    fileRouter.get('/download', download);
     teacher.use('/file', period.permiss([9]), fileRouter);
 
     subjectRouter.post('/submit', period.permiss([1]), receive, subject.submit);
@@ -119,7 +131,7 @@ app.use((req, res, next) => {
     subjectRouter.post('/mark', period.permiss([9]), subject.mark);
     teacher.use('/subject', subjectRouter);
 
-    emailRouter.get('/sendPinCode', period.permiss([0]),email.sendPinCode);
+    emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
     emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
     emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
     teacher.use('/email', emailRouter);
@@ -128,7 +140,7 @@ app.use((req, res, next) => {
 
     teacher.get('/logout', general.logout);
     teacher.post('/password', password.modify);
-})();
+}
 (function () {
     const fileRouter = Router();
     dean.set('views', __dirname + '/resourses/dean/views/');

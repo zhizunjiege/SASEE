@@ -43,8 +43,6 @@ function sendPinCode(req, res) {
             code: pinCode,
             time: new Date().getTime()
         };
-        console.log(req.session.pinCode);
-
         res.send('验证码已发送至' + email.replace(/(\S{2,})(\S{4,4})(@.*)/, '$1****$3'));
     }).catch(err => {
         console.log(err);

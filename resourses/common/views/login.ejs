@@ -80,7 +80,7 @@
                 $.post('/login', $form.serialize()).done((data, textStatus, xhr) => {
                     window.location.href = xhr.getResponseHeader('Location');
                 }).fail(xhr => {
-                    $('.alert>span').text(xhr.responseText);
+                    $('.alert>span').text(xhr.responseText||'网络错误，请稍后重试！');
                     $('.alert-modal').modal({
                         backdrop: 'static',
                         keyboard: false

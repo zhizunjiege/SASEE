@@ -64,10 +64,8 @@
     <h5>相关资料</h5>
     <% if (subject.materials) { %>
     <ul class="list-group list-group-flush">
-        <% for( let index = 0; index < subject.materials.length; index++ ) { %>
-        <a href="<%= subject.materials[index].url %>" class="list-group-item"
-            download><small><%= subject.materials[index].name %></small></a>
-        <% } %>
+        <a href="./file/download<%= '?id='+subject.id+'&filename='+subject.materials %>" class="list-group-item"
+            download><small><%= subject.materials %></small></a>
     </ul>
     <% } else { %>
     <div class="d-flex justify-content-center" style="height: 250px">
@@ -93,12 +91,12 @@
             <div class="modal-body">
                 <form action="" id="subject_check_form" method="POST">
                     <div class="form-group form-row">
-                        <input name="number" type="hidden" value="<%= data.number %>">
-                        <input name="check" id="subject_check_pw" type="password" class="form-control"
-                            placeholder="请输入密码" pattern="\w{8,16}" required>
+                        <input name="id" type="hidden" value="<%= subject.id %>">
+                        <input name="password" type="password" class="form-control" placeholder="请输入密码"
+                            pattern="\w{8,16}" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
-                        <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                        <button type="reset" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
                         <button type="submit" class="btn btn-primary col-3">提交</button>
                     </div>
                 </form>
@@ -109,11 +107,13 @@
 
 <script>
     (function ($, SASEE) {
-        let $subject_check_form=$('#subject_check_form');
-        $subject_check_form.submit((e)=>{
-            e.preventDefault();
-            $subject_check_form[0].action = SASEE.URL_CHOOSE;
-            $subject_check_form[0].submit();
+        SASEE.formSubmit({
+            selector: '#subject_check_form',
+            url: './choose',
+            done: msg => {
+                $('#subject_check_modal').modal('hide');
+                SASEE.requestDone(msg);
+            },
         });
     })(window.jQuery, window.SASEE);
 </script>

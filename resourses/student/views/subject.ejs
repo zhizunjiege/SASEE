@@ -12,15 +12,7 @@
             </tr>
         </thead>
         <tbody class="infinite-scroll-container-2">
-            <% for( let index = 0; index < data.length; index++ ) { %>
-            <tr class="infinite-scroll-item-2 point" data-id="<%= data[index].id %>">
-                <td class="text-left"><a href="#"><%= data[index].title %></a></td>
-                <td><%= data[index].group %></td>
-                <td><%= data[index].chosen+'/'+data[index].capacity %></td>
-                <td><%= data[index].teacher %></td>
-                <td><%= data[index].submitTime %></td>
-            </tr>
-            <% } %>
+            <%- include('./subjectList',{data}) %>
         </tbody>
     </table>
     <div class="text-center card-footer infinite-scroll-status-2" style="display:none">
@@ -28,24 +20,28 @@
         <span class="infinite-scroll-last">没有啦</span>
         <span class="text-warning infinite-scroll-error">出错了</span>
     </div>
-
 </div>
 
 <script>
     (function ($, SASEE) {
-        function _loadSubjectContent(e){
-            SASEE._loadContent(e, '#subject_content', 'subjectContent', (e) => {
-                SASEE._contentBarToggle();
+        function _loadSubjectContent(e) {
+            SASEE._loadContent('#subject_content', {
+                type: 'subjectContent',
+                id: $(e.currentTarget).data('id')
+            }, () => {
                 SASEE._subjectToggle('#subject_content', '#subject_list');
             })
         }
+
         $('.infinite-scroll-item-2').click(_loadSubjectContent);
-        SASEE.instScroll('.infinite-scroll-container-2', function () {
-            let page=Number($('#subject_list').data().page);
+        SASEE.instScroll('.infinite-scroll-container-2', () => {
+            let page = Number($('#subject_list').data().page);
             if (page) {
-                return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (page+1);
+                return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (page + 1);
             }
         }, '.infinite-scroll-item-2', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
+            let page = Number($('#subject_list').data().page);
+            $('#subject_list').data('page', page+1);
             $(items).click(_loadSubjectContent);
         });
     })(window.jQuery, window.SASEE);

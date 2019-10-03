@@ -7,7 +7,7 @@
             let href = $target.attr('href'),
                 type = $target[0].dataset.type;
             if (!$(href).length) {
-                $.get(SASEE.URL_VIEWS+'/'+type).fail(fail).done((html) => {
+                $.get(SASEE.URL_VIEWS + '/' + type).fail(fail).done((html) => {
                     $('<div>', {
                         "id": href.substring(1),
                         "class": "collapse",
@@ -36,6 +36,8 @@
                 return SASEE.URL_VIEWS + '/newsList?nextPage=' + (page + 1);
             }
         }, '.list-group-item', 400, '#news_list', false, '.infinite-scroll-status-1', '.infinite-scroll-button-1', null, (e, res, path, items) => {
+            let page = Number($('#news_list').data().page);
+            $('#news_list').data('page', page + 1);
             $(items).click(_loadNewsContent);
         });
 

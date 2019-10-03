@@ -73,9 +73,12 @@
                                     class="form-text text-muted">请上传zip，rar或7z文件，不超过5M</small></label>
                         </div>
                     </div>
+                    <% if (isTeacher) { %>
                     <div class="form-group">
-                        <input type="text" name="tag" class="form-control" placeholder="请为文件输入一个标签~" maxlength="16" required>
+                        <input type="text" name="tag" class="form-control" placeholder="请为文件输入一个标签~" maxlength="16"
+                            required>
                     </div>
+                    <% } %>
                     <div class="form-group form-row justify-content-around">
                         <button type="reset" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
                         <button type="submit" class="btn btn-primary col-3">提交</button>
@@ -94,14 +97,14 @@
             done: msg => {
                 let $form = $('#file_form'), $upFile_list = $('#upFile_list'),
                     name = $form[0].file.value.match(/\\([^\\\s]+)$/)[1],
-                    tag = $form[0].tag.value;
+                    tag = $form[0].tag?$form[0].tag.value:null;
                 SASEE.requestDone(msg);
                 $('#file_modal').modal('hide');
                 $upFile_list.find('div').remove();
                 $(`<a href="#" class="list-group-item">
                     <small class="d-inline-block w-50 ellipsis">${name}</small>
-                    ${`<small class="ellipsis"><strong>Tag:</strong>${tag}</small>`}
-                    <small class="float-right">${new Date().toISOString().substr(0,10)}</small>
+                    ${tag?`<small class="ellipsis"><strong>Tag:</strong>${tag}</small>`:''}
+                    <small class="float-right">${new Date().toISOString().substr(0, 10)}</small>
                 </a>`).prependTo($upFile_list);
             }
         });
