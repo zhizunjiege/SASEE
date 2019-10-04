@@ -38,7 +38,7 @@ const period = require('./routes/period'),
     info = require('./routes/info'),
     upload = require('./routes/upload'),
     download = require('./routes/download'),
-    choose = require('./routes/choose');
+    subject = require('./routes/subject');
 
 app.set('views', __dirname + CONSTANT.VIEWS_COMMON);
 app.set('view engine', 'ejs');
@@ -106,14 +106,20 @@ app.use((req, res, next) => {
     emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
     student.use('/email', emailRouter);
 
-    student.post('/choose',period.permiss([5,8]), choose(period));
+    student.post('/choose', period.permiss([5, 8]), (req, res, next) => {
+        if (period.GET_STATE() == 5) {
+            req.body.colume = 'selected';
+        } else {
+            req.body.colume = 'final';
+        }
+        next();
+    }, subject.choose);
 
     student.get('/logout', general.logout);
     student.post('/password', password.modify);
 }
 {
-    const subject = require('./routes/subject'),
-        fileRouter = Router(),
+    const fileRouter = Router(),
         subjectRouter = Router(),
         emailRouter = Router();
     teacher.set('views', __dirname + CONSTANT.VIEWS_TEACHER);
@@ -141,21 +147,23 @@ app.use((req, res, next) => {
     teacher.get('/logout', general.logout);
     teacher.post('/password', password.modify);
 }
-(function () {
-    const fileRouter = Router();
-    dean.set('views', __dirname + '/resourses/dean/views/');
+{
+    const emailRouter = Router();
+    dean.set('views', __dirname + CONSTANT.VIEWS_DEAN);
 
-    fileRouter.post('/upload', receive);
+    dean.get('/', login.render);
+    dean.use('/views', views.common(Router), views.dean(Router, period));
 
-    dean.post('/', login.render);
-    dean.get('/views', views.dean);
-    dean.use('/file', fileRouter);
-    //dean.get('/logout',logout);
-    //dean.get('/download',download);
-    //dean.post('/email',email);
-    //dean.post('/password',password);
-    //dean.post('/choose',choose);
-})();
+    emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
+    emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
+    dean.use('/email', emailRouter);
+
+    dean.post('/pass', period.permiss([2, 4]), subject.pass, email.sendEmail);
+    dean.post('/fail', period.permiss([2, 4]), subject.fail, email.sendEmail);
+
+    dean.get('/logout', general.logout);
+    dean.post('/password', password.modify);
+}
 
 app.use('/student', student);
 app.use('/teacher', teacher);

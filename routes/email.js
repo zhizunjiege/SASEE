@@ -51,10 +51,10 @@ function sendPinCode(req, res) {
 }
 
 function sendEmail(req, res) {
-    let { toAddr, title, content } = req.body;
+    let { toAddr, title, content, extraData } = req.body;
     _send({
         to: toAddr,
-        html: content + `<footer style="text-align:center">~~~此邮件由系统代发,请勿回复~~~</footer>`,
+        html: (extraData || '') + content + `<footer style="text-align:center">~~~此邮件由系统代发,请勿回复~~~</footer>`,
         subject: title
     }).then(info => {
         res.send('邮件发送成功！');

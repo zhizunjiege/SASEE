@@ -10,7 +10,7 @@ function submit(req, res) {
         paramArray = [title, group, group_des, capacity, introduction, materials];
     let sql_query = 'SELECT id,password FROM teacher WHERE account=?',
         sql_insert = 'INSERT INTO bysj (title,`group`,group_des,capacity,introduction,materials,submitTime,lastModifiedTime,teacher,state,studentFiles,teacherFiles,notice,student_selected,student_final) VALUES (?,?,?,?,?,?,CURDATE(),CURDATE(),?,0,JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY())',
-        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
+        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",CONCAT("",?)) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher_id;
 
     mysql.transaction().then(conn => {
@@ -49,7 +49,7 @@ function modify(req, res) {
         account = req.session.account,
         paramObj = { title, capacity, introduction, materials };
     let sql_query = 'SELECT 1 FROM teacher WHERE account=? AND password=?',
-        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE() WHERE id=?;SELECT * FROM bysj WHERE id=?';
+        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state=0 WHERE id=?;SELECT * FROM bysj WHERE id=?';
     mysql.find(sql_query, [account, password]).then(results => {
         if (results.length != 0) {
             if (!req.file) {
@@ -101,10 +101,72 @@ function mark(req, res) {
     paramArray.push(id);
     mysql.find(sql_update, paramArray).then(() => {
         res.send('评分成功！');
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err);
         res.status(403).send('评分失败，请重试！');
     });
 }
 
-module.exports = { submit, modify, notice, mark };
+function choose(req, res) {
+    let { account } = req.session,
+        { id, password, colume } = req.body;
+    let sql_query = 'SELECT id stuId,bysj FROM student WHERE account=? AND password=?',
+        sql_update1 = 'UPDATE bysj SET student_' + colume + '=JSON_REMOVE(student_' + colume + ',JSON_UNQUOTE(JSON_SEARCH(student_' + colume + ',"one",?))) WHERE id=?',
+        sql_update2 = 'UPDATE bysj SET student_' + colume + '=JSON_ARRAY_APPEND(student_' + colume + ',"$",CONCAT("",?)) WHERE id=?',
+        sql_update3 = 'UPDATE student SET bysj=? WHERE id=?';
+    mysql.find(sql_query, [account, password]).then(results => {
+        if (results.length > 0) {
+            let { stuId, bysj } = results[0];
+            if (bysj && bysj == id) {
+                res.status(403).send('你已经选择过该课题！');
+            } else {
+                mysql.transaction().then(conn => {
+                    if (bysj) {
+                        return conn.find(sql_update1, [stuId, bysj]);
+                    } else {
+                        return Promise.resolve({
+                            results: 'succeeded!',
+                            conn: conn
+                        });
+                    }
+                }).then(({ conn }) => {
+                    return conn.find(sql_update2, [stuId, id]);
+                }).then(({ conn }) => {
+                    return conn.find(sql_update3, [id, stuId]);
+                }).then(({ results, conn }) => {
+                    return conn.commitPromise(results);
+                }).then(() => {
+                    res.send('选择课题成功');
+                }).catch(err => {
+                    console.log(err);
+                    res.status(403).send('选择课题失败，请稍后重试！');
+                });
+            }
+        } else {
+            res.status(403).send('密码错误，请重试！');
+        }
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('服务器错误，请重试！');
+    });
+}
+
+function _changeState(req, res, next, state) {
+    let { id } = req.body,
+        sql_update = 'UPDATE bysj SET state=? WHERE id=?';
+    mysql.find(sql_update, [state, id]).then((results) => {
+        next();
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('操作失败，请重试！');
+    });
+}
+
+function pass(req, res, next) {
+    _changeState(req, res, next, 1);
+}
+function fail(req, res, next) {
+    _changeState(req, res, next, -1);
+}
+
+module.exports = { submit, modify, notice, mark, choose, pass, fail };

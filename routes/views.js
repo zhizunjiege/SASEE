@@ -40,7 +40,6 @@ function student(Router, period) {
         let group = req.session.group,
             sql_query = 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0';
         _render(res, sql_query, [group,group], 'subject');
-
     });
     studentRouter.get('/subjectList', period.permiss([5, 8]), (req, res) => {
         let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
@@ -90,42 +89,30 @@ function teacher(Router, period) {
 }
 
 
-function dean(req, res) {
-    let file = req.query.type,
-        nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
-        account = Number(req.session.account) || 0,
-        group = Number(req.session.group) || 0,
-        id = Number(req.query.id) || 0,
-        sql_query = '',
-        param;
-    switch (file) {
-        case 'newsList':
-            //req.query.nextPage表示第几页
-            sql_query = 'SELECT * FROM news ORDER BY top DESC,id DESC LIMIT 10 OFFSET ?';
-            param = nextPageOffset;
-            file = process.cwd() + '/resourses/common/views/newsList';
-            console.log(param);
-            break;
-        case 'newsContent':
-            file = process.cwd() + '/resourses/common/news/news_' + id;
-            break;
-        case 'userInfo':
+function dean(Router, period) {
+    const deanRouter = Router();
+    deanRouter.get('/userInfo', (req, res) => {
+        let account = req.session.account,
             sql_query = 'SELECT * FROM dean WHERE account =?';
-            param = account;
-            break;
-        case 'subject':
-        case 'subjectList':
-            sql_query = 'SELECT bysj.id,title,`group`,chosen,capacity,submitTime,t.name teacher FROM bysj,teacher t WHERE `group`=? AND bysj.teacher=t.id ORDER BY lastModifiedTime DESC LIMIT 10 OFFSET ?';
-            param = [group, nextPageOffset];
-            break;
-        case 'subjectContent':
-            sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT `name`,gender,proTitle,field,email,department_des FROM teacher t,bysj b WHERE b.id=? AND b.teacher=t.id';
-            param = [id, id];
-            break;
-        default:
-            break;
-    }
-    _render(res, sql_query, param, file);
+        _render(res, sql_query, account, 'userInfo');
+    });
+    deanRouter.get('/subject', period.permiss([2,4]), (req, res) => {
+        let group = req.session.group,
+            sql_query = 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=0 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=0 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0';
+        _render(res, sql_query, [group,group], '../../student/views/subject');
+    });
+    deanRouter.get('/subjectList', period.permiss([2,4]), (req, res) => {
+        let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
+            group = req.session.group,
+            sql_query = 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=0 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?';
+        _render(res, sql_query, [group, nextPageOffset], '../../student/views/subjectList');
+    });
+    deanRouter.get('/subjectContent', period.permiss([2,4]), (req, res) => {
+        let id = req.query.id,
+            sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?';
+        _render(res, sql_query, [id, id], 'subjectContent');
+    });
+    return deanRouter;
 }
 
 function admin(req, res) { }

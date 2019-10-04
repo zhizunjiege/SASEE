@@ -199,7 +199,7 @@
                 }
             });
         }
-        $form.submit((e) => {
+        $form[0].onsubmit = (e) => {
             e.preventDefault();
             if (!validate || validate($form)) {
                 let ajaxObj = null;
@@ -219,7 +219,7 @@
             } else {
                 ifNotValid && ifNotValid($form);
             }
-        });
+        };
     };
 
     SASEE.counter = ({ count, doing = () => { }, done = () => { } } = {}) => {
