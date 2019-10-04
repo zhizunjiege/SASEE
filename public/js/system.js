@@ -69,50 +69,42 @@
             callback();
         }).fail(SASEE.requestFail);
     };
-    SASEE.instScroll = (container, path, append, scrollThreshold, elementScroll, loadOnScroll, status, button, loadCallback, appendCallback) => {
-        var $infiniteScrollObj = $(container).infiniteScroll({
-            path: path,
-            append: append,
-            checkLastPage: true,
-            prefill: false,
-            responseType: 'document',
-            onInit: null,
-            scrollThreshold: scrollThreshold,
-            elementScroll: elementScroll,//默认用window的滚动触发
-            loadOnScroll: loadOnScroll,
-            history: false,
-            //hideNav: '.infinite-scroll-status',
-            status: status,
-            //button: button,
-            debug: true
+    SASEE.instPagination = ({ container, pagination, url, max = 10 } = {}) => {
+        let $container = $(container),
+            $pagination = $(pagination),
+            $previous = $pagination.find('.previous'),
+            $now = $pagination.find('.now'),
+            $next = $pagination.find('.next'),
+            totalPage = Math.ceil(Number($pagination.data('total')) / max);
+        function _now() {
+            return Number($now[0].children[0].innerText);
+        }
+        function _load(offset) {
+            let page = _now() + offset;
+            $.get(url, { page }).done(html => {
+                $container.empty().append(html);
+                $now[0].children[0].innerText = page;
+            }).fail(SASEE.requestFail);
+        }
+        $previous.click(e => {
+            if (_now() > 1) {
+                _load(-1);
+            } else {
+                _load(totalPage - 1);
+            }
         });
-        function log(e, res, path, items) {
-            console.log(e);
-            console.log(res);
-            console.log(path);
-            console.log(items);
-        }
-        if (button) {
-            $(button).click(() => {
-                $(container).infiniteScroll('loadNextPage');
-                $infiniteScrollObj.infiniteScroll('option', {
-                    loadOnScroll: true
-                });
-                $(button).hide();
-            });
-        }
-
-        //$infiniteScrollObj.on('scrollThreshold.infiniteScroll', log);
-        //$infiniteScrollObj.on('request.infiniteScroll', log);
-        if (loadCallback) {
-            $infiniteScrollObj.on('load.infiniteScroll', loadCallback);
-        }
-        if (appendCallback) {
-            $infiniteScrollObj.on('append.infiniteScroll', appendCallback);
-        }
-        //$infiniteScrollObj.on('error.infiniteScroll', log);
-        //$infiniteScrollObj.on('last.infiniteScroll', log);
+        $now.click(e => {
+            _load(0);
+        });
+        $next.click(e => {
+            if (_now() < totalPage) {
+                _load(1);
+            } else {
+                _load(1 - totalPage);
+            }
+        });
     };
+
     SASEE.instEditor = (container, full = false) => {
         let editor = new window.wangEditor(container + ' .editor');
         editor.customConfig.uploadImgShowBase64 = true;

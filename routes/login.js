@@ -28,7 +28,7 @@ function authenticate(req, res) {
 
 function render(req, res) {
     let { identity, account } = req.session,
-        sql_query = "SELECT name,gender,`group` FROM ?? user WHERE account = ?;SELECT * FROM news ORDER BY top DESC,date DESC LIMIT 10 OFFSET 0";
+        sql_query = "SELECT name,gender,`group` FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0";
     mysql.find(sql_query, [identity, account])
         .then(data => {
             let [[user], news] = data;

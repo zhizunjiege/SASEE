@@ -18,10 +18,9 @@ function common(Router) {
     const commonRouter = Router();
     const filePath = process.cwd() + '/resourses/common';
     commonRouter.get('/newsList', (req, res) => {
-        let nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
-            sql_query = 'SELECT * FROM news ORDER BY top DESC,id DESC LIMIT 10 OFFSET ?',
-            param = nextPageOffset;
-        _render(res, sql_query, param, filePath + '/views/newsList');
+        let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
+            sql_query = 'SELECT * FROM news ORDER BY top DESC,id DESC LIMIT 10 OFFSET ?';
+        _render(res, sql_query, nextPageOffset, filePath + '/views/newsList');
     });
     commonRouter.get('/newsContent', (req, res) => {
         let id = req.query.id;
@@ -35,28 +34,29 @@ function student(Router, period) {
     studentRouter.get('/userInfo', (req, res) => {
         let account = req.session.account,
             sql_query = 'SELECT * FROM student WHERE account =?';
-        _render(res, sql_query,account, 'userInfo');
+        _render(res, sql_query, account, 'userInfo');
     });
-    studentRouter.get('/subject', period.permiss([5,8]), (req, res) => {
+    studentRouter.get('/subject', period.permiss([5, 8]), (req, res) => {
         let group = req.session.group,
-            sql_query = 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0';
-        _render(res, sql_query, group, 'subject');
+            sql_query = 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0';
+        _render(res, sql_query, [group,group], 'subject');
 
     });
-    studentRouter.get('/subjectList', period.permiss([5,8]), (req, res) => {
-        let nextPageOffset = ((Number(req.query.nextPage) || 1) - 1) * 10,
-            sql_query = 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 ORDER BY submitTime,b.id LIMIT 10 OFFSET ?';
-        _render(res, sql_query, nextPageOffset, 'subjectList');
+    studentRouter.get('/subjectList', period.permiss([5, 8]), (req, res) => {
+        let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
+            group = req.session.group,
+            sql_query = 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?';
+        _render(res, sql_query, [group, nextPageOffset], 'subjectList');
     });
-    studentRouter.get('/subjectContent', period.permiss([5,8]), (req, res) => {
+    studentRouter.get('/subjectContent', period.permiss([5, 8]), (req, res) => {
         let id = req.query.id,
             sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?';
-        _render(res, sql_query,[id, id], 'subjectContent');
+        _render(res, sql_query, [id, id], 'subjectContent');
     });
     studentRouter.get('/mySubject', period.permiss([9]), (req, res) => {
         let account = req.session.account,
             sql_query = 'SELECT s.name stuName,b.id,notice,teacherFiles,studentFiles FROM bysj b,student s WHERE b.id=s.bysj AND s.account=?;SELECT t.* FROM teacher t,bysj b,student s WHERE s.account=? AND s.bysj=b.id AND b.teacher=t.id';
-        _render(res, sql_query,[account, account], 'mySubject');
+        _render(res, sql_query, [account, account], 'mySubject');
     });
     return studentRouter;
 }
@@ -66,12 +66,12 @@ function teacher(Router, period) {
     teacherRouter.get('/userInfo', (req, res) => {
         let account = req.session.account,
             sql_query = 'SELECT * FROM teacher WHERE account =?';
-        _render(res, sql_query,account, 'userInfo');
+        _render(res, sql_query, account, 'userInfo');
     });
     teacherRouter.get('/subject', period.permiss([[1, 9]]), (req, res) => {
         let account = req.session.account,
             sql_query = 'SELECT b.id,title,chosen,capacity,introduction,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))';
-        _render(res, sql_query,account, 'subject');
+        _render(res, sql_query, account, 'subject');
     });
     teacherRouter.get('/submitSubject', period.permiss([1]), (req, res) => {
         _render(res, null, null, 'submitSubject');
@@ -84,7 +84,7 @@ function teacher(Router, period) {
     teacherRouter.get('/mySubject', period.permiss([9]), (req, res) => {
         let id = req.query.id,
             sql_query = 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,CONCAT("",s.id))';
-        _render(res, sql_query,[id, id], 'mySubject');
+        _render(res, sql_query, [id, id], 'mySubject');
     });
     return teacherRouter;
 }

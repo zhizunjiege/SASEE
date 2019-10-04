@@ -24,7 +24,7 @@
                     width="48px">
                 <div>
                     <div class="h5 my-0"><%= user.name %></div>
-                    <% const identity={'student':'学生','teacher':'教师','dean':'系主任'} %>
+                    <% const identity={'student':'学生','teacher':'教师','dean':'系主任'}; %>
                     <span class="badge badge-pill badge-info"><%= identity[user.identity] %></span>
                 </div>
             </div>
@@ -109,33 +109,20 @@
                 <div id="contents_body">
                     <div id="news" class="collapse show" data-parent="#contents">
                         <% if (news.length) { %>
-                        <div id="news_content" class="col-10 mx-auto scroll-container" style="display: none"></div>
-                        <div id="news_list" class="scroll-container" data-page="1">
-                            <ul class="list-group list-group-flush col-10 mx-auto infinite-scroll-container-1">
-                                <% for( let index = 0; index < news.length; index++ ) { %>
-                                <li class="list-group-item list-group-item-action" data-id="<%= news[index].id %>">
-                                    <a href="#" class="float-left w-50 ellipsis">
-                                        <% if (news[index].top) { %>
-                                        <span class="badge badge-pill badge-warning">置顶</span>
-                                        <% } %>
-                                        <%= news[index].title %>
-                                    </a>
-                                    <span
-                                        class="float-right"><%= news[index].publisher+'--'+news[index].category+'--'+news[index].date %>
-                                    </span>
-                                </li>
-                                <% } %>
+                        <div id="news_content" class="col-10 mx-auto" style="display: none"></div>
+                        <div id="news_list">
+                            <ul class="list-group list-group-flush col-10 mx-auto">
+                                <%- include('./newsList',{data:news}) %>
                             </ul>
-                            <div class="text-center card-footer infinite-scroll-status-1" style="display:none">
-                                <span class="infinite-scroll-request">加载中···</span>
-                                <span class="infinite-scroll-last">没有啦</span>
-                                <span class="text-warning infinite-scroll-error">出错了</span>
-                            </div>
-                            <div class="row justify-content-center">
-                                <button class="btn btn-secondary col-3 my-4 infinite-scroll-button-1">
-                                    <h5 class="mb-0">更多···</h5>
-                                </button>
-                            </div>
+                            <nav id="news_pagination" class="rel-bottom" data-total="<%= news[0].total %>">
+                                <ul class="pagination pagination-lg">
+                                    <li class="page-item previous"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                                    <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+                                    <li class="page-item now"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+                                    <li class="page-item next"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                                </ul>
+                            </nav>
                         </div>
                         <% } else { %>
                         <div class="d-flex justify-content-center" style="height: 250px">
@@ -157,7 +144,6 @@
 
     <script src="/bootstrap/others/jquery-3.4.0.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/infinite-scroll.pkgd.min.js"></script>
     <script src="/js/wangEditor.min.js"></script>
     <script src="/js/system.js"></script>
     <script src="/js/main.js"></script>

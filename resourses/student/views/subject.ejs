@@ -1,6 +1,6 @@
 <% if (data.length) { %>
-<div id="subject_content" class="col-12 mx-auto scroll-container" style="display: none"></div>
-<div id="subject_list" class="scroll-container" data-page="1">
+<div id="subject_content" class="col-12 mx-auto" style="display: none"></div>
+<div id="subject_list">
     <table class="table table-hover text-center col-10 mx-auto table-fixed">
         <thead class="thead-light">
             <tr>
@@ -11,15 +11,19 @@
                 <th scope="col">发布时间</th>
             </tr>
         </thead>
-        <tbody class="infinite-scroll-container-2">
+        <tbody>
             <%- include('./subjectList',{data}) %>
         </tbody>
     </table>
-    <div class="text-center card-footer infinite-scroll-status-2" style="display:none">
-        <span class="infinite-scroll-request">加载中···</span>
-        <span class="infinite-scroll-last">没有啦</span>
-        <span class="text-warning infinite-scroll-error">出错了</span>
-    </div>
+    <nav id="subject_pagination" class="rel-bottom" data-total="<%= data[0].total %>">
+        <ul class="pagination pagination-lg">
+            <li class="page-item previous"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+            <li class="page-item now"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+            <li class="page-item next"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+        </ul>
+    </nav>
 </div>
 
 <script>
@@ -27,22 +31,16 @@
         function _loadSubjectContent(e) {
             SASEE._loadContent('#subject_content', {
                 type: 'subjectContent',
-                id: $(e.currentTarget).data('id')
+                id: $(e.target).closest('tr').data('id')
             }, () => {
                 SASEE._subjectToggle('#subject_content', '#subject_list');
-            })
+            });
         }
-
-        $('.infinite-scroll-item-2').click(_loadSubjectContent);
-        SASEE.instScroll('.infinite-scroll-container-2', () => {
-            let page = Number($('#subject_list').data().page);
-            if (page) {
-                return SASEE.URL_VIEW + '?type=subjectList&nextPage=' + (page + 1);
-            }
-        }, '.infinite-scroll-item-2', 400, '#subject_list', true, '.infinite-scroll-status-2', null, null, (e, res, path, items) => {
-            let page = Number($('#subject_list').data().page);
-            $('#subject_list').data('page', page+1);
-            $(items).click(_loadSubjectContent);
+        $('#subject_list tbody').click(_loadSubjectContent);
+        SASEE.instPagination({
+            container: '#subject_list tbody',
+            pagination: '#subject_pagination',
+            url: SASEE.URL_VIEWS + '/subjectList'
         });
     })(window.jQuery, window.SASEE);
 </script>
