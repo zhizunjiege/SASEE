@@ -153,8 +153,9 @@ function choose(req, res) {
 
 function _changeState(req, res, next, state) {
     let { id } = req.body,
-        sql_update = 'UPDATE bysj SET state=? WHERE id=?';
-    mysql.find(sql_update, [state, id]).then((results) => {
+        sql_update = 'UPDATE bysj SET state=? WHERE id=?;SELECT title FROM bysj WHERE id=?';
+    mysql.find(sql_update, [state, id, id]).then((results) => {
+        req.body.content = '<h3>课题“<strong>' + results[1][0].title + '</strong>”的审核结果：</h3>' + req.body.content;
         next();
     }).catch(err => {
         console.log(err);

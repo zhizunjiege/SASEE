@@ -19,9 +19,8 @@ function init() {
 function update(req, res) {
     let columeArray = ['open', 'submit', 'review', 'modify', 'release', 'choose', 'draw', 'publicity', 'final', 'general', 'close'],
         sql_update = 'UPDATE period SET state=state+1,??=NOW()';
-    mysql.find(sql_update, columeArray[STATE + 1]).then(() => {
-        STATE++;
-        res.sendStatus(200);
+    mysql.find(sql_update, columeArray[++STATE]).then(() => {
+        res.send('更新成功！');
     });
 }
 
