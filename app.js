@@ -1,32 +1,46 @@
-const express = require('express');
-const Router = express.Router;
-const app = express();
-const student = express();
-const teacher = express();
-const dean = express();
-const admin = express();
+const CONSTANT = {
+    PATH_TMP: './tmp/',
+    PATH_FILES: 'resourses/common/files/',
+    VIEWS_COMMON: '/resourses/common/views/',
+    VIEWS_TEACHER: '/resourses/teacher/views/',
+    VIEWS_STUDENT: '/resourses/student/views/',
+    VIEWS_DEAN: '/resourses/dean/views/',
+    VIEWS_ADMIN: '/resourses/admin/views/'
+};
 
-const path = require('path');
-const multer = require("multer");
-const session = require('express-session');
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, 'upload/');
-        },
-        filename: (req, file, cb) => {
-            cb(null, file.originalname);
-        }
-    })
-});
-const period = require('./routes/period');
-const login = require("./routes/login");
-const views = require("./routes/views");
-const NotFound = require("./routes/NotFound");
-const upload_function = require("./routes/upload");
-const email = require('./routes/email');
+const express = require('express'),
+    Router = express.Router,
+    app = express(),
+    student = express(),
+    teacher = express(),
+    dean = express(),
+    admin = express();
 
-app.set('views', __dirname + '/resourses');
+const path = require('path'),
+    multer = require("multer"),
+    session = require('express-session'),
+    receive = multer({
+        storage: multer.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, CONSTANT.PATH_TMP);
+            },
+            filename: (req, file, cb) => {
+                cb(null, file.originalname);
+            }
+        })
+    }).single('file');
+const period = require('./routes/period'),
+    login = require("./routes/login"),
+    views = require("./routes/views"),
+    general = require("./routes/general"),
+    password = require("./routes/password"),
+    email = require('./routes/email'),
+    info = require('./routes/info'),
+    upload = require('./routes/upload'),
+    download = require('./routes/download'),
+    subject = require('./routes/subject');
+
+app.set('views', __dirname + CONSTANT.VIEWS_COMMON);
 app.set('view engine', 'ejs');
 app.set('strict routing', true);
 
@@ -34,88 +48,129 @@ period.init();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(session({
     resave: false,//每次请求都保存session，即使session未更改
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
-        maxAge: 30 * 60 * 1000,//设置cookie的过期时间为30分钟
-        activeDuration: 5 * 60 * 1000, // 激活时间，比如设置为5分钟，那么只要5分钟内用户有服务器的交互，那么就会被重新激活。
+        maxAge: app.get('env') == 'development' ? 5 * 60 * 1000 : 20 * 60 * 1000,//设置cookie的过期时间
     }
 }));
 
 app.get('/', (req, res) => {
-    res.render('common/views/login');
+    if (req.session.account) {
+        res.redirect('/' + req.session.identity + '/');
+    } else {
+        res.render('login');
+    }
 });
 
-app.get('/password', (req, res) => {
-    res.render('common/views/password');
+const pwRouter = Router();
+pwRouter.get('/', (req, res) => {
+    res.render('password');
+});
+pwRouter.get('/sendPinCode', email._spcmw, email.sendPinCode);
+pwRouter.post('/retrieve', password.retrieve);
+app.use('/password', pwRouter);
+
+app.post('/login', login.authenticate);
+
+app.use((req, res, next) => {
+    if (!req.session.account) {
+        if (req.method.toLowerCase == 'post') {
+            res.location('/').status(403).send('登陆信息失效，请重新登陆！');
+        } else {
+            res.redirect('/');
+        }
+    } else {
+        req.APP_CONSTANT = CONSTANT;
+        next();
+    }
 });
 
-(function () {
-    const file = Router();
-    student.set('views', __dirname + '/resourses/student/views/');
+{
+    const emailRouter = Router(),
+        fileRouter = Router();
+    student.set('views', __dirname + CONSTANT.VIEWS_STUDENT);
 
-    file.post('/upload', upload.single('file_new'), upload_function);
+    student.get('/', login.render);
+    student.use('/views', views.common(Router), views.student(Router, period));
 
-    student.post('/', login);
-    student.get('/views', views.student);
-    student.use('/file', file);
-    //student.get('/logout',logout);
-    //student.get('/download',download);
-    //student.post('/email',email);
-    //student.post('/password',password);
-    //student.post('/choose',choose);
-})();
-(function () {
-    const subject = require('./routes/subject'),
-        fileRouter = Router(),
+    fileRouter.post('/upload', receive, upload);
+    fileRouter.get('/download', download);
+    student.use('/file', period.permiss([9]), fileRouter);
+
+    emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
+    emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
+    emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
+    student.use('/email', emailRouter);
+
+    student.post('/choose', period.permiss([5, 8]), (req, res, next) => {
+        if (period.GET_STATE() == 5) {
+            req.body.colume = 'selected';
+        } else {
+            req.body.colume = 'final';
+        }
+        next();
+    }, subject.choose);
+
+    student.get('/logout', general.logout);
+    student.post('/password', password.modify);
+}
+{
+    const fileRouter = Router(),
         subjectRouter = Router(),
         emailRouter = Router();
-    teacher.set('views', __dirname + '/resourses/teacher/views/');
+    teacher.set('views', __dirname + CONSTANT.VIEWS_TEACHER);
 
-    teacher.post('/', login);
-    teacher.use('/views', views.common(Router), views.teacher(Router, period.permiss));
+    teacher.get('/', login.render);
+    teacher.use('/views', views.common(Router), views.teacher(Router, period));
 
-    fileRouter.post('/upload', upload.single('file_new'), upload_function);
+    fileRouter.post('/upload', receive, upload);
+    fileRouter.get('/download', download);
     teacher.use('/file', period.permiss([9]), fileRouter);
 
-    subjectRouter.post('/submit', period.permiss([1]), upload.single('file'), subject.submit);
-    subjectRouter.post('./modify', period.permiss([1, 3]), upload.single('file'), subject.modify);
+    subjectRouter.post('/submit', period.permiss([1]), receive, subject.submit);
+    subjectRouter.post('/modify', period.permiss([1, 3]), receive, subject.modify);
+    subjectRouter.post('/notice', period.permiss([9]), subject.notice);
+    subjectRouter.post('/mark', period.permiss([9]), subject.mark);
     teacher.use('/subject', subjectRouter);
 
-    emailRouter.get('/sendPinCode', email.sendPinCode);
-    emailRouter.post('/setEmailAddr',email.setEmailAddr);
+    emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
+    emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
+    emailRouter.post('/sendEmail', period.permiss([9]), email.sendEmail);
     teacher.use('/email', emailRouter);
 
-    teacher.post('/info', (req, res) => {
-        console.log(req.body);
-    });
+    teacher.post('/info', period.permiss([0]), info.setGeneralInfo(['field', 'office', 'tele', 'resume']));
 
-    //teacher.get('/logout',logout);
-    //teacher.post('/password',password);
-})();
-(function () {
-    const file = Router();
-    dean.set('views', __dirname + '/resourses/dean/views/');
+    teacher.get('/logout', general.logout);
+    teacher.post('/password', password.modify);
+}
+{
+    const emailRouter = Router();
+    dean.set('views', __dirname + CONSTANT.VIEWS_DEAN);
 
-    file.post('/upload', upload.single('file_new'), upload_function);
+    dean.get('/', login.render);
+    dean.use('/views', views.common(Router), views.dean(Router, period));
 
-    dean.post('/', login);
-    dean.get('/views', views.dean);
-    dean.use('/file', file);
-    //dean.get('/logout',logout);
-    //dean.get('/download',download);
-    //dean.post('/email',email);
-    //dean.post('/password',password);
-    //dean.post('/choose',choose);
-})();
+    emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
+    emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
+    dean.use('/email', emailRouter);
+
+    dean.post('/pass', period.permiss([2, 4]), subject.pass, email.sendEmail);
+    dean.post('/fail', period.permiss([2, 4]), subject.fail, email.sendEmail);
+
+    dean.get('/logout', general.logout);
+    dean.post('/password', password.modify);
+}
+
 app.use('/student', student);
 app.use('/teacher', teacher);
 app.use('/dean', dean);
 app.use('/admin', admin);
 
-app.use(NotFound);
+app.use(general.notFound);
 
 app.listen(3000, '::', () => {
     console.log('express is running on localhost:3000')

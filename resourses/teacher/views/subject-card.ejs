@@ -1,5 +1,10 @@
-<div class="card w-25 mt-4 list-group-item-action" data-id="<%= id %>">
-    <header class="card-header ellipsis"><%= title||'暂无标题' %></header>
+<% const stateObj={'-1':'modifySubject','0':'modifySubject','1':'mySubject'},
+colorObj={'-1':'warning','0':'primary','1':'succcess'},
+desObj={'-1':'被打回','0':'未审核','1':'已通过'}; %>
+<div class="card w-25 mt-4 list-group-item-action" data-type="<%= stateObj[state] %>" data-id="<%= id %>">
+    <header class="card-header d-flex align-items-center"><span
+            class="d-inline-block w-75 ellipsis"><%= title||'暂无标题' %></span><span
+            class="badge badge-pill badge-<%= colorObj[state] %>"><%= desObj[state] %></span></header>
     <div class="card-body row">
         <p class="card-text" style="height:100px;">
             <%= introduction||'暂无介绍' %></p>

@@ -12,20 +12,22 @@ var pool = mysql.createPool({
     password: 'mysql',
     database: 'app',
     port: 3306,
-    dateStrings:true,
+    dateStrings: true,
     typeCast: (field, next) => {
         if (field.type == 'JSON') return JSON.parse(next());
         else return next();
     }
 });
 
-const find = function (sql, param) {
-    return new Promise(function (resolve, reject) {
-        pool.getConnection(function (err, conn) {
+const query = pool.query;
+
+const find = (sql, param) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, conn) => {
             if (err) {
                 reject(err);
             } else {
-                conn.query(sql, param, function (err, rows, fields) {
+                conn.query(sql, param, (err, rows, fields) => {
                     conn.release();
                     if (err) reject(err);
                     else resolve(rows);
@@ -34,5 +36,46 @@ const find = function (sql, param) {
         });
     });
 };
-exports.query = pool.query;
-exports.find = find;
+
+const transaction = () => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, conn) => {
+            if (err) {
+                reject(err);
+            }
+            conn.beginTransaction((err) => {
+                if (err) {
+                    reject(err);
+                };
+                conn.find = (sql, param) => {
+                    return new Promise((resolve, reject) => {
+                        conn.query(sql, param, (err, results, fields) => {
+                            if (err) {
+                                return conn.rollback(() => {
+                                    reject(err);
+                                })
+                            }
+                            resolve({ results, conn });
+                        });
+                    });
+                };
+                conn.commitPromise = (results) => {
+                    return new Promise((resolve, reject) => {
+                        conn.commit((err) => {
+                            if (err) {
+                                return conn.rollback(() => {
+                                    reject(err);
+                                });
+                            }
+                            conn.release();
+                            resolve(results);
+                        });
+                    });
+                };
+                resolve(conn);
+            });
+        });
+    });
+};
+
+module.exports = { query, find, transaction };

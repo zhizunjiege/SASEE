@@ -1,62 +1,4 @@
-const nodemailer = require('nodemailer');
-const mysql = require('./sql');
-
-// to_addr = ['2945161896@qq.com']
-function send(to_addr, content, subject = '选课系统') {
-    const transporter = nodemailer.createTransport({
-        service: '163',
-        auth: {
-            user: 'sasee_lab@163.com',
-            pass: '880424d'
-        }
-    });
-    const mailOptions = {
-        from: 'sasee_lab@163.com', // 发送者
-        to: to_addr,
-        subject: subject,
-        text: content,
-        html: '',
-        attachments: []
-    };
-    transporter.sendMail(mailOptions, function (err, info) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        console.log('发送成功');
-    });
-}
-
-function sendPinCode(req, res) {
-    let to_addr = req.query.email,
-        pinCode = _createSixNum(),
-        content = '这是本次验证码：' + pinCode + '。此验证码在五分钟内有效。';
-    send(to_addr, content, '邮箱验证');
-
-    req.session.pinCode = pinCode;
-    res.send('验证码已发送！');
-}
-
-function setEmailAddr(req, res) {
-    let pinCode = req.session.pinCode,
-        identity = req.session.identity,
-        account = req.session.account,
-        sql_update = 'UPDATE ?? SET email=? WHERE account=?';
-
-    if (!pinCode) {
-        console.log(req.session);
-        
-        res.status(403).send('验证码已失效，请重试！');
-    } else if (req.body.pin_code == pinCode) {
-        mysql.find(sql_update,[identity,req.body.email,account]).then(()=>{
-            res.status(200).send('已成功更新邮箱地址！');
-        });
-    } else {
-        console.log(req.session);
-        
-        res.status(403).send('验证码不匹配,请重试！');
-    }
-}
+const nodemailer = require('nodemailer'), mysql = require('./sql');
 
 function _createSixNum() {
     let Num = "";
@@ -66,4 +8,60 @@ function _createSixNum() {
     return Num;
 }
 
-module.exports = { send, sendPinCode, setEmailAddr };
+function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = '', html, subject = '毕业设计选题系统' } = {}) {
+    const transporter = nodemailer.createTransport({
+        service: '163',
+        auth: {
+            user: from,
+            pass: password
+        }
+    });
+    return transporter.sendMail({ from, to, text, html, subject });
+}
+
+function _spcmw(req, res, next) {
+    let { identity, account } = req.query,
+        sql_query = 'SELECT email FROM ?? WHERE account=?';
+    mysql.find(sql_query, [identity, account]).then(results => {
+        req.query.email = results[0].email;
+        next();
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('验证码发送失败，请稍后重试！');
+    });
+}
+
+function sendPinCode(req, res) {
+    let pinCode = _createSixNum(),
+        email = req.query.email;
+    _send({
+        to: email,
+        html: '这是本次验证码：' + pinCode + '。此验证码在五分钟内有效。',
+        subject: '邮箱验证'
+    }).then(info => {
+        req.session.pinCode = {
+            code: pinCode,
+            time: new Date().getTime()
+        };
+        res.send('验证码已发送至' + email.replace(/(\S{2,})(\S{4,4})(@.*)/, '$1****$3'));
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('验证码发送失败，请稍后重试！');
+    });
+}
+
+function sendEmail(req, res) {
+    let { toAddr, title, content, extraData } = req.body;
+    _send({
+        to: toAddr,
+        html: (extraData || '') + content + `<footer style="text-align:center">~~~此邮件由系统代发,请勿回复~~~</footer>`,
+        subject: title
+    }).then(info => {
+        res.send('邮件发送成功！');
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('邮件发送失败，请稍后重试！');
+    });
+}
+
+module.exports = { _spcmw, sendPinCode, sendEmail };

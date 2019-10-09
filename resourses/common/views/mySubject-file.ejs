@@ -1,0 +1,112 @@
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <header class="card-header">
+                <h5 class="mb-0 text-left">下载文件</h5>
+            </header>
+            <div class="card-body">
+                <% if (down.length) { %>
+                <ul class="list-group list-group-flush">
+                    <% for( let i = 0; i < down.length; i++ ) { %>
+                    <a href="./file/download<%= '?id='+id+'&filename='+down[i].name+(isTeacher?'&uploader='+down[i].uploader:'') %>"
+                        class="list-group-item" download>
+                        <small class="d-inline-block w-50 ellipsis"><%= down[i].name %></small>
+                        <small
+                            class="ellipsis"><%- isTeacher?down[i].uploader:'<strong>Tag:</strong>'+down[i].tag %></small>
+                        <small class="float-right"><%= down[i].date %></small>
+                    </a>
+                    <% } %>
+                </ul>
+                <% } else { %>
+                <div class="d-flex justify-content-center" style="height: 150px">
+                    <h3 class="text-muted align-self-center">暂无可下载文件</h3>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-group list-group-flush" id="upFile_list">
+                    <% if (up.length) { 
+                          for( let i = 0; i < up.length; i++ ) { %>
+                    <a href="#" class="list-group-item">
+                        <small class="d-inline-block w-50 ellipsis"><%= up[i].name %></small>
+                        <% if(isTeacher){ %>
+                        <small class="ellipsis"><%- '<strong>Tag:</strong>'+up[i].tag %></small>
+                        <% } %>
+                        <small class="float-right"><%= up[i].date %></small>
+                    </a>
+                    <% } 
+                 } else { %>
+                    <div class="d-flex justify-content-center" style="height: 150px">
+                        <h3 class="text-muted align-self-center">未上传文件</h3>
+                    </div>
+                    <% } %>
+                </ul>
+            </div>
+            <footer class="card-footer d-flex align-items-center justify-content-end">
+                <a class="" data-toggle="modal" href="#file_modal">
+                    <h5 class="mb-0 d-inline-block">上传文件</h5>
+                </a>
+            </footer>
+        </div>
+    </div>
+</div>
+
+<div id="file_modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">上传文件</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="file_form" action="" method="POST" class="text-center">
+                    <input type="hidden" name="id" value="<%= id %>">
+                    <div class="form-group">
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input d-none" id="file_new_input"
+                                required>
+                            <label for="file_new_input" class="custom-file-label text-left"><small
+                                    class="form-text text-muted">请上传zip，rar或7z文件，不超过5M</small></label>
+                        </div>
+                    </div>
+                    <% if (isTeacher) { %>
+                    <div class="form-group">
+                        <input type="text" name="tag" class="form-control" placeholder="请为文件输入一个标签~" maxlength="16"
+                            required>
+                    </div>
+                    <% } %>
+                    <div class="form-group form-row justify-content-around">
+                        <button type="reset" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary col-3">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (($, SASEE) => {
+        SASEE.formSubmit({
+            file: true,
+            selector: '#file_form',
+            url: SASEE.URL_FILE + SASEE.URL_UPLOAD,
+            done: msg => {
+                let $form = $('#file_form'), $upFile_list = $('#upFile_list'),
+                    name = $form[0].file.value.match(/\\([^\\\s]+)$/)[1],
+                    tag = $form[0].tag?$form[0].tag.value:null;
+                SASEE.requestDone(msg);
+                $('#file_modal').modal('hide');
+                $upFile_list.find('div').remove();
+                $(`<a href="#" class="list-group-item">
+                    <small class="d-inline-block w-50 ellipsis">${name}</small>
+                    ${tag?`<small class="ellipsis"><strong>Tag:</strong>${tag}</small>`:''}
+                    <small class="float-right">${new Date().toISOString().substr(0, 10)}</small>
+                </a>`).prependTo($upFile_list);
+            }
+        });
+    })(window.jQuery, window.SASEE);
+</script>

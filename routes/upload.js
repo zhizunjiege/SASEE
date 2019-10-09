@@ -1,65 +1,36 @@
-const fs = require("fs");
-function upload(req, res) {
-    var file = req.file;
-    // console.log("名称：%s",file.originalname);
-    // console.log("mime：%s",file.mimetype);
-//以下代码得到文件后缀
-    let name = file.originalname;
-    let nameArray = name.split('');
-    let nameMime = [];
-    let l = nameArray.pop();
-    nameMime.unshift(l);
-    while (nameArray.length != 0 && l != '.') {
-        l = nameArray.pop();
-        nameMime.unshift(l);
-    }
-//Mime是文件的后缀
-    let Mime = nameMime.join('');
-    console.log(Mime);
-    res.send("done");
-    //判断并建立文件夹
-    let my_path = './upload/new/';
-    mkdir(my_path);
-//重命名文件 加上文件后缀
-    let readableStream = fs.createReadStream('./upload/' + file.filename);
-    let writeableStream = fs.createWriteStream(my_path + file.originalname);
-// 可以通过使用可读流的函数pipe()接入到可写流中
-// pipe()是一种很高效的数据处理方式
-    if (readableStream.pipe(writeableStream)) {
-        fs.unlinkSync('./upload/' + file.filename);
-        console.log('文件复制成功了')
-    } else {
-        console.log('文件复制失败了')
-    }
-}
+const mysql = require('./sql'),
+    file = require('./file');
 
-function mkdir(filepath) {
-    const dirCache={};
-    const arr=filepath.split('/');
-    let dir=arr[0];
-    for(let i=1;i<arr.length;i++){
-        if(!dirCache[dir]&&!fs.existsSync(dir)){
-            dirCache[dir]=true;
-            fs.mkdirSync(dir);
-        }
-        dir=dir+'/'+arr[i];
-    }
-}
-
-function deleteall(path) {
-    var files = [];
-    if(fs.existsSync(path)) {
-        files = fs.readdirSync(path);
-        files.forEach(function(file, index) {
-            var curPath = path + "/" + file;
-            if(fs.statSync(curPath).isDirectory()) { // recurse
-                deleteall(curPath);
-            } else { // delete file
-                fs.unlinkSync(curPath);
-            }
-        });
-        fs.rmdirSync(path);
-    }
+module.exports = (req, res) => {
+    let { id, tag } = req.body,
+        { name, identity } = req.session,
+        { filename, path } = req.file,
+        sql_update = 'UPDATE bysj SET ' + identity + 'Files=JSON_ARRAY_INSERT(' + identity + 'Files,"$[0]",JSON_OBJECT("date",CURDATE(),"name",?,"' + (tag ? 'tag' : 'uploader') + '",?)) WHERE id=?;SELECT id,`group` FROM bysj WHERE id=?';
+    mysql.find(sql_update, [filename, tag ? tag : name, id, id]).then(results => {
+        let to = req.APP_CONSTANT.PATH_FILES + 'group' + results[1][0].group + '/subject' + results[1][0].id + '/' + identity + '/' + (tag ? '' : name + '/') + filename;
+        file.move(path, to, err => {
+            if (err) throw err;
+            res.send('文件上传成功！');
+        })
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('文件上传失败，请稍后重试！');
+    });
 };
 
-module.exports = upload;
+/* function teacher(req, res) {
+    let { id, tag } = req.body,
+        { filename, path } = req.file,
+        sql_update = 'UPDATE bysj SET teacherFiles=JSON_ARRAY_INSERT(teacherFiles,"$[0]",JSON_OBJECT("date",CURDATE(),"name",?,"tag",?)) WHERE id=?;SELECT id,`group` FROM bysj WHERE id=?';
+    mysql.find(sql_update, [filename, tag, id, id]).then(results => {
+        let to = req.APP_CONSTANT.PATH_FILES + 'group' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/' + filename;
+        file.move(path, to, err => {
+            if (err) throw err;
+            res.send('文件上传成功！');
+        })
+    }).catch(err => {
+        res.status(403).send('文件上传失败，请稍后重试！');
+    });
+}
+
+module.exports = { student, teacher }; */

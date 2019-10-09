@@ -1,36 +1,41 @@
-const mysql = require("./sql");
+const mysql = require("./sql"),
+    { paramIfValid } = require('./util');
 
+function authenticate(req, res) {
+    let { account, password, identity } = req.body;
 
-function login(req, res) {
-    let account = Number(req.body.account),
-        password = req.body.password,
-        identity = req.body.identity;
-
-    //验证用户输入的数据
-
-    let sql_login = "SELECT name,gender,password,`group` FROM ?? user WHERE account = ?;SELECT * FROM news ORDER BY top DESC,date DESC LIMIT 10 OFFSET 0";
-    mysql.find(sql_login, [identity, account])
+    if (!paramIfValid([account, password, identity])) {
+        res.status(403).send('数据无效，请重新输入！');
+        return;
+    }
+    
+    let sql_query = 'SELECT id,account,name,`group` FROM ?? WHERE account = ? AND password=?';
+    mysql.find(sql_query, [identity, account, password])
         .then(data => {
-            if(data[0].length==0){
-                res.send('账号不存在，请返回输入重试！');
+            if (data.length == 0) {
+                res.status(403).send('账号或密码错误，请重试！');
                 return;
             }
-            let user = data[0][0],
-                news=data[1];
-            if (password === user.password) {
-                //设置session
-                req.session.account = account;
-                req.session.group=user.group;
-                req.session.identity=identity;
-                
-                user.profile =  (user.gender =='男' ? 'man' : 'woman') + '_' + identity + '.png';
-                user.identity = identity;
-                res.render(process.cwd() + '/resourses/common/views/user', {user,news})
-            }
-            else {
-                res.send('密码错误，请返回输入重试！');
-            }
+            //设置session
+            req.session.id=data[0].id;
+            req.session.account = data[0].account;
+            req.session.name = data[0].name;
+            req.session.group = data[0].group;
+            req.session.identity = identity;
+            res.location('/'+identity+'/').send('登陆成功！');
         });
 }
 
-module.exports = login;
+function render(req, res) {
+    let { identity, account } = req.session,
+        sql_query = "SELECT name,gender,`group` FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0";
+    mysql.find(sql_query, [identity, account])
+        .then(data => {
+            let [[user], news] = data;
+            user.profile = (user.gender == '男' ? 'man' : 'woman') + '_' + identity + '.png';
+            user.identity = identity;
+            res.type('html').render(process.cwd() + req.APP_CONSTANT.VIEWS_COMMON + 'user', { user, news });
+        });
+}
+
+module.exports = { authenticate, render };

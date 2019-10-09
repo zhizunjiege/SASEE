@@ -17,28 +17,29 @@
         let _toggle = (e) => {
             SASEE._subjectToggle('#subject_content', '#subject_list');
         };
-        let cb = (e, param) => {
-            SASEE._loadContent(e, '#subject_content', param, _toggle)
+        let cb = (param) => {
+            SASEE._loadContent('#subject_content', param, _toggle);
         };
-        $('#card_container').children().click((e) => {
-            cb(e, {
-                type: 'mySubject',
-                id: $(e.currentTarget).data('id')
-            });
-        });
+
+        SASEE._modifyOrView = e => {
+            let type = $(e.currentTarget).data('type'),
+                id = $(e.currentTarget).data('id');
+            if (type) {
+                cb({ type, id });
+            } else {
+                SASEE.alert({
+                    msg: '该课题已被否决，无法查看！'
+                })
+            }
+        }
+        $('#card_container').children().click(SASEE._modifyOrView);
 
         let $subject_submit = $('#subject_submit');
         if ($subject_submit.length) {
             $subject_submit.click((e) => {
-                let $subject_form = $('#subject_form');
-                if ($subject_form.length > 0) {
-                    $subject_form[0].reset();
-                    _toggle();
-                } else {
-                    cb(e, {
-                        type: 'submitSubject'
-                    })
-                }
+                cb({
+                    type: 'submitSubject'
+                });
             });
         }
     })(window.jQuery, window.SASEE);

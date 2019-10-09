@@ -44,8 +44,7 @@
         <tr>
             <th scope="col" colspan="6">资格审查</th>
         </tr>
-        <% var conv=(flag)=>flag>-1?'有':'无';
-        var warn=(flag)=>flag>-1?'':'text-warning' %>
+        <% let conv=(flag)=>flag>-1?'有':'无',warn=(flag)=>flag>-1?'':'text-warning' %>
         <tr>
             <th scope="row">毕业设计</th>
             <td class="<%= warn(data[0].bysj) %>"><%= conv(data[0].bysj) %></td>
@@ -56,11 +55,7 @@
         </tr>
     </tbody>
 </table>
-<div class="d-flex justify-content-around">
-    <button id="edit_email" data-toggle="modal" data-target="#edit_email_modal"
-        class="btn btn-primary w-25">绑定邮箱</button>
-    <button id="modifyPW" data-toggle="modal" data-target="#modifyPW_modal" class="btn btn-primary w-25">修改密码</button>
+<div class="d-flex justify-content-around mt-5">
+    <%- include('../../common/views/setEmailAddr') %>
+    <%- include('../../common/views/modifyPW') %>
 </div>
-
-<%- include('../../common/views/setEmailAddr') %>
-<%- include('../../common/views/modifyPW') %>

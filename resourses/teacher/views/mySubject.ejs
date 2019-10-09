@@ -1,8 +1,7 @@
 <% let subject=data[0][0],student=data[1]; %>
-<nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
+<nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white" data-id="<%= subject.id %>">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_assignment">任务进度</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">学生资料</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_student">学生</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_file">文件</a>
 </nav>
 <div class="tab-content p-3">
@@ -18,10 +17,7 @@
                          for( let index =0; index <subject.notice.length ; index++ ) { %>
                     <a href="#myNotice_<%= index %>" class="list-group-item list-group-item-action nav-link"
                         data-toggle="pill">
-                        <span class="w-50 ellipsis">
-                            <% if (subject.notice[index].top) { %>
-                            <span class="badge badge-pill badge-warning">置顶</span>
-                            <% } %><%= subject.notice[index].title %></span>
+                        <span class="w-50 ellipsis"><%= subject.notice[index].title %></span>
                         <span class="float-right"><%= subject.notice[index].date %></span>
                     </a>
                     <% } 
@@ -33,75 +29,32 @@
                 </nav>
                 <div class="col-8 tab-content border rounded p-3">
                     <div class="tab-pane fade show active" id="myNotice">
-                        <div id="editor_container">
-                            <div id="editor" class="mb-3">
-                                <p>请在此处输入内容···</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <button id="editor_clear" class="btn btn-secondary px-5" type="button">清空</button>
-                                <button id="editor_submit" class="btn btn-primary px-5" type="button">提交</button>
-                            </div>
+                        <div class="mb-3 editor">
+                            <p>请在此处输入内容···</p>
                         </div>
+                        <form action="" id="subject_notice_form" method="POST">
+                            <div class="form-group">
+                                <input type="text" name="title" class="form-control" placeholder="请输入标题" maxlength="255" required>
+                            </div>
+                            <div class="form-group form-row justify-content-between">
+                                <button class="btn btn-secondary px-5 editor-clear" type="reset">清空</button>
+                                <button class="btn btn-primary px-5" type="submit">发布</button>
+                            </div>
+                        </form>
                     </div>
                     <% for( let index = 0; index < subject.notice.length; index++ ) { %>
                     <div class="tab-pane fade" id="myNotice_<%= index %>">
-                        <%= subject.notice[index].content %></div>
+                        <%- subject.notice[index].content %></div>
                     <% } %>
                 </div>
             </div>
         </div>
     </div>
-    <div class="tab-pane fade" id="mySubject_assignment">
-        <% let colorArray=['primary','danger','warning'],statusArray=['已完成','不合格','未完成']; 
-        if (subject.assignment.length) { 
-            for( let index = 0; index < subject.assignment.length; index++ ) { %>
-        <div class="card">
-            <div class="card-header list-group-item-action" data-toggle="collapse" data-target="#assign_<%= index+1 %>">
-                <h5 class="mb-0 py-2 d-flex justify-content-between">
-                    <span class="w-50 ellipsis">任务<%= index+1 %>:<%= subject.assignment[index].title %></span>
-                    <span>截止日期：<%= subject.assignment[index].deadline %></span>
-                </h5>
-            </div>
-            <div class="collapse" id="assign_<%= index+1 %>" data-parent="#mySubject_assignment">
-                <div class="card-body row">
-                    <div class="col-9"><%= subject.assignment[index].description %></div>
-                    <div class="col-3">
-                        <table class="table table-bordered text-center">
-                            <thead class="thead-light">
-                                <tr>
-                                    <% let tableHead=['姓名','状态','评分'] 
-                                            for( let j = 0; j < tableHead.length; j++ ) { %>
-                                    <th scope="col"><%= tableHead[j] %></th>
-                                    <% } %>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for( let k = 0; k < subject.assignment[index].member.length; k++ ) { %>
-                                <tr>
-                                    <td><%= subject.assignment[index].member[k].name %></td>
-                                    <td class="text-<%= colorArray[subject.assignment[index].member[k].status] %>">
-                                        <%= statusArray[subject.assignment[index].member[k].status] %></td>
-                                    <td><%= subject.assignment[index].member[k].score||'暂无' %></td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <% } 
-     } else { %>
-        <div class="d-flex justify-content-center" style="height: 250px">
-            <h1 class="text-muted align-self-center">暂无任务</h1>
-        </div>
-        <% } %>
-    </div>
-    <div class="tab-pane fade" id="mySubject_info">
+    <div class="tab-pane fade" id="mySubject_student">
         <table class="table table-bordered text-center">
             <thead class="thead-light">
                 <tr>
-                    <% let tableHead=['姓名','性别','专业','方向','小班','学号','GPA','加权平均','算术平均','邮箱'] 
+                    <% const tableHead=['姓名','性别','专业','方向','小班','学号','GPA','加权平均','算术平均','邮箱']; 
                     for( let index = 0; index < tableHead.length; index++ ) { %>
                     <th scope="col"><%= tableHead[index] %></th>
                     <% } %>
@@ -124,165 +77,79 @@
                 <% } %>
             </tbody>
         </table>
-
+        <div class="d-flex mt-5 justify-content-around">
+            <button data-toggle="modal" data-target="#mark_modal" class="btn btn-primary w-25">打分</button>
+            <div id="mark_modal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">打分</h4>
+                            <button class="close" data-dismiss="modal"><span>&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="" id="subject_mark_form" method="POST">
+                                <input type="hidden" name="id" value="<%= subject.id %>">
+                                <% for( let index = 0; index < student.length; index++ ) { %>
+                                <div class="form-group form-row text-center">
+                                    <label for="mark_<%= student[index].id %>"
+                                        class="col-4 col-form-label"><%= student[index].name %>:</label>
+                                    <input name="<%= student[index].id %>" id="mark_<%= student[index].id %>"
+                                        type="number" class="col-8 form-control" placeholder="请输入分数" min="0" max="100" required>
+                                </div>
+                                <% } %>
+                                <div class="form-group form-row justify-content-around">
+                                    <button type="reset" class="btn btn-secondary col-3"
+                                        data-dismiss="modal">取消</button>
+                                    <button type="submit" class="btn btn-primary col-3">提交</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../../common/views/mySubject-sendEmail',{
+                to:student
+            }) %>
+        </div>
     </div>
     <div class="tab-pane fade" id="mySubject_file">
-        <div class="row">
-            <div class="col">
-                <div class="card">
-                    <header class="card-header">
-                        <h5 class="mb-0 text-left">下载文件</h5>
-                    </header>
-                    <div class="card-body">
-                        <% if (subject.studentFiles.length) { 
-                            for( let i = 0; i < subject.studentFiles.length; i++ ) { %>
-                        <p class="card-title"><%= subject.studentFiles[i].date %></p>
-                        <ul class="list-group list-group-flush <%= i==subject.studentFiles.length-1?'':'mb-3' _%>">
-                            <% for( let j = 0; j < subject.studentFiles[i].file.length; j++ ) { %>
-                            <a href="<%= subject.studentFiles[i].file[j].url %>" class="list-group-item" download><small
-                                    class="w-50 ellipsis"><%= subject.studentFiles[i].file[j].name %></small><small
-                                    class="float-right"><%= subject.studentFiles[i].file[j].uploader %></small></a>
-                            <% } %>
-                        </ul>
-                        <% } %>
-                        <% } else { %>
-                        <div class="d-flex justify-content-center" style="height: 150px">
-                            <h3 class="text-muted align-self-center">暂无可下载文件</h3>
-                        </div>
-                        <% } %>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <% if (subject.teacherFiles.length) { 
-                            for( let i = 0; i < subject.teacherFiles.length; i++ ) { %>
-                        <p class="card-title"><%= subject.teacherFiles[i].date %></p>
-                        <ul class="list-group list-group-flush <%= i==subject.teacherFiles.length-1?'':'mb-3' _%>">
-                            <% for( let j = 0; j < subject.teacherFiles[i].file.length; j++ ) { %>
-                            <a href="#" class="list-group-item">
-                                <small class="w-100 ellipsis"><%= subject.teacherFiles[i].file[j] %></small>
-                            </a>
-                            <% } %>
-                        </ul>
-                        <% } %>
-                        <% } else { %>
-                        <div class="d-flex justify-content-center" style="height: 150px">
-                            <h3 class="text-muted align-self-center">未上传文件</h3>
-                        </div>
-                        <% } %>
-                    </div>
-                    <footer class="card-footer dropup d-flex align-items-center justify-content-end">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <h5 class="mb-0 d-inline-block">文件操作</h5>
-                        </a>
-                        <ul id="file_edit_menu" class="dropdown-menu text-center w-25">
-                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">上传</a>
-                            <!-- <div class="dropdown-divider"></div> -->
-                            <% if (subject.teacherFiles.length) { %>
-                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">替换</a>
-                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">删除</a>
-                            <a href="#file_modal" class="dropdown-item" data-toggle="modal">重命名</a>
-                            <% } %>
-                        </ul>
-                    </footer>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="file_modal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 id="file_edit_title" class="modal-title">文件操作</h4>
-                <button class="close" data-dismiss="modal"><span>&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <form id="file_form" action="" method="POST" class="text-center">
-                    <div class="form-group">
-                        <input type="password" name="file_checkPW" id="file_checkPW" class="form-control"
-                            pattern="\w{8,16}" placeholder="请输入密码验证身份" required>
-                    </div>
-                    <div class="form-group form-row justify-content-around">
-                        <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary col-3">提交</button>
-                    </div>
-                    <input type="text" name="file_edit_type" id="file_edit_type" class="d-none" value="">
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="form_materials" class="d-none">
-    <% if (subject.teacherFiles.length) { %>
-    <div id="file_select" class="form-group">
-        <select class="custom-select" required>
-            <option value="placeholder" selected disabled>请选择一个文件</option>
-            <% for( let i = 0; i < subject.teacherFiles.length; i++ ) { 
-                    for( let j = 0; j < subject.teacherFiles[i].file.length; j++ ) { 
-                        if (subject.teacherFiles[i].editable) { %>
-            <option value="<%= subject.teacherFiles[i].file[j] %>"><%= subject.teacherFiles[i].date+'--'+subject.teacherFiles[i].file[j] %></option>
-            <% }
-                }
-                } %>
-        </select>
-    </div>
-    <div id="file_rename" class="form-group">
-        <input type="text" name="file_rename" class="form-control" placeholder="请输入新文件名" required>
-    </div>
-    <% } %>
-    <div id="file_new" class="form-group">
-        <div class="custom-file mb-3">
-            <input type="file" name="file_new" id="file_new_input" class="custom-file-input" required>
-            <label for="file_new_input" class="custom-file-label text-left"><small
-                    class="form-text text-muted">请上传zip，rar或7z文件，不超过5M</small></label>
-        </div>
-        <textarea name="file_description" id="file_description" class="form-control" rows="3" placeholder="请填写相关说明···"
-            required></textarea>
+        <%- include('../../common/views/mySubject-file',{
+            down:subject.studentFiles,
+            up:subject.teacherFiles,
+            id:subject.id,
+            isTeacher:true
+        }) %>
     </div>
 </div>
 
 <script>
     (function ($, SASEE) {
-        const materialSelector = [
-            '#file_new',
-            '#file_select,#file_new',
-            '#file_select',
-            '#file_select,#file_rename'
-        ];
-        const fileEditType = [
-            'new',
-            'replace',
-            'delete',
-            'rename'
-        ];
-        var $materialContent = null;
-        var $fileForm = $('#file_form');
-
-        $('#file_edit_menu>a').click(function (e) {
-            var index = $(this).index();
-            $fileForm[0].reset();
-            $('#file_new_input').next().find('small').text('请上传zip，rar或7z文件，不超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!');
-            if ($materialContent) {
-                $('#form_materials').append($materialContent);
+        let editor = SASEE.instEditor('#myNotice',true),
+            $form = $('#subject_notice_form');
+        $form.submit(e => {
+            let data = {
+                id: $('#mySubject_nav').data('id'),
+                title: $form[0].title.value,
+                content: editor.txt.html()
+            };
+            e.preventDefault();
+            $.post(SASEE.URL_SUBJECT + '/notice', data).done(msg => {
+                let date = new Date();
+                $(`<a href="#myNotice_${date.getTime()}" class="list-group-item list-group-item-action nav-link" data-toggle="pill">
+                        <span class="w-50 ellipsis">${data.title}</span>
+                        <span class="float-right">${date.toISOString().substr(0, 10)}</span>
+                </a>`).insertAfter('a[href="#myNotice"]');
+                $(`<div class="tab-pane fade" id="myNotice_${date.getTime()}">${data.content}</div>`).insertAfter('#myNotice');
+                SASEE.requestDone(msg);
+            }).fail(SASEE.requestFail);;
+        });
+        SASEE.formSubmit({
+            selector: '#subject_mark_form',
+            url: SASEE.URL_SUBJECT + '/mark',
+            done: msg => {
+                $('#mark_modal').modal('hide');
+                SASEE.requestDone(msg);
             }
-            $materialContent = $(materialSelector[index]);
-            $fileForm.prepend($materialContent);
-            $('#file_edit_title').text(this.innerText);
-            $('#file_edit_type').val(fileEditType[index]);
         });
-
-        SASEE.fileUpload('#file_form',SASEE.URL_FILE+SASEE.URL_UPLOAD,(data)=>{
-            alert(data);
-        },(err)=>{
-            alert(err);
-        });
-        SASEE.fileCheck('#file_new_input');
-
-        SASEE.instEditor('#myNotice');
     })(window.jQuery, window.SASEE);
 </script>

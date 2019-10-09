@@ -1,3 +1,4 @@
+<button id="edit_email" data-toggle="modal" data-target="#edit_email_modal" class="btn btn-primary w-25">绑定邮箱</button>
 <div id="edit_email_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -15,7 +16,7 @@
                     <div class="form-group form-row">
                         <label for="pin_code" class="col-4 col-form-label">验证码：</label>
                         <div class="input-group col-8 px-0">
-                            <input name="pin_code" id="pin_code" type="number" class="form-control" pattern="\d{4}"
+                            <input name="pinCode" id="pin_code" type="text" class="form-control" pattern="\d{6}"
                                 placeholder="请输入收到的验证码" required>
                             <div class="input-group-append">
                                 <button type="button" id="pin_code_send" class="btn btn-outline-primary">发送验证码</button>
@@ -39,36 +40,34 @@
         $pin_code_send.click(() => {
             let email = $pin_code_send[0].form.email.value;
             if (regexpStr.test(email)) {
-                $.get(SASEE.URL_EMAIL + '/sendPinCode', {
-                    email: email
-                }).done(() => {
-                    let count = 60;
-                    $pin_code_send[0].setAttribute('disabled', true);
-                    function countDown(target) {
-                        if (count) {
-                            target.innerText = String(count--) + 's';
-                            setTimeout(() => {
-                                countDown(target);
-                            }, 1000);
-                        } else {
-                            target.innerText = '发送验证码';
-                            target.removeAttribute('disabled')
+                $.get(SASEE.URL_EMAIL + '/sendPinCode', { email }).fail(SASEE.requestFail).done(msg => {
+                    SASEE.requestDone(msg);
+                    SASEE.counter({
+                        count: 60,
+                        doing: count => {
+                            $pin_code_send[0].setAttribute('disabled', true);
+                            $pin_code_send[0].innerText = count + 's';
+                        },
+                        done: () => {
+                            $pin_code_send[0].innerText = '发送验证码';
+                            $pin_code_send[0].removeAttribute('disabled');
                         }
-                    }
-                    countDown($pin_code_send[0]);
-                }).fail(() => {
-                    alert('验证码发送失败，请稍后重试！');
+                    })
                 });
             } else {
-                alert('请输入有效的邮箱地址！');
+                SASEE.alert({
+                    msg:'请输入有效的邮箱地址！'
+                });
             }
         });
-        
-        SASEE.formSubmit('#edit_email_form', SASEE.URL_EMAIL + '/setEmailAddr',(data)=>{
-            alert(data);
-            $('#edit_email_modal').modal('hide');
-        },(data)=>{
-            alert(data);
+
+        SASEE.formSubmit({
+            selector: '#edit_email_form',
+            url: SASEE.URL_EMAIL + '/setEmailAddr',
+            done: msg => {
+                $('#edit_email_modal').modal('hide');
+                SASEE.requestDone(msg);
+            }
         });
     })(window.jQuery, window.SASEE);
 </script>
