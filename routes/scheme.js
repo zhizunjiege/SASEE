@@ -3,32 +3,34 @@ const mysql = require('./sql');
 
 function Draw(id) {
     return new Promise(resolve => {
-        let scheme_sql = 'SELECT selected, capacity FROM scheme WHERE id = ?';
-        let final = [];
+        let scheme_sql = 'SELECT student_selected, capacity FROM bysj WHERE id = ?';
         mysql.find(scheme_sql, id).then(SchemeInfo => {
-            console.log(SchemeInfo);
-            let list = shuffle(JSON.parse((SchemeInfo[0].selected)));
+            let list = shuffle(SchemeInfo[0]["student_selected"]);
+            let capacity = SchemeInfo[0].capacity;
+            if (capacity < 1) return console.log("容量设置错误");
             let num = list.length;
-            while (num > SchemeInfo[0].capacity) {
+            while (num > capacity) {
                 list.pop();
+                // delete chosen in g;
                 num -= 1;
             }
-            final = list;
-            console.log(final);
-            resolve(final)
+            resolve(list);
         });
     })
 }
 
 function Draw_all() {
-    let all_scheme = 'SELECT id FROM scheme ';
+    let all_scheme = 'SELECT id FROM bysj ';
     mysql.find(all_scheme, []).then(all => {
         console.log(all);
         let total = all.length;
         for (let i = 0; i < total; i++) {
             Draw(all[i].id).then(list => {
                 console.log(all[i].id, list);
+                list = '[' + list.toString() + ']';
                 //write
+                let update = "UPDATE bysj SET student_final = ? WHERE id = ?";
+                mysql.find(update, [list, all[i]['id']]);
             })
 
         }
@@ -84,3 +86,13 @@ function shuffle(array) {
 
 
 module.exports = Draw_all;
+
+// let test = "select student_selected from bysj where id = 1";
+// mysql.find(test, []).then(data=>{
+//     console.log(typeof data[0]);
+//     console.log(data[0]["student_selected"][3]);
+// });
+
+Draw_all();
+// let update = "UPDATE bysj SET student_final = ? WHERE id = ?";
+// mysql.find(update, ['[]', 1]);
