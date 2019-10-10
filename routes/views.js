@@ -7,10 +7,12 @@ function _render(res, sql_query, param, file) {
             res.render(file, { data });
         });
     } else if (file) {
-        res.render(file, { data: '' });
+        res.render(file, { data: '' },(err,html)=>{
+            console.log(err);
+            res.status(403).send('页面渲染出错！');
+        });
     } else {
         res.end();
-        console.log('页面渲染出错！');
     }
 }
 
@@ -39,7 +41,7 @@ function student(Router, period) {
     studentRouter.get('/subject', period.permiss([5, 8]), (req, res) => {
         let group = req.session.group,
             sql_query = 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0';
-        _render(res, sql_query, [group,group], 'subject');
+        _render(res, sql_query, [group, group], 'subject');
     });
     studentRouter.get('/subjectList', period.permiss([5, 8]), (req, res) => {
         let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
@@ -96,18 +98,18 @@ function dean(Router, period) {
             sql_query = 'SELECT * FROM dean WHERE account =?';
         _render(res, sql_query, account, 'userInfo');
     });
-    deanRouter.get('/subject', period.permiss([2,4]), (req, res) => {
+    deanRouter.get('/subject', period.permiss([2, 4]), (req, res) => {
         let group = req.session.group,
             sql_query = 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=0 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=0 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0';
-        _render(res, sql_query, [group,group], '../../student/views/subject');
+        _render(res, sql_query, [group, group], '../../student/views/subject');
     });
-    deanRouter.get('/subjectList', period.permiss([2,4]), (req, res) => {
+    deanRouter.get('/subjectList', period.permiss([2, 4]), (req, res) => {
         let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
             group = req.session.group,
             sql_query = 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=0 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?';
         _render(res, sql_query, [group, nextPageOffset], '../../student/views/subjectList');
     });
-    deanRouter.get('/subjectContent', period.permiss([2,4]), (req, res) => {
+    deanRouter.get('/subjectContent', period.permiss([2, 4]), (req, res) => {
         let id = req.query.id,
             sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?';
         _render(res, sql_query, [id, id], 'subjectContent');

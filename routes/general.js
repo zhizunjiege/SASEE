@@ -9,4 +9,25 @@ function logout(req, res) {
         res.redirect('/');
     });
 }
-module.exports = { notFound, logout };
+function redirect(req, res) {
+    if (req.session.account) {
+        res.redirect('/' + req.session.identity + '/');
+    } else {
+        res.render('login');
+    }
+}
+function auth({ url = '/',CONSTANT } = {}) {
+    return (req, res, next) => {
+        if (!req.session.account) {
+            if (req.method.toLowerCase() == 'post') {
+                res.location(url).status(403).send('登陆信息失效，请重新登陆！');
+            } else {
+                res.redirect(url);
+            }
+        } else {
+            req.APP_CONSTANT = CONSTANT;
+            next();
+        }
+    };
+}
+module.exports = { notFound, logout, redirect, auth };

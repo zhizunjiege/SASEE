@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="/pictures/favicon.ico">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <title>系统管理</title>
+</head>
+<!-- 发布通知，查看信息，更新系统状态，发送邮件 -->
+<body>
+<button class="btn btn-primary w-25" data-toggle="modal" data-target="#menu_modal">菜单</button>
+    <div id="menu_modal" class="modal fade show" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col p-3 bg-primary">发布通知</div>
+                            <div class="col p-3 bg-primary">查看信息</div>
+                        </div>
+                        <div class="row">
+                            <div class="col p-3 bg-info">更新状态</div>
+                            <div class="col p-3 bg-info">发送邮件</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../common/views/alert') %>
+
+    <script src="/bootstrap/others/jquery-3.4.0.js"></script>
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/wangEditor.min.js"></script>
+    <script src="/js/system.js"></script>
+</body>
+
+</html>

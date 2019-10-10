@@ -58,36 +58,24 @@ app.use(session({
     }
 }));
 
-app.get('/', (req, res) => {
-    if (req.session.account) {
-        res.redirect('/' + req.session.identity + '/');
-    } else {
-        res.render('login');
-    }
-});
+app.get('/', general.redirect);
 
-const pwRouter = Router();
-pwRouter.get('/', (req, res) => {
-    res.render('password');
-});
-pwRouter.get('/sendPinCode', email._spcmw, email.sendPinCode);
-pwRouter.post('/retrieve', password.retrieve);
-app.use('/password', pwRouter);
+{
+    const pwRouter = Router();
+    pwRouter.get('/', (req, res) => {
+        res.render('password');
+    });
+    pwRouter.get('/sendPinCode', email._spcmw, email.sendPinCode);
+    pwRouter.post('/retrieve', password.retrieve);
+
+    app.use('/password', pwRouter);
+}
 
 app.post('/login', login.authenticate);
 
-app.use((req, res, next) => {
-    if (!req.session.account) {
-        if (req.method.toLowerCase == 'post') {
-            res.location('/').status(403).send('登陆信息失效，请重新登陆！');
-        } else {
-            res.redirect('/');
-        }
-    } else {
-        req.APP_CONSTANT = CONSTANT;
-        next();
-    }
-});
+app.use('/admin', require('./routes/admin')({ admin, email,general, __dirname, CONSTANT }));
+
+app.use(general.auth({ url: '/',CONSTANT:CONSTANT }));
 
 {
     const emailRouter = Router(),
@@ -168,7 +156,6 @@ app.use((req, res, next) => {
 app.use('/student', student);
 app.use('/teacher', teacher);
 app.use('/dean', dean);
-app.use('/admin', admin);
 
 app.use(general.notFound);
 
