@@ -73,15 +73,13 @@ app.get('/', general.redirect);
 
 app.post('/login', login.authenticate);
 
-app.use('/admin', require('./routes/admin')({ admin, email,general, __dirname, CONSTANT }));
-
-app.use(general.auth({ url: '/',CONSTANT:CONSTANT }));
+app.use('/admin', require('./routes/admin')({ admin,Router,views, email,general, __dirname, CONSTANT }));
 
 {
     const emailRouter = Router(),
         fileRouter = Router();
     student.set('views', __dirname + CONSTANT.VIEWS_STUDENT);
-
+    student.use(general.auth({ url: '/',identity:'student',CONSTANT:CONSTANT }));
     student.get('/', login.render);
     student.use('/views', views.common(Router), views.student(Router, period));
 
@@ -111,7 +109,7 @@ app.use(general.auth({ url: '/',CONSTANT:CONSTANT }));
         subjectRouter = Router(),
         emailRouter = Router();
     teacher.set('views', __dirname + CONSTANT.VIEWS_TEACHER);
-
+    teacher.use(general.auth({ url: '/',identity:'teacher',CONSTANT:CONSTANT }));
     teacher.get('/', login.render);
     teacher.use('/views', views.common(Router), views.teacher(Router, period));
 
@@ -138,7 +136,7 @@ app.use(general.auth({ url: '/',CONSTANT:CONSTANT }));
 {
     const emailRouter = Router();
     dean.set('views', __dirname + CONSTANT.VIEWS_DEAN);
-
+    dean.use(general.auth({ url: '/',identity:'dean',CONSTANT:CONSTANT }));
     dean.get('/', login.render);
     dean.use('/views', views.common(Router), views.dean(Router, period));
 

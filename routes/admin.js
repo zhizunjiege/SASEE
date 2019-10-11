@@ -1,5 +1,5 @@
 const mysql = require('./sql');
-module.exports = ({ admin, email, general, __dirname, CONSTANT } = {}) => {
+module.exports = ({ admin,Router,views, email, general, __dirname, CONSTANT } = {}) => {
     admin.set('views', __dirname + CONSTANT.VIEWS_ADMIN);
     admin.get('/', (req, res) => {
         res.render('login');
@@ -23,16 +23,29 @@ module.exports = ({ admin, email, general, __dirname, CONSTANT } = {}) => {
                     req.session.email = data[0].email;
                     req.session.account = data[0].account;
                     req.session.password = data[0].password;
+                    req.session.identity='admin';
                     res.location('/admin/main').send('登陆成功！');
                 }
             }); */
-        req.session.account = 1;
+        let { account, password } = req.body;
+        req.session.account = account;
+        req.session.password=password;
+        req.session.identity='admin';
         res.location('/admin/main').send('登陆成功！');
     });
-    admin.use(general.auth({ url: '/admin' }));
+    admin.use(general.auth({ url: '/admin' ,identity:'admin',CONSTANT}));
     admin.get('/main', (req, res) => {
-        res.type('html').render('main');
-    })
+        let sql_query = 'SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0';
+        mysql.find(sql_query).then(results => {
+            res.render('main', { news: results});
+        });
+    });
+    admin.use('/views',views.common(Router));
+    admin.post('/submitNotice',(req,res)=>{
+        console.log(req.body);
+        
+        res.send('发布成功！');
+    });
 
     return admin;
 };

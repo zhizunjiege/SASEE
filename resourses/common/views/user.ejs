@@ -97,7 +97,6 @@
         </aside>
 
         <div class="aside invisible">占位</div>
-
         <div id="contents" class="p-3">
             <div class="card">
                 <header id="contents_header" class="card-header">
@@ -108,27 +107,7 @@
 
                 <div id="contents_body">
                     <div id="news" class="collapse show" data-parent="#contents">
-                        <% if (news.length) { %>
-                        <div id="news_content" class="col-10 mx-auto" style="display: none"></div>
-                        <div id="news_list">
-                            <ul class="list-group list-group-flush col-10 mx-auto">
-                                <%- include('./newsList',{data:news}) %>
-                            </ul>
-                            <nav id="news_pagination" class="rel-bottom" data-total="<%= news[0].total %>">
-                                <ul class="pagination pagination-lg">
-                                    <li class="page-item previous"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                                    <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
-                                    <li class="page-item now"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
-                                    <li class="page-item next"><a class="page-link" href="#"><span>&raquo;</span></a></li>
-                                </ul>
-                            </nav>
-                        </div>
-                        <% } else { %>
-                        <div class="d-flex justify-content-center" style="height: 250px">
-                            <h1 class="text-muted align-self-center">暂时没有通知</h1>
-                        </div>
-                        <% }  %>
+                        <%- include('../../common/views/contents-news',{news}) %>
                     </div>
                 </div>
             </div>
@@ -146,6 +125,7 @@
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/js/wangEditor.min.js"></script>
     <script src="/js/system.js"></script>
+    <script src="/js/common.js"></script>
     <script src="/js/main.js"></script>
 </body>
 

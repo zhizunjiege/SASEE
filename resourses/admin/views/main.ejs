@@ -7,23 +7,104 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="/pictures/favicon.ico">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="/css/main.css"> -->
+    <style type="text/css">
+        #contents_body {
+            height: 750px;
+        }
+
+        .rel-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .alert {
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            top: 25%;
+            transform: translate(-50%, -50%);
+        }
+
+        ::-webkit-scrollbar {
+            display: none
+        }
+    </style>
     <title>系统管理</title>
 </head>
 <!-- 发布通知，查看信息，更新系统状态，发送邮件 -->
-<body>
-<button class="btn btn-primary w-25" data-toggle="modal" data-target="#menu_modal">菜单</button>
+
+<body class="container-fluid">
+    <div id="contents" class="p-3">
+        <div class="card">
+            <header id="contents_header" class="card-header">
+                <button id="contents_back" class="btn" style="display: none"><span
+                        class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
+                <h3 id="contents_title" class="mb-0 text-center">通知</h3>
+            </header>
+
+            <div id="contents_body">
+                <div id="news" class="collapse show" data-parent="#contents">
+                    <%- include('../../common/views/contents-news',{news}) %>
+                </div>
+                <div id="submit_notice" class="collapse p-3" data-parent="#contents">
+                    <form action="" id="submit_notice_form" method="POST">
+                        <div class="form-group form-row align-items-center">
+                            <div class="col">
+                                <div class="form-group">
+                                    <input type="text" name="title" class="form-control" placeholder="请输入通知标题"
+                                        maxlength="255" required>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-around">
+                                <% const obj={
+                                    "bysj":'毕业设计',
+                                    "scsx":'生产实习',
+                                    "zhsy":'课程设计与综合实验'
+                                }; 
+                                for (const [key,value] of Object.entries(obj)) { %>
+                                <div class="form-group custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" name="category" class="custom-control-input"
+                                        id="customCheck_<%= key %>" value="<%= value %>" checked>
+                                    <label class="custom-control-label"
+                                        for="customCheck_<%= key %>"><%= value %></label>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div id="noticeEditor">
+                            <div class="mb-3 editor">
+                                <p>请在此处输入内容···</p>
+                            </div>
+                            <div class="form-group form-row justify-content-around">
+                                <button type="reset" class="btn btn-secondary col-3 editor-clear"
+                                    data-dismiss="modal">清空</button>
+                                <button type="submit" class="btn btn-primary col-3">发布</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="menu_modal" class="modal fade show" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="row">
-                            <div class="col p-3 bg-primary">发布通知</div>
-                            <div class="col p-3 bg-primary">查看信息</div>
+                        <div class="row justify-content-around">
+                            <button class="btn btn-primary w-25" data-toggle="collapse"
+                                data-target="#submit_notice">发布通知</button>
+                            <button class="btn btn-primary w-25" data-toggle="collapse"
+                                data-target="#news">查看通知</button>
+                            <button class="btn btn-primary w-25">查看信息</button>
                         </div>
-                        <div class="row">
-                            <div class="col p-3 bg-info">更新状态</div>
-                            <div class="col p-3 bg-info">发送邮件</div>
+                        <div class="row justify-content-around">
+                            <button class="btn btn-primary w-25">更新状态</button>
+                            <button class="btn btn-primary w-25">发送邮件</button>
                         </div>
                     </div>
                 </div>
@@ -37,6 +118,41 @@
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/js/wangEditor.min.js"></script>
     <script src="/js/system.js"></script>
+    <script src="/js/common.js"></script>
+    <script>
+        (function ($, SASEE) {
+            let editor = SASEE.instEditor('#noticeEditor', true),
+                $form = $('#submit_notice_form');
+            console.log(editor);
+            editor.$textContainerElem[0].style.height='540px';
+            $form.submit(e => {
+                e.preventDefault();
+                let data = $form.serializeObject();
+                if (!data.category) {
+                    SASEE.alert({
+                        msg: '通知分类不能为空，请选择至少一个分类！'
+                    })
+                    return;
+                }
+                data.content = editor.txt.html();
+                $.json({
+                    url: './submitNotice',
+                    data: data
+                }).done(msg => {
+                    SASEE.requestDone(msg);
+                }).fail(SASEE.requestFail);
+            });
+            $(window).keydown(e => {
+                if (e.ctrlKey && e.key == 'Alt') {
+                    $('#menu_modal').modal('toggle');
+                }
+            });
+            $('.container-fluid','#menu_modal').click(e=>{
+                $('#menu_modal').modal('hide');
+            });
+            SASEE.initNews();
+        })(window.jQuery, window.SASEE);
+    </script>
 </body>
 
 </html>

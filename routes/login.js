@@ -34,7 +34,7 @@ function render(req, res) {
             let [[user], news] = data;
             user.profile = (user.gender == '男' ? 'man' : 'woman') + '_' + identity + '.png';
             user.identity = identity;
-            res.type('html').render(process.cwd() + req.APP_CONSTANT.VIEWS_COMMON + 'user', { user, news });
+            res.render(process.cwd() + req.APP_CONSTANT.VIEWS_COMMON + 'user', { user, news });
         });
 }
 

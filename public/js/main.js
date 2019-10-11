@@ -19,20 +19,8 @@
                 });
             }
         }
-        function _loadNewsContent(e) {
-            SASEE._loadContent('#news_content', {
-                type: 'newsContent',
-                id: $(e.target).closest('li').data('id')
-            }, () => {
-                SASEE._subjectToggle('#news_content', '#news_list');
-            });
-        }
-        $('#news_list>ul').click(_loadNewsContent);
-        SASEE.instPagination({
-            container: '#news_list>ul',
-            pagination: '#news_pagination',
-            url: SASEE.URL_VIEWS + '/newsList'
-        });
+
+        SASEE.initNews();
 
         $('#_toggle_user_info,#navigator a[href="#news"],#navigator ul>a').each((index, element) => {
             var $element = $(element);

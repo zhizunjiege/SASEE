@@ -7,9 +7,13 @@ function _render(res, sql_query, param, file) {
             res.render(file, { data });
         });
     } else if (file) {
-        res.render(file, { data: '' },(err,html)=>{
-            console.log(err);
-            res.status(403).send('页面渲染出错！');
+        res.render(file, { data: '' }, (err, html) => {
+            if (err) {
+                console.log(err);
+                res.status(403).send('页面渲染出错！');
+            }else {
+                res.send(html);
+            }
         });
     } else {
         res.end();

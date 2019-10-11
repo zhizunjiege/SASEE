@@ -1,0 +1,21 @@
+<% if (news.length) { %>
+<div id="news_content" class="col-10 mx-auto" style="display: none"></div>
+<div id="news_list">
+    <ul class="list-group list-group-flush col-10 mx-auto">
+        <%- include('../../common/views/newsList',{data:news}) %>
+    </ul>
+    <nav id="news_pagination" class="rel-bottom" data-total="<%= news[0].total %>">
+        <ul class="pagination pagination-lg">
+            <li class="page-item previous"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+            <li class="page-item now"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+            <li class="page-item next"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+        </ul>
+    </nav>
+</div>
+<% } else { %>
+<div class="d-flex justify-content-center" style="height: 250px">
+    <h1 class="text-muted align-self-center">暂时没有通知</h1>
+</div>
+<% }  %>
