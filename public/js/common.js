@@ -41,7 +41,7 @@
         })
     }
 
-    SASEE.formSubmit = ({ file = false, selector, url, validate, ifNotValid, done, fail = SASEE.requestFail, always } = {}) => {
+    SASEE.formSubmit = ({ file = false, editor = null, selector, url, validate, ifNotValid, done, fail = SASEE.requestFail, always } = {}) => {
         let $form = $(selector);
         if (file) {
             let $file = $('input[type=file]', selector);
@@ -71,6 +71,10 @@
                         processData: false,
                         contentType: false
                     });
+                } else if (editor) {
+                    let data = $form.serializeObject();
+                    data.content = editor.txt.html();
+                    ajaxObj = $.json({ url, data });
                 } else {
                     ajaxObj = $.post(url, $form.serialize());
                 }

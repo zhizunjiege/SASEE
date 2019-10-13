@@ -1,40 +1,35 @@
 <div class="p-3">
-    <div class="row justify-content-center mb-1">
-        <div class="col-2">
-            <img src="/pictures/<%= data[0].profile %>" alt="头像" class="img-thumbnail float-right" style="height:200px">
-        </div>
-        <div class="col-10">
-            <table class="table table-bordered table-fixed">
-                <tbody class="text-center">
-                    <tr>
-                        <th>账号</th>
-                        <td><%= data[0].account %></td>
-                        <th>姓名</th>
-                        <td><%= data[0].name %></td>
-                        <th>性别</th>
-                        <td><%= data[0].gender %></td>
-                    </tr>
-                    <tr>
-                        <th>方向</th>
-                        <td colspan="2"><%= data[0].department_des %></td>
-                        <th>职称</th>
-                        <td colspan="2"><%= data[0].proTitle %></td>
-                    </tr>
-                    <tr>
-                        <th>研究领域</th>
-                        <td colspan="2"><%= data[0].field %></td>
-                        <th>办公地点</th>
-                        <td colspan="2"><%= data[0].office %></td>
-                    </tr>
-                    <tr>
-                        <th>联系邮箱</th>
-                        <td colspan="2"><%= data[0].email %></td>
-                        <th>联系电话</th>
-                        <td colspan="2"><%= data[0].tele %></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="mb-1">
+        <table class="table table-bordered table-fixed">
+            <tbody class="text-center">
+                <tr>
+                    <th>账号</th>
+                    <td><%= data[0].account %></td>
+                    <th>姓名</th>
+                    <td><%= data[0].name %></td>
+                    <th>性别</th>
+                    <td><%= data[0].gender %></td>
+                </tr>
+                <tr>
+                    <th>方向</th>
+                    <td colspan="2"><%= data[0].department_des %></td>
+                    <th>职称</th>
+                    <td colspan="2"><%= data[0].proTitle %></td>
+                </tr>
+                <tr>
+                    <th>研究领域</th>
+                    <td colspan="2"><%= data[0].field %></td>
+                    <th>办公地点</th>
+                    <td colspan="2"><%= data[0].office %></td>
+                </tr>
+                <tr>
+                    <th>联系邮箱</th>
+                    <td colspan="2"><%= data[0].email %></td>
+                    <th>联系电话</th>
+                    <td colspan="2"><%= data[0].tele %></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div class="mb-3">
         <h5>个人简介</h5>
@@ -93,7 +88,7 @@
         SASEE.formSubmit({
             selector: '#edit_info_form',
             url: './info',
-            done:msg=>{
+            done: msg => {
                 $('#edit_info_modal').modal('hide');
                 SASEE.requestDone(msg);
             }

@@ -73,7 +73,7 @@ app.get('/', general.redirect);
 
 app.post('/login', login.authenticate);
 
-app.use('/admin', require('./routes/admin')({ admin,Router,views, email,general, __dirname, CONSTANT }));
+app.use('/admin', require('./routes/admin')({ admin,Router,views,period, email,general, __dirname, CONSTANT }));
 
 {
     const emailRouter = Router(),

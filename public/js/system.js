@@ -46,28 +46,36 @@
         }
     });
 
-    SASEE._contentBarToggle = () => {
-        $('#contents_back').toggle();
-        $('#contents_title').toggle();
-    };
-    SASEE._subjectToggle = (content, list, flag) => {
-        SASEE._contentBarToggle();
-        if (flag) {
-            $(content).hide();
-            $(list).show();
-        } else {
-            $(content).toggle();
-            $(list).toggle();
+    SASEE._showListOrContent = ({ container, flag = true, title }) => {
+        function _show(container, flag = true) {
+            let listSel = '#contents_title,' + container + ' .sys-list',
+                contentSel = '#contents_back,' + container + ' .sys-content';
+            if (flag) {
+                $(contentSel).hide();
+                $(listSel).show();
+            } else {
+                $(contentSel).show();
+                $(listSel).hide();
+            }
         }
-    };
-    SASEE._loadContent = (content, param, callback) => {
-        document.getElementById('contents_back').onclick = callback;
-        $.get(SASEE.URL_VIEWS + '/' + param.type, {
-            id: param.id
-        }).done(html => {
-            $(content).html(html);
-            callback();
-        }).fail(SASEE.requestFail);
+        function _bindContentsBack(container) {
+            document.getElementById('contents_back').onclick = () => {
+                _show(container);
+            };
+        }
+        if (title) {
+            $('#contents_title').text(title);
+        }
+        if ($(container).find('.sys-list').length > 0) {
+            _bindContentsBack(container);
+        }
+        _show(container, flag);
+    }
+    SASEE._loadContent = ({ container, url, data, done, fail = SASEE.requestFail }) => {
+        $.get(url, data).done(html => {
+            $(container).find('.sys-content').html(html);
+            done && done();
+        }).fail(fail);
     };
     SASEE.instPagination = ({ container, pagination, url, max = 10 } = {}) => {
         let $container = $(container),
@@ -142,19 +150,25 @@
         return editor;
     };
 
-    SASEE.initNews = () => {
-        function _loadNewsContent(e) {
-            SASEE._loadContent('#news_content', {
-                type: 'newsContent',
-                id: $(e.target).closest('li').data('id')
-            }, () => {
-                SASEE._subjectToggle('#news_content', '#news_list');
+    SASEE.initNewsFrame = () => {
+        $('#news>.sys-list>ul').click(e => {
+            SASEE._loadContent({
+                container: '#news',
+                url: SASEE.URL_VIEWS + '/newsContent',
+                data: {
+                    id: $(e.target).closest('li').data('id')
+                },
+                done: () => {
+                    SASEE._showListOrContent({
+                        container: '#news',
+                        flag: false
+                    });
+                }
             });
-        }
-        $('#news_list>ul').click(_loadNewsContent);
+        });
         SASEE.instPagination({
-            container: '#news_list>ul',
-            pagination: '#news_pagination',
+            container: '#news>.sys-list>ul',
+            pagination: '#news .sys-pagination',
             url: SASEE.URL_VIEWS + '/newsList'
         });
     };

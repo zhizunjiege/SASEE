@@ -3,7 +3,7 @@
     $(function ($) {
         //初始化
         const SASEE = window.SASEE;
-        function _loadFrame({ $target, fail = SASEE.requestFail } = {}) {
+        function _loadFrame({ $target, done, fail = SASEE.requestFail } = {}) {
             let href = $target.attr('href'),
                 type = $target[0].dataset.type;
             if (!$(href).length) {
@@ -16,22 +16,27 @@
                         parent: '#contents',
                         toggle: true
                     }).append(html);
+                    done($target);
                 });
+            } else {
+                done($target);
             }
         }
 
-        SASEE.initNews();
+        SASEE.initNewsFrame();
 
         $('#_toggle_user_info,#navigator a[href="#news"],#navigator ul>a').each((index, element) => {
             var $element = $(element);
             $element.click((e) => {
-                let $target = $(e.currentTarget);
-                if ($target.data('sub')) {
-                    SASEE._subjectToggle($target[0].dataset.content, $target[0].dataset.list, true);
-                }
-                $('#contents_back').hide();
-                $('#contents_title').show().text($element.text());
-                _loadFrame({ $target });
+                _loadFrame({
+                    $target: $element,
+                    done: $target => {
+                        SASEE._showListOrContent({
+                            container: $target.attr('href'),
+                            title: $target.text()
+                        });
+                    }
+                });
             });
         });
     });

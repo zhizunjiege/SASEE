@@ -1,5 +1,5 @@
 <% let subject=data[0][0],student=data[1]; %>
-<nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white" data-id="<%= subject.id %>">
+<nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_student">学生</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_file">文件</a>
@@ -33,12 +33,13 @@
                             <p>请在此处输入内容···</p>
                         </div>
                         <form action="" id="subject_notice_form" method="POST">
+                            <input type="hidden" name="id" value="<%= subject.id %>">
                             <div class="form-group">
                                 <input type="text" name="title" class="form-control" placeholder="请输入标题" maxlength="255" required>
                             </div>
-                            <div class="form-group form-row justify-content-between">
-                                <button class="btn btn-secondary px-5 editor-clear" type="reset">清空</button>
-                                <button class="btn btn-primary px-5" type="submit">发布</button>
+                            <div class="form-group form-row justify-content-around">
+                                <button class="btn btn-secondary w-25 editor-clear" type="reset">清空</button>
+                                <button class="btn btn-primary w-25" type="submit">发布</button>
                             </div>
                         </form>
                     </div>
@@ -124,24 +125,20 @@
 
 <script>
     (function ($, SASEE) {
-        let editor = SASEE.instEditor('#myNotice',true),
-            $form = $('#subject_notice_form');
-        $form.submit(e => {
-            let data = {
-                id: $('#mySubject_nav').data('id'),
-                title: $form[0].title.value,
-                content: editor.txt.html()
-            };
-            e.preventDefault();
-            $.post(SASEE.URL_SUBJECT + '/notice', data).done(msg => {
+        let editor = SASEE.instEditor('#myNotice',true);
+        SASEE.formSubmit({
+            editor,
+            selector: '#subject_notice_form',
+            url: SASEE.URL_SUBJECT + '/notice',
+            done: msg => {
                 let date = new Date();
                 $(`<a href="#myNotice_${date.getTime()}" class="list-group-item list-group-item-action nav-link" data-toggle="pill">
-                        <span class="w-50 ellipsis">${data.title}</span>
+                        <span class="w-50 ellipsis">${$('#subject_notice_form')[0].title.value}</span>
                         <span class="float-right">${date.toISOString().substr(0, 10)}</span>
                 </a>`).insertAfter('a[href="#myNotice"]');
-                $(`<div class="tab-pane fade" id="myNotice_${date.getTime()}">${data.content}</div>`).insertAfter('#myNotice');
+                $(`<div class="tab-pane fade" id="myNotice_${date.getTime()}">${editor.txt.html()}</div>`).insertAfter('#myNotice');
                 SASEE.requestDone(msg);
-            }).fail(SASEE.requestFail);;
+            }
         });
         SASEE.formSubmit({
             selector: '#subject_mark_form',

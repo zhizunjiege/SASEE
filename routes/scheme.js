@@ -93,6 +93,6 @@ module.exports = Draw_all;
 //     console.log(data[0]["student_selected"][3]);
 // });
 
-Draw_all();
+//Draw_all();
 // let update = "UPDATE bysj SET student_final = ? WHERE id = ?";
 // mysql.find(update, ['[]', 1]);

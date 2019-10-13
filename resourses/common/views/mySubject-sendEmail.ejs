@@ -41,25 +41,24 @@
 </div>
 <script>
     (($, SASEE) => {
-        let editor = SASEE.instEditor('#emailEditor'),
-            $form = $('#subject_sendEmail_form');
-        $form.submit(e => {
-            e.preventDefault();
-            let data = $form.serializeObject();
-            if (!data.toAddr) {
+        let editor = SASEE.instEditor('#emailEditor');
+        SASEE.formSubmit({
+            editor,
+            selector: '#subject_sendEmail_form',
+            url: SASEE.URL_EMAIL + '/sendEmail',
+            validate: $form => {
+                return Boolean($form.find(':checkbox:checked')[0].value);
+            },
+            ifNotValid: ($form) => {
                 SASEE.alert({
                     msg: '收件人不能为空，请选择至少一位收件人！'
                 })
                 return;
-            }
-            data.content = editor.txt.html();
-            $.json({
-                url: SASEE.URL_EMAIL + '/sendEmail',
-                data: data
-            }).done(msg => {
+            },
+            done: msg => {
                 $('#sendEmail_modal').modal('hide');
                 SASEE.requestDone(msg);
-            }).fail(SASEE.requestFail);
+            }
         });
     })(window.jQuery, window.SASEE);
 </script>

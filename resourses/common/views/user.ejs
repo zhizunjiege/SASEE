@@ -41,8 +41,8 @@
             <dl class="list-group list-group-flush" id="accordion_nav">
                 <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航</dt>
                 <dd class="list-group-item">
-                    <a data-toggle="collapse" href="#news" data-sub="true" data-content="#news_content"
-                        data-list="#news_list"><span class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
+                    <a data-toggle="collapse" href="#news"><span
+                            class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                 </dd>
                 <dd class="list-group-item">
@@ -51,14 +51,13 @@
                             class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     <div id="bysj" class="collapse" data-parent="#accordion_nav">
                         <ul class="list-group list-group-flush">
-                            <% let hrefArray={'student':'xt','teacher':'wdkt','dean':'ktsh'},contentArray={'student':'选题','teacher':'我的课题','dean':'课题审核'}; %>
-                            <a href="#bysj_<%= hrefArray[user.identity] %>"
-                                class="list-group-item list-group-item-action" data-toggle="collapse"
-                                data-type="subject" data-sub="true" data-content="#subject_content"
-                                data-list="#subject_list"><small><%= contentArray[user.identity] %></small></a>
+                            <% let contentArray={'student':'选题','teacher':'我的课题','dean':'课题审核'}; %>
+                            <a href="#bysj_subject" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"
+                                data-type="subject"><small><%= contentArray[user.identity] %></small></a>
                             <% if(user.identity=='student') { %>
-                            <a href="#bysj_wdkt" class="list-group-item list-group-item-action" data-toggle="collapse"
-                                data-type="mySubject"><small>我的课题</small></a>
+                            <a href="#bysj_muSubject" class="list-group-item list-group-item-action"
+                                data-toggle="collapse" data-type="mySubject"><small>我的课题</small></a>
                             <% } %>
                         </ul>
                     </div>

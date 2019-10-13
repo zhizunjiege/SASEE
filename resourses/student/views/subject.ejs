@@ -1,6 +1,6 @@
 <% if (data.length) { %>
-<div id="subject_content" class="col-12 mx-auto" style="display: none"></div>
-<div id="subject_list">
+<div class="sys-content col-12 mx-auto" style="display: none"></div>
+<div class="sys-list">
     <table class="table table-hover text-center col-10 mx-auto table-fixed">
         <thead class="thead-light">
             <tr>
@@ -15,7 +15,7 @@
             <%- include('./subjectList',{data}) %>
         </tbody>
     </table>
-    <nav id="subject_pagination" class="rel-bottom" data-total="<%= data[0].total %>">
+    <nav class="sys-pagination rel-bottom" data-total="<%= data[0].total %>">
         <ul class="pagination pagination-lg">
             <li class="page-item previous"><a class="page-link" href="#"><span>&laquo;</span></a></li>
             <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
@@ -28,18 +28,24 @@
 
 <script>
     (function ($, SASEE) {
-        function _loadSubjectContent(e) {
-            SASEE._loadContent('#subject_content', {
-                type: 'subjectContent',
-                id: $(e.target).closest('tr').data('id')
-            }, () => {
-                SASEE._subjectToggle('#subject_content', '#subject_list');
-            });
-        }
-        $('#subject_list tbody').click(_loadSubjectContent);
+        $('#bysj_subject>.sys-list tbody').click(e => {
+            SASEE._loadContent({
+                container: '#bysj_subject',
+                url: SASEE.URL_VIEWS + '/subjectContent',
+                data: {
+                    id: $(e.target).closest('tr').data('id')
+                },
+                done: () => {
+                    SASEE._showListOrContent({
+                        container: '#bysj_subject',
+                        flag: false
+                    });
+                }
+            })
+        });
         SASEE.instPagination({
-            container: '#subject_list tbody',
-            pagination: '#subject_pagination',
+            container: '#bysj_subject>.sys-list tbody',
+            pagination: '#bysj_subject>.sys-pagination',
             url: SASEE.URL_VIEWS + '/subjectList'
         });
     })(window.jQuery, window.SASEE);

@@ -1,5 +1,5 @@
-<div id="subject_content" class="col-12 mx-auto scroll-container" style="display: none"></div>
-<div id="subject_list" class="px-3">
+<div class="sys-content col-12 mx-auto" style="display: none"></div>
+<div class="sys-list px-3">
     <div class="d-flex justify-content-around" id="card_container">
         <% if(data.length){
         for( let i = 0; i < data.length; i++ ) { %>
@@ -14,32 +14,28 @@
 </div>
 <script>
     (function ($, SASEE) {
-        let _toggle = (e) => {
-            SASEE._subjectToggle('#subject_content', '#subject_list');
-        };
-        let cb = (param) => {
-            SASEE._loadContent('#subject_content', param, _toggle);
-        };
-
-        SASEE._modifyOrView = e => {
-            let type = $(e.currentTarget).data('type'),
-                id = $(e.currentTarget).data('id');
-            if (type) {
-                cb({ type, id });
-            } else {
-                SASEE.alert({
-                    msg: '该课题已被否决，无法查看！'
-                })
-            }
+        function _loadSubjectContent(type, data = null) {
+            SASEE._loadContent({
+                container: '#bysj_subject',
+                url: SASEE.URL_VIEWS + '/' + type,
+                data,
+                done: () => {
+                    SASEE._showListOrContent({
+                        container: '#bysj_subject',
+                        flag: false
+                    });
+                }
+            });
         }
-        $('#card_container').children().click(SASEE._modifyOrView);
+        $('#card_container').click(e => {
+            let $target = $(e.target).closest('.card');
+            _loadSubjectContent($target.data('type'), { id: $target.data('id') });
+        });
 
         let $subject_submit = $('#subject_submit');
         if ($subject_submit.length) {
-            $subject_submit.click((e) => {
-                cb({
-                    type: 'submitSubject'
-                });
+            $subject_submit.click(() => {
+                _loadSubjectContent('submitSubject');
             });
         }
     })(window.jQuery, window.SASEE);

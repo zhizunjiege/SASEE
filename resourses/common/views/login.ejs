@@ -44,20 +44,14 @@
                     </div>
 
                     <div class="form-group form-row justify-content-around">
+                        <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任'}; 
+                        for (const [key,value] of Object.entries(idObj)) { %>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="identity" value="student" id="identity-s" class="custom-control-input"
-                                checked>
-                            <label for="identity-s" class="custom-control-label">Student</label>
+                            <input type="radio" name="identity" value="<%= key %>" id="identity-<%= key %>"
+                                class="custom-control-input" <%= key=='student'?'checked':'' %>>
+                            <label for="identity-<%= key %>" class="custom-control-label"><%= value %></label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="identity" value="teacher" id="identity-t"
-                                class="custom-control-input">
-                            <label for="identity-t" class="custom-control-label">Teacher</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="identity" value="dean" id="identity-d" class="custom-control-input">
-                            <label for="identity-d" class="custom-control-label">Dean</label>
-                        </div>
+                        <% } %>
                     </div>
                     <div class="form-row justify-content-between align-items-center mb-3">
                         <a href="/password">忘记密码</a>
@@ -80,7 +74,7 @@
                 $.post('/login', $form.serialize()).done((data, textStatus, xhr) => {
                     window.location.href = xhr.getResponseHeader('Location');
                 }).fail(xhr => {
-                    $('.alert>span').text(xhr.responseText||'网络错误，请稍后重试！');
+                    $('.alert>span').text(xhr.responseText || '网络错误，请稍后重试！');
                     $('.alert-modal').modal({
                         backdrop: 'static',
                         keyboard: false
