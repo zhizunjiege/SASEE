@@ -1,6 +1,8 @@
 const CONSTANT = {
+    ROOT: process.cwd(),
     PATH_TMP: './tmp/',
-    PATH_FILES: 'resourses/common/files/',
+    PATH_FILES: '/resourses/common/files/',
+    PATH_NEWS: '/resourses/common/news/',
     VIEWS_COMMON: '/resourses/common/views/',
     VIEWS_TEACHER: '/resourses/teacher/views/',
     VIEWS_STUDENT: '/resourses/student/views/',
@@ -73,13 +75,13 @@ app.get('/', general.redirect);
 
 app.post('/login', login.authenticate);
 
-app.use('/admin', require('./routes/admin')({ admin,Router,views,period, email,general, __dirname, CONSTANT }));
+app.use('/admin', require('./routes/admin')({ admin, Router, views, period, email, general, __dirname, CONSTANT }));
 
 {
     const emailRouter = Router(),
         fileRouter = Router();
     student.set('views', __dirname + CONSTANT.VIEWS_STUDENT);
-    student.use(general.auth({ url: '/',identity:'student',CONSTANT:CONSTANT }));
+    student.use(general.auth({ url: '/', identity: 'student', CONSTANT: CONSTANT }));
     student.get('/', login.render);
     student.use('/views', views.common(Router), views.student(Router, period));
 
@@ -101,7 +103,7 @@ app.use('/admin', require('./routes/admin')({ admin,Router,views,period, email,g
         next();
     }, subject.choose);
 
-    student.get('/logout', general.logout);
+    student.get('/logout', general.logout());
     student.post('/password', password.modify);
 }
 {
@@ -109,7 +111,7 @@ app.use('/admin', require('./routes/admin')({ admin,Router,views,period, email,g
         subjectRouter = Router(),
         emailRouter = Router();
     teacher.set('views', __dirname + CONSTANT.VIEWS_TEACHER);
-    teacher.use(general.auth({ url: '/',identity:'teacher',CONSTANT:CONSTANT }));
+    teacher.use(general.auth({ url: '/', identity: 'teacher', CONSTANT: CONSTANT }));
     teacher.get('/', login.render);
     teacher.use('/views', views.common(Router), views.teacher(Router, period));
 
@@ -130,13 +132,13 @@ app.use('/admin', require('./routes/admin')({ admin,Router,views,period, email,g
 
     teacher.post('/info', period.permiss([0]), info.setGeneralInfo(['field', 'office', 'tele', 'resume']));
 
-    teacher.get('/logout', general.logout);
+    teacher.get('/logout', general.logout());
     teacher.post('/password', password.modify);
 }
 {
     const emailRouter = Router();
     dean.set('views', __dirname + CONSTANT.VIEWS_DEAN);
-    dean.use(general.auth({ url: '/',identity:'dean',CONSTANT:CONSTANT }));
+    dean.use(general.auth({ url: '/', identity: 'dean', CONSTANT: CONSTANT }));
     dean.get('/', login.render);
     dean.use('/views', views.common(Router), views.dean(Router, period));
 
@@ -147,7 +149,7 @@ app.use('/admin', require('./routes/admin')({ admin,Router,views,period, email,g
     dean.post('/pass', period.permiss([2, 4]), subject.pass, email.sendEmail);
     dean.post('/fail', period.permiss([2, 4]), subject.fail, email.sendEmail);
 
-    dean.get('/logout', general.logout);
+    dean.get('/logout', general.logout());
     dean.post('/password', password.modify);
 }
 

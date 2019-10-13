@@ -11,7 +11,7 @@ function _render(res, sql_query, param, file) {
             if (err) {
                 console.log(err);
                 res.status(403).send('页面渲染出错！');
-            }else {
+            } else {
                 res.send(html);
             }
         });
@@ -22,15 +22,14 @@ function _render(res, sql_query, param, file) {
 
 function common(Router) {
     const commonRouter = Router();
-    const filePath = process.cwd() + '/resourses/common';
     commonRouter.get('/newsList', (req, res) => {
         let nextPageOffset = ((Number(req.query.page) || 1) - 1) * 10,
             sql_query = 'SELECT * FROM news ORDER BY top DESC,id DESC LIMIT 10 OFFSET ?';
-        _render(res, sql_query, nextPageOffset, filePath + '/views/newsList');
+        _render(res, sql_query, nextPageOffset, req.APP_CONSTANT.ROOT + req.APP_CONSTANT.VIEWS_COMMON + 'newsList');
     });
     commonRouter.get('/newsContent', (req, res) => {
         let id = req.query.id;
-        _render(res, null, null, filePath + '/news/news_' + id);
+        _render(res, null, null, req.APP_CONSTANT.ROOT + req.APP_CONSTANT.PATH_NEWS + id);
     });
     return commonRouter;
 }
