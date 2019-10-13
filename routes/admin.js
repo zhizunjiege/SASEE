@@ -1,4 +1,4 @@
-const mysql = require('./sql');
+const mysql = require('./sql'), file = require('./file');
 module.exports = ({ admin, Router, views, period, email, general, __dirname, CONSTANT } = {}) => {
     admin.set('views', __dirname + CONSTANT.VIEWS_ADMIN);
     admin.get('/', (req, res) => {
@@ -45,17 +45,30 @@ module.exports = ({ admin, Router, views, period, email, general, __dirname, CON
         });
     });
     admin.use('/views', views.common(Router));
+    admin.get('/logout', general.logout('/admin'));
     admin.post('/submitNotice', (req, res) => {
-        console.log(req.body);
-        res.send('发布成功！');
+        let { top, title, category, content } = req.body,
+            sql_insert = 'INSERT INTO news (top,title,date,category) VALUES (?,?,CURDATE(),?)';
+        mysql.find(sql_insert, [top == 'on' ? 1 : 0, title, category.join('/')]).then(info => {
+            file.fs.writeFile(req.APP_CONSTANT.ROOT + req.APP_CONSTANT.PATH_NEWS + info.insertId + '.ejs', content, err => {
+                if (err) throw err;
+                res.send('通知发布成功！');
+            });
+        }).catch(err => {
+            console.log(err);
+            res.status(403).send('通知发布失败！');
+        });
     });
-    admin.post('/sendEmail', (req, res) => {
-        console.log(req.body);
-        res.send('发送成功！');
-    });
+    admin.post('/sendEmail', (req, res,next) => {
+        let sql_query = 'SELECT email FROM ??';
+        mysql.find(sql_query, [req.body.identity]).then(results => {
+            req.body.toAddr = results.map(x => x.email);
+            next();
+        });
+    }, email.sendEmail);
     admin.post('/updateState', (req, res) => {
         console.log(req.body);
-        
+
         res.send('更新成功！');
     });
     return admin;

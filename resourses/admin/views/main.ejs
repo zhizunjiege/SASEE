@@ -51,13 +51,21 @@
                 <div id="submit_notice" class="collapse" data-parent="#contents">
                     <form action="" id="submit_notice_form" method="POST">
                         <div class="form-group form-row align-items-center">
-                            <div class="col">
+                            <div class="col-1">
+                                <div class="form-group form-row justify-content-around">
+                                    <div class="custom-control custom-checkbox custom-control-inline">
+                                        <input type="checkbox" name="top" class="custom-control-input" id="ifTop">
+                                        <label class="custom-control-label" for="ifTop">置顶</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5">
                                 <div class="form-group">
                                     <input type="text" name="title" class="form-control" placeholder="请输入通知标题"
                                         maxlength="255" required>
                                 </div>
                             </div>
-                            <div class="col">
+                            <div class="col-6">
                                 <div class="form-group form-row justify-content-around">
                                     <% const categoryObj={
                                         "bysj":'毕业设计',
@@ -172,6 +180,7 @@
                                 data-target="#update_state">更新状态</button>
                             <button class="btn btn-primary w-25" data-toggle="collapse"
                                 data-target="#send_email">发送邮件</button>
+                            <a class="btn btn-primary w-25" href="./logout">退出系统</a>
                         </div>
                     </div>
                 </div>
@@ -197,7 +206,7 @@
                 selector: '#submit_notice_form',
                 url: './submitNotice',
                 validate: $form => {
-                    return Boolean($form.find(':checkbox:checked')[0].value);
+                    return Boolean($form.find(':checkbox:checked').length);
                 },
                 ifNotValid: () => {
                     SASEE.alert({
@@ -212,7 +221,7 @@
                 selector: '#send_email_form',
                 url: './sendEmail',
                 validate: $form => {
-                    return Boolean($form.find(':checkbox:checked')[0].value);
+                    return Boolean($form.find(':radio:checked').length);
                 },
                 ifNotValid: () => {
                     SASEE.alert({
@@ -249,8 +258,8 @@
             });
             $('.container-fluid', '#menu_modal').click(e => {
                 SASEE._showListOrContent({
-                    container:'#news',
-                    title:e.target.innerText
+                    container: '#news',
+                    title: e.target.innerText
                 });
                 $('#menu_modal').modal('hide');
             });

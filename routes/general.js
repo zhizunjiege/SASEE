@@ -3,11 +3,13 @@ function notFound(req, res) {
     res.status(404);
     res.send('您要的东西没找到哦-_-');
 }
-function logout(req, res) {
-    req.session.destroy((err) => {
-        if (err) throw err;
-        res.redirect('/');
-    });
+function logout(path = '/') {
+    return (req, res) => {
+        req.session.destroy((err) => {
+            if (err) throw err;
+            res.redirect(path);
+        });
+    }
 }
 function redirect(req, res) {
     if (req.session.identity) {
@@ -30,4 +32,20 @@ function auth({ url = '/', identity, CONSTANT } = {}) {
         }
     };
 }
-module.exports = { notFound, logout, redirect, auth };
+function catchError({ msg='服务器出现错误，请稍后重试！', typeMap , res } = {}) {
+    return err => {
+        console.log(err);
+        if (Array.isArray(typeMap)) {
+            for (const [type, msg] of typeMap) {
+                if (err instanceof type) {
+                    console.log(msg);
+                    res && res.status(403).send(msg);
+                    return;
+                }
+            }
+        } else {
+            res && res.status(403).send(msg);
+        }
+    }
+}
+module.exports = { notFound, logout, redirect, auth, catchError };

@@ -1,6 +1,5 @@
 const mysql = require('./sql');
 
-
 let STATEOBJ = null;
 const PERIODARRAY = [
     { period: "open", des: '系统开启' },
