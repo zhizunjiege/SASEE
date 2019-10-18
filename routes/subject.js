@@ -10,7 +10,7 @@ function submit(req, res) {
         paramArray = [title, group, group_des, capacity, introduction, materials];
     let sql_query = 'SELECT id,password FROM teacher WHERE account=?',
         sql_insert = 'INSERT INTO bysj (title,`group`,group_des,capacity,introduction,materials,submitTime,lastModifiedTime,teacher,state,studentFiles,teacherFiles,notice,student_selected,student_final) VALUES (?,?,?,?,?,?,CURDATE(),CURDATE(),?,0,JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY())',
-        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",CONCAT("",?)) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
+        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher_id;
 
     mysql.transaction().then(conn => {

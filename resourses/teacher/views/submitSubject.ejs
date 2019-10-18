@@ -13,7 +13,8 @@
                     <label class="col-3 col-form-label" for="subject_group">方向</label>
                     <select class="custom-select form-control col-9" name="group" id="subject_group"
                         value="<%= _data.group %>" <%= _data.group?'readonly':'' %> required>
-                        <option value="" <%= _data.group?'':'selected' %> disabled><%= _data.group?'方向不可变更,选择将无效':'请选择一个方向' %></option>
+                        <option value="" <%= _data.group?'':'selected' %> disabled>
+                            <%= _data.group?'方向不可变更,选择将无效':'请选择一个方向' %></option>
                         <% for( let index = 1; index <= 5; index++ ) { %>
                         <option value="<%= index %>" <%= _data.group==index?'selected':'' %>><%= index %></option>
                         <% } %>
@@ -63,11 +64,13 @@
                 if ($curSubject[0].value) {
                     $('#card_container>[data-id=' + $curSubject[0].value + ']').remove();
                 }
-                $(data).appendTo($container).click(SASEE._modifyOrView);
+                $(data).appendTo($container);
                 if ($container.children().length == 3) {
                     $('#subject_submit').parent().remove();
                 }
-                SASEE._subjectToggle('#subject_content', '#subject_list');
+                SASEE._showListOrContent({
+                    container: '#bysj_subject'
+                });
             }
         });
     })(window.jQuery, window.SASEE);

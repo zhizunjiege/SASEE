@@ -1,4 +1,11 @@
-const nodemailer = require('nodemailer'), mysql = require('./sql');
+const nodemailer = require('nodemailer'),
+    mysql = require('./sql');
+
+const CONSTANT = {
+    SYS_TEST: '此邮件为系统测试邮件，请忽略······',
+    SYS_FOOTER: `<footer style="text-align:center;position:absolute;bottom:0;">~~~此邮件由系统代发,请勿回复~~~</footer>`,
+    SYS_SUBJECT: '毕业设计选题系统通知'
+}
 
 function _createSixNum() {
     let Num = "";
@@ -8,7 +15,7 @@ function _createSixNum() {
     return Num;
 }
 
-function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = '', html, subject = '毕业设计选题系统' } = {}) {
+function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
     const transporter = nodemailer.createTransport({
         service: '163',
         auth: {
@@ -54,7 +61,7 @@ function sendEmail(req, res) {
     let { toAddr, title, content, extraData } = req.body;
     _send({
         to: toAddr,
-        html: (extraData || '') + content + `<footer style="text-align:center;position:absolute;bottom:0;">~~~此邮件由系统代发,请勿回复~~~</footer>`,
+        html: (extraData || '') + content + CONSTANT.SYS_FOOTER,
         subject: title
     }).then(info => {
         res.send('邮件发送成功！');
@@ -64,4 +71,21 @@ function sendEmail(req, res) {
     });
 }
 
-module.exports = { _spcmw, sendPinCode, sendEmail };
+function emailTemplate({ title = '通知', paragraph = [], from = '系统' } = {}) {
+    let p = ``;
+    for (let i = 0; i < paragraph.length; i++) {
+        p += `<p>${paragraph[i]}</p>`;
+    }
+    return `
+        <h3>${title}</h3>
+        ${p}
+        <p>${from}</p>
+        <p>${new Date().toLocaleString()}</p>
+            `;
+}
+
+function tableTemplate({ caption, tableItems } = {}) {
+    return `` + caption + `\n` + tableItems;
+}
+
+module.exports = { CONSTANT, _spcmw, _send, sendPinCode, sendEmail, emailTemplate, tableTemplate };

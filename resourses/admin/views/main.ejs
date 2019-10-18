@@ -135,24 +135,25 @@
                         <% for (index=0;index<periodArray.length;index++) { 
                             let key=periodArray[index].period,
                             value=periodArray[index].des,
-                            flag=index<=stateObj.state||index==periodArray.length-1; %>
+                            startTime=periodArray[index].startTime; %>
                         <div class="form-group form-row">
                             <label for="_<%= key %>" class="col-3 text-center col-form-label"><%= value %></label>
                             <div class="input-group col-9 px-0">
                                 <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
-                                    value="<%= stateObj[key]?stateObj[key].replace(' ','T'):'' %>"
-                                    <%= flag?'disabled':'required' %>>
+                                    value="<%= startTime?startTime.toLocaleString().replace(' ','T'):'' %>"
+                                    <%= index<=state?'disabled':'required' %>>
                                 <div class="input-group-append">
-                                    <% if (flag) { %>
-                                    <button type="button" class="btn btn-outline-secondary" disabled>不可操作</button>
+                                    <% if (index==state+1) { %>
+                                    <button id="updateImm_button" type="button"
+                                        class="btn btn-outline-secondary">手动开始</button>
                                     <% } else { %>
-                                    <button type="button" class="btn btn-outline-secondary">手动开始</button>
+                                    <button type="button" class="btn btn-outline-secondary" disabled>不可操作</button>
                                     <% } %>
                                 </div>
                             </div>
                         </div>
                         <% } 
-                        if (stateObj.state!=periodArray.length-2) { %>
+                        if (state!=periodArray.length-2) { %>
                         <div class="form-group form-row justify-content-around">
                             <button type="reset" class="btn btn-secondary w-25">重置</button>
                             <button type="submit" class="btn btn-primary w-25">提交</button>
@@ -233,7 +234,7 @@
             });
             SASEE.formSubmit({
                 selector: '#update_state_form',
-                url: './updateState',
+                url: './updateNext',
                 validate: $form => {
                     console.log($form);
                     let validateArray = $form.serializeArray();
@@ -250,6 +251,9 @@
                     return;
                 },
                 done: SASEE.requestDone
+            });
+            $('#updateImm_button').click(e => {
+                $.get('./updateImm').done(SASEE.requestDone).fail(requestFail);
             });
             $(window).keydown(e => {
                 if (e.ctrlKey && e.key == 'Alt') {

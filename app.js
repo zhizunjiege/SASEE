@@ -1,7 +1,7 @@
 const CONSTANT = {
     ROOT: process.cwd(),
     PATH_TMP: './tmp/',
-    PATH_FILES: '/resourses/common/files/',
+    PATH_FILES: 'resourses/common/files/',
     PATH_NEWS: '/resourses/common/news/',
     VIEWS_COMMON: '/resourses/common/views/',
     VIEWS_TEACHER: '/resourses/teacher/views/',
@@ -45,8 +45,6 @@ const period = require('./routes/period'),
 app.set('views', __dirname + CONSTANT.VIEWS_COMMON);
 app.set('view engine', 'ejs');
 app.set('strict routing', true);
-
-period.init();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
@@ -159,6 +157,9 @@ app.use('/dean', dean);
 
 app.use(general.notFound);
 
-app.listen(3000, '::', () => {
-    console.log('express is running on localhost:3000')
+
+period.init(() => {
+    app.listen(3000, '::', () => {
+        console.log('express is running on localhost:3000')
+    });
 });

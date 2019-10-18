@@ -53,22 +53,23 @@
                             <div class="form-group form-row">
                                 <label for="field" class="col-4 col-form-label">研究领域：</label>
                                 <input name="field" id="field" type="text" class="col-8 form-control"
-                                    placeholder="请输入研究领域" maxlength="255" required>
+                                    value="<%= data[0].field %>" placeholder="请输入研究领域" maxlength="255" required>
                             </div>
                             <div class="form-group form-row">
                                 <label for="office" class="col-4 col-form-label">办公地点：</label>
                                 <input name="office" id="office" type="text" class="col-8 form-control"
-                                    placeholder="请输入办公地点" maxlength="255" required>
+                                    value="<%= data[0].office %>" placeholder="请输入办公地点" maxlength="255" required>
                             </div>
                             <div class="form-group form-row">
                                 <label for="tele" class="col-4 col-form-label">电话号码：</label>
                                 <input name="tele" id="tele" type="number" class="col-8 form-control"
-                                    placeholder="请输入电话号码" min="10000000000" max="20000000000" required>
+                                    value="<%= data[0].tele %>" placeholder="请输入电话号码" min="10000000000"
+                                    max="20000000000" required>
                             </div>
                             <div class="form-group form-row">
                                 <label for="resume" class="col-4 col-form-label">个人简介：</label>
                                 <textarea name="resume" id="resume" class="col-8 form-control" rows="5"
-                                    placeholder="请填写个人简介" maxlength="1023" required></textarea>
+                                    placeholder="请填写个人简介" maxlength="1023" required><%= data[0].resume||'' %></textarea>
                             </div>
                             <div class="form-group form-row justify-content-around">
                                 <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>

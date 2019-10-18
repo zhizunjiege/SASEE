@@ -1,4 +1,5 @@
-const mysql = require('./sql'), file = require('./file');
+const mysql = require('./sql'),
+    file = require('./file');
 module.exports = ({ admin, Router, views, period, email, general, __dirname, CONSTANT } = {}) => {
     admin.set('views', __dirname + CONSTANT.VIEWS_ADMIN);
     admin.get('/', (req, res) => {
@@ -39,7 +40,7 @@ module.exports = ({ admin, Router, views, period, email, general, __dirname, CON
         mysql.find(sql_query).then(results => {
             res.render('main', {
                 news: results,
-                stateObj: period.GET_STATEOBJ(),
+                state: period.GET_STATE(),
                 periodArray: period.GET_PERIODARRAY()
             });
         });
@@ -59,17 +60,14 @@ module.exports = ({ admin, Router, views, period, email, general, __dirname, CON
             res.status(403).send('通知发布失败！');
         });
     });
-    admin.post('/sendEmail', (req, res,next) => {
+    admin.post('/sendEmail', (req, res, next) => {
         let sql_query = 'SELECT email FROM ??';
         mysql.find(sql_query, [req.body.identity]).then(results => {
             req.body.toAddr = results.map(x => x.email);
             next();
         });
     }, email.sendEmail);
-    admin.post('/updateState', (req, res) => {
-        console.log(req.body);
-
-        res.send('更新成功！');
-    });
+    admin.post('/updateNext', period.updateNext);
+    admin.get('/updateImm', period.updateImm);
     return admin;
 };

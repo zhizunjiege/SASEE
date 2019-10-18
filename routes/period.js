@@ -1,7 +1,12 @@
-const mysql = require('./sql');
+const mysql = require('./sql'),
+    schedule = require("node-schedule"),
+    script = require('./script');
 
-let STATEOBJ = null;
-const PERIODARRAY = [
+const _stateObj = {
+    state: 0,
+    curJob: schedule.scheduledJobs
+};
+const _periodArray = [
     { period: "open", des: '系统开启' },
     { period: "submit", des: '提交课题' },
     { period: "review", des: '初次审核' },
@@ -15,7 +20,11 @@ const PERIODARRAY = [
     { period: "close", des: '系统关闭' }
 ];
 
-function init() {
+_periodArray.forEach(value => {
+    value.job = script[value.period];
+});
+
+function init(callback) {
     let sql_query = 'SELECT * FROM period';
     mysql.find(sql_query).then((data) => {
         if (data.length == 0) {
@@ -25,16 +34,89 @@ function init() {
             return Promise.resolve([null, data]);
         }
     }).then(results => {
-        delete results[1][0].id;
-        STATEOBJ = JSON.parse(JSON.stringify(results[1][0]));
-        console.log('初始化成功！');
+        _periodArray.forEach(value => {
+            let startTime = results[1][0][value.period];
+            value.startTime = startTime ? new Date(startTime) : null;
+        });
+        _stateObj.state = results[1][0].state;
+        _registerSchedule();
+        console.log('系统初始化成功！');
+        callback();
+    }).catch(err => {
+        console.log(err);
     });
 }
 
-function update(req, res) {
-    let sql_update = 'UPDATE period SET state=state+1,??=NOW()';
-    mysql.find(sql_update, PERIODARRAY[++STATEOBJ.state].period).then(() => {
-        res.send('更新成功！');
+function _registerSchedule() {
+    let state = _stateObj.state,
+        start = _periodArray[state].startTime,
+        end = _periodArray[state + 1].startTime,
+        jobArray = _periodArray[state].job,
+        immFunc = null;
+    for (const iterator of jobArray) {
+        if (iterator.time == 0) {
+            immFunc = iterator.func;
+        } else if (iterator.time > 0) {
+            schedule.scheduleJob(new Date(start.getTime() + iterator.time), iterator.func);
+        } else {
+            end && schedule.scheduleJob(new Date(end.getTime() + iterator.time), iterator.func);
+        }
+    }
+    end && schedule.scheduleJob(end, () => {
+        let sql_update = 'UPDATE period SET state=?';
+        mysql.find(sql_update, _stateObj.state + 1).then(() => {
+            _stateObj.state++;
+            _cancelSchedule();
+            _registerSchedule();
+        }).catch(err => {
+            console.log(err);
+        });
+    });
+    immFunc && immFunc();
+}
+
+function _cancelSchedule() {
+    for (const iterator of Object.values(_stateObj.curJob)) {
+        iterator.cancel();
+    }
+}
+
+function updateNext(req, res) {
+    let oldNextPeriodTime = _periodArray[_stateObj.state + 1].startTime,
+        paramObj = {},
+        sql_update = 'UPDATE period SET ?';
+    for (let i = _stateObj.state + 1; i < _periodArray.length; i++) {
+        const period = _periodArray[i].period;
+        paramObj[period] = req.body[period].replace('T', ' ');
+    }
+    mysql.find(sql_update, paramObj).then(() => {
+        for (let i = _stateObj.state + 1; i < _periodArray.length; i++) {
+            const element = _periodArray[i];
+            element.startTime = new Date(req.body[element.period]);
+        }
+        if (!oldNextPeriodTime || Math.abs(oldNextPeriodTime.getTime() - _periodArray[_stateObj.state + 1].startTime.getTime()) > 1 * 60 * 1000) {
+            _cancelSchedule();
+            _registerSchedule();
+        }
+        res.send('时间设置更新成功！');
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('操作出错，请稍后重试！');
+    });
+}
+
+function updateImm(req, res) {
+    let nextState = _stateObj.state + 1,
+        sql_update = 'UPDATE period SET state=?,??=?',
+        now = new Date();
+    mysql.find(sql_update, [nextState, _periodArray[nextState].period, now.toLocaleString()]).then(() => {
+        _periodArray[++_stateObj.state].startTime = now;
+        _cancelSchedule();
+        _registerSchedule();
+        res.send('立即启动成功！');
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('操作出错，请稍后重试！');
     });
 }
 
@@ -51,7 +133,7 @@ function permiss(param) {
             }
         }
         return (req, res, next) => {
-            if (periodSet.has(STATEOBJ.state)) {
+            if (periodSet.has(_stateObj.state)) {
                 next();
             } else {
                 res.status(403).send('现阶段无法进行该操作！');
@@ -62,13 +144,10 @@ function permiss(param) {
 }
 
 function GET_STATE() {
-    return STATEOBJ.state;
-}
-function GET_STATEOBJ() {
-    return STATEOBJ;
+    return _stateObj.state;
 }
 function GET_PERIODARRAY() {
-    return PERIODARRAY;
+    return _periodArray;
 }
 
-module.exports = { init, update, permiss, GET_STATE, GET_STATEOBJ, GET_PERIODARRAY };
+module.exports = { init, permiss, updateImm, updateNext, GET_STATE, GET_PERIODARRAY };
