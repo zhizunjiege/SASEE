@@ -57,10 +57,15 @@ function student(Router, period) {
             sql_query = 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?';
         _render(res, sql_query, [id, id], 'subjectContent');
     });
-    studentRouter.get('/mySubject', period.permiss([9]), (req, res) => {
-        let account = req.session.account,
+    studentRouter.get('/mySubject', period.permiss([7, 9]), (req, res) => {
+        let account = req.session.account, sql_query;
+        if (period.GET_STATE() == 7) {
+            sql_query='SELECT id FROM student WHERE account=? AND bysj IS NOT NULL';
+            _render(res, sql_query, account, 'mySubjectPublic')
+        } else {
             sql_query = 'SELECT s.name stuName,b.id,notice,teacherFiles,studentFiles FROM bysj b,student s WHERE b.id=s.bysj AND s.account=?;SELECT t.* FROM teacher t,bysj b,student s WHERE s.account=? AND s.bysj=b.id AND b.teacher=t.id';
-        _render(res, sql_query, [account, account], 'mySubject');
+            _render(res, sql_query, [account, account], 'mySubject');
+        }
     });
     return studentRouter;
 }
@@ -87,7 +92,7 @@ function teacher(Router, period) {
     });
     teacherRouter.get('/mySubject', period.permiss([9]), (req, res) => {
         let id = req.query.id,
-            sql_query = 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,CONCAT("",s.id))';
+            sql_query = 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,JSON_QUOTE(CONCAT("",s.id)))';
         _render(res, sql_query, [id, id], 'mySubject');
     });
     return teacherRouter;

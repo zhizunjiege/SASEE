@@ -50,7 +50,7 @@ function init(callback) {
 function _registerSchedule() {
     let state = _stateObj.state,
         start = _periodArray[state].startTime,
-        end = _periodArray[state + 1].startTime,
+        end = _periodArray[state + 1] ? _periodArray[state + 1].startTime : null,
         jobArray = _periodArray[state].job,
         immFunc = null;
     for (const iterator of jobArray) {

@@ -37,9 +37,9 @@ function draw(group) {
     return mysql.find(sql_query, group).then(results => {
         let sql_update1 = 'UPDATE bysj s SET student_final=CASE s.id' + ' WHEN ? THEN ?'.repeat(results.length) + ' END WHERE `group`=' + group,
             sql_update2 = 'UPDATE student SET bysj=NULL WHERE id IN ',
+            sql_update3 = 'UPDATE bysj SET chosen=JSON_LENGTH(student_final) WHERE `group`=' + group,
             paramArray = [],
             failedStudents = [];
-        console.log(sql_update1);
         if (results.length) {
             for (let i = 0; i < results.length; i++) {
                 let [final, failed] = _randomSelect(results[i].student_selected, results[i].capacity);
@@ -47,17 +47,23 @@ function draw(group) {
                 failedStudents = failedStudents.concat(failed);
             }
             sql_update2 += '(' + failedStudents.join(',') + ')';
-            console.log(sql_update2);
-
             return mysql.transaction().then(conn => {
                 return conn.find(sql_update1, paramArray);
-            }).then(({ results, conn }) => {
-                return conn.find(sql_update2);
+            }).then(({ conn }) => {
+                if (failedStudents.length > 0) {
+                    return conn.find(sql_update2);
+                } else {
+                    return Promise.resolve({
+                        results: '该分组没有落选者。',
+                        conn
+                    });
+                }
+            }).then(({conn }) => {
+                return conn.find(sql_update3);
             }).then(({ results, conn }) => {
                 return conn.commitPromise(results);
             }).then(results => {
                 console.log(results);
-
             });
         } else {
             return Promise.resolve('该分组不需要抽签。');
@@ -73,11 +79,8 @@ function drawAll() {
             promiseArray.push(draw(group.num));
         }
     }
-    console.log(promiseArray);
-
     if (promiseArray.length > 0) {
-        console.log(`现在正在进行第${count}次抽签···`);
-
+        console.log(`现在正在进行第${count + 1}次抽签···`);
         if (count == MAX) {
             return Promise.reject(new Error('抽签失败！'));
         } else {
@@ -104,15 +107,11 @@ function allSettled(promiseArray) {
         for (let i = 0; i < len; i++) {
             let index = i;
             promiseArray[i].then(value => {
-                console.log(index, value);
-
                 results[index] = {
                     status: 'fulfilled',
                     value
                 };
             }).catch(reason => {
-                console.log(index, reason);
-
                 results[index] = {
                     status: 'rejected',
                     reason

@@ -213,13 +213,13 @@ module.exports = {
     ],
     "draw": [
         {
-            "time": 5 * 60 * 1000,
+            "time": 1 * 60 * 1000,
             "func": _sendEmail({
                 title: '抽签即将开始',
                 paragraph: [`请管理员注意，抽签将在30分钟后开始。`]
             })
         }, {
-            "time": 35 * 60 * 1000,
+            "time": 5 * 60 * 1000,
             "func": () => {
                 draw().then(_sendEmail({
                     title: '抽签成功',

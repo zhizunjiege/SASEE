@@ -48,21 +48,41 @@
                 url: $form.data('url'),
                 data: data
             }).done(msg => {
-                $('#subject_list tbody>tr[data-id="'+$form[0].id.value+'"]').remove();
+                let $container = $('#bysj_subject>.sys-list tbody');
+                if ($container.children().length == 1) {
+                    $('#bysj_subject .sys-list').replaceWith(`
+                    <div class="d-flex justify-content-center" style="height: 250px">
+                        <h1 class="text-muted align-self-center">课题审核完成！</h1>
+                    </div>`);
+                } else {
+                    $container.find('tr[data-id="' + $form[0].id.value + '"]').remove();
+                }
                 $('#subject_check_modal').modal('hide');
                 SASEE.requestDone(msg);
+                SASEE._showListOrContent({
+                    container: '#bysj_subject'
+                });
             }).fail(SASEE.requestFail);
         });
+
+        function _reviewSubject({ url, title, info }) {
+            $form.data('url', url);
+            $form[0].title.value = title;
+            editor.txt.html(info);
+        }
         $('#subject_pass').click(() => {
-            $form.data('url', './pass');
-            $form[0].title.value = '课题通过。';
-            editor.txt.html('<p>默认消息：此课题经审核通过。</p>');
+            _reviewSubject({
+                url: './pass',
+                title: '课题通过。',
+                info: '<p>默认消息：此课题经审核通过。</p>'
+            });
         });
         $('#subject_fail').click(() => {
-            $form.data('url', './fail');
-            $form[0].title.value = '课题被打回，请修改。';
-            editor.txt.html('<p>请在此处输入打回该课题的原因···</p>');
+            _reviewSubject({
+                url: './fail',
+                title: '课题被打回，请修改。',
+                info: '<p>请在此处输入打回该课题的原因···</p>'
+            });
         });
-
     })(window.jQuery, window.SASEE);
 </script>

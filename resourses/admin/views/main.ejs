@@ -199,7 +199,8 @@
     <script>
         (function ($, SASEE) {
             let noticeEditor = SASEE.instEditor('#noticeEditor', true),
-                emailEditor = SASEE.instEditor('#emailEditor', true);
+                emailEditor = SASEE.instEditor('#emailEditor', true),
+                $updateButton = $('#updateImm_button');
             noticeEditor.$textContainerElem[0].style.height = '540px';
             emailEditor.$textContainerElem[0].style.height = '540px';
             SASEE.formSubmit({
@@ -252,8 +253,11 @@
                 },
                 done: SASEE.requestDone
             });
-            $('#updateImm_button').click(e => {
-                $.get('./updateImm').done(SASEE.requestDone).fail(requestFail);
+            $updateButton.click(e => {
+                $.get('./updateImm').done(msg => {
+                    $updateButton.attr('disabled', true);
+                    SASEE.requestDone(msg);
+                }).fail(SASEE.requestFail);
             });
             $(window).keydown(e => {
                 if (e.ctrlKey && e.key == 'Alt') {

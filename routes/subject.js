@@ -97,7 +97,7 @@ function mark(req, res) {
     delete req.body.id;
     let entries = Object.entries(req.body),
         paramArray = entries.reduce((ac, cur) => ac.concat(cur)),
-        sql_update = 'UPDATE student s SET score_bysj = CASE s.id' + ' WHEN ? THEN ?'.repeat(entries.length) + ' END WHERE JSON_CONTAINS((SELECT student_final FROM bysj b WHERE b.id=?),CONCAT("",s.id))';
+        sql_update = 'UPDATE student s SET score_bysj = CASE s.id' + ' WHEN ? THEN ?'.repeat(entries.length) + ' END WHERE JSON_CONTAINS((SELECT student_final FROM bysj b WHERE b.id=?),JSON_QUOTE(CONCAT("",s.id)))';
     paramArray.push(id);
     mysql.find(sql_update, paramArray).then(() => {
         res.send('评分成功！');
@@ -110,15 +110,17 @@ function mark(req, res) {
 function choose(req, res) {
     let { account } = req.session,
         { id, password, colume } = req.body;
-    let sql_query = 'SELECT id stuId,bysj FROM student WHERE account=? AND password=?',
-        sql_update1 = 'UPDATE bysj SET student_' + colume + '=JSON_REMOVE(student_' + colume + ',JSON_UNQUOTE(JSON_SEARCH(student_' + colume + ',"one",?))) WHERE id=?',
-        sql_update2 = 'UPDATE bysj SET student_' + colume + '=JSON_ARRAY_APPEND(student_' + colume + ',"$",CONCAT("",?)) WHERE id=?',
+    let sql_query = 'SELECT id stuId,bysj FROM student WHERE account=? AND password=?;SELECT capacity,chosen FROM bysj WHERE id=?',
+        sql_update1 = 'UPDATE bysj SET chosen=chosen-1,student_' + colume + '=JSON_REMOVE(student_' + colume + ',JSON_UNQUOTE(JSON_SEARCH(student_' + colume + ',"one",?))) WHERE id=?',
+        sql_update2 = 'UPDATE bysj SET chosen=chosen+1,student_' + colume + '=JSON_ARRAY_APPEND(student_' + colume + ',"$",CONCAT("",?)) WHERE id=?',
         sql_update3 = 'UPDATE student SET bysj=? WHERE id=?';
-    mysql.find(sql_query, [account, password]).then(results => {
-        if (results.length > 0) {
-            let { stuId, bysj } = results[0];
+    mysql.find(sql_query, [account, password, id]).then(results => {
+        if (results[0].length > 0) {
+            let { stuId, bysj } = results[0][0];
             if (bysj && bysj == id) {
                 res.status(403).send('你已经选择过该课题！');
+            } else if (colume == 'final' && results[1][0].chosen >= results[1][0].capacity) {
+                res.status(403).send('该课题已满，请重新选择！');
             } else {
                 mysql.transaction().then(conn => {
                     if (bysj) {
