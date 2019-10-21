@@ -1,0 +1,33 @@
+<div class="p-3">
+    <div class="row justify-content-center mb-1">
+        <div class="col-11">
+            <table class="table table-bordered table-fixed">
+                <tbody class="text-center">
+                    <tr>
+                        <th>姓名</th>
+                        <td><%= data[0].name %></td>
+                        <th>性别</th>
+                        <td><%= data[0].gender %></td>
+                    </tr>
+                    <tr>
+                        <th>账号</th>
+                        <td><%= data[0].account %></td>
+                        <th>联系邮箱</th>
+                        <td><%= data[0].email||'暂无' %></td>
+                    </tr>
+                    <tr>
+                        <th>方向</th>
+                        <td><%= data[0].department_des %></td>
+                        <th>职称</th>
+                        <td><%= data[0].proTitle %></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="d-flex justify-content-around mt-5">
+        <%- include(PATH.VIEWS_COMMON+'/setEmailAddr') %>
+        <%- include(PATH.VIEWS_COMMON+'/modifyPW') %>
+    </div>
+</div>

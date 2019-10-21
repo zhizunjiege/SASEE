@@ -1,0 +1,98 @@
+<% let subject=data[0][0],teacher=data[1][0]; %>
+<nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
+    <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_teacher">教师</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_file">文件</a>
+</nav>
+<div class="tab-content p-3">
+    <div class="tab-pane fade show active" id="mySubject_notice">
+        <% if (subject.notice.length) { %>
+        <div class="container-fluid">
+            <div class="row">
+                <nav class="col-4 list-group nav nav-pills flex-column">
+                    <% for( let index = 0; index < subject.notice.length; index++ ) { %>
+                    <a href="#myNotice_<%= index %>"
+                        class="list-group-item list-group-item-action nav-link <%= index?'':'active' _%>"
+                        data-toggle="pill">
+                        <span class="w-50 ellipsis"><%= subject.notice[index].title %></span>
+                        <span class="float-right"><%= subject.notice[index].date %></span>
+                    </a>
+                    <% } %>
+                </nav>
+                <div class="col-8 tab-content border rounded p-3">
+                    <% for( let index = 0; index < subject.notice.length; index++ ) { %>
+                    <div class="tab-pane fade <%= index?'':'show active' _%>" id="myNotice_<%= index %>">
+                        <%- subject.notice[index].content %></div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="d-flex justify-content-center" style="height: 250px">
+            <h1 class="text-muted align-self-center">暂无通知</h1>
+        </div>
+        <% } %>
+    </div>
+    <div class="tab-pane fade" id="mySubject_teacher">
+        <div class="row justify-content-center mb-1">
+            <!-- <div class="col-2">
+                <img src="/pictures/< teacher.profile %>" alt="头像" class="img-thumbnail float-right"
+                    style="height:200px">
+            </div> -->
+            <div class="col-11">
+                <table class="table table-bordered">
+                    <tbody class="text-center">
+                        <tr>
+                            <th>姓名</th>
+                            <td><%= teacher.name %></td>
+                            <th>性别</th>
+                            <td><%= teacher.gender %></td>
+                        </tr>
+                        <tr>
+                            <th>方向</th>
+                            <td><%= teacher.department_des %></td>
+                            <th>职称</th>
+                            <td><%= teacher.proTitle %></td>
+                        </tr>
+                        <tr>
+                            <th>研究领域</th>
+                            <td><%= teacher.field %></td>
+                            <th>办公地点</th>
+                            <td><%= teacher.office %></td>
+                        </tr>
+                        <tr>
+                            <th>联系邮箱</th>
+                            <td><%= teacher.email %></td>
+                            <th>联系电话</th>
+                            <td><%= teacher.tele %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <h5>个人简介</h5>
+            <div class="p-3 border rounded">
+                <%= teacher.resume %>
+            </div>
+            <!-- <pre></pre> -->
+        </div>
+        <div class="d-flex mt-5 justify-content-around">
+            <%- include(PATH.VIEWS_COMMON+'/mySubject-sendEmail',{
+                to:teacher,
+                PATH
+            }) %>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="mySubject_file">
+        <%- include(PATH.VIEWS_COMMON+'/mySubject-file',{
+            down:subject.teacherFiles,
+            up:subject.studentFiles.filter((element)=>{
+                return element.uploader==subject.stuName;
+            }),
+            id:subject.id,
+            isTeacher:false,
+            PATH
+        }) %>
+    </div>
+</div>

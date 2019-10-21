@@ -1,48 +1,29 @@
-const CONSTANT = {
-    ROOT: process.cwd(),
-    PATH_TMP: './tmp/',
-    PATH_FILES: 'resourses/common/files/',
-    PATH_NEWS: '/resourses/common/news/',
-    VIEWS_COMMON: '/resourses/common/views/',
-    VIEWS_TEACHER: '/resourses/teacher/views/',
-    VIEWS_STUDENT: '/resourses/student/views/',
-    VIEWS_DEAN: '/resourses/dean/views/',
-    VIEWS_ADMIN: '/resourses/admin/views/'
-};
+const superApp = require('./config');
 
-const express = require('express'),
-    Router = express.Router,
+const [express, path, session] = superApp.requireAll(['express', 'path', 'express-session']);
+
+const [period, login, views, general, password, email, info, upload, download, subject] = superApp.requireUserModules([
+    'period',
+    'login',
+    'views',
+    'general',
+    'password',
+    'email',
+    'info',
+    'upload',
+    'download',
+    'subject'
+]);
+
+const { VIEWS_COMMON, VIEWS_DEAN, VIEWS_STUDENT, VIEWS_TEACHER } = superApp.resourses;
+
+const Router = express.Router,
     app = express(),
     student = express(),
     teacher = express(),
     dean = express(),
     admin = express();
-
-const path = require('path'),
-    multer = require("multer"),
-    session = require('express-session'),
-    receive = multer({
-        storage: multer.diskStorage({
-            destination: (req, file, cb) => {
-                cb(null, CONSTANT.PATH_TMP);
-            },
-            filename: (req, file, cb) => {
-                cb(null, file.originalname);
-            }
-        })
-    }).single('file');
-const period = require('./routes/period'),
-    login = require("./routes/login"),
-    views = require("./routes/views"),
-    general = require("./routes/general"),
-    password = require("./routes/password"),
-    email = require('./routes/email'),
-    info = require('./routes/info'),
-    upload = require('./routes/upload'),
-    download = require('./routes/download'),
-    subject = require('./routes/subject');
-
-app.set('views', __dirname + CONSTANT.VIEWS_COMMON);
+app.set('views', VIEWS_COMMON);
 app.set('view engine', 'ejs');
 app.set('strict routing', true);
 
@@ -73,18 +54,18 @@ app.get('/', general.redirect);
 
 app.post('/login', login.authenticate);
 
-app.use('/admin', require('./routes/admin')({ admin, Router, views, period, email, general, __dirname, CONSTANT }));
+app.use('/admin', superApp.requireUserModule('admin'));
 
 {
     const emailRouter = Router(),
         fileRouter = Router();
-    student.set('views', __dirname + CONSTANT.VIEWS_STUDENT);
-    student.use(general.auth({ url: '/', identity: 'student', CONSTANT: CONSTANT }));
+    student.set('views', VIEWS_STUDENT);
+    student.use(general.auth({ url: '/', identity: 'student' }));
     student.get('/', login.render);
-    student.use('/views', views.common(Router), views.student(Router, period));
+    student.use('/views', views.common, views.student);
 
-    fileRouter.post('/upload', receive, upload);
-    fileRouter.get('/download', download);
+    fileRouter.post('/upload', upload.receive, upload.upload);
+    fileRouter.get('/download', download.download);
     student.use('/file', period.permiss([9]), fileRouter);
 
     emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
@@ -108,17 +89,17 @@ app.use('/admin', require('./routes/admin')({ admin, Router, views, period, emai
     const fileRouter = Router(),
         subjectRouter = Router(),
         emailRouter = Router();
-    teacher.set('views', __dirname + CONSTANT.VIEWS_TEACHER);
-    teacher.use(general.auth({ url: '/', identity: 'teacher', CONSTANT: CONSTANT }));
+    teacher.set('views', VIEWS_TEACHER);
+    teacher.use(general.auth({ url: '/', identity: 'teacher' }));
     teacher.get('/', login.render);
-    teacher.use('/views', views.common(Router), views.teacher(Router, period));
+    teacher.use('/views', views.common, views.teacher);
 
-    fileRouter.post('/upload', receive, upload);
-    fileRouter.get('/download', download);
+    fileRouter.post('/upload', upload.receive, upload.upload);
+    fileRouter.get('/download', download.download);
     teacher.use('/file', period.permiss([9]), fileRouter);
 
-    subjectRouter.post('/submit', period.permiss([1]), receive, subject.submit);
-    subjectRouter.post('/modify', period.permiss([1, 3]), receive, subject.modify);
+    subjectRouter.post('/submit', period.permiss([1]), upload.receive, subject.submit);
+    subjectRouter.post('/modify', period.permiss([1, 3]), upload.receive, subject.modify);
     subjectRouter.post('/notice', period.permiss([9]), subject.notice);
     subjectRouter.post('/mark', period.permiss([9]), subject.mark);
     teacher.use('/subject', subjectRouter);
@@ -135,10 +116,10 @@ app.use('/admin', require('./routes/admin')({ admin, Router, views, period, emai
 }
 {
     const emailRouter = Router();
-    dean.set('views', __dirname + CONSTANT.VIEWS_DEAN);
-    dean.use(general.auth({ url: '/', identity: 'dean', CONSTANT: CONSTANT }));
+    dean.set('views', VIEWS_DEAN);
+    dean.use(general.auth({ url: '/', identity: 'dean' }));
     dean.get('/', login.render);
-    dean.use('/views', views.common(Router), views.dean(Router, period));
+    dean.use('/views', views.common, views.dean);
 
     emailRouter.get('/sendPinCode', period.permiss([0]), email.sendPinCode);
     emailRouter.post('/setEmailAddr', period.permiss([0]), info.setEmailAddr);
@@ -159,7 +140,7 @@ app.use(general.notFound);
 
 
 period.init(() => {
-    app.listen(3000, '::', () => {
+    superApp.server = app.listen(3000, '::', () => {
         console.log('express is running on localhost:3000')
     });
 });
