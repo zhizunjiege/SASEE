@@ -3,6 +3,17 @@ function notFound(req, res) {
     res.status(404);
     res.send('您要的东西没找到哦-_-');
 }
+
+function permiss(states) {
+    return (req, res, next) => {
+        if (req.fsm.permiss(states)) {
+            next();
+        } else {
+            res.status(403).send('现阶段不允许该操作！');
+        }
+    }
+}
+
 function logout(path = '/') {
     return (req, res) => {
         req.session.destroy((err) => {
@@ -47,4 +58,4 @@ function catchError({ msg = '服务器出现错误，请稍后重试！', typeMa
         }
     }
 }
-module.exports = { notFound, logout, redirect, auth, catchError };
+module.exports = { notFound, permiss, logout, redirect, auth, catchError };

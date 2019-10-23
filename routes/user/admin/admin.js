@@ -1,20 +1,22 @@
 const express = require('express'),
-    [mysql, file, email, general, views, period] = superApp.requireUserModules([
+    [mysql, file, email, general, views] = superApp.requireUserModules([
         'mysql',
         'file',
         'email',
         'general',
-        'views',
-        'period'
+        'views'
     ]),
     { VIEWS_ADMIN, NEWS } = superApp.resourses;
 
 const admin = express();
 
 admin.set('views', VIEWS_ADMIN);
-admin.get('/', (req, res) => {
-    res.render('login', { PATH: superApp.resourses });
-});
+admin.get('/', (req, res, next) => {
+    req.renderData = {
+        file: 'login'
+    };
+    next();
+}, views.render);
 admin.get('/sendPinCode', (req, res, next) => {
     req.query.identity = 'admin';
     next();
@@ -45,24 +47,27 @@ admin.post('/login', (req, res) => {
     res.location('/admin/main').send('登陆成功！');
 });
 admin.use(general.auth({ url: '/admin', identity: 'admin' }));
-admin.get('/main', (req, res) => {
-    let sql_query = 'SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0';
-    mysql.find(sql_query).then(results => {
-        res.render('main', {
-            PATH: superApp.resourses,
-            news: results,
-            state: period.GET_STATE(),
-            periodArray: period.GET_PERIODARRAY()
-        });
-    });
-});
-admin.use('/views', views.common);
 admin.get('/logout', general.logout('/admin'));
+
+admin.get('/main', (req, res, next) => {
+    req.renderData = {
+        sql_query: 'SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0',
+        file: 'main',
+        extraData: {
+            initialized: req.fsm.initialized,
+            now: req.fsm.now(),
+            states: req.fsm.info()
+        }
+    };
+    next();
+}, views.render);
+admin.use('/views', views.common);
+
 admin.post('/submitNotice', (req, res) => {
     let { top, title, category, content } = req.body,
         sql_insert = 'INSERT INTO news (top,title,date,category) VALUES (?,?,CURDATE(),?)';
     mysql.find(sql_insert, [top == 'on' ? 1 : 0, title, category.join('/')]).then(info => {
-        file.fs.writeFile(NEWS + '/' + info.insertId + '.ejs', content, err => {
+        file.writeFile(NEWS + '/' + info.insertId + '.ejs', content, err => {
             if (err) throw err;
             res.send('通知发布成功！');
         });
@@ -78,7 +83,54 @@ admin.post('/sendEmail', (req, res, next) => {
         next();
     });
 }, email.sendEmail);
-admin.post('/updateNext', period.updateNext);
-admin.get('/updateImm', period.updateImm);
+
+admin.post('/initState', (req, res) => {
+    if (req.fsm.initialized) {
+        res.status(403).send('系统已经初始化！');
+        return;
+    }
+    let states = req.fsm.info();
+    for (const iterator of states) {
+        iterator.start = req.body[iterator.name];
+    }
+    console.log(states);
+
+    req.fsm.initialize(states).then(info => {
+        res.send('初始化成功！');
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('操作出错，请稍后重试！');
+    });
+});
+
+admin.post('/updateState', (req, res) => {
+    if (!req.fsm.initialized) {
+        res.status(403).send('系统尚未初始化！');
+        return;
+    }
+    let { name, start } = req.body;
+    req.fsm.update(name, start).then(() => {
+        res.send('时间设置更新成功！');
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('操作出错，请稍后重试！');
+    });
+});
+admin.get('/nextState', (req, res) => {
+    if (!req.fsm.initialized) {
+        res.status(403).send('系统尚未初始化！');
+        return;
+    }
+    if (req.fsm.completed) {
+        res.status(403).send('系统已经运行完成！');
+        return;
+    }
+    req.fsm.next().then(() => {
+        res.send('立即启动成功！');
+    }).catch(err => {
+        console.log(err);
+        res.status(403).send('操作出错，请稍后重试！');
+    });
+});
 
 module.exports = admin;

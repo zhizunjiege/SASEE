@@ -46,7 +46,7 @@
 
             <div id="contents_body" class="p-3">
                 <div id="news" class="collapse show" data-parent="#contents">
-                    <%- include(PATH.VIEWS_COMMON+'/contents-news',{news}) %>
+                    <%- include(PATH.VIEWS_COMMON+'/contents-news',{news:data}) %>
                 </div>
                 <div id="submit_notice" class="collapse" data-parent="#contents">
                     <form action="" id="submit_notice_form" method="POST">
@@ -132,33 +132,36 @@
                 </div>
                 <div id="update_state" class="collapse" data-parent="#contents">
                     <form action="" id="update_state_form" method="POST" class="col-6 mx-auto">
-                        <% for (index=0;index<periodArray.length;index++) { 
-                            let key=periodArray[index].period,
-                            value=periodArray[index].des,
-                            startTime=periodArray[index].startTime; %>
+                        <% let {states,now,initialized}=extraData,flag1=false,flag2=!initialized;
+                        for (index=0;index<states.length;index++) { 
+                            let key=states[index].name,
+                            value=states[index].description,
+                            start=states[index].start;
+                            if(flag1){
+                                flag2=true;
+                            }
+                            if(key==now.name){
+                                flag1=true;
+                            } %>
                         <div class="form-group form-row">
                             <label for="_<%= key %>" class="col-3 text-center col-form-label"><%= value %></label>
                             <div class="input-group col-9 px-0">
                                 <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
-                                    value="<%= startTime?startTime.toLocaleString().replace(' ','T'):'' %>"
-                                    <%= index<=state?'disabled':'required' %>>
+                                    value="<%= start||'' %>" <%= flag1&&flag2?'required':'disabled' %>>
                                 <div class="input-group-append">
-                                    <% if (index==state+1) { %>
-                                    <button id="updateImm_button" type="button"
-                                        class="btn btn-outline-secondary">手动开始</button>
+                                    <% if (flag1&&flag2) { %>
+                                    <button type="button" class="btn btn-outline-secondary update-button">更新时间</button>
                                     <% } else { %>
                                     <button type="button" class="btn btn-outline-secondary" disabled>不可操作</button>
                                     <% } %>
                                 </div>
                             </div>
                         </div>
-                        <% } 
-                        if (state!=periodArray.length-2) { %>
-                        <div class="form-group form-row justify-content-around">
-                            <button type="reset" class="btn btn-secondary w-25">重置</button>
-                            <button type="submit" class="btn btn-primary w-25">提交</button>
-                        </div>
                         <% } %>
+                        <div class="form-group form-row justify-content-around">
+                            <button type="submit" class="btn btn-secondary w-25">初始化</button>
+                            <button type="button" id="next_button" class="btn btn-primary w-25">下一阶段</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -200,7 +203,8 @@
         (function ($, SASEE) {
             let noticeEditor = SASEE.instEditor('#noticeEditor', true),
                 emailEditor = SASEE.instEditor('#emailEditor', true),
-                $updateButton = $('#updateImm_button');
+                $updateButton = $('.update-button'),
+                $nextButton = $('#next_button');
             noticeEditor.$textContainerElem[0].style.height = '540px';
             emailEditor.$textContainerElem[0].style.height = '540px';
             SASEE.formSubmit({
@@ -235,11 +239,13 @@
             });
             SASEE.formSubmit({
                 selector: '#update_state_form',
-                url: './updateNext',
+                url: './initState',
                 validate: $form => {
                     console.log($form);
                     let validateArray = $form.serializeArray();
                     if (validateArray.length > 0) {
+                        console.log(validateArray);
+
                         return validateArray.reduce((accumulator, currentValue, currentIndex, array) => Boolean(accumulator && currentValue.value > array[currentIndex - 1].value));
                     } else {
                         return false;
@@ -254,8 +260,17 @@
                 done: SASEE.requestDone
             });
             $updateButton.click(e => {
-                $.get('./updateImm').done(msg => {
+                let $input = $updateButton.closest('.input-group').find('input');
+                $.post('./updateState', {
+                    name: $input[0].name,
+                    start: $input[0].value
+                }).done(msg => {
                     $updateButton.attr('disabled', true);
+                    SASEE.requestDone(msg);
+                }).fail(SASEE.requestFail);
+            });
+            $nextButton.click(e => {
+                $.get('./nextState').done(msg => {
                     SASEE.requestDone(msg);
                 }).fail(SASEE.requestFail);
             });

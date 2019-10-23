@@ -1,6 +1,7 @@
 global.superApp = {
     resourses: {},
     userModules: {},
+    startTime: new Date().toLocaleString(),
     requireUserModule(name) {
         return require(this.userModules[name]);
     },
@@ -38,6 +39,7 @@ function transObjToPath(cache, path, node) {
 
 /* 各类资源 */
 transObjToPath(superApp.resourses, __dirname, {
+    "public": "PUBLIC",
     "resourses": {
         "news": "NEWS",
         "files": "FILES",
@@ -49,7 +51,8 @@ transObjToPath(superApp.resourses, __dirname, {
             "dean": "VIEWS_DEAN"
         }
     },
-    "tmp": "TMP"
+    "tmp": "TMP",
+    "fsm.json": "fsm"
 });
 
 /* 用户编写模块 */
@@ -71,13 +74,10 @@ transObjToPath(superApp.userModules, __dirname, {
             "upload": "upload",
             "download": "download",
             "subject": "subject",
-            'period': 'period'
+            "fsm": "fsm",
+            "script": "script"
         },
         "user": {
-            "system": {
-                "init": "init",
-                "script": "script"
-            },
             "admin": {
                 "admin": "admin"
             },
