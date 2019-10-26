@@ -45,6 +45,11 @@
             })
         }
     });
+    $.ajaxSetup({
+        headers: {
+            Frame: 'jQuery'
+        }
+    });
 
     SASEE._showListOrContent = ({ container, flag = true, title }) => {
         function _show(container, flag = true) {

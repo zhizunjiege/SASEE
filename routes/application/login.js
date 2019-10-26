@@ -9,7 +9,7 @@ function authenticate(req, res) {
         return;
     }
 
-    let sql_query = 'SELECT id,account,name,`group` FROM ?? WHERE account = ? AND password=?';
+    let sql_query = 'SELECT * FROM ?? WHERE account = ? AND password=?';
     mysql.find(sql_query, [identity, account, password])
         .then(data => {
             if (data.length == 0) {
@@ -22,6 +22,7 @@ function authenticate(req, res) {
             req.session.name = data[0].name;
             req.session.group = data[0].group;
             req.session.identity = identity;
+            data[0].specialt && (req.session.specialty = data[0].specialty);
             res.location('/' + identity + '/').send('登陆成功！');
         });
 }

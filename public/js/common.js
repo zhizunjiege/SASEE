@@ -3,7 +3,11 @@
     const { SASEE, $ } = window;
     SASEE.alert = ({ msg = '网络错误，请稍后重试！', static = true, count = 0, buttonHide = false } = {}) => {
         $('.alert>span').text(msg);
-        buttonHide && $('.alert>button').hide();
+        if (buttonHide) {
+            $('.alert>button').hide();
+        } else {
+            $('.alert>button').show();
+        }
         $('.alert-modal').modal(static ? {
             backdrop: 'static',
             keyboard: false

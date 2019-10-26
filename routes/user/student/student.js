@@ -33,19 +33,26 @@ studentViews.get('/userInfo', (req, res, next) => {
     next();
 }, views.render);
 studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, next) => {
-    req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
-        param: [req.session.group, req.session.group],
+    req.renderData = req.session.specialty == 0 ? {
+        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
         file: 'subject'
-    };
+    } : {
+            sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+            param: [req.session.group, req.session.group],
+            file: 'subject'
+        };
     next();
 }, views.render);
 studentViews.get('/subjectList', general.permiss(['choose', 'final']), (req, res, next) => {
-    req.renderData = {
-        sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
-        param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
+    req.renderData = req.session.specialty == 0 ? {
+        sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+        param: ((Number(req.query.page) || 1) - 1) * 10,
         file: 'subjectList'
-    };
+    } : {
+            sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+            param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
+            file: 'subjectList'
+        };
     next();
 }, views.render);
 studentViews.get('/subjectContent', general.permiss(['choose', 'final']), (req, res, next) => {

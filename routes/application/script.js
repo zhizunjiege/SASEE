@@ -78,8 +78,9 @@ function drawAll(succeed, fail) {
     });
 }
 
-function closeServer() {
+function closeServer(param) {
     superApp.server.close();
+    sendEmail(param);
 }
 
 module.exports = { sendEmail, sendInfoToAdmin, deleteSubject, drawAll, closeServer };
