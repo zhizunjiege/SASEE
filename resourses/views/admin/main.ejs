@@ -242,17 +242,17 @@
                 done: SASEE.requestDone
             });
             $updateButton.click(e => {
-                let $input = $updateButton.closest('.input-group').find('input');
+                let $input = $(e.target).closest('.input-group').find('input');
                 $.post('./updateState', {
                     name: $input[0].name,
                     start: $input[0].value
-                }).done(msg => {
-                    $updateButton.attr('disabled', true);
-                    SASEE.requestDone(msg);
-                }).fail(SASEE.requestFail);
+                }).done(SASEE.requestDone).fail(SASEE.requestFail);
             });
             $nextButton.click(e => {
                 $.get('./nextState').done(msg => {
+                    let $next = $('.update-button').eq(0);
+                    $next.attr('disabled', true);
+                    $next.closest('.input-group').find('input').attr('disabled', true);
                     SASEE.requestDone(msg);
                 }).fail(SASEE.requestFail);
             });

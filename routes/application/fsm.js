@@ -91,8 +91,11 @@ proto.next = function () {
             this.completed = true;
             this._curState = this.states.length;
         } else {
+            let now = new Date().toLocaleDateString().replace(' ', 'T');
             this.cancelSchedule();
+            this.states[this._curState].end = now;
             this._curState++;
+            this.states[this._curState].start = now;
             this.registerSchedule();
         }
         return this.store();
