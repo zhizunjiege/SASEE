@@ -44,10 +44,13 @@
         <aside id="navigator" class="aside border-right border-light">
             <div class="page-1">
                 <dl class="list-group list-group-flush" id="accordion_nav">
-                    <dt class="list-group-item"><span class="glyphicon glyphicon-th mr-2"></span>系统导航
+                    <dt class="list-group-item">
+                        <a data-toggle="collapse" href="#manual" data-type="manual"><span
+                                class="glyphicon glyphicon-th mr-2"></span>用户手册<span
+                                class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     </dt>
                     <dd class="list-group-item">
-                        <a data-toggle="collapse" href="#news"><span
+                        <a data-toggle="collapse" href="#news" data-type="news"><span
                                 class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
                                 class="glyphicon glyphicon-chevron-right float-right"></span></a>
                     </dd>
@@ -102,7 +105,15 @@
             </div>
             <div class="page-2">
                 <div class="d-flex row text-center text-primary">
-                    <div class="col point p-3 border-top border-right" data-toggle="collapse" data-target="#news">通知公告
+                    <div class="col point border-top border-right dropup">
+                        <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">系统相关</div>
+                        <ul class="dropdown-menu">
+                            <a href="#news" class="dropdown-item" data-toggle="collapse"
+                                data-type="news"><small>通知公告</small></a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#manual" class="dropdown-item" data-toggle="collapse"
+                                data-type="manual"><small>用户手册</small></a>
+                        </ul>
                     </div>
                     <div class="col point border-top border-right dropup">
                         <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">毕业设计</div>
@@ -152,6 +163,9 @@
     </footer>
 
     <%- include('./alert') %>
+    <% if(user.ifReadLicense=='N'){ %>
+    <%- include('./license',{identity:user.identity,PATH}) %>
+    <% } %>
 
     <script src="/frames/others/jquery-3.4.0.js"></script>
     <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>

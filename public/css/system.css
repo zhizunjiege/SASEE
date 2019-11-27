@@ -9,7 +9,7 @@ html, body, #container, #row {
 .alert {
     position: fixed;
     min-width: 50%;
-    z-index: 2000;
+    z-index: 10000;
     left: 50%;
     top: 25%;
     transform: translate(-50%, -50%);

@@ -1,7 +1,9 @@
+const mysql = superApp.requireUserModule('mysql');
+
 function notFound(req, res) {
     res.type('text/html');
     res.status(404);
-    res.send(`<h1>您要的东西没找到哦-_-</h1>`);
+    res.send(`您要的东西没找到哦-_-`);
 }
 
 function permiss(states) {
@@ -42,6 +44,20 @@ function auth({ url = '/', identity } = {}) {
         }
     };
 }
+
+function agreeLicense(req, res) {
+    let sql_update = 'UPDATE ?? SET ifReadLicense="Y" WHERE account=?';
+    mysql.find(sql_update, [req.session.identity, req.session.account]).then(() => {
+        res.send('您同意了用户协议！');
+    }).catch(catchError({ res }));
+}
+
+function disagreeLicense(req, res) {
+    req.session.destroy();
+    res.location('/');
+    res.redirect('/');
+}
+
 function catchError({ msg = '服务器出现错误，请稍后重试！', typeMap, res } = {}) {
     return err => {
         console.log(err);
@@ -58,4 +74,4 @@ function catchError({ msg = '服务器出现错误，请稍后重试！', typeMa
         }
     }
 }
-module.exports = { notFound, permiss, logout, redirect, auth, catchError };
+module.exports = { notFound, permiss, logout, redirect, auth, catchError, agreeLicense, disagreeLicense };

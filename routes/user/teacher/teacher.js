@@ -22,6 +22,9 @@ teacher.set('views', VIEWS_TEACHER);
 teacher.use(general.auth({ url: '/', identity: 'teacher' }));
 teacher.get('/', login.render);
 
+teacher.get('/license/agree',general.agreeLicense);
+teacher.get('/license/disagree',general.disagreeLicense);
+
 teacherViews.get('/userInfo', (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT * FROM teacher WHERE account =?',
@@ -52,7 +55,7 @@ teacherViews.get('/modifySubject', general.permiss(['submit', 'modify']), (req, 
     };
     next();
 }, views.render);
-teacherViews.get('/mySubject', general.permiss(['general']), (req, res, next) => {
+teacherViews.get('/mySubject', general.permiss(['choose','final','general']), (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,JSON_QUOTE(CONCAT("",s.id)))',
         param: [req.query.id, req.query.id],

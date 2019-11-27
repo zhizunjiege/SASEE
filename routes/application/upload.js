@@ -5,7 +5,7 @@ const multer = require('multer'),
 let receive = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, CONSTANT.PATH_TMP);
+            cb(null, superApp.resourses.TMP);
         },
         filename: (req, file, cb) => {
             cb(null, file.originalname);

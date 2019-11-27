@@ -15,6 +15,10 @@ const dean = express(), emailRouter = express.Router();
 dean.set('views', VIEWS_DEAN);
 dean.use(general.auth({ url: '/', identity: 'dean' }));
 dean.get('/', login.render);
+
+dean.get('/license/agree',general.agreeLicense);
+dean.get('/license/disagree',general.disagreeLicense);
+
 dean.get('/logout', general.logout());
 dean.post('/password', password.modify);
 

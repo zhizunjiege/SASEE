@@ -27,7 +27,7 @@ function submit(req, res) {
         return conn.commitPromise(results);
     }).then(results => {
         let from = req.file.path,
-            to = req.APP_CONSTANT.PATH_FILES + 'group' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/' + req.file.filename;
+            to = superApp.resourses.FILES + 'group' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/' + req.file.filename;
         file.move(from, to, (err) => {
             if (err) throw err;
             res.render('subject-card', results[1][0]);

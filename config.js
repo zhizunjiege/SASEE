@@ -34,7 +34,7 @@ function transObjToPath(cache, path, node) {
 }
 
 
-/* fs模块使用的是cwd路径为根目录，随脚本启动位置不同而变化；而require函数用的是__dirname，以文件间相对路径关系为准。
+/* fs模块使用cwd路径为根目录，随脚本启动位置不同而变化；而require函数使用__dirname，以文件间相对路径关系为准。
 故模块加载只要使用相对路径即可，而资源定位需要绝对路径。为确保准确，本程序均使用绝对路径。 */
 
 /* 各类资源 */
@@ -49,6 +49,10 @@ transObjToPath(superApp.resourses, __dirname, {
             "student": "VIEWS_STUDENT",
             "teacher": "VIEWS_TEACHER",
             "dean": "VIEWS_DEAN"
+        },
+        "documents":{
+            "license":"LICENSE",
+            "manual":"MANUAL"
         }
     },
     "tmp": "TMP",

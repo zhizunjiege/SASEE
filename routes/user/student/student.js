@@ -21,6 +21,9 @@ student.set('views', VIEWS_STUDENT);
 student.use(general.auth({ url: '/', identity: 'student' }));
 student.get('/', login.render);
 
+student.get('/license/agree',general.agreeLicense);
+student.get('/license/disagree',general.disagreeLicense);
+
 student.get('/logout', general.logout());
 student.post('/password', password.modify);
 

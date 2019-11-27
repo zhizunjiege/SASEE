@@ -17,7 +17,7 @@ function authenticate(req, res) {
                 return;
             }
             //设置session
-            req.session.id = data[0].id;
+            req.session.userId = data[0].id;
             req.session.account = data[0].account;
             req.session.name = data[0].name;
             req.session.group = data[0].group;
@@ -29,7 +29,7 @@ function authenticate(req, res) {
 
 function render(req, res) {
     let { identity, account } = req.session,
-        sql_query = "SELECT name,gender,`group` FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0";
+        sql_query = "SELECT name,gender,`group`,ifReadLicense FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0";
     mysql.find(sql_query, [identity, account])
         .then(data => {
             let [[user], news] = data;

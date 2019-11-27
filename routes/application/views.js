@@ -1,6 +1,6 @@
 const express = require('express'),
     mysql = superApp.requireUserModule('mysql'),
-    { NEWS, VIEWS_COMMON } = superApp.resourses;
+    { NEWS, VIEWS_COMMON,MANUAL } = superApp.resourses;
 
 function render(req, res) {
     let { sql_query, param, file, dir, extraData } = req.renderData;
@@ -37,6 +37,13 @@ common.get('/newsContent', (req, res, next) => {
     req.renderData = {
         file: req.query.id,
         dir: NEWS
+    };
+    next();
+}, render);
+common.get('/manual', (req, res, next) => {
+    req.renderData = {
+        file: req.session.identity,
+        dir: MANUAL
     };
     next();
 }, render);
