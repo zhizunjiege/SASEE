@@ -91,3 +91,10 @@
 #account_info:hover {
     background-color: blue;
 }
+
+.subject-card {
+    width: 375px;
+}
+.subject-card .card-body>p{
+    height:120px;
+}

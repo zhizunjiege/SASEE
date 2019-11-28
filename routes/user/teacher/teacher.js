@@ -39,7 +39,8 @@ teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'rel
         param: req.session.account,
         file: 'subject',
         extraData: {
-            maxProjects: superApp.maxProjectsMap[req.session.proTitle]
+            maxProjects: superApp.maxProjectsMap[req.session.proTitle],
+            ifPermiss:req.fsm.now().name=='submit'
         }
     };
     next();
@@ -79,12 +80,12 @@ subjectRouter.post('/notice', general.permiss(['general']), subject.notice);
 subjectRouter.post('/mark', general.permiss(['general']), subject.mark);
 teacher.use('/subject', subjectRouter);
 
-emailRouter.get('/sendPinCode', general.permiss(['open']), email.sendPinCode);
-emailRouter.post('/setEmailAddr', general.permiss(['open']), info.setEmailAddr);
+emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
+emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 teacher.use('/email', emailRouter);
 
-teacher.post('/info', general.permiss(['open']), info.setGeneralInfo(['field', 'office', 'tele', 'resume']));
+teacher.post('/info', general.permiss(['info']), info.setGeneralInfo(['field', 'office', 'tele', 'resume']));
 
 teacher.get('/logout', general.logout());
 teacher.post('/password', password.modify);

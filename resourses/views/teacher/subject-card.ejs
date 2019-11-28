@@ -1,19 +1,15 @@
 <% const stateObj={'-1':'modifySubject','0':'modifySubject','1':'mySubject'},
 colorObj={'-1':'warning','0':'primary','1':'succcess'},
 desObj={'-1':'被打回','0':'未审核','1':'已通过'}; %>
-<div class="card w-25 mt-4 list-group-item-action" data-type="<%= stateObj[state] %>" data-id="<%= id %>">
-    <header class="card-header d-flex align-items-center"><span
+<div class="card my-3 list-group-item-action subject-card" data-type="<%= stateObj[state] %>" data-id="<%= id %>">
+    <header class="card-header d-flex align-items-center justify-content-between"><span
             class="d-inline-block w-75 ellipsis"><%= title||'暂无标题' %></span><span
             class="badge badge-pill badge-<%= colorObj[state] %>"><%= desObj[state] %></span></header>
     <div class="card-body row">
-        <p class="card-text" style="height:100px;">
+        <p class="card-text">
             <%= introduction||'暂无介绍' %></p>
         <table class="table mb-0 text-center">
             <tbody>
-                <tr>
-                    <th>容量</th>
-                    <td><%= capacity||0 %></td>
-                </tr>
                 <tr>
                     <th>已选</th>
                     <td><%= chosen||0 %></td>

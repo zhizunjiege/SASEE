@@ -23,10 +23,12 @@ function FSM({ cercular = false, recoverable = true, relatedFile = 'fsm.json', s
             this._curState = recovery._curState;
             if (this.initialized) {
                 this.registerSchedule();
+                return Promise.resolve('系统已恢复！');
+            } else {
+                this.states[0].start = new Date().toLocaleString();
+                return this.store();
             }
-        }).bind(this)).catch(err => {
-            console.log(err);
-        });
+        }).bind(this));
     }
 }
 
@@ -36,8 +38,8 @@ proto.initialize = function (states) {
     if (this.initialized) {
         return Promise.reject('系统已经初始化！');
     }
-    for (let i = 0; i < this.states.length; i++) {
-        const state = this.states[i];
+    for (let i = 0; i < this.states.length - 1; i++) {
+        const state = this.states[i + 1];
         if (state.name != states[i].name) {
             throw new Error('状态不匹配！');
         }
@@ -47,6 +49,7 @@ proto.initialize = function (states) {
         state.start = states[i].start;
         state.end = states[i].end || states[i + 1] ? states[i + 1].start : null;
     }
+    this.states[0].end = states[0].start;
     this.lastWriteTime = new Date();
     this.registerSchedule();
     this.initialized = true;
@@ -89,7 +92,6 @@ proto.next = function () {
     if (this.initialized) {
         if (this._curState >= this.states.length - 1) {
             this.completed = true;
-            this._curState = this.states.length;
         } else {
             let now = new Date().toLocaleString();
             this.cancelSchedule();
@@ -106,15 +108,22 @@ proto.next = function () {
 
 proto.update = function (name, start, end) {
     if (this.initialized) {
-        for (const iterator of this.states) {
-            if (iterator.name == name) {
-                start && (iterator.start = start);
-                end && (iterator.end = end);
+        for (let i = this._curState + 1; i < this.states.length; i++) {
+            const element = this.states[i];
+            if (element.name == name) {
+                if (start) {
+                    element.start = start;
+                    this.states[i - 1].end = start;
+                }
+                end && (element.end = end);
                 this.lastWriteTime = new Date();
                 this.cancelSchedule();
                 this.registerSchedule();
                 return this.store();
             }
+        }
+        for (const iterator of this.states) {
+
         }
         return Promise.reject('没有对应状态！');
     } else {
@@ -149,7 +158,7 @@ proto.now = function () {
 };
 proto.info = function () {
     return this.states.map(cur => {
-        return { name, description, start, end} = cur;
+        return { name, description, start, end } = cur;
     });
 }
 

@@ -2,7 +2,7 @@ const [mysql, email, draw] = superApp.requireUserModules(['mysql', 'email', 'dra
 
 function queryEmailAddrToArray({ sql, identity, then } = {}) {
     let sql_query = sql || 'SELECT email FROM ??' + (Array.isArray(identity) ? ' UNION SELECT email FROM ??'.repeat(identity.length - 1) : '');
-    mysql.find(sql_query, identity).then(results => {
+    return mysql.find(sql_query, identity).then(results => {
         let addr = [];
         for (let i = 0; i < results.length; i++) {
             addr.push(results[i].email);
@@ -10,11 +10,11 @@ function queryEmailAddrToArray({ sql, identity, then } = {}) {
         if (addr.length > 0) {
             then(addr);
         }
-    }).catch(util.catchError(res));
+    });
 }
 
 function queryNumberToTables({ sql, captionArray, then } = {}) {
-    mysql.find(sql).then(results => {
+    return mysql.find(sql).then(results => {
         let paragraph = [];
         if (captionArray.length > 1) {
             for (let i = 0; i < results.length; i++) {
@@ -28,7 +28,7 @@ function queryNumberToTables({ sql, captionArray, then } = {}) {
         if (paragraph.length > 0) {
             then(paragraph);
         }
-    }).catch(util.catchError(res));
+    });
 }
 
 function sendEmail({ sql, identity = 'admin', title, paragraph }) {
@@ -64,7 +64,7 @@ function deleteSubject() {
     mysql.find(sql_delete).then(info => {
         console.log(info);
         console.log(`废弃课题已全部删除！共删除了${info.affectedRows}个课题。`);
-    }).catch(util.catchError(res));
+    });
 }
 
 function drawAll(succeed, fail) {

@@ -1,12 +1,12 @@
 <div class="sys-content col-12 mx-auto" style="display: none"></div>
 <div class="sys-list px-3">
-    <div class="d-flex justify-content-around" id="card_container">
+    <div class="row justify-content-around" id="card_container">
         <% if(data.length){
         for( let i = 0; i < data.length; i++ ) { %>
         <%- include('./subject-card',data[i]) %>
         <% } } %>
     </div>
-    <% if (data.length<extraData.maxProjects) { %>
+    <% if (extraData.ifPermiss&&data.length<extraData.maxProjects) { %>
     <div class="d-flex justify-content-center align-items-center" style="height: 250px">
         <button class="btn btn-primary col-3" id="subject_submit">发布课题</button>
     </div>
@@ -28,8 +28,12 @@
             });
         }
         $('#card_container').click(e => {
-            let $target = $(e.target).closest('.card');
-            _loadSubjectContent($target.data('type'), { id: $target.data('id') });
+            if (e.target != e.currentTarget) {
+                let $target = $(e.target).closest('.card');
+                if ($target.length > 0) {
+                    _loadSubjectContent($target.data('type'), { id: $target.data('id') });
+                }
+            }
         });
 
         let $subject_submit = $('#subject_submit');

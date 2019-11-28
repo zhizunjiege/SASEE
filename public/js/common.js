@@ -45,7 +45,7 @@
         })
     }
 
-    SASEE.formSubmit = ({ file = false, editor = null, selector, url, validate, ifNotValid, done, fail = SASEE.requestFail, always } = {}) => {
+    SASEE.formSubmit = ({ file = false, editor = null, selector, url, validate, ifNotValid, preprocess = null, done, fail = SASEE.requestFail, always } = {}) => {
         let $form = $(selector);
         if (file) {
             let $file = $('input[type=file]', selector);
@@ -71,16 +71,16 @@
                         url: url,
                         type: 'POST',
                         cache: false,
-                        data: new FormData($form[0]),
+                        data: preprocess ? preprocess($form) : new FormData($form[0]),
                         processData: false,
                         contentType: false
                     });
                 } else if (editor) {
-                    let data = $form.serializeObject();
+                    let data = preprocess ? preprocess($form) : $form.serializeObject();
                     data.content = editor.txt.html();
                     ajaxObj = $.json({ url, data });
                 } else {
-                    ajaxObj = $.post(url, $form.serialize());
+                    ajaxObj = $.post(url, preprocess ? preprocess($form) : $form.serialize());
                 }
                 ajaxObj.done(done).fail(fail).always(always);
             } else {
@@ -146,5 +146,17 @@
                 ifNotValid && ifNotValid(data);
             }
         });
+    };
+
+    SASEE.getTime = ({dateObj=null,tostring=false,start=0,length=19}={}) => {
+        let date=new Date(Date.now() - new Date().getTimezoneOffset() * 1000 * 60);
+        if(dateObj){
+            return new Date(dateObj).toISOString().substr(start,length);
+        }
+        if(tostring===true){
+            return date.toISOString().substr(start,length);
+        }else{
+            return date;
+        }
     };
 }

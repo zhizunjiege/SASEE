@@ -60,8 +60,8 @@ deanViews.get('/subjectContent', general.permiss(['review', 'release']), (req, r
 
 dean.use('/views', views.common, deanViews);
 
-emailRouter.get('/sendPinCode', general.permiss(['open']), email.sendPinCode);
-emailRouter.post('/setEmailAddr', general.permiss(['open']), info.setEmailAddr);
+emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
+emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
 dean.use('/email', emailRouter);
 
 dean.post('/pass', general.permiss(['review', 'release']), subject.pass, email.sendEmail);

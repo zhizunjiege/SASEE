@@ -88,8 +88,8 @@ fileRouter.post('/upload', upload.receive, upload.upload);
 fileRouter.get('/download', download.download);
 student.use('/file', general.permiss(['general']), fileRouter);
 
-emailRouter.get('/sendPinCode', general.permiss(['open']), email.sendPinCode);
-emailRouter.post('/setEmailAddr', general.permiss(['open']), info.setEmailAddr);
+emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
+emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 student.use('/email', emailRouter);
 

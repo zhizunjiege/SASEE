@@ -54,7 +54,7 @@ admin.get('/main', (req, res, next) => {
         sql_query: 'SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0',
         file: 'main',
         extraData: {
-            initialized: req.fsm.initialized,
+            initialized:req.fsm.initialized,
             now: req.fsm.now(),
             states: req.fsm.info()
         }
@@ -92,10 +92,11 @@ admin.post('/initState', (req, res) => {
     }
     let states = req.fsm.info();
     for (const iterator of states) {
-        iterator.start = req.body[iterator.name].replace('T',' ');
+        if (req.body[iterator.name]) {
+            iterator.start = req.body[iterator.name].replace('T', ' ');
+        }
     }
-    console.log(states);
-
+    states.shift();
     req.fsm.initialize(states).then(info => {
         res.send('初始化成功！');
     }).catch(err => {
@@ -110,7 +111,7 @@ admin.post('/updateState', (req, res) => {
         return;
     }
     let { name, start } = req.body;
-    start=start.replace('T',' ');
+    start = start.replace('T', ' ');
     req.fsm.update(name, start).then(() => {
         res.send('时间设置更新成功！');
     }).catch(err => {
