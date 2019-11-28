@@ -1,5 +1,5 @@
 const multer = require('multer'),
-    [mysql, file] = superApp.requireUserModules(['mysql', 'file']),
+    [mysql, file,util] = superApp.requireUserModules(['mysql', 'file','util']),
     { FILES } = superApp.resourses;
 
 let receive = multer({
@@ -24,10 +24,7 @@ function upload(req, res) {
             if (err) throw err;
             res.send('文件上传成功！');
         })
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('文件上传失败，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 module.exports = { receive, upload };

@@ -14,9 +14,7 @@ function setGeneralInfo(fieldArray) {
         if (util.paramIfValid(param)) {
             mysql.find(sql_update, [identity, param, account]).then(() => {
                 res.send('已更新信息！');
-            }, (err) => {
-                res.status(403).send('更新信息出错，请稍后重试！');
-            });
+            }).catch(util.catchError(res));
         } else {
             res.status(403).send('数据不合法，请改正后重试！');
         }
@@ -31,8 +29,8 @@ function setEmailAddr(req, res) {
         res.status(403).send('验证码已失效，请重试！');
     } else if (req.body.pinCode == pinCode.code) {
         mysql.find(sql_update, [identity, req.body.email, account]).then(() => {
-            res.status(200).send('已成功更新邮箱地址！');
-        });
+            res.send('已成功更新邮箱地址！');
+        }).catch(util.catchError(res));;
     } else {
         res.status(403).send('验证码不匹配,请重试！');
     }

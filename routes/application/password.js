@@ -9,14 +9,14 @@ function modify(req, res) {
         if (oldPW == results[0].password) {
             return mysql.find(sql_update, [identity, newPW, account]);
         } else {
-            res.status(403).send('旧密码错误,请重试！');
+            return Promise.reject(15);
         }
     }).then(() => {
         if (!res.headersSent) {
             req.session.destroy();
             res.send('修改密码成功！');
         }
-    });
+    }).catch(util.catchError(res, superApp.errorMap));
 }
 function retrieve(req, res) {
     let { account, identity, newPW } = req.body,
@@ -27,8 +27,8 @@ function retrieve(req, res) {
         res.status(403).send('验证码已失效，请重试！');
     } else if (req.body.pinCode == pinCode.code) {
         mysql.find(sql_update, [identity, newPW, account]).then(() => {
-            res.status(200).send('已成功更新邮箱地址！');
-        });
+            res.send('已成功更新邮箱地址！');
+        }).catch(util.catchError(res));
     } else {
         res.status(403).send('验证码不匹配,请重试！');
     }

@@ -22,8 +22,8 @@ teacher.set('views', VIEWS_TEACHER);
 teacher.use(general.auth({ url: '/', identity: 'teacher' }));
 teacher.get('/', login.render);
 
-teacher.get('/license/agree',general.agreeLicense);
-teacher.get('/license/disagree',general.disagreeLicense);
+teacher.get('/license/agree', general.agreeLicense);
+teacher.get('/license/disagree', general.disagreeLicense);
 
 teacherViews.get('/userInfo', (req, res, next) => {
     req.renderData = {
@@ -37,7 +37,10 @@ teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'rel
     req.renderData = {
         sql_query: 'SELECT b.id,title,chosen,capacity,introduction,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
         param: req.session.account,
-        file: 'subject'
+        file: 'subject',
+        extraData: {
+            maxProjects: superApp.maxProjectsMap[req.session.proTitle]
+        }
     };
     next();
 }, views.render);
@@ -55,7 +58,7 @@ teacherViews.get('/modifySubject', general.permiss(['submit', 'modify']), (req, 
     };
     next();
 }, views.render);
-teacherViews.get('/mySubject', general.permiss(['choose','final','general']), (req, res, next) => {
+teacherViews.get('/mySubject', general.permiss(['choose', 'final', 'general']), (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,JSON_QUOTE(CONCAT("",s.id)))',
         param: [req.query.id, req.query.id],

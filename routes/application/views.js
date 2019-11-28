@@ -1,6 +1,6 @@
 const express = require('express'),
-    mysql = superApp.requireUserModule('mysql'),
-    { NEWS, VIEWS_COMMON,MANUAL } = superApp.resourses;
+    [mysql, util] = superApp.requireUserModules(['mysql', 'util']),
+    { NEWS, VIEWS_COMMON, MANUAL } = superApp.resourses;
 
 function render(req, res) {
     let { sql_query, param, file, dir, extraData } = req.renderData;
@@ -8,7 +8,7 @@ function render(req, res) {
     if (sql_query) {
         mysql.find(sql_query, param).then(data => {
             res.render(path, { PATH: superApp.resourses, data, extraData });
-        });
+        }).catch(util.catchError(res));
     } else if (path) {
         res.render(path, { PATH: superApp.resourses, data: null, extraData }, (err, html) => {
             if (err) {

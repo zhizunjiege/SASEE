@@ -129,7 +129,8 @@
                             <label for="_<%= key %>" class="col-3 text-center col-form-label"><%= value %></label>
                             <div class="input-group col-9 px-0">
                                 <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
-                                    value="<%= start||'' %>" <%= flag1&&flag2?'required':'disabled' %>>
+                                    value="<%= start?start.replace(' ','T'):'' %>"
+                                    <%= flag1&&flag2?'required':'disabled' %>>
                                 <div class="input-group-append">
                                     <% if (flag1&&flag2) { %>
                                     <button type="button" class="btn btn-outline-secondary update-button">更新时间</button>

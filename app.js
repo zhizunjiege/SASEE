@@ -59,6 +59,8 @@ app.use('/teacher', teacher);
 app.use('/dean', dean);
 app.use('/admin', admin);
 
+app.get('/serverTime', general.serverTime);
+
 app.use(general.notFound);
 
 superApp.server = app.listen(3000, '::', () => {

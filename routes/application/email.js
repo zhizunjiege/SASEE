@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer'),
-    mysql = superApp.requireUserModule('mysql');
+    [mysql,util] = superApp.requireUserModules(['mysql','util']);
 
 const CONSTANT = {
     SYS_TEST: '此邮件为系统测试邮件，请忽略······',
@@ -32,10 +32,7 @@ function _spcmw(req, res, next) {
     mysql.find(sql_query, [identity, account]).then(results => {
         req.query.email = results[0].email;
         next();
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('验证码发送失败，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 function sendPinCode(req, res) {
@@ -51,10 +48,7 @@ function sendPinCode(req, res) {
             time: new Date().getTime()
         };
         res.send('验证码已发送至' + email.replace(/(\S{2,})(\S{4,4})(@.*)/, '$1****$3'));
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('验证码发送失败，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 function sendEmail(req, res) {
@@ -65,10 +59,7 @@ function sendEmail(req, res) {
         subject: title
     }).then(info => {
         res.send('邮件发送成功！');
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('邮件发送失败，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 function emailTemplate({ title = '通知', paragraph = [], from = '系统' } = {}) {

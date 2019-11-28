@@ -13,8 +13,7 @@ function authenticate(req, res) {
     mysql.find(sql_query, [identity, account, password])
         .then(data => {
             if (data.length == 0) {
-                res.status(403).send('账号或密码错误，请重试！');
-                return;
+                return Promise.reject(14);
             }
             //设置session
             req.session.userId = data[0].id;
@@ -22,9 +21,10 @@ function authenticate(req, res) {
             req.session.name = data[0].name;
             req.session.group = data[0].group;
             req.session.identity = identity;
-            data[0].specialt && (req.session.specialty = data[0].specialty);
+            data[0].specialty && (req.session.specialty = data[0].specialty);
+            data[0].proTitle && (req.session.proTitle = data[0].proTitle);
             res.location('/' + identity + '/').send('登陆成功！');
-        });
+        }).catch(util.catchError(res,superApp.errorMap));
 }
 
 function render(req, res) {
@@ -35,8 +35,8 @@ function render(req, res) {
             let [[user], news] = data;
             user.profile = (user.gender == '男' ? 'man' : 'woman') + '_' + identity + '.png';
             user.identity = identity;
-            res.render(VIEWS_COMMON + '/user', { PATH: superApp.resourses, user, news });
-        });
+            res.render(VIEWS_COMMON + '/user', { PATH: superApp.resourses, user, news});
+        }).catch(util.catchError(res));
 }
 
 module.exports = { authenticate, render };

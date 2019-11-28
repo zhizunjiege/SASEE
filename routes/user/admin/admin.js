@@ -92,7 +92,7 @@ admin.post('/initState', (req, res) => {
     }
     let states = req.fsm.info();
     for (const iterator of states) {
-        iterator.start = req.body[iterator.name];
+        iterator.start = req.body[iterator.name].replace('T',' ');
     }
     console.log(states);
 
@@ -110,6 +110,7 @@ admin.post('/updateState', (req, res) => {
         return;
     }
     let { name, start } = req.body;
+    start=start.replace('T',' ');
     req.fsm.update(name, start).then(() => {
         res.send('时间设置更新成功！');
     }).catch(err => {

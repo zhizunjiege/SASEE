@@ -1,4 +1,4 @@
-const mysql = superApp.requireUserModule('mysql');
+const [mysql, util] = superApp.requireUserModules(['mysql', 'util']);
 
 function notFound(req, res) {
     res.type('text/html');
@@ -11,7 +11,7 @@ function permiss(states) {
         if (req.fsm.permiss(states)) {
             next();
         } else {
-            res.status(403).send('现阶段不允许该操作！');
+            res.status(403).send('还没到时间哦^_^');
         }
     }
 }
@@ -49,7 +49,7 @@ function agreeLicense(req, res) {
     let sql_update = 'UPDATE ?? SET ifReadLicense="Y" WHERE account=?';
     mysql.find(sql_update, [req.session.identity, req.session.account]).then(() => {
         res.send('您同意了用户协议！');
-    }).catch(catchError({ res }));
+    }).catch(util.catchError(res));
 }
 
 function disagreeLicense(req, res) {
@@ -58,20 +58,13 @@ function disagreeLicense(req, res) {
     res.redirect('/');
 }
 
-function catchError({ msg = '服务器出现错误，请稍后重试！', typeMap, res } = {}) {
-    return err => {
-        console.log(err);
-        if (Array.isArray(typeMap)) {
-            for (const [type, msg] of typeMap) {
-                if (err instanceof type) {
-                    console.log(msg);
-                    res && res.status(403).send(msg);
-                    return;
-                }
-            }
-        } else {
-            res && res.status(403).send(msg);
-        }
-    }
+function serverTime(req, res) {
+    let cur = req.fsm.now();
+    res.json({
+        now: new Date().toLocaleString(),
+        description: cur.description,
+        end: cur.end
+    });
 }
-module.exports = { notFound, permiss, logout, redirect, auth, catchError, agreeLicense, disagreeLicense };
+
+module.exports = { notFound, permiss, logout, redirect, auth, agreeLicense, disagreeLicense, serverTime };

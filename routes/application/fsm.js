@@ -91,7 +91,7 @@ proto.next = function () {
             this.completed = true;
             this._curState = this.states.length;
         } else {
-            let now = new Date().toLocaleDateString().replace(' ', 'T');
+            let now = new Date().toLocaleString();
             this.cancelSchedule();
             this.states[this._curState].end = now;
             this._curState++;
@@ -149,12 +149,7 @@ proto.now = function () {
 };
 proto.info = function () {
     return this.states.map(cur => {
-        return {
-            "name": cur.name,
-            "description": cur.description,
-            "start": cur.start,
-            "end": cur.end
-        }
+        return { name, description, start, end} = cur;
     });
 }
 

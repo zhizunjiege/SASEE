@@ -89,6 +89,21 @@
         };
     };
 
+    SASEE.timeDifference = (date1, date2) => {
+        let time1 = new Date(date1).valueOf(),
+            time2 = new Date(date2).valueOf(),
+            time = time2 - time1,
+            _time = time;
+
+        let divMap = [1000, 60, 60, 24, 365, 100], nameMap = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'years'], returnObj = {};
+        for (const [index, value] of divMap.entries()) {
+            returnObj[nameMap[index]] = _time % value;
+            _time = Math.floor(_time / value);
+        }
+        returnObj.time = time;
+        return returnObj;
+    };
+
     SASEE.counter = ({ count, doing = () => { }, done = () => { } } = {}) => {
         function _countDown() {
             if (count) {

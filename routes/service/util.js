@@ -28,4 +28,23 @@ function isObject(obj) {
     return Object.prototype.toString.call(obj) == '[object Object]';
 }
 
-module.exports = { paramIfValid, isObject };
+function catchError(res, errCodeMap) {
+    return err => {
+        let msg = '服务器出现错误，请稍后重试！';
+        if (err instanceof Error) {
+            console.log(err);
+        } else if (isObject(errCodeMap)) {
+            for (const [errCode, errMsg] of errCodeMap) {
+                if (err == errCode) {
+                    msg = errMsg;
+                    break;
+                }
+            }
+        }
+        console.log(msg);
+        res && res.status(403).send(msg);
+        return;
+    }
+}
+
+module.exports = { paramIfValid, isObject, catchError };

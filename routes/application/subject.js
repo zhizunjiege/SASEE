@@ -1,13 +1,13 @@
-const [mysql, file] = superApp.requireUserModules(['mysql', 'file']);
+const [mysql, file, util] = superApp.requireUserModules(['mysql', 'file', 'util']);
+const errorMap = superApp.errorMap;
 
 function submit(req, res) {
-    const group_desArray = ['自动控制与模式识别', '自主导航与精确制导', '检测与自动化工程', '飞行器控制与仿真', '机电控制与液压'];
     let { title, group, capacity, introduction, password } = req.body,
-        group_des = group_desArray[group - 1],
+        group_des = superApp.groupDesMap[group],
         materials = req.file.filename,
         account = req.session.account,
         paramArray = [title, group, group_des, capacity, introduction, materials];
-    let sql_query = 'SELECT id,password FROM teacher WHERE account=?',
+    let sql_query = 'SELECT id,password,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=?',
         sql_insert = 'INSERT INTO bysj (title,`group`,group_des,capacity,introduction,materials,submitTime,lastModifiedTime,teacher,state,studentFiles,teacherFiles,notice,student_selected,student_final) VALUES (?,?,?,?,?,?,CURDATE(),CURDATE(),?,0,JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY())',
         sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher_id;
@@ -16,7 +16,10 @@ function submit(req, res) {
         return conn.find(sql_query, account);
     }).then(({ results, conn }) => {
         if (password != results[0].password) {
-            return Promise.reject('密码错误，请稍后重试！');
+            return Promise.reject(10);
+        }
+        if (superApp.maxProMap[results[0].proTitle] <= results[0].bysjNum) {
+            return Promise.reject(11);
         }
         teacher_id = results[0].id;
         paramArray.push(teacher_id);
@@ -32,14 +35,7 @@ function submit(req, res) {
             if (err) throw err;
             res.render('subject-card', results[1][0]);
         });
-    }).catch(err => {
-        if (err instanceof Error) {
-            res.status(403).send('服务器错误，请稍后重试！');
-            throw err;
-        } else {
-            res.status(403).send(err);
-        }
-    });
+    }).catch(util.catchError(res, errorMap));
 };
 
 function modify(req, res) {
@@ -56,7 +52,7 @@ function modify(req, res) {
             }
             return mysql.find(sql_update, [paramObj, id, id]);
         } else {
-            return Promise.reject('密码验证错误，请重试！');
+            return Promise.reject(10);
         }
     }).then(results => {
         if (req.file) {
@@ -71,14 +67,7 @@ function modify(req, res) {
         } else {
             res.render('subject-card', results[1][0]);
         }
-    }).catch(err => {
-        if (err instanceof Error) {
-            res.status(403).send('服务器错误，请稍后重试！');
-            throw err;
-        } else {
-            res.status(403).send(err);
-        }
-    });
+    }).catch(util.catchError(res, errorMap));
 }
 
 function notice(req, res) {
@@ -86,9 +75,7 @@ function notice(req, res) {
         sql_update = 'UPDATE bysj SET notice=JSON_ARRAY_INSERT(notice,"$[0]",JSON_OBJECT("date",CURDATE(),"title",?,"content",?)) WHERE id=?';
     mysql.find(sql_update, [title, content, id]).then(() => {
         res.send('通知发布成功！');
-    }).catch(err => {
-        res.status(403).send('通知发布失败，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 function mark(req, res) {
@@ -100,10 +87,7 @@ function mark(req, res) {
     paramArray.push(id);
     mysql.find(sql_update, paramArray).then(() => {
         res.send('评分成功！');
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('评分失败，请重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 function choose(req, res) {
@@ -117,9 +101,9 @@ function choose(req, res) {
         if (results[0].length > 0) {
             let { stuId, bysj } = results[0][0];
             if (bysj && bysj == id) {
-                res.status(403).send('你已经选择过该课题！');
+                return Promise.reject(12);
             } else if (colume == 'final' && results[1][0].chosen >= results[1][0].capacity) {
-                res.status(403).send('该课题已满，请重新选择！');
+                return Promise.reject(13);
             } else {
                 mysql.transaction().then(conn => {
                     if (bysj) {
@@ -136,20 +120,14 @@ function choose(req, res) {
                     return conn.find(sql_update3, [id, stuId]);
                 }).then(({ results, conn }) => {
                     return conn.commitPromise(results);
-                }).then(() => {
-                    res.send('选择课题成功');
-                }).catch(err => {
-                    console.log(err);
-                    res.status(403).send('选择课题失败，请稍后重试！');
                 });
             }
         } else {
-            res.status(403).send('密码错误，请重试！');
+            return Promise.reject(10);
         }
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('服务器错误，请重试！');
-    });
+    }).then(() => {
+        res.send('选择课题成功');
+    }).catch(util.catchError(res, errorMap));
 }
 
 function _changeState(req, res, next, state) {
@@ -158,10 +136,7 @@ function _changeState(req, res, next, state) {
     mysql.find(sql_update, [state, id, id]).then((results) => {
         req.body.content = '<h3>课题“<strong>' + results[1][0].title + '</strong>”的审核结果：</h3>' + req.body.content;
         next();
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('操作失败，请重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 function pass(req, res, next) {

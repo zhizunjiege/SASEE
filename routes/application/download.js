@@ -1,4 +1,4 @@
-const mysql = superApp.requireUserModule('mysql'),
+const [mysql, util] = superApp.requireUserModules(['mysql', 'util']),
     { FILES } = superApp.resourses;
 
 function download(req, res) {
@@ -10,10 +10,7 @@ function download(req, res) {
         res.download(path, err => {
             if (err) throw err;
         });
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('出现错误，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 }
 
 module.exports = { download };

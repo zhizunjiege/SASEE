@@ -6,7 +6,7 @@
         <%- include('./subject-card',data[i]) %>
         <% } } %>
     </div>
-    <% if (data.length<3) { %>
+    <% if (data.length<extraData.maxProjects) { %>
     <div class="d-flex justify-content-center align-items-center" style="height: 250px">
         <button class="btn btn-primary col-3" id="subject_submit">发布课题</button>
     </div>

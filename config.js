@@ -1,4 +1,24 @@
 global.superApp = {
+    maxProjectsMap: {
+        '讲师': 2,
+        '副教授': 5,
+        '教授': 7
+    },
+    groupDesMap: {
+        1: '自动控制与模式识别',
+        2: '自主导航与精确制导',
+        3: '检测与自动化工程',
+        4: '飞行器控制与仿真',
+        5: '机电控制与液压'
+    },
+    errorMap: {
+        10: '密码错误，请稍后重试！',
+        11: '课题数已达上限！',
+        12: '你已经选择过该课题！',
+        13: '该课题已满，请重新选择！',
+        14: '密码错误，请重试！',
+        15: '旧密码错误,请重试！',
+    },
     resourses: {},
     userModules: {},
     startTime: new Date().toLocaleString(),
@@ -50,9 +70,9 @@ transObjToPath(superApp.resourses, __dirname, {
             "teacher": "VIEWS_TEACHER",
             "dean": "VIEWS_DEAN"
         },
-        "documents":{
-            "license":"LICENSE",
-            "manual":"MANUAL"
+        "documents": {
+            "license": "LICENSE",
+            "manual": "MANUAL"
         }
     },
     "tmp": "TMP",

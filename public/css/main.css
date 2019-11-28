@@ -31,6 +31,16 @@
     display: block;
 }
 
+.page-3 {
+    display: none;
+}
+
+@media(min-width:768px) {
+    .page-3 {
+        display: block;
+    }
+}
+
 @media (min-width: 992px) {
     .aside, #navigator {
         width: 24%;

@@ -10,9 +10,7 @@ function queryEmailAddrToArray({ sql, identity, then } = {}) {
         if (addr.length > 0) {
             then(addr);
         }
-    }).catch(err => {
-        console.log(err);
-    });
+    }).catch(util.catchError(res));
 }
 
 function queryNumberToTables({ sql, captionArray, then } = {}) {
@@ -30,7 +28,7 @@ function queryNumberToTables({ sql, captionArray, then } = {}) {
         if (paragraph.length > 0) {
             then(paragraph);
         }
-    });
+    }).catch(util.catchError(res));
 }
 
 function sendEmail({ sql, identity = 'admin', title, paragraph }) {
@@ -66,7 +64,7 @@ function deleteSubject() {
     mysql.find(sql_delete).then(info => {
         console.log(info);
         console.log(`废弃课题已全部删除！共删除了${info.affectedRows}个课题。`);
-    });
+    }).catch(util.catchError(res));
 }
 
 function drawAll(succeed, fail) {
@@ -79,8 +77,8 @@ function drawAll(succeed, fail) {
 }
 
 function closeServer(param) {
-    superApp.server.close();
     sendEmail(param);
+    superApp.server.close();
 }
 
 module.exports = { sendEmail, sendInfoToAdmin, deleteSubject, drawAll, closeServer };

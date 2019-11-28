@@ -178,4 +178,36 @@
         });
     };
 
+    SASEE.serverTimeObj = {
+        $serverTime: $('#_serverTime'),
+        $nowState: $('#_nowState'),
+        $restTime: $('#_restTime'),
+        time: null,
+        counterId: null,
+        callback(data) {
+            let obj = SASEE.serverTimeObj, timeDiff = SASEE.timeDifference(data.now, data.end);
+            obj.time = data.now;
+            obj.$serverTime.text(data.now);
+            obj.$nowState.text(data.description);
+            obj.$restTime.text(timeDiff.days ? `${timeDiff.days}天${timeDiff.hours}小时` : `${timeDiff.hours}小时${timeDiff.minutes}分钟`);
+            data.now = new Date(new Date(data.now).valueOf() + 1000).toLocaleString({
+                hc: 'h23'
+            }, {
+                hour12: false
+            });
+            obj.counterId = setTimeout(obj.callback, 1000, data);
+        }
+    };
+    SASEE.updateTime = () => {
+        $.getJSON('/serverTime').done(data => {
+            let counterId = SASEE.serverTimeObj.counterId;
+            if (counterId) {
+                clearTimeout(counterId);
+            }
+            counterId = SASEE.serverTimeObj.callback(data);
+        }).fail(()=>{
+            console.log('服务端失去响应，计时可能不精确，请刷新页面重试！');
+        });
+    };
+
 })(window.jQuery);
