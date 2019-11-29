@@ -1,14 +1,18 @@
 const [mysql, file, util] = superApp.requireUserModules(['mysql', 'file', 'util']);
 const errorMap = superApp.errorMap;
 
+function query(req, res) {
+    res.send(''+superApp.maxProjectsMap[req.session.proTitle]);
+}
+
 function submit(req, res) {
-    let { title, group, capacity, introduction, password } = req.body,
-        group_des = superApp.groupDesMap[group],
-        materials = req.file.filename,
-        account = req.session.account,
-        paramArray = [title, group, group_des, capacity, introduction, materials];
+    let { title, introduction, type, source, requirement, difficulty, weight, password } = req.body,
+        { allRound, experiment, graphic, data, analysis } = req.body,
+        { group, account } = req.session,
+        materials = req.file?req.file.filename:'',
+        paramArray = [title, group, 1, introduction, materials, '未审核', type, source, requirement, difficulty, weight, JSON.stringify({ allRound, experiment, graphic, data, analysis })];
     let sql_query = 'SELECT id,password,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=?',
-        sql_insert = 'INSERT INTO bysj (title,`group`,group_des,capacity,introduction,materials,submitTime,lastModifiedTime,teacher,state,studentFiles,teacherFiles,notice,student_selected,student_final) VALUES (?,?,?,?,?,?,CURDATE(),CURDATE(),?,0,JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY())',
+        sql_insert = 'INSERT INTO bysj (title,`group`,capacity,introduction,materials,submitTime,lastModifiedTime,state,studentFiles,teacherFiles,notice,student_selected,student_final,type, source, requirement, difficulty, weight, ability,teacher) VALUES (?,?,?,?,?,CURDATE(),CURDATE(),?,JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),?,?,?,?,?,?,?)',
         sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher_id;
 
@@ -18,7 +22,7 @@ function submit(req, res) {
         if (password != results[0].password) {
             return Promise.reject(10);
         }
-        if (superApp.maxProMap[results[0].proTitle] <= results[0].bysjNum) {
+        if (superApp.maxProjectsMap[results[0].proTitle] <= results[0].bysjNum) {
             return Promise.reject(11);
         }
         teacher_id = results[0].id;
@@ -29,35 +33,38 @@ function submit(req, res) {
     }).then(({ results, conn }) => {
         return conn.commitPromise(results);
     }).then(results => {
-        let from = req.file.path,
-            to = superApp.resourses.FILES + 'group' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/' + req.file.filename;
-        file.move(from, to, (err) => {
-            if (err) throw err;
+        if (req.file) {
+            let from = req.file.path,
+                to = superApp.resourses.FILES + '/' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/' + req.file.filename;
+            file.move(from, to, (err) => {
+                if (err) throw err;
+                res.render('subject-card', results[1][0]);
+            });
+        }else{
             res.render('subject-card', results[1][0]);
-        });
+        }
     }).catch(util.catchError(res, errorMap));
 };
 
 function modify(req, res) {
-    let { id, title, group, capacity, introduction, password } = req.body,
-        materials = req.file ? req.file.filename : '',
+    let { id, title, introduction, type, source, requirement, difficulty, weight, ability, password } = req.body,
         account = req.session.account,
-        paramObj = { title, capacity, introduction, materials };
+        paramObj = { title, introduction, type, source, requirement, difficulty, weight, ability };
     let sql_query = 'SELECT 1 FROM teacher WHERE account=? AND password=?',
-        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state=0 WHERE id=?;SELECT * FROM bysj WHERE id=?';
+        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state=? WHERE id=?;SELECT * FROM bysj WHERE id=?';
     mysql.find(sql_query, [account, password]).then(results => {
         if (results.length != 0) {
-            if (!req.file) {
-                delete paramObj.materials;
+            if (req.file) {
+                paramObj.materials = req.file.filename;
             }
-            return mysql.find(sql_update, [paramObj, id, id]);
+            return mysql.find(sql_update, [paramObj, '未审核', id, id]);
         } else {
             return Promise.reject(10);
         }
     }).then(results => {
         if (req.file) {
             let from = req.file.path,
-                toDir = req.APP_CONSTANT.PATH_FILES + 'group' + group + '/subject' + id + '/teacher/',
+                toDir = req.APP_CONSTANT.PATH_FILES + '/' + group + '/subject' + id + '/teacher/',
                 to = toDir + req.file.originalname;
             file.deleteAll(toDir);
             file.move(from, to, (err) => {
@@ -91,21 +98,21 @@ function mark(req, res) {
 }
 
 function choose(req, res) {
-    let { account } = req.session,
+    let { stuId, account } = req.session,
         { id, password, colume } = req.body;
-    let sql_query = 'SELECT id stuId,bysj FROM student WHERE account=? AND password=?;SELECT capacity,chosen FROM bysj WHERE id=?',
+    let sql_query = 'SELECT bysj FROM student WHERE account=? AND password=?;SELECT capacity,chosen FROM bysj WHERE id=?',
         sql_update1 = 'UPDATE bysj SET chosen=chosen-1,student_' + colume + '=JSON_REMOVE(student_' + colume + ',JSON_UNQUOTE(JSON_SEARCH(student_' + colume + ',"one",?))) WHERE id=?',
         sql_update2 = 'UPDATE bysj SET chosen=chosen+1,student_' + colume + '=JSON_ARRAY_APPEND(student_' + colume + ',"$",CONCAT("",?)) WHERE id=?',
         sql_update3 = 'UPDATE student SET bysj=? WHERE id=?';
     mysql.find(sql_query, [account, password, id]).then(results => {
         if (results[0].length > 0) {
-            let { stuId, bysj } = results[0][0];
+            let { bysj } = results[0][0];
             if (bysj && bysj == id) {
                 return Promise.reject(12);
             } else if (colume == 'final' && results[1][0].chosen >= results[1][0].capacity) {
                 return Promise.reject(13);
             } else {
-                mysql.transaction().then(conn => {
+                return mysql.transaction().then(conn => {
                     if (bysj) {
                         return conn.find(sql_update1, [stuId, bysj]);
                     } else {
@@ -134,16 +141,16 @@ function _changeState(req, res, next, state) {
     let { id } = req.body,
         sql_update = 'UPDATE bysj SET state=? WHERE id=?;SELECT title FROM bysj WHERE id=?';
     mysql.find(sql_update, [state, id, id]).then((results) => {
-        req.body.content = '<h3>课题“<strong>' + results[1][0].title + '</strong>”的审核结果：</h3>' + req.body.content;
+        req.body.content = '<h3>课题“<strong>' + results[1][0].title + '</strong>”的审核结果：</h3>' + state;
         next();
     }).catch(util.catchError(res));
 }
 
 function pass(req, res, next) {
-    _changeState(req, res, next, 1);
+    _changeState(req, res, next, '通过');
 }
 function fail(req, res, next) {
-    _changeState(req, res, next, -1);
+    _changeState(req, res, next, '不通过');
 }
 
-module.exports = { submit, modify, notice, mark, choose, pass, fail };
+module.exports = { query, submit, modify, notice, mark, choose, pass, fail };

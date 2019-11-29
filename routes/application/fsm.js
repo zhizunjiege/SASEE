@@ -21,13 +21,19 @@ function FSM({ cercular = false, recoverable = true, relatedFile = 'fsm.json', s
             this.lastWriteTime = new Date(recovery.lastWriteTime);
             this.states = recovery.states;
             this._curState = recovery._curState;
+            while (1) {
+                let end = this.states[this._curState].end;
+                if (!end || this._curState >= this.states.length || Date.now() < new Date(end).valueOf()) {
+                    break;
+                }
+                this._curState++;
+            }
             if (this.initialized) {
                 this.registerSchedule();
-                return Promise.resolve('系统已恢复！');
             } else {
                 this.states[0].start = new Date().toLocaleString();
-                return this.store();
             }
+            return this.store();
         }).bind(this));
     }
 }

@@ -253,8 +253,8 @@
                     let $updateStateInput = $('#update_state').find('input');
                     time = SASEE.getTime().valueOf();
                     $updateStateInput.each(function () {
-                        time += 1000 * 60 * 60;
-                        $(this).val(SASEE.getTime({ dateObj: time }));
+                        time += 1000 * 60 * 60 * 2;
+                        $(this).val(SASEE.getTime({ dateObj: time, length: 16 }));
                     });
                 });
             }

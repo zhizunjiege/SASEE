@@ -11,6 +11,7 @@
         URL_SUBJECT: './subject',
         URL_SUBMIT: '/submit',
         URL_MODIFY: '/modify',
+        URL_QUERY: '/query',
 
         FILE_MAXSIZE: 5 * 1024 * 1024
     };
@@ -186,6 +187,10 @@
         counterId: null,
         callback(data) {
             let obj = SASEE.serverTimeObj, timeDiff = SASEE.timeDifference(data.now, data.end);
+            if (timeDiff.time <= 0) {
+                window.location.href = './';
+                return;
+            }
             obj.time = data.now;
             obj.$serverTime.text(data.now);
             obj.$nowState.text(data.description);
@@ -205,7 +210,7 @@
                 clearTimeout(counterId);
             }
             counterId = SASEE.serverTimeObj.callback(data);
-        }).fail(()=>{
+        }).fail(() => {
             console.log('服务端失去响应，计时可能不精确，请刷新页面重试！');
         });
     };
