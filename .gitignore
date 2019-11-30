@@ -78,3 +78,5 @@ typings/
 .idea
 
 toJSON.js
+demo.js
+demo/
