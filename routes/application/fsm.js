@@ -59,7 +59,7 @@ proto.initialize = function (states) {
 proto.registerSchedule = function () {
     let state = this.states[this._curState],
         start = new Date(state.start).getTime(),
-        end = new Date(state.end || start + 1 * 24 * 3600 * 1000).getTime(),
+        end = new Date(state.end || start + 10 * 60 * 1000).getTime(),
         immFunc = null;
     if (!state.start) {
         throw new Error('时间参数有误！');
@@ -73,7 +73,7 @@ proto.registerSchedule = function () {
             schedule.scheduleJob(new Date(end + iterator.time), this.script[iterator.func].bind(this, iterator.parameter));
         }
     }
-    schedule.scheduleJob(new Date(end), this.next.bind(this));
+    state.end && schedule.scheduleJob(new Date(end), this.next.bind(this));
     this._curJobs = schedule.scheduledJobs;
     immFunc && immFunc();
 };
@@ -91,8 +91,11 @@ proto.next = function () {
             this.completed = true;
             this._curState = this.states.length;
         } else {
+            let now = new Date().toLocaleDateString().replace(' ', 'T');
             this.cancelSchedule();
+            this.states[this._curState].end = now;
             this._curState++;
+            this.states[this._curState].start = now;
             this.registerSchedule();
         }
         return this.store();

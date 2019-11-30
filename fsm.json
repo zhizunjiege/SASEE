@@ -1,8 +1,8 @@
 {
     "initialized": true,
     "completed": false,
-    "_curState": 0,
-    "lastWriteTime": "2019-10-23 21:26:06",
+    "_curState": 5,
+    "lastWriteTime": "2019-10-27 14:50:21",
     "states": [
         {
             "name": "open",
@@ -422,11 +422,11 @@
             "script": [
                 {
                     "time": 300000,
-                    "func": "sendEmail",
+                    "func": "closeServer",
                     "parameter": {
-                        "title": "请管理员关闭系统",
+                        "title": "系统关闭",
                         "paragraph": [
-                            "毕业设计工作已经结束，请管理员在导出信息后关闭系统。"
+                            "毕业设计工作结束，系统已经关闭，请管理员前往服务器导出所需信息。"
                         ]
                     }
                 }

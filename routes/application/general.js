@@ -1,7 +1,7 @@
 function notFound(req, res) {
-    res.type('text/plain');
+    res.type('text/html');
     res.status(404);
-    res.send('您要的东西没找到哦-_-');
+    res.send(`<h1>您要的东西没找到哦-_-</h1>`);
 }
 
 function permiss(states) {
@@ -34,7 +34,7 @@ function auth({ url = '/', identity } = {}) {
         if (req.session.account && req.session.identity == identity) {
             next();
         } else {
-            if (req.method.toLowerCase() == 'post') {
+            if (req.get('Frame') == 'jQuery') {
                 res.location(url).status(403).send('登陆信息失效，请重新登陆！');
             } else {
                 res.redirect(url);

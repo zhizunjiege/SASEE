@@ -7,28 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="/pictures/favicon.ico">
     <link rel="stylesheet" href="/frames/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/system.css">
     <style type="text/css">
         #contents_body {
             height: 750px;
-        }
-
-        .rel-bottom {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .alert {
-            position: fixed;
-            z-index: 2000;
-            left: 50%;
-            top: 25%;
-            transform: translate(-50%, -50%);
-        }
-
-        ::-webkit-scrollbar {
-            display: none
         }
     </style>
     <title>系统管理</title>
@@ -260,17 +242,17 @@
                 done: SASEE.requestDone
             });
             $updateButton.click(e => {
-                let $input = $updateButton.closest('.input-group').find('input');
+                let $input = $(e.target).closest('.input-group').find('input');
                 $.post('./updateState', {
                     name: $input[0].name,
                     start: $input[0].value
-                }).done(msg => {
-                    $updateButton.attr('disabled', true);
-                    SASEE.requestDone(msg);
-                }).fail(SASEE.requestFail);
+                }).done(SASEE.requestDone).fail(SASEE.requestFail);
             });
             $nextButton.click(e => {
                 $.get('./nextState').done(msg => {
+                    let $next = $('.update-button').eq(0);
+                    $next.attr('disabled', true);
+                    $next.closest('.input-group').find('input').attr('disabled', true);
                     SASEE.requestDone(msg);
                 }).fail(SASEE.requestFail);
             });

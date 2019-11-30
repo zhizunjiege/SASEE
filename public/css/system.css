@@ -1,0 +1,51 @@
+html, body, #container, #row {
+    height: 100%;
+}
+
+::-webkit-scrollbar {
+    display: none
+}
+
+.alert {
+    position: fixed;
+    min-width: 50%;
+    z-index: 2000;
+    left: 50%;
+    top: 25%;
+    transform: translate(-50%, -50%);
+}
+
+.rel-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:hover {
+    cursor: pointer;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.table-fixed {
+    table-layout: fixed;
+}
+
+.table-fixed td, .ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-menu {
+    min-width: 100%;
+    text-align: center;
+}

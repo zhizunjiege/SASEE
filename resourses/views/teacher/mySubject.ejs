@@ -56,25 +56,27 @@
         <table class="table table-bordered text-center">
             <thead class="thead-light">
                 <tr>
-                    <% const tableHead=['姓名','性别','专业','方向','小班','学号','GPA','加权平均','算术平均','邮箱']; 
+                    <% const tableHead=['姓名','性别','专业','方向','小班','学号','GPA','加权平均','算术平均','保研','邮箱']; 
                     for( let index = 0; index < tableHead.length; index++ ) { %>
                     <th scope="col"><%= tableHead[index] %></th>
                     <% } %>
                 </tr>
             </thead>
             <tbody>
-                <% for( let index = 0; index < student.length; index++ ) { %>
+                <% for( let index = 0; index < student.length; index++ ) { 
+                    let s=student[index]; %>
                 <tr>
-                    <td><%= student[index].name %></td>
-                    <td><%= student[index].gender %></td>
-                    <td><%= student[index].specialty_des %></td>
-                    <td><%= student[index].group_des %></td>
-                    <td><%= student[index].class %></td>
-                    <td><%= student[index].stuNum %></td>
-                    <td><%= student[index].GPA %></td>
-                    <td><%= student[index].WAS %></td>
-                    <td><%= student[index].AMS %></td>
-                    <td><%= student[index].email %></td>
+                    <td><%= s.name %></td>
+                    <td><%= s.gender %></td>
+                    <td><%= s.specialty_des %></td>
+                    <td><%= s.group_des %></td>
+                    <td><%= s.class %></td>
+                    <td><%= s.stuNum %></td>
+                    <td><%= s.GPA %></td>
+                    <td><%= s.WAS %></td>
+                    <td><%= s.AMS %></td>
+                    <td><%= s.postgraduate %></td>
+                    <td><%= s.email %></td>
                 </tr>
                 <% } %>
             </tbody>

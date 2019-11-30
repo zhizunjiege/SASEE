@@ -6,7 +6,7 @@
         function _loadFrame({ $target, done, fail = SASEE.requestFail } = {}) {
             let href = $target.attr('href'),
                 type = $target[0].dataset.type;
-            if (!$(href).length) {
+            if (href && !$(href).length) {
                 $.get(SASEE.URL_VIEWS + '/' + type).fail(fail).done((html) => {
                     $('<div>', {
                         "id": href.substring(1),
@@ -25,7 +25,7 @@
 
         SASEE.initNewsFrame();
 
-        $('#_toggle_user_info,#navigator a[href="#news"],#navigator ul>a').each((index, element) => {
+        $('#_toggle_user_info,#navigator a[href="#news"],div[data-target="#news"],#navigator ul>a[data-type]').each((index, element) => {
             var $element = $(element);
             $element.click((e) => {
                 _loadFrame({
