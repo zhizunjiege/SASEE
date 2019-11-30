@@ -64,10 +64,9 @@ admin.get('/main', (req, res, next) => {
 admin.use('/views', views.common);
 
 admin.post('/submitNotice', (req, res) => {
-    let { top, title, category, content } = req.body,
-        sql_insert = 'INSERT INTO news (top,title,date,category) VALUES (?,?,CURDATE(),?)';
-    category = Array.isArray(category) ? category.join('/') : category;
-    mysql.find(sql_insert, [top == 'on' ? 1 : 0, title, category]).then(info => {
+    let { top, title, group, content } = req.body,
+        sql_insert = 'INSERT INTO news (top,title,date,`group`) VALUES (?,?,CURDATE(),?)';
+    mysql.find(sql_insert, [top == 'on' ? 1 : 0, title, JSON.stringify(group)]).then(info => {
         file.writeFile(NEWS + '/' + info.insertId + '.ejs', content, err => {
             if (err) throw err;
             res.send('通知发布成功！');

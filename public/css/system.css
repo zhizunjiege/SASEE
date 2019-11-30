@@ -49,3 +49,8 @@ pre {
     min-width: 100%;
     text-align: center;
 }
+
+.required::before {
+    content: "*";
+    color: red;
+}

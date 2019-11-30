@@ -41,22 +41,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-5">
+                            <div class="col-3">
                                 <div class="form-group">
                                     <input type="text" name="title" class="form-control" placeholder="请输入通知标题"
                                         maxlength="255" required>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-8">
                                 <div class="form-group form-row justify-content-around">
-                                    <% const categoryObj={
-                                        "bysj":'毕业设计',
-                                        "scsx":'生产实习',
-                                        "zhsy":'课程设计与综合实验'
+                                    <% const groupObj={
+                                        1: '自动控制与模式识别',
+                                        2: '自主导航与精确制导',
+                                        3: '检测与自动化工程',
+                                        4: '飞行器控制与仿真',
+                                        5: '机电控制与液压'
                                     }; 
-                                    for (const [key,value] of Object.entries(categoryObj)) { %>
+                                    for (const [key,value] of Object.entries(groupObj)) { %>
                                     <div class="custom-control custom-checkbox custom-control-inline">
-                                        <input type="checkbox" name="category" class="custom-control-input"
+                                        <input type="checkbox" name="group" class="custom-control-input"
                                             id="customCheck_<%= key %>" value="<%= value %>" checked>
                                         <label class="custom-control-label"
                                             for="customCheck_<%= key %>"><%= value %></label>
@@ -156,29 +158,36 @@
     </div>
 
     <div id="menu_modal" class="modal fade show" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body text-center">
+                    <h3>功能菜单</h3>
                     <div class="container-fluid">
-                        <div class="row justify-content-around">
-                            <button class="btn btn-primary w-25" data-toggle="collapse"
-                                data-target="#submit_notice">发布通知</button>
-                            <button class="btn btn-primary w-25" data-toggle="collapse"
-                                data-target="#news">查看通知</button>
+                        <div class="row justify-content-center">
+                            <div class="col">
+                                <button class="btn btn-primary btn-lg mb-3 w-100" data-toggle="collapse"
+                                    data-target="#submit_notice">发布通知</button>
+                                <button class="btn btn-primary btn-lg mb-3 w-100" data-toggle="collapse"
+                                    data-target="#news">查看通知</button>
+                                <a class="btn btn-primary btn-lg mb-3 w-100" href="./logout">退出系统</a>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-primary btn-lg mb-3 w-100" data-toggle="collapse"
+                                    data-target="#update_state">更新状态</button>
+                                <button class="btn btn-primary btn-lg mb-3 w-100" data-toggle="collapse"
+                                    data-target="#send_email">发送邮件</button>
+                            </div>
                         </div>
-                        <div class="row justify-content-around">
-                            <button class="btn btn-primary w-25" data-toggle="collapse"
-                                data-target="#update_state">更新状态</button>
-                            <button class="btn btn-primary w-25" data-toggle="collapse"
-                                data-target="#send_email">发送邮件</button>
-                            <a class="btn btn-primary w-25" href="./logout">退出系统</a>
-                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around">
+                        <p class="mb-0">系统时间：<span id="_serverTime"></span></p>
+                        <p class="mb-0">距&ensp;<strong id="_nowState"></strong>&ensp;结束还有&ensp;<strong
+                                id="_restTime"></strong></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <%- include(PATH.VIEWS_COMMON+'/alert') %>
 
     <script src="/frames/others/jquery-3.4.0.js"></script>
@@ -204,7 +213,7 @@
                 },
                 ifNotValid: () => {
                     SASEE.alert({
-                        msg: '通知分类不能为空，请选择至少一个分类！'
+                        msg: '通知分组不能为空，请选择至少一个分组！'
                     })
                     return;
                 },
@@ -289,6 +298,12 @@
                 $('#menu_modal').modal('hide');
             });
             SASEE.initNewsFrame();
+
+            let callback = () => {
+                SASEE.updateTime();
+                setTimeout(callback, 10 * 60 * 1000);
+            };
+            callback();
         })(window.jQuery, window.SASEE);
     </script>
 </body>

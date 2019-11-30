@@ -33,7 +33,7 @@ app.use(session({
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
-        maxAge: app.get('env') == 'development' ? 15 * 60 * 1000 : 20 * 60 * 1000,//设置cookie的过期时间
+        maxAge: app.get('env') == 'development' ? 30 * 60 * 1000 : 20 * 60 * 1000,//设置cookie的过期时间
     }
 }));
 

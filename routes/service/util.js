@@ -34,7 +34,7 @@ function catchError(res, errCodeMap) {
         if (err instanceof Error) {
             console.log(err);
         } else if (isObject(errCodeMap)) {
-            for (const [errCode, errMsg] of errCodeMap) {
+            for (const [errCode, errMsg] of Object.entries(errCodeMap)) {
                 if (err == errCode) {
                     msg = errMsg;
                     break;

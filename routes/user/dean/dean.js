@@ -16,8 +16,8 @@ dean.set('views', VIEWS_DEAN);
 dean.use(general.auth({ url: '/', identity: 'dean' }));
 dean.get('/', login.render);
 
-dean.get('/license/agree',general.agreeLicense);
-dean.get('/license/disagree',general.disagreeLicense);
+dean.get('/license/agree', general.agreeLicense);
+dean.get('/license/disagree', general.disagreeLicense);
 
 dean.get('/logout', general.logout());
 dean.post('/password', password.modify);
@@ -31,18 +31,27 @@ deanViews.get('/userInfo', (req, res, next) => {
     };
     next();
 }, views.render);
-deanViews.get('/subject', general.permiss(['review', 'release']), (req, res, next) => {
+deanViews.get('/statistics', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=0 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=0 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="未审核" AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
         param: [req.session.group, req.session.group],
         file: 'subject',
         dir: VIEWS_STUDENT
     };
     next();
 }, views.render);
-deanViews.get('/subjectList', general.permiss(['review', 'release']), (req, res, next) => {
+deanViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=0 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="未审核" AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+        param: [req.session.group, req.session.group],
+        file: 'subject',
+        dir: VIEWS_STUDENT
+    };
+    next();
+}, views.render);
+deanViews.get('/subjectList', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
+    req.renderData = {
+        sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
         param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
         file: 'subjectList',
         dir: VIEWS_STUDENT

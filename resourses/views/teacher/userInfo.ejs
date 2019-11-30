@@ -12,7 +12,7 @@
                 </tr>
                 <tr>
                     <th>方向</th>
-                    <td colspan="2"><%= data[0].department_des %></td>
+                    <td colspan="2"><%= data[0].group %></td>
                     <th>职称</th>
                     <td colspan="2"><%= data[0].proTitle %></td>
                 </tr>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="form-group form-row">
                                 <label for="resume" class="col-4 col-form-label">个人简介：</label>
-                                <textarea name="resume" id="resume" class="col-8 form-control" rows="5"
+                                <textarea name="resume" id="resume" class="col-8 form-control" rows="8"
                                     placeholder="请填写个人简介" maxlength="1023" required><%= data[0].resume||'' %></textarea>
                             </div>
                             <div class="form-group form-row justify-content-around">

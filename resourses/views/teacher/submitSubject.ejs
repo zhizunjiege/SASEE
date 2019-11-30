@@ -16,20 +16,19 @@
     },
     materials:'请上传zip，rar或7z文件，不超过5M'
     }; %>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-6 mx-auto mt-3 text-center">
+        <div class="col-12 col-md-10 col-xl-8 mx-auto mt-3 text-center">
             <form action="" method="POST" id="subject_form">
                 <input type="hidden" name="id" id="subject_id" value="<%= _data.id %>">
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_title">名称</label>
-                    <input class="form-control col-9" type="text" name="title" id="subject_title" placeholder="课题名称"
+                    <label class="col-4 col-form-label required" for="subject_title">名称</label>
+                    <input class="form-control col-8" type="text" name="title" id="subject_title" placeholder="课题名称"
                         value="<%= _data.title %>" maxlength="255" required>
                 </div>
-
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_type">题目类型</label>
-                    <select class="custom-select form-control col-9" name="type" id="subject_type"
+                    <label class="col-4 col-form-label required" for="subject_type">题目类型</label>
+                    <select class="custom-select form-control col-8" name="type" id="subject_type"
                         value="<%= _data.type %>" required>
                         <% typeArray=['科学研究','工程设计','实验','其他'];
                         for( let index = 0; index < 4; index++ ) { %>
@@ -39,8 +38,8 @@
                     </select>
                 </div>
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_source">题目来源</label>
-                    <select class="custom-select form-control col-9" name="source" id="subject_source"
+                    <label class="col-4 col-form-label required" for="subject_source">题目来源</label>
+                    <select class="custom-select form-control col-8" name="source" id="subject_source"
                         value="<%= _data.source %>" required>
                         <% sourceArray=['科学研究','工程实际','实验室建设','假拟','其他'];
                         for( let index = 0; index < 5; index++ ) { %>
@@ -51,19 +50,19 @@
                 </div>
 
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_introduction">简介</label>
-                    <textarea name="introduction" id="subject_introduction" class="form-control col-9" rows="8"
+                    <label class="col-4 col-form-label required required" for="subject_introduction">简介</label>
+                    <textarea name="introduction" id="subject_introduction" class="form-control col-8" rows="8"
                         placeholder="请填写题目简介···" maxlength="1023" required><%= _data.introduction %></textarea>
                 </div>
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_requirement">要求</label>
-                    <textarea name="requirement" id="subject_requirement" class="form-control col-9" rows="8"
+                    <label class="col-4 col-form-label required required" for="subject_requirement">要求</label>
+                    <textarea name="requirement" id="subject_requirement" class="form-control col-8" rows="8"
                         placeholder="请填写对学生的要求···" maxlength="1023" required><%= _data.requirement %></textarea>
                 </div>
 
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_difficulty">题目难度</label>
-                    <select class="custom-select form-control col-9" name="difficulty" id="subject_difficulty"
+                    <label class="col-4 col-form-label required required" for="subject_difficulty">题目难度</label>
+                    <select class="custom-select form-control col-8" name="difficulty" id="subject_difficulty"
                         value="<%= _data.difficulty %>" required>
                         <% difficultyArray=['很难','比较难','一般','比较容易','很容易'];
                         for( let index = 0; index < 5; index++ ) { %>
@@ -75,8 +74,8 @@
                 </div>
 
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_weight">题目份量</label>
-                    <select class="custom-select form-control col-9" name="weight" id="subject_weight"
+                    <label class="col-4 col-form-label required" for="subject_weight">题目份量</label>
+                    <select class="custom-select form-control col-8" name="weight" id="subject_weight"
                         value="<%= _data.weight %>" required>
                         <% weightArray=['很重','比较重','一般','比较轻','很轻'];
                         for( let index = 0; index < 5; index++ ) { %>
@@ -94,8 +93,8 @@
                 for( let i = 0; i < abilityArray.length; i++ ) { 
                     let key=abilityArray[i].key,value=abilityArray[i].value; %>
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_<%= key %>"><%= value %></label>
-                    <select class="custom-select form-control col-9" name="<%= key %>" id="subject_<%= key %>"
+                    <label class="col-4 col-form-label required" for="subject_<%= key %>"><%= value %></label>
+                    <select class="custom-select form-control col-8" name="<%= key %>" id="subject_<%= key %>"
                         value="<%= _data.ability[key] %>" required>
                         <% for( let index = 0; index < 5; index++ ) { %>
                         <option value="<%= levelArray[index] %>"
@@ -106,16 +105,16 @@
                 </div>
                 <% } %>
                 <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="subject_file">附件</label>
-                    <div class="custom-file mb-3 col-9">
+                    <label class="col-4 col-form-label" for="subject_file">附件</label>
+                    <div class="custom-file mb-3 col-8">
                         <input type="file" name="file" id="subject_file" class="custom-file-input d-none">
                         <label for="subject_file" class="custom-file-label text-left"><small
                                 class="form-text text-muted"><%= _data.materials||'无' %></small></label>
                     </div>
                 </div>
                 <div class="form-group form-row mt-3">
-                    <label class="col-3 col-form-label" for="subject_password">密码</label>
-                    <input type="password" name="password" id="subject_password" class="form-control col-9"
+                    <label class="col-4 col-form-label required" for="subject_password">密码</label>
+                    <input type="password" name="password" id="subject_password" class="form-control col-8"
                         pattern="\w{8,16}" placeholder="请输入密码验证身份" required>
                 </div>
                 <div class="form-row justify-content-around align-items-center mb-3">

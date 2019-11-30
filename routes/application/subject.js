@@ -1,70 +1,73 @@
 const [mysql, file, util] = superApp.requireUserModules(['mysql', 'file', 'util']);
-const errorMap = superApp.errorMap;
+const errorMap = superApp.errorMap, { FILES } = superApp.resourses;
 
 function query(req, res) {
-    res.send(''+superApp.maxProjectsMap[req.session.proTitle]);
+    res.send('' + superApp.maxProjectsMap[req.session.proTitle]);
 }
 
 function submit(req, res) {
     let { title, introduction, type, source, requirement, difficulty, weight, password } = req.body,
         { allRound, experiment, graphic, data, analysis } = req.body,
         { group, account } = req.session,
-        materials = req.file?req.file.filename:'',
-        paramArray = [title, group, 1, introduction, materials, '未审核', type, source, requirement, difficulty, weight, JSON.stringify({ allRound, experiment, graphic, data, analysis })];
-    let sql_query = 'SELECT id,password,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=?',
-        sql_insert = 'INSERT INTO bysj (title,`group`,capacity,introduction,materials,submitTime,lastModifiedTime,state,studentFiles,teacherFiles,notice,student_selected,student_final,type, source, requirement, difficulty, weight, ability,teacher) VALUES (?,?,?,?,?,CURDATE(),CURDATE(),?,JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),?,?,?,?,?,?,?)',
-        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
-        teacher_id;
+        materials = req.file ? req.file.filename : '';
+    let sql_query = 'SELECT id,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=? AND password=?',
+        sql_insert = 'INSERT INTO bysj (submitTime,lastModifiedTime,studentFiles,teacherFiles,notice,student_selected,student_final,state,title,`group`,introduction,materials,type, source, requirement, difficulty, weight, ability,teacher) VALUES (CURDATE(),CURDATE(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),NULL,"未审核",?,?,?,?,?,?,?,?,?,?,?)',
+        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT *,JSON_LENGTH(student_selected) chosen FROM bysj WHERE id=?',
+        teacher;
 
     mysql.transaction().then(conn => {
-        return conn.find(sql_query, account);
+        let param = [account, password];
+        return conn.find(sql_query, param);
     }).then(({ results, conn }) => {
-        if (password != results[0].password) {
+        if (!results.length) {
             return Promise.reject(10);
         }
         if (superApp.maxProjectsMap[results[0].proTitle] <= results[0].bysjNum) {
             return Promise.reject(11);
         }
-        teacher_id = results[0].id;
-        paramArray.push(teacher_id);
-        return conn.find(sql_insert, paramArray);
+        teacher = results[0].id;
+
+        let param = [title, group, introduction, materials, type, source, requirement, difficulty, weight, JSON.stringify({ allRound, experiment, graphic, data, analysis }), teacher];
+        return conn.find(sql_insert, param);
     }).then(({ results, conn }) => {
-        return conn.find(sql_update, [results.insertId, teacher_id, results.insertId]);
+        let param = [results.insertId, teacher, results.insertId];
+        return conn.find(sql_update, param);
     }).then(({ results, conn }) => {
-        return conn.commitPromise(results);
-    }).then(results => {
+        return conn.commitPromise(results[1][0]);
+    }).then(result => {
         if (req.file) {
             let from = req.file.path,
-                to = superApp.resourses.FILES + '/' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/' + req.file.filename;
+                to = FILES + '/' + result.group + '/subject' + result.id + '/teacher/' + req.file.filename;
             file.move(from, to, (err) => {
                 if (err) throw err;
-                res.render('subject-card', results[1][0]);
+                res.render('subject-card', result);
             });
-        }else{
-            res.render('subject-card', results[1][0]);
+        } else {
+            res.render('subject-card', result);
         }
     }).catch(util.catchError(res, errorMap));
 };
 
 function modify(req, res) {
-    let { id, title, introduction, type, source, requirement, difficulty, weight, ability, password } = req.body,
-        account = req.session.account,
-        paramObj = { title, introduction, type, source, requirement, difficulty, weight, ability };
+    let { id, title, introduction, type, source, requirement, difficulty, weight, password } = req.body,
+        { allRound, experiment, graphic, data, analysis } = req.body,
+        account = req.session.account;
     let sql_query = 'SELECT 1 FROM teacher WHERE account=? AND password=?',
-        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state=? WHERE id=?;SELECT * FROM bysj WHERE id=?';
+        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state="未审核" WHERE id=?;SELECT *,JSON_LENGTH(student_selected) chosen FROM bysj WHERE id=?';
     mysql.find(sql_query, [account, password]).then(results => {
-        if (results.length != 0) {
+        let param = { title, introduction, type, source, requirement, difficulty, weight, ability: JSON.stringify({ allRound, experiment, graphic, data, analysis }) };
+        if (results.length) {
             if (req.file) {
-                paramObj.materials = req.file.filename;
+                param.materials = req.file.filename;
             }
-            return mysql.find(sql_update, [paramObj, '未审核', id, id]);
+            return mysql.find(sql_update, [param, id, id]);
         } else {
             return Promise.reject(10);
         }
     }).then(results => {
         if (req.file) {
             let from = req.file.path,
-                toDir = req.APP_CONSTANT.PATH_FILES + '/' + group + '/subject' + id + '/teacher/',
+                toDir = FILES + '/' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/',
                 to = toDir + req.file.originalname;
             file.deleteAll(toDir);
             file.move(from, to, (err) => {

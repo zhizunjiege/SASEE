@@ -24,18 +24,18 @@ function authenticate(req, res) {
             data[0].specialty && (req.session.specialty = data[0].specialty);
             data[0].proTitle && (req.session.proTitle = data[0].proTitle);
             res.location('/' + identity + '/').send('登陆成功！');
-        }).catch(util.catchError(res,superApp.errorMap));
+        }).catch(util.catchError(res, superApp.errorMap));
 }
 
 function render(req, res) {
-    let { identity, account } = req.session,
-        sql_query = "SELECT name,gender,ifReadLicense FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0";
-    mysql.find(sql_query, [identity, account])
+    let { identity, group, account } = req.session,
+        sql_query = 'SELECT name,gender,ifReadLicense FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news WHERE JSON_CONTAINS(`group`,JSON_QUOTE(?))) total,n.* FROM news n WHERE JSON_CONTAINS(`group`,JSON_QUOTE(?)) ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0';
+    mysql.find(sql_query, [identity, account, group, group,])
         .then(data => {
             let [[user], news] = data;
             user.profile = (user.gender == '男' ? 'man' : 'woman') + '_' + identity + '.png';
             user.identity = identity;
-            res.render(VIEWS_COMMON + '/user', { PATH: superApp.resourses, user, news});
+            res.render(VIEWS_COMMON + '/user', { PATH: superApp.resourses, user, news });
         }).catch(util.catchError(res));
 }
 

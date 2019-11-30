@@ -13,7 +13,7 @@
             <tbody>
                 <tr>
                     <th colspan="2">方向</th>
-                    <td colspan="2"><%= subject.group_des %></td>
+                    <td colspan="2"><%= subject.group %></td>
                 </tr>
                 <tr>
                     <th>容量</th>
@@ -38,7 +38,7 @@
                     <th>性别</th>
                     <td><%= teacher.gender %></td>
                     <th>方向</th>
-                    <td><%= teacher.department_des %></td>
+                    <td><%= teacher.group %></td>
                     <th>职称</th>
                     <td><%= teacher.proTitle %></td>
                 </tr>
@@ -61,15 +61,15 @@
 </div>
 
 <div class="mb-3">
-    <h5>相关资料</h5>
+    <h5>附件</h5>
     <% if (subject.materials) { %>
     <ul class="list-group list-group-flush">
         <a href="./file/download<%= '?id='+subject.id+'&filename='+subject.materials %>" class="list-group-item"
             download><small><%= subject.materials %></small></a>
     </ul>
     <% } else { %>
-    <div class="d-flex justify-content-center" style="height: 250px">
-        <h1 class="text-muted align-self-center">暂时没有资料</h1>
+    <div class="d-flex justify-content-center" style="height: 100px">
+        <h3 class="text-muted align-self-center">无附件</h3>
     </div>
     <% } %>
 </div>

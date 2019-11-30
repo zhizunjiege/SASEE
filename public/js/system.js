@@ -183,18 +183,22 @@
         $serverTime: $('#_serverTime'),
         $nowState: $('#_nowState'),
         $restTime: $('#_restTime'),
-        time: null,
         counterId: null,
         callback(data) {
             let obj = SASEE.serverTimeObj, timeDiff = SASEE.timeDifference(data.now, data.end);
-            if (timeDiff.time <= 0) {
-                window.location.href = './';
-                return;
+
+            if (isNaN(timeDiff.time)) {
+                obj.$serverTime.text(data.now);
+                obj.$restTime.parent().remove();
+            } else {
+                if (timeDiff.time <= 0) {
+                    window.location.href = './';
+                    return;
+                }
+                obj.$serverTime.text(data.now);
+                obj.$nowState.text(data.description);
+                obj.$restTime.text(timeDiff.days ? `${timeDiff.days}天${timeDiff.hours}小时` : `${timeDiff.hours}小时${timeDiff.minutes}分钟`);
             }
-            obj.time = data.now;
-            obj.$serverTime.text(data.now);
-            obj.$nowState.text(data.description);
-            obj.$restTime.text(timeDiff.days ? `${timeDiff.days}天${timeDiff.hours}小时` : `${timeDiff.hours}小时${timeDiff.minutes}分钟`);
             data.now = new Date(new Date(data.now).valueOf() + 1000).toLocaleString({
                 hc: 'h23'
             }, {
