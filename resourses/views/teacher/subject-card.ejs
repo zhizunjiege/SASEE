@@ -5,13 +5,16 @@ colorObj={'未通过':'warning','未审核':'primary','通过':'succcess'}; %>
             class="d-inline-block w-75 ellipsis"><%= title %></span><span
             class="badge badge-pill badge-<%= colorObj[state] %>"><%= state %></span></header>
     <div class="card-body row">
-        <p class="card-text">
-            <%= introduction %></p>
+        <p class="card-text"><%= introduction %></p>
         <table class="table mb-0 text-center">
             <tbody>
                 <tr>
-                    <th>已选</th>
-                    <td><%= chosen||0 %></td>
+                    <th>题目难度</th>
+                    <td><%= difficulty %></td>
+                </tr>
+                <tr>
+                    <th>题目份量</th>
+                    <td><%= weight %></td>
                 </tr>
             </tbody>
         </table>

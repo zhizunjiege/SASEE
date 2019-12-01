@@ -25,33 +25,34 @@ dean.post('/password', password.modify);
 const deanViews = express.Router();
 deanViews.get('/userInfo', (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT * FROM dean WHERE account =?',
-        param: req.session.account,
+        sql_query: 'SELECT * FROM dean WHERE id =?',
+        param: req.session.userId,
         file: 'userInfo'
     };
     next();
 }, views.render);
 deanViews.get('/statistics', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
+    let { group, userId } = req.session;
     req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="未审核" AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+        sql_query: 'SELECT name,gender,teaNum,proTitle,JSON_LENGTH(bysj) submitted,email FROM teacher WHERE `group`=? ORDER BY teaNum;SELECT COUNT(*) totalStu FROM student WHERE `group`=?;SELECT goal FROM dean WHERE id=?',
+        param: [group, group, userId],
+        file: 'statistics',
+        extraData: superApp.maxProjectsMap
+    };
+    next();
+}, views.render);
+deanViews.get('/subject', general.permiss(['review', 'release']), (req, res, next) => {
+    req.renderData = {
+        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="未审核" AND `group`=?) total,b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
         param: [req.session.group, req.session.group],
         file: 'subject',
         dir: VIEWS_STUDENT
     };
     next();
 }, views.render);
-deanViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
+deanViews.get('/subjectList', general.permiss(['review', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="未审核" AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
-        param: [req.session.group, req.session.group],
-        file: 'subject',
-        dir: VIEWS_STUDENT
-    };
-    next();
-}, views.render);
-deanViews.get('/subjectList', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
-    req.renderData = {
-        sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+        sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
         param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
         file: 'subjectList',
         dir: VIEWS_STUDENT

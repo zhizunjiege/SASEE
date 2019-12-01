@@ -1,0 +1,29 @@
+<table class="table table-hover text-center col-10 mx-auto table-fixed">
+    <% let teachers=data[0],totalStu=data[1][0].totalStu,goal=data[2][0].goal,map=extraData,count=0; %>
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">教师姓名</th>
+            <th scope="col">教师性别</th>
+            <th scope="col">教师工号</th>
+            <th scope="col">教师职称</th>
+            <th scope="col">已发布/课题上限</th>
+            <th scope="col">联系邮箱</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% for( let i = 0; i < teachers.length; i++ ) {
+            count+=teachers[i].submitted; %>
+        <tr>
+            <td><%= teachers[i].name %></td>
+            <td><%= teachers[i].gender %></td>
+            <td><%= teachers[i].teaNum %></td>
+            <td><%= teachers[i].proTitle %></td>
+            <td><%= teachers[i].submitted+'/'+map[teachers[i].proTitle] %></td>
+            <td><%= teachers[i].email %></td>
+        </tr>
+        <% } %>
+    </tbody>
+    <caption class="text-success">
+        本方向共&ensp;<strong><%= totalStu %></strong>&ensp;名学生，&ensp;<strong><%= teachers.length %></strong>&ensp;位教师，已有课题&ensp;<strong><%= count %></strong>&ensp;个，目标&ensp;<strong><%= goal||'暂无' %></strong>&ensp;个。
+    </caption>
+</table>

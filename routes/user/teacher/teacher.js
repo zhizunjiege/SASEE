@@ -35,7 +35,7 @@ teacherViews.get('/userInfo', (req, res, next) => {
 }, views.render);
 teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release', 'choose', 'draw', 'publicity', 'final', 'general']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT b.id,title,JSON_LENGTH(student_selected) chosen,introduction,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
+        sql_query: 'SELECT b.id,title,introduction,difficulty,weight,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
         param: req.session.account,
         file: 'subject',
         extraData: {

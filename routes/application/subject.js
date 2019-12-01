@@ -12,7 +12,7 @@ function submit(req, res) {
         materials = req.file ? req.file.filename : '';
     let sql_query = 'SELECT id,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=? AND password=?',
         sql_insert = 'INSERT INTO bysj (submitTime,lastModifiedTime,studentFiles,teacherFiles,notice,student_selected,student_final,state,title,`group`,introduction,materials,type, source, requirement, difficulty, weight, ability,teacher) VALUES (CURDATE(),CURDATE(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),NULL,"未审核",?,?,?,?,?,?,?,?,?,?,?)',
-        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT *,JSON_LENGTH(student_selected) chosen FROM bysj WHERE id=?',
+        sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher;
 
     mysql.transaction().then(conn => {
@@ -53,7 +53,7 @@ function modify(req, res) {
         { allRound, experiment, graphic, data, analysis } = req.body,
         account = req.session.account;
     let sql_query = 'SELECT 1 FROM teacher WHERE account=? AND password=?',
-        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state="未审核" WHERE id=?;SELECT *,JSON_LENGTH(student_selected) chosen FROM bysj WHERE id=?';
+        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state="未审核" WHERE id=?;SELECT * FROM bysj WHERE id=?';
     mysql.find(sql_query, [account, password]).then(results => {
         let param = { title, introduction, type, source, requirement, difficulty, weight, ability: JSON.stringify({ allRound, experiment, graphic, data, analysis }) };
         if (results.length) {
