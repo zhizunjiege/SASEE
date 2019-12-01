@@ -92,7 +92,7 @@ admin.post('/initState', (req, res) => {
     let states = req.fsm.info();
     for (const iterator of states) {
         if (req.body[iterator.name]) {
-            iterator.start = req.body[iterator.name].replace('T', ' ');
+            iterator.start = new Date(req.body[iterator.name]).toLocaleISOString();
         }
     }
     states.shift();
@@ -110,7 +110,7 @@ admin.post('/updateState', (req, res) => {
         return;
     }
     let { name, start } = req.body;
-    start = start.replace('T', ' ');
+    start = new Date(start).Locale2ISO();
     req.fsm.update(name, start).then(() => {
         res.send('时间设置更新成功！');
     }).catch(err => {

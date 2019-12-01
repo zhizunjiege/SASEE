@@ -42,7 +42,7 @@
 
         let callback=()=>{
             SASEE.updateTime();
-            setTimeout(callback,10*60*1000);
+            setTimeout(callback,5*60*1000);
         };
         callback();
 

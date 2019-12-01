@@ -31,7 +31,7 @@ function FSM({ cercular = false, recoverable = true, relatedFile = 'fsm.json', s
             if (this.initialized) {
                 this.registerSchedule();
             } else {
-                this.states[0].start = new Date().toLocaleString();
+                this.states[0].start = new Date().toLocaleISOString();
             }
             return this.store();
         }).bind(this));
@@ -59,6 +59,7 @@ proto.initialize = function (states) {
     this.lastWriteTime = new Date();
     this.registerSchedule();
     this.initialized = true;
+
     if (this.recoverable) {
         return this.store();
     } else {
@@ -99,7 +100,7 @@ proto.next = function () {
         if (this._curState >= this.states.length - 1) {
             this.completed = true;
         } else {
-            let now = new Date().toLocaleString();
+            let now = new Date().toLocaleISOString();
             this.cancelSchedule();
             this.states[this._curState].end = now;
             this._curState++;
@@ -142,7 +143,7 @@ proto.store = function () {
         initialized: this.initialized,
         completed: this.completed,
         _curState: this._curState,
-        lastWriteTime: this.lastWriteTime.toLocaleString(),
+        lastWriteTime: this.lastWriteTime.toLocaleISOString(),
         states: this.states
     })).catch(err => {
         console.log(err);
@@ -164,7 +165,7 @@ proto.now = function () {
 };
 proto.info = function () {
     return this.states.map(cur => {
-        return { name, description, start, end } = cur;
+        return { name, description, start, end }= cur;
     });
 }
 
