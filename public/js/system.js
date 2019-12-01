@@ -183,6 +183,8 @@
         $serverTime: $('#_serverTime'),
         $nowState: $('#_nowState'),
         $restTime: $('#_restTime'),
+        refreshCount: 0,
+        updaterId: null,
         counterId: null,
         callback(data) {
             let obj = SASEE.serverTimeObj, timeDiff = SASEE.timeDifference(data.now, data.end);
@@ -205,17 +207,27 @@
                 hour12: false
             });
             obj.counterId = setTimeout(obj.callback, 1000, data);
-        }
+        },
     };
     SASEE.updateTime = () => {
+        let timeObj = SASEE.serverTimeObj;
+        if (timeObj.updaterId) {
+            clearTimeout(timeObj.updaterId);
+        }
         $.getJSON('/serverTime').done(data => {
-            let counterId = SASEE.serverTimeObj.counterId;
-            if (counterId) {
-                clearTimeout(counterId);
+            if (timeObj.counterId) {
+                clearTimeout(timeObj.counterId);
             }
-            counterId = SASEE.serverTimeObj.callback(data);
+            timeObj.refreshCount = 0;
+            timeObj.callback(data);
+            timeObj.updaterId = setTimeout(SASEE.updateTime, 5 * 60 * 1000);
         }).fail(() => {
-            console.log('服务端失去响应，计时可能不精确，请刷新页面重试！');
+            if (timeObj.refreshCount == 3) {
+                SASEE.alert({ msg: '与服务端失去连接，请刷新重试！' });
+                return;
+            }
+            timeObj.refreshCount++;
+            setTimeout(SASEE.updateTime, 2000);
         });
     };
 

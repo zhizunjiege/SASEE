@@ -40,11 +40,7 @@
             });
         });
 
-        let callback=()=>{
-            SASEE.updateTime();
-            setTimeout(callback,5*60*1000);
-        };
-        callback();
+        SASEE.updateTime();
 
         let $license = $('#license_modal');
         if ($license.length > 0) {

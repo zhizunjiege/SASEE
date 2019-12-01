@@ -132,7 +132,7 @@
                             <label for="_<%= key %>" class="col-3 text-center col-form-label"><%= value %></label>
                             <div class="input-group col-9 px-0">
                                 <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
-                                    value="<%= start?start.replace(' ','T'):'' %>"
+                                    value="<%= start?start.substr(0,16):'' %>"
                                     <%= index<=flag?'disabled':'required' %>>
                                 <div class="input-group-append">
                                     <% if (index<=flag) { %>
@@ -283,6 +283,7 @@
                     $input.val(SASEE.getTime({ tostring: true }));
                     $input.attr('disabled', true);
                     SASEE.requestDone(msg);
+                    SASEE.updateTime();
                 }).fail(SASEE.requestFail);
             });
             $(window).keydown(e => {
@@ -299,11 +300,7 @@
             });
             SASEE.initNewsFrame();
 
-            let callback = () => {
-                SASEE.updateTime();
-                setTimeout(callback, 5 * 60 * 1000);
-            };
-            callback();
+            SASEE.updateTime();
         })(window.jQuery, window.SASEE);
     </script>
 </body>
