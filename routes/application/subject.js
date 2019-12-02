@@ -140,20 +140,19 @@ function choose(req, res) {
     }).catch(util.catchError(res, errorMap));
 }
 
-function _changeState(req, res, next, state) {
-    let { id } = req.body,
-        sql_update = 'UPDATE bysj SET state=? WHERE id=?;SELECT title FROM bysj WHERE id=?';
-    mysql.find(sql_update, [state, id, id]).then((results) => {
-        req.body.content = '<h3>课题“<strong>' + results[1][0].title + '</strong>”的审核结果：</h3>' + state;
-        next();
+function check(req, res) {
+    const ifPassObj = {
+        yes: '通过',
+        no: '未通过'
+    };
+    let { id } = req.body, sql_update = 'UPDATE bysj SET state=?,`check`=? WHERE id=?';
+    if (!req.body.extra) {
+        delete req.body.extra;
+    }
+    delete req.body.id;
+    mysql.find(sql_update, [ifPassObj[req.body.ifPass], JSON.stringify(req.body), id]).then(() => {
+        res.send('审查意见提交成功！');
     }).catch(util.catchError(res));
 }
 
-function pass(req, res, next) {
-    _changeState(req, res, next, '通过');
-}
-function fail(req, res, next) {
-    _changeState(req, res, next, '不通过');
-}
-
-module.exports = { query, submit, modify, notice, mark, choose, pass, fail };
+module.exports = { query, submit, modify, notice, mark, choose, check };

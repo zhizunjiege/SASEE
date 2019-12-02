@@ -39,10 +39,19 @@ pre {
     table-layout: fixed;
 }
 
-.table-fixed td, .ellipsis {
+.table-fixed th,.table-fixed td, .ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.multi-ellipsis {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
 }
 
 .dropdown-menu {

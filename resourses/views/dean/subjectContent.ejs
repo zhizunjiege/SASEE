@@ -9,68 +9,51 @@
             <div class="modal-body">
                 <form action="" id="subject_check_form" method="POST">
                     <input name="id" type="hidden" value="<%= data[0][0].id %>">
-                    <div class="form-group">
-                        <label>1、本题目的要求、任务、内容是否明确具体</label>
+                    <% let fieldArray=[{
+                        name:'ifClear',
+                        des:'1、本题目的要求、任务、内容是否明确具体',
+                        yes:'是&emsp;&emsp;&emsp;',
+                        no:'否&emsp;&emsp;&emsp;'
+                    },{
+                        name:'ifDifficultyProper',
+                        des:'2、工作量是否饱满，题目难度是否适中',
+                        yes:'是&emsp;&emsp;&emsp;',
+                        no:'否&emsp;&emsp;&emsp;'
+                    },{
+                        name:'ifMeetGoal',
+                        des:'3、本题目能否满足综合训练学生的基本教学要求',
+                        yes:'是&emsp;&emsp;&emsp;',
+                        no:'否&emsp;&emsp;&emsp;'
+                    },{
+                        name:'ifConditionWell',
+                        des:'4、做本题目的条件是否满足',
+                        yes:'是&emsp;&emsp;&emsp;',
+                        no:'否&emsp;&emsp;&emsp;'
+                    },{
+                        name:'ifPass',
+                        des:'5、审查结论',
+                        yes:'通过&emsp;&emsp;',
+                        no:'不通过&emsp;'
+                    }]; 
+                    for (let i = 0; i < fieldArray.length; i++) {
+                        const {name,des,yes,no} = fieldArray[i]; %>
+                    <label class="required"><%= des %></label>
+                    <div class="form-group form-row justify-content-around">
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifClear" id="check_ifClear_y" class="form-control" checked>
-                            <label class="custom-control-label" for="check_ifClear_y">是</label>
+                            <input type="radio" name="<%= name %>" id="check_<%= name %>_y" class="custom-control-input"
+                                value="yes" checked>
+                            <label class="custom-control-label" for="check_<%= name %>_y"><%- yes %></label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifClear" id="check_ifClear_n" class="form-control">
-                            <label class="custom-control-label" for="check_ifClear_n">否</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>2、工作量是否饱满，题目难度是否适中</label>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifDifficultyProper" id="check_ifDifficultyProper_y"
-                                class="form-control" checked>
-                            <label class="custom-control-label" for="check_ifDifficultyProper_y">是</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifDifficultyProper" id="check_ifDifficultyProper_n"
-                                class="form-control">
-                            <label class="custom-control-label" for="check_ifDifficultyProper_n">否</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>3、本题目能否满足综合训练学生的基本教学要求</label>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifMeetGoal" id="check_ifMeetGoal_y" class="form-control" checked>
-                            <label class="custom-control-label" for="check_ifMeetGoal_y">是</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifMeetGoal" id="check_ifMeetGoal_n" class="form-control">
-                            <label class="custom-control-label" for="check_ifMeetGoal_n">否</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>4、做本题目的条件是否满足</label>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifConditionWell" id="check_ifConditionWell_y" class="form-control"
-                                checked>
-                            <label class="custom-control-label" for="check_ifConditionWell_y">是</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifConditionWell" id="check_ifConditionWell_n"
-                                class="form-control">
-                            <label class="custom-control-label" for="check_ifConditionWell_n">否</label>
+                            <input type="radio" name="<%= name %>" id="check_<%= name %>_n" class="custom-control-input"
+                                value="no">
+                            <label class="custom-control-label" for="check_<%= name %>_n"><%- no %></label>
                         </div>
                     </div>
+                    <% } %>
+                    <label>&ensp;6、其他意见</label>
                     <div class="form-group">
-                        <label>5、审查结论</label>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifPass" id="check_ifPass_y" class="form-control" checked>
-                            <label class="custom-control-label" for="check_ifPass_y">通过</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="ifPass" id="check_ifPass_n" class="form-control">
-                            <label class="custom-control-label" for="check_ifPass_n">不通过</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>6、其他意见</label>
-                        <textarea name="extra" id="check_extra" class="form-control" rows="8" placeholder="选填"
+                        <textarea name="extra" id="check_extra" class="form-control" rows="5" placeholder="选填"
                             maxlength="1023"></textarea>
                     </div>
                     <div class="form-group form-row justify-content-around">
@@ -82,7 +65,7 @@
         </div>
     </div>
 </div>
-<div class="mt-3 d-flex justify-content-center">
+<div class="my-3 d-flex justify-content-center">
     <button id="button_check" type="button" class="btn btn-secondary w-50" data-toggle="modal"
         data-target="#subject_check_modal">填写审查意见</button>
 </div>
@@ -92,7 +75,8 @@
             selector: '#subject_check_form',
             url: './check',
             done(msg) {
-                let $container = $('#bysj_subject>.sys-list tbody');
+                let $container = $('#bysj_subject>.sys-list tbody'),
+                    $form = $('#subject_check_form');
                 if ($container.children().length == 1) {
                     $('#bysj_subject .sys-list').replaceWith(`
                     <div class="d-flex justify-content-center" style="height: 250px">
@@ -108,26 +92,5 @@
                 });
             }
         });
-
-
-        /*         function _reviewSubject({ url, title, info }) {
-                    $form.data('url', url);
-                    $form[0].title.value = title;
-                    editor.txt.html(info);
-                }
-                $('#button_check').click(() => {
-                    _reviewSubject({
-                        url: './pass',
-                        title: '课题通过。',
-                        info: '<p>默认消息：此课题经审核通过。</p>'
-                    });
-                });
-                $('#subject_fail').click(() => {
-                    _reviewSubject({
-                        url: './fail',
-                        title: '课题被打回，请修改。',
-                        info: '<p>请在此处输入打回该课题的原因···</p>'
-                    });
-                }); */
     })(window.jQuery, window.SASEE);
 </script>

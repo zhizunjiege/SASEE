@@ -60,7 +60,7 @@ function sendInfoToAdmin({ sql, title, captionArray = ['学生', '教师', '系�
 }
 
 function deleteSubject() {
-    let sql_delete = "DELETE FROM bysj WHERE state=-1";
+    let sql_delete = "DELETE FROM bysj WHERE state='未通过'";
     mysql.find(sql_delete).then(info => {
         console.log(info);
         console.log(`废弃课题已全部删除！共删除了${info.affectedRows}个课题。`);

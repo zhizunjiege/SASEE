@@ -114,26 +114,25 @@
                     <div class="col point border-top border-right dropup">
                         <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">系统相关</div>
                         <ul class="dropdown-menu">
-                            <a href="#news" class="dropdown-item" data-toggle="collapse"
-                                data-type="news"><small>通知公告</small></a>
+                            <a href="#news" class="dropdown-item" data-toggle="collapse" data-type="news">通知公告</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#manual" class="dropdown-item" data-toggle="collapse"
-                                data-type="manual"><small>用户手册</small></a>
+                            <a href="#manual" class="dropdown-item" data-toggle="collapse" data-type="manual">用户手册</a>
                         </ul>
                     </div>
                     <div class="col point border-top border-right dropup">
                         <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">毕业设计</div>
                         <ul class="dropdown-menu">
-                            <% for( const element of content ) { %>
-                            <a href="#bysj_<%= element.key %>" class="list-group-item list-group-item-action"
-                                data-toggle="collapse"
-                                data-type="<%= element.key %>"><small><%= element.value %></small></a>
-                            <% } %>
+                            <% for( const [index,element] of content.entries() ) { %>
+                            <a href="#bysj_<%= element.key %>" class="dropdown-item" data-toggle="collapse"
+                                data-type="<%= element.key %>"><%= element.value %></a>
+                            <% if(index<content.length-1) { %>
+                            <div class="dropdown-divider"></div>
+                            <% } } %>
                         </ul>
                     </div>
                     <div class="col point border-top border-right dropup">
                         <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">我的</div>
-                        <ul class="dropdown-menu text-center w-75">
+                        <ul class="dropdown-menu text-center">
                             <a href="#user_info" class="dropdown-item" data-toggle="collapse"
                                 data-type="userInfo">个人信息</a>
                             <div class="dropdown-divider"></div>

@@ -148,7 +148,7 @@
         });
     };
 
-    SASEE.getTime = ({dateObj=null,tostring=false,start=0,length=19}={}) => {
+    SASEE.getTime = ({dateObj=null,tostring=false,start=0,length=16}={}) => {
         let date=new Date(Date.now() - new Date().getTimezoneOffset() * 1000 * 60);
         if(dateObj){
             return new Date(dateObj).toISOString().substr(start,length);

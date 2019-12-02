@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer'),
 const CONSTANT = {
     SYS_TEST: '此邮件为系统测试邮件，请忽略······',
     SYS_FOOTER: `<footer style="text-align:center;position:absolute;bottom:0;">~~~此邮件由系统代发,请勿回复~~~</footer>`,
-    SYS_SUBJECT: '毕业设计选题系统通知'
+    SYS_SUBJECT: '毕业设计系统通知'
 }
 
 function _createSixNum() {

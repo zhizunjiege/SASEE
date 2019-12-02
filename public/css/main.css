@@ -96,12 +96,7 @@
     width: 375px;
 }
 
-.card-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
+.card-text{
     text-indent:2em;
     height: 120px;
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
 }

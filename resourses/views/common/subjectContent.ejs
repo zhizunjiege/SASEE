@@ -1,63 +1,90 @@
 <% let subject=data[0][0],teacher=data[1][0]; %>
-<header class="text-center text-info border-bottom border-secondary my-3">
+<header class="text-center border-bottom border-secondary my-3">
     <h3 class="mb-0"><%= subject.title %></h3>
 </header>
-<div class="row text-center mb-3">
-    <div class="col-5">
-        <table class="table table-bordered">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col" colspan="4">课题基本信息</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th colspan="2">方向</th>
-                    <td colspan="2"><%= subject.group %></td>
-                </tr>
-                <tr>
-                    <th>容量</th>
-                    <td><%= subject.capacity %>人</td>
-                    <th>已选</th>
-                    <td><%= subject.chosen %>人</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="mb-3">
+    <h5>课题信息</h5>
+    <table class="table text-center table-fixed table-bordered">
+        <tbody>
+            <tr>
+                <th>题目类型</th>
+                <td><%= subject.type %></td>
+                <th>题目来源</th>
+                <td><%= subject.source %></td>
+                <th>题目难度</th>
+                <td><%= subject.difficulty %></td>
+                <th>题目份量</th>
+                <td><%= subject.weight %></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="mb-3">
+    <h5>能力要求</h5>
+    <table class="table text-center table-fixed table-bordered">
+        <tbody>
+            <tr>
+                <th>解决问题综合能力</th>
+                <th>实验能力</th>
+                <th>绘图能力</th>
+                <th>数据处理能力</th>
+                <th>计算结果分析能力</th>
+            </tr>
+            <tr>
+                <td><%= subject.ability.allRound %></td>
+                <td><%= subject.ability.experiment %></td>
+                <td><%= subject.ability.graphic %></td>
+                <td><%= subject.ability.data %></td>
+                <td><%= subject.ability.analysis %></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row mb-3">
+    <div class="col">
+        <h5>课题简介</h5>
+        <div class="p-3 border rounded">
+            <%- subject.introduction _%>
+        </div>
+        <!-- <pre></pre> -->
     </div>
-    <div class="col-7">
-        <table class="table table-bordered">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col" colspan="8">教师简介</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>姓名</th>
-                    <td><%= teacher.name %></td>
-                    <th>性别</th>
-                    <td><%= teacher.gender %></td>
-                    <th>方向</th>
-                    <td><%= teacher.group %></td>
-                    <th>职称</th>
-                    <td><%= teacher.proTitle %></td>
-                </tr>
-                <tr>
-                    <th>研究方向</th>
-                    <td colspan="3"><%= teacher.field %></td>
-                    <th>联系邮箱</th>
-                    <td colspan="3"><%= teacher.email %></td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="col">
+        <h5>学生要求</h5>
+        <div class="p-3 border rounded">
+            <%- subject.requirement _%>
+        </div>
     </div>
 </div>
 <div class="mb-3">
-    <h5>课题简介</h5>
+    <h5>教师信息</h5>
+    <table class="table text-center table-fixed table-bordered">
+        <tbody>
+            <tr>
+                <th>姓名</th>
+                <td><%= teacher.name %></td>
+                <th>性别</th>
+                <td><%= teacher.gender %></td>
+                <th>工号</th>
+                <td><%= teacher.teaNum %></td>
+                <th>职称</th>
+                <td><%= teacher.proTitle %></td>
+            </tr>
+            <tr>
+                <th>研究方向</th>
+                <td><%= teacher.field %></td>
+                <th>办公地点</th>
+                <td><%= teacher.office %></td>
+                <th colspan="2">联系邮箱</th>
+                <td colspan="2"><%= teacher.email %></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="mb-3">
+    <h5>教师简介</h5>
     <div class="p-3 border rounded">
-        <%- subject.introduction _%>
+        <%- teacher.resume _%>
     </div>
-    <!-- <pre></pre> -->
 </div>
 
 <div class="mb-3">
@@ -68,7 +95,7 @@
             download><small><%= subject.materials %></small></a>
     </ul>
     <% } else { %>
-    <div class="d-flex justify-content-center" style="height: 100px">
+    <div class="d-flex justify-content-center" style="height: 80px">
         <h3 class="text-muted align-self-center">无附件</h3>
     </div>
     <% } %>

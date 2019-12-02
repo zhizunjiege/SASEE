@@ -1,4 +1,4 @@
-const mysql = superApp.requireUserModule('mysql');
+const [mysql,util] = superApp.requireUserModules(['mysql','util']);
 
 function modify(req, res) {
     let { account, identity } = req.session,

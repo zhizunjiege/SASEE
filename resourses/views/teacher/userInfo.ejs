@@ -7,26 +7,24 @@
                     <td><%= data[0].account %></td>
                     <th>姓名</th>
                     <td><%= data[0].name %></td>
+                </tr>
+                <tr>
                     <th>性别</th>
                     <td><%= data[0].gender %></td>
+                    <th>联系邮箱</th>
+                    <td><%= data[0].email %></td>
                 </tr>
                 <tr>
                     <th>方向</th>
-                    <td colspan="2"><%= data[0].group %></td>
+                    <td><%= data[0].group %></td>
                     <th>职称</th>
-                    <td colspan="2"><%= data[0].proTitle %></td>
+                    <td><%= data[0].proTitle %></td>
                 </tr>
                 <tr>
                     <th>研究领域</th>
-                    <td colspan="2"><%= data[0].field %></td>
+                    <td><%= data[0].field %></td>
                     <th>办公地点</th>
-                    <td colspan="2"><%= data[0].office %></td>
-                </tr>
-                <tr>
-                    <th>联系邮箱</th>
-                    <td colspan="2"><%= data[0].email %></td>
-                    <th>联系电话</th>
-                    <td colspan="2"><%= data[0].tele %></td>
+                    <td><%= data[0].office %></td>
                 </tr>
             </tbody>
         </table>
@@ -59,12 +57,6 @@
                                 <label for="office" class="col-4 col-form-label">办公地点：</label>
                                 <input name="office" id="office" type="text" class="col-8 form-control"
                                     value="<%= data[0].office %>" placeholder="请输入办公地点" maxlength="255" required>
-                            </div>
-                            <div class="form-group form-row">
-                                <label for="tele" class="col-4 col-form-label">电话号码：</label>
-                                <input name="tele" id="tele" type="number" class="col-8 form-control"
-                                    value="<%= data[0].tele %>" placeholder="请输入电话号码" min="10000000000"
-                                    max="20000000000" required>
                             </div>
                             <div class="form-group form-row">
                                 <label for="resume" class="col-4 col-form-label">个人简介：</label>
