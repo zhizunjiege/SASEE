@@ -21,52 +21,62 @@ student.set('views', VIEWS_STUDENT);
 student.use(general.auth({ url: '/', identity: 'student' }));
 student.get('/', login.render);
 
-student.get('/license/agree',general.agreeLicense);
-student.get('/license/disagree',general.disagreeLicense);
+student.get('/license/agree', general.agreeLicense);
+student.get('/license/disagree', general.disagreeLicense);
 
 student.get('/logout', general.logout());
 student.post('/password', password.modify);
 
 studentViews.get('/userInfo', (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT * FROM student WHERE account =?',
-        param: req.session.account,
+        sql_query: 'SELECT * FROM student WHERE id =?',
+        param: req.session.userId,
         file: 'userInfo'
     };
     next();
 }, views.render);
+
+let optionalObj = {
+    group: ' AND `group`=',
+    period: ' AND student_final IS NULL'
+};
+let getConditions = req => {
+    let { group } = req.session, condition = '';
+    if (group !== '高工') {
+        condition += optionalObj.group + '"' + group + '"';
+    }
+    if (req.fsm.now().name === 'final') {
+        condition += optionalObj.period;
+    }
+    return condition;
+};
 studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, next) => {
-    req.renderData = req.session.specialty == 0 ? {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+    let condition = getConditions(req);
+    req.renderData = {
+        sql_query: `SELECT COUNT(*) total FROM bysj WHERE bysj.state="通过"${condition};SELECT b.id,\`group\`,title,JSON_LENGTH(student_selected) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET 0`,
         file: 'subject'
-    } : {
-            sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state=1 AND `group`=?) total,b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
-            param: [req.session.group, req.session.group],
-            file: 'subject'
-        };
+    };
     next();
 }, views.render);
 studentViews.get('/subjectList', general.permiss(['choose', 'final']), (req, res, next) => {
-    req.renderData = req.session.specialty == 0 ? {
-        sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+    let condition = getConditions(req);
+    req.renderData = {
+        sql_query: `SELECT b.id,\`group\`,title,JSON_LENGTH(student_selected) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET ?`,
         param: ((Number(req.query.page) || 1) - 1) * 10,
         file: 'subjectList'
-    } : {
-            sql_query: 'SELECT b.id,`group`,title,chosen,capacity,submitTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE b.state=1 AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
-            param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
-            file: 'subjectList'
-        };
+    };
     next();
 }, views.render);
 studentViews.get('/subjectContent', general.permiss(['choose', 'final']), (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?',
         param: [req.query.id, req.query.id],
-        file: 'subjectContent'
+        file: 'subjectContent',
+        extraData: req.fsm.now().name == 'choose'
     };
     next();
 }, views.render);
-studentViews.get('/mySubject', general.permiss(['publicity', 'general']), (req, res) => {
+studentViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res) => {
     if (req.fsm.now().name == 'publicity') {
         req.renderData = {
             sql_query: 'SELECT id FROM student WHERE account=? AND bysj IS NOT NULL',
@@ -84,9 +94,9 @@ studentViews.get('/mySubject', general.permiss(['publicity', 'general']), (req, 
 
 student.use('/views', views.common, studentViews);
 
-fileRouter.post('/upload', upload.receive, upload.upload);
-fileRouter.get('/download', download.download);
-student.use('/file', general.permiss(['general']), fileRouter);
+fileRouter.post('/upload', general.permiss(['general']), upload.receive, upload.upload);
+fileRouter.get('/download', general.permiss(['choose', 'final', 'general']), download.download);
+student.use('/file', fileRouter);
 
 emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
 emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);

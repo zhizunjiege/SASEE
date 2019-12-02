@@ -19,7 +19,7 @@ function upload(req, res) {
         { filename, path } = req.file,
         sql_update = 'UPDATE bysj SET ' + identity + 'Files=JSON_ARRAY_INSERT(' + identity + 'Files,"$[0]",JSON_OBJECT("date",CURDATE(),"name",?,"' + (tag ? 'tag' : 'uploader') + '",?)) WHERE id=?;SELECT id,`group` FROM bysj WHERE id=?';
     mysql.find(sql_update, [filename, tag ? tag : name, id, id]).then(results => {
-        let to = FILES + '/group' + results[1][0].group + '/subject' + results[1][0].id + '/' + identity + '/' + (tag ? '' : name + '/') + filename;
+        let to = FILES + '/' + results[1][0].group + '/subject' + results[1][0].id + '/' + identity + '/' + (tag ? '' : name + '/') + filename;
         file.move(path, to, err => {
             if (err) throw err;
             res.send('文件上传成功！');

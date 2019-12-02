@@ -1,8 +1,9 @@
 <% for( let index = 0; index < data.length; index++ ) { %>
 <tr class="point" data-id="<%= data[index].id %>">
     <td class="text-primary text-left ellipsis"><%= data[index].title %></td>
-    <td><%= data[index].group %></td>
-    <td><%= data[index].teacher %></td>
-    <td><%= data[index].chosen %></td>
+    <td><%= data[index].teaName %></td>
+    <td><%= data[index].proTitle %></td>
+    <td><%= data[index].submitTime %></td>
+    <td><%= data[index].lastModifiedTime %></td>
 </tr>
 <% } %>

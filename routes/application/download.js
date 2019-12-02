@@ -6,7 +6,7 @@ function download(req, res) {
         { identity } = req.session,
         sql_query = 'SELECT `group` FROM bysj WHERE id=?';
     mysql.find(sql_query, id).then(results => {
-        let path = FILES + '/group' + results[0].group + '/subject' + id + '/' + (identity == 'teacher' ? 'student' : 'teacher') + '/' + (uploader ? uploader + '/' : '') + filename;
+        let path = FILES + '/' + results[0].group + '/subject' + id + '/' + (identity == 'teacher' ? 'student' : 'teacher') + '/' + (uploader ? uploader + '/' : '') + filename;
         res.download(path, err => {
             if (err) throw err;
         });

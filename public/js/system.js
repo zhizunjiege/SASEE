@@ -95,10 +95,14 @@
         }
         function _load(offset) {
             let page = _now() + offset;
-            $.get(url, { page }).done(html => {
-                $container.empty().append(html);
-                $now[0].children[0].innerText = page;
-            }).fail(SASEE.requestFail);
+            if (totalPage > 0) {
+                $.get(url, { page }).done(html => {
+                    $container.empty().append(html);
+                    $now[0].children[0].innerText = page;
+                }).fail(SASEE.requestFail);
+            } else {
+                SASEE.alert({ msg: '未获取到内容，请刷新页面或重新登陆！' });
+            }
         }
         $previous.click(e => {
             if (_now() > 1) {

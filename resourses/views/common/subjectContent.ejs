@@ -3,7 +3,7 @@
     <h3 class="mb-0"><%= subject.title %></h3>
 </header>
 <div class="mb-3">
-    <h5>课题信息</h5>
+    <h5 class="text-primary">课题信息</h5>
     <table class="table text-center table-fixed table-bordered">
         <tbody>
             <tr>
@@ -20,7 +20,7 @@
     </table>
 </div>
 <div class="mb-3">
-    <h5>能力要求</h5>
+    <h5 class="text-primary">能力要求</h5>
     <table class="table text-center table-fixed table-bordered">
         <tbody>
             <tr>
@@ -42,21 +42,21 @@
 </div>
 <div class="row mb-3">
     <div class="col">
-        <h5>课题简介</h5>
+        <h5 class="text-primary">课题简介</h5>
         <div class="p-3 border rounded">
             <%- subject.introduction _%>
         </div>
         <!-- <pre></pre> -->
     </div>
     <div class="col">
-        <h5>学生要求</h5>
+        <h5 class="text-primary">学生要求</h5>
         <div class="p-3 border rounded">
             <%- subject.requirement _%>
         </div>
     </div>
 </div>
 <div class="mb-3">
-    <h5>教师信息</h5>
+    <h5 class="text-primary">教师信息</h5>
     <table class="table text-center table-fixed table-bordered">
         <tbody>
             <tr>
@@ -81,14 +81,14 @@
     </table>
 </div>
 <div class="mb-3">
-    <h5>教师简介</h5>
+    <h5 class="text-primary">教师简介</h5>
     <div class="p-3 border rounded">
         <%- teacher.resume _%>
     </div>
 </div>
 
 <div class="mb-3">
-    <h5>附件</h5>
+    <h5 class="text-primary">附件</h5>
     <% if (subject.materials) { %>
     <ul class="list-group list-group-flush">
         <a href="./file/download<%= '?id='+subject.id+'&filename='+subject.materials %>" class="list-group-item"
