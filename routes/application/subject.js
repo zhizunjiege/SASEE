@@ -155,4 +155,9 @@ function check(req, res) {
     }).catch(util.catchError(res));
 }
 
-module.exports = { query, submit, modify, notice, mark, choose, check };
+function confirm(req, res) {
+    console.log(req.body);
+    res.send('Ok');
+}
+
+module.exports = { query, submit, modify, notice, mark, choose, check, confirm };

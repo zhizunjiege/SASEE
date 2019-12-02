@@ -27,16 +27,16 @@ teacher.get('/license/disagree', general.disagreeLicense);
 
 teacherViews.get('/userInfo', (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT * FROM teacher WHERE account =?',
-        param: req.session.account,
+        sql_query: 'SELECT * FROM teacher WHERE id =?',
+        param: req.session.userId,
         file: 'userInfo'
     };
     next();
 }, views.render);
 teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release', 'choose', 'draw', 'publicity', 'final', 'general']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT b.id,title,introduction,difficulty,weight,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE account=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
-        param: req.session.account,
+        sql_query: 'SELECT b.id,title,introduction,difficulty,weight,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE t.id=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
+        param: req.session.userId,
         file: 'subject',
         extraData: {
             maxProjects: superApp.maxProjectsMap[req.session.proTitle],
@@ -77,6 +77,7 @@ teacher.use('/file', general.permiss(['general']), fileRouter);
 subjectRouter.get('/query', general.permiss(['submit']),subject.query);
 subjectRouter.post('/submit', general.permiss(['submit']), upload.receive, subject.submit);
 subjectRouter.post('/modify', general.permiss(['submit', 'modify']), upload.receive, subject.modify);
+subjectRouter.post('/confirm',general.permiss(['choose']),subject.confirm);
 subjectRouter.post('/notice', general.permiss(['general']), subject.notice);
 subjectRouter.post('/mark', general.permiss(['general']), subject.mark);
 teacher.use('/subject', subjectRouter);
