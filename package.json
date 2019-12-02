@@ -1,0 +1,7 @@
+{
+  "name": "SASEE",
+  "version": "1.0.0",
+  "dependencies": {
+    "excel-export": "latest"
+  }
+}
