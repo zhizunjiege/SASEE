@@ -43,8 +43,8 @@ function draw(group) {
     let find_student1 = 'SELECT account FROM student WHERE `group` = ? AND bysj is null AND target1 = ?',
         find_student2 = 'SELECT account FROM student WHERE `group` = ? AND bysj is null AND target2 = ?',
         find_student3 = 'SELECT account FROM student WHERE `group` = ? AND bysj is null AND target3 = ?',
-        find_id = 'SELECT id FROM bysj WHERE `group` = ? AND student_final is null';
-    let update_final = 'UPDATE bysj SET student_final = ?  WHERE id = ?',
+        find_id = 'SELECT id FROM bysj WHERE `group` = ? AND student is null';
+    let update_final = 'UPDATE bysj SET student = ?  WHERE id = ?',
         update_student = 'UPDATE student SET bysj = ? WHERE account = ?';
     let scheme1 = [], scheme2 = [], scheme3 = [];
     return mysql.find(find_id, group).then(list => {

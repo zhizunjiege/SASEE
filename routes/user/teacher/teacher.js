@@ -61,7 +61,7 @@ teacherViews.get('/modifySubject', general.permiss(['submit', 'modify']), (req, 
 }, views.render);
 teacherViews.get('/mySubject', general.permiss(['choose', 'final', 'general']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student_final,JSON_QUOTE(CONCAT("",s.id)))',
+        sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student,JSON_QUOTE(CONCAT("",s.id)))',
         param: [req.query.id, req.query.id],
         file: 'mySubject'
     };

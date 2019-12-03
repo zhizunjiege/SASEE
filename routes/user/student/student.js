@@ -38,22 +38,20 @@ studentViews.get('/userInfo', (req, res, next) => {
 
 let optionalObj = {
     group: ' AND `group`=',
-    period: ' AND student_final IS NULL'
+    period: ' AND student IS NULL'
 };
 let getConditions = req => {
     let { group } = req.session, condition = '';
     if (group !== '高工') {
         condition += optionalObj.group + '"' + group + '"';
     }
-    if (req.fsm.now().name === 'final') {
-        condition += optionalObj.period;
-    }
+    condition += optionalObj.period;
     return condition;
 };
 studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, next) => {
     let condition = getConditions(req);
     req.renderData = {
-        sql_query: `SELECT COUNT(*) total FROM bysj WHERE bysj.state="通过"${condition};SELECT b.id,\`group\`,title,JSON_LENGTH(student_selected) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET 0`,
+        sql_query: `SELECT COUNT(*) total FROM bysj WHERE bysj.state="通过"${condition};SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET 0`,
         file: 'subject'
     };
     next();
@@ -61,7 +59,7 @@ studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, ne
 studentViews.get('/subjectList', general.permiss(['choose', 'final']), (req, res, next) => {
     let condition = getConditions(req);
     req.renderData = {
-        sql_query: `SELECT b.id,\`group\`,title,JSON_LENGTH(student_selected) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET ?`,
+        sql_query: `SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET ?`,
         param: ((Number(req.query.page) || 1) - 1) * 10,
         file: 'subjectList'
     };
@@ -76,20 +74,23 @@ studentViews.get('/subjectContent', general.permiss(['choose', 'final']), (req, 
     };
     next();
 }, views.render);
-studentViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res) => {
-    if (req.fsm.now().name == 'publicity') {
+studentViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res, next) => {
+    let { userId } = req.session, period = req.fsm.now().name;
+    if (period == 'choose' || period == 'publicity' || period == 'final') {
         req.renderData = {
-            sql_query: 'SELECT id FROM student WHERE account=? AND bysj IS NOT NULL',
-            param: req.session.account,
-            file: 'mySubjectPublic'
+            sql_query: 'SELECT (SELECT title FROM bysj b WHERE b.id=s.target1) target1,(SELECT title FROM bysj b WHERE b.id=s.target2) target2,(SELECT title FROM bysj b WHERE b.id=s.target3) target3,(SELECT title FROM bysj b WHERE b.id=s.bysj) bysj FROM student s WHERE s.id=?',
+            param: userId,
+            file: 'mySubjectPublic',
+            extraData: period == 'choose'
         };
     } else {
         req.renderData = {
-            sql_query: 'SELECT s.name stuName,b.id,notice,teacherFiles,studentFiles FROM bysj b,student s WHERE b.id=s.bysj AND s.account=?;SELECT t.* FROM teacher t,bysj b,student s WHERE s.account=? AND s.bysj=b.id AND b.teacher=t.id',
-            param: [req.session.account, req.session.account],
+            sql_query: 'SELECT s.name stuName,b.id,notice,teacherFiles,studentFiles FROM bysj b,student s WHERE b.id=s.bysj AND s.id=?;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
+            param: [userId, userId],
             file: 'mySubject'
         };
     }
+    next();
 }, views.render);
 
 student.use('/views', views.common, studentViews);
@@ -103,13 +104,6 @@ emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 student.use('/email', emailRouter);
 
-student.post('/choose', general.permiss(['choose', 'final']), (req, res, next) => {
-    if (req.fsm.now().name == 'choose') {
-        req.body.colume = 'selected';
-    } else {
-        req.body.colume = 'final';
-    }
-    next();
-}, subject.choose);
+student.post('/choose', general.permiss(['choose', 'final']), subject.choose);
 
 module.exports = student;

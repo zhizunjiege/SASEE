@@ -1,9 +1,14 @@
-<div class="d-flex justify-content-center" style="height: 250px">
-    <h1 class="text-muted align-self-center">抽签结果：
-        <% if(data.length) { %>
-        <span class="badge badge-pill badge-primary">抽中</span>
-        <% } else { %>
-        <span class="badge badge-pill badge-warning">未中</span>
-        <% } %>
-    </h1>
+<div class="d-flex justify-content-center align-items-center" style="height: 300px">
+    <% let {target1,target2,target3,bysj}=data[0],ifChoose=extraData;
+    if (bysj) { %>
+    <h3>已生效：&ensp;<strong><%= bysj %></strong>&ensp;</h3>
+    <% }else if(ifChoose){  %>
+    <div>
+        <h3 class="mb-3 text-info ellipsis">第一志愿：&ensp;<strong><%= target1||'暂无' %></strong>&ensp;</h3>
+        <h3 class="mb-3 text-info ellipsis">第二志愿：&ensp;<strong><%= target3||'暂无' %></strong>&ensp;</h3>
+        <h3 class="mb-3 text-info ellipsis">第三志愿：&ensp;<strong><%= target3||'暂无' %></strong>&ensp;</h3>
+    </div>
+    <% }else{ %>
+    <h1>暂无选择</h1>
+    <% } %>
 </div>

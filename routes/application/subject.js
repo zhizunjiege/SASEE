@@ -11,7 +11,7 @@ function submit(req, res) {
         { group, account } = req.session,
         materials = req.file ? req.file.filename : '';
     let sql_query = 'SELECT id,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=? AND password=?',
-        sql_insert = 'INSERT INTO bysj (submitTime,lastModifiedTime,studentFiles,teacherFiles,notice,student_selected,student_final,state,title,`group`,introduction,materials,type, source, requirement, difficulty, weight, ability,teacher) VALUES (CURDATE(),CURDATE(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),NULL,"未审核",?,?,?,?,?,?,?,?,?,?,?)',
+        sql_insert = 'INSERT INTO bysj (submitTime,lastModifiedTime,studentFiles,teacherFiles,notice,student,state,title,`group`,introduction,materials,type, source, requirement, difficulty, weight, ability,teacher) VALUES (CURDATE(),CURDATE(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),NULL,"未审核",?,?,?,?,?,?,?,?,?,?,?)',
         sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher;
 
@@ -93,7 +93,7 @@ function mark(req, res) {
     delete req.body.id;
     let entries = Object.entries(req.body),
         paramArray = entries.reduce((ac, cur) => ac.concat(cur)),
-        sql_update = 'UPDATE student s SET score_bysj = CASE s.id' + ' WHEN ? THEN ?'.repeat(entries.length) + ' END WHERE JSON_CONTAINS((SELECT student_final FROM bysj b WHERE b.id=?),JSON_QUOTE(CONCAT("",s.id)))';
+        sql_update = 'UPDATE student s SET score_bysj = CASE s.id' + ' WHEN ? THEN ?'.repeat(entries.length) + ' END WHERE JSON_CONTAINS((SELECT student FROM bysj b WHERE b.id=?),JSON_QUOTE(CONCAT("",s.id)))';
     paramArray.push(id);
     mysql.find(sql_update, paramArray).then(() => {
         res.send('评分成功！');
@@ -101,40 +101,33 @@ function mark(req, res) {
 }
 
 function choose(req, res) {
-    let { stuId, account } = req.session,
-        { id, password, colume } = req.body;
-    let sql_query = 'SELECT bysj FROM student WHERE account=? AND password=?;SELECT capacity,chosen FROM bysj WHERE id=?',
-        sql_update1 = 'UPDATE bysj SET chosen=chosen-1,student_' + colume + '=JSON_REMOVE(student_' + colume + ',JSON_UNQUOTE(JSON_SEARCH(student_' + colume + ',"one",?))) WHERE id=?',
-        sql_update2 = 'UPDATE bysj SET chosen=chosen+1,student_' + colume + '=JSON_ARRAY_APPEND(student_' + colume + ',"$",CONCAT("",?)) WHERE id=?',
-        sql_update3 = 'UPDATE student SET bysj=? WHERE id=?';
-    mysql.find(sql_query, [account, password, id]).then(results => {
-        if (results[0].length > 0) {
-            let { bysj } = results[0][0];
-            if (bysj && bysj == id) {
-                return Promise.reject(12);
-            } else if (colume == 'final' && results[1][0].chosen >= results[1][0].capacity) {
-                return Promise.reject(13);
-            } else {
-                return mysql.transaction().then(conn => {
-                    if (bysj) {
-                        return conn.find(sql_update1, [stuId, bysj]);
-                    } else {
-                        return Promise.resolve({
-                            results: 'succeeded!',
-                            conn: conn
-                        });
-                    }
-                }).then(({ conn }) => {
-                    return conn.find(sql_update2, [stuId, id]);
-                }).then(({ conn }) => {
-                    return conn.find(sql_update3, [id, stuId]);
-                }).then(({ results, conn }) => {
-                    return conn.commitPromise(results);
-                });
-            }
-        } else {
+    let { userId, group } = req.session,
+        { id, password, target } = req.body,
+        ifFinal = req.fsm.now().name == 'final', ifGaoGong = group == '高工';
+    let sql_query = 'SELECT bysj FROM student WHERE id=? AND password=?;SELECT 1 FROM bysj WHERE id=? AND state="通过" AND student IS NULL' + (ifGaoGong ? ';SELECT COUNT(*) total,(SELECT `limit` FROM dean d WHERE d.`group`=b.`group`) `limit` FROM student s,bysj b WHERE s.`group`="高工" AND (s.bysj=b.id OR s.target1=b.id) AND b.`group`=(SELECT `group` FROM bysj WHERE id=?)' : ''),
+        sql_update_choose = `UPDATE student SET target${target}=? WHERE id=?`,
+        sql_update_final = 'UPDATE student SET bysj=? WHERE id=?;UPDATE bysj SET student=? WHERE id=?';
+    let param = [userId, password, id];
+    ifGaoGong && param.push(id);
+    mysql.find(sql_query, param).then(results => {
+        let { bysj } = results[0][0];
+        if (results[0].length == 0) {
             return Promise.reject(10);
         }
+        if (results[1].length == 0) {
+            return Promise.reject(13);
+        }
+        if (bysj) {
+            return Promise.reject(18);
+        }
+        if (ifGaoGong && results[2][0].total >= results[2][0].limit) {
+            return Promise.reject(17);
+        }
+        return mysql.transaction().then(conn => {
+            return conn.find(ifFinal ? sql_update_final : sql_update_choose, ifFinal ? [id, userId, userId, id] : [id, userId]);
+        }).then(({ results, conn }) => {
+            return conn.commitPromise(results);
+        });
     }).then(() => {
         res.send('选择课题成功');
     }).catch(util.catchError(res, errorMap));
