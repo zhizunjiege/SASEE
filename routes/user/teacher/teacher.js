@@ -59,12 +59,25 @@ teacherViews.get('/modifySubject', general.permiss(['submit', 'modify']), (req, 
     };
     next();
 }, views.render);
-teacherViews.get('/mySubject', general.permiss(['choose', 'final', 'general']), (req, res, next) => {
-    req.renderData = {
-        sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND JSON_CONTAINS(b.student,JSON_QUOTE(CONCAT("",s.id)))',
-        param: [req.query.id, req.query.id],
-        file: 'mySubject'
-    };
+teacherViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res, next) => {
+    let { id } = req.query, period = req.fsm.now().name;
+    if (period == 'choose' || period == 'publicity' || period == 'final') {
+        req.renderData = {
+            sql_query: 'SELECT * FROM student WHERE bysj=?;SELECT * FROM student WHERE target1=?;SELECT * FROM student WHERE target2=?;SELECT * FROM student WHERE target3=?',
+            param: [id, id, id, id],
+            file: 'subjectConfirm',
+            extraData: {
+                id,
+                ifChoose: period == 'choose'
+            }
+        }
+    } else {
+        req.renderData = {
+            sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND s.bysj=b.id',
+            param: [id, id],
+            file: 'mySubject'
+        };
+    }
     next();
 }, views.render);
 
@@ -74,10 +87,10 @@ fileRouter.post('/upload', upload.receive, upload.upload);
 fileRouter.get('/download', download.download);
 teacher.use('/file', general.permiss(['general']), fileRouter);
 
-subjectRouter.get('/query', general.permiss(['submit']),subject.query);
+subjectRouter.get('/query', general.permiss(['submit']), subject.query);
 subjectRouter.post('/submit', general.permiss(['submit']), upload.receive, subject.submit);
 subjectRouter.post('/modify', general.permiss(['submit', 'modify']), upload.receive, subject.modify);
-subjectRouter.post('/confirm',general.permiss(['choose']),subject.confirm);
+subjectRouter.post('/confirm', general.permiss(['choose']), subject.confirm);
 subjectRouter.post('/notice', general.permiss(['general']), subject.notice);
 subjectRouter.post('/mark', general.permiss(['general']), subject.mark);
 teacher.use('/subject', subjectRouter);

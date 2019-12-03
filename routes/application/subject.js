@@ -129,7 +129,7 @@ function choose(req, res) {
             return conn.commitPromise(results);
         });
     }).then(() => {
-        res.send('选择课题成功');
+        res.send('选择课题成功！');
     }).catch(util.catchError(res, errorMap));
 }
 
@@ -150,7 +150,31 @@ function check(req, res) {
 
 function confirm(req, res) {
     console.log(req.body);
-    res.send('Ok');
+    let { id, confirm, password } = req.body,
+        { userId } = req.session,
+        sql_query = 'SELECT 1 FROM teacher WHERE id=? AND password=?;SELECT 1 FROM student WHERE id=? AND bysj IS NULL',
+        sql_update1 = 'UPDATE bysj SET student=? WHERE id=?',
+        sql_update2 = 'UPDATE student SET bysj=?,target1=NULL,target2=NULL,target3=NULL WHERE id=?',
+        sql_update3 = 'UPDATE student SET target1=NULL WHERE target1=?;UPDATE student SET target2=NULL WHERE target2=?;UPDATE student SET target3=NULL WHERE target3=?';
+    mysql.find(sql_query, [userId, password, confirm]).then(results => {
+        if (!results[0].length) {
+            return Promise.reject(10);
+        }
+        if (!results[1].length) {
+            return Promise.reject(19);
+        }
+        return mysql.transaction().then(conn => {
+            return conn.find(sql_update1, [confirm, id]);
+        }).then(({ conn }) => {
+            return conn.find(sql_update2, [id, confirm]);
+        }).then(({ conn }) => {
+            return conn.find(sql_update3, [id, id, id]);
+        }).then(({ conn }) => {
+            return conn.commitPromise();
+        }).then(() => {
+            res.send('确认成功！');
+        })
+    }).catch(util.catchError(res, errorMap));
 }
 
 module.exports = { query, submit, modify, notice, mark, choose, check, confirm };

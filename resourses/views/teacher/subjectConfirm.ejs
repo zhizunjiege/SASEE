@@ -1,0 +1,126 @@
+<% let [bysj,target1,target2,target3]=data,{id,ifChoose}=extraData,tableHead=['姓名','性别','专业','方向','小班','学号','是否保研','状态'],stateArray=['已生效','第一志愿','第二志愿','第三志愿']; 
+if(bysj.length) {
+     let s=bysj[0]; %>
+<table class="table table-fixed table-bordered text-center">
+    <thead class="thead-light">
+        <tr>
+            <% for( let j = 0; j < tableHead.length; j++ ) { %>
+            <th scope="col"><%= tableHead[j] %></th>
+            <% } %>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><%= s.name %></td>
+            <td><%= s.gender %></td>
+            <td><%= s.specialty %></td>
+            <td><%= s.group %></td>
+            <td><%= s.class %></td>
+            <td><%= s.stuNum %></td>
+            <td><%= s.postgraduate %></td>
+            <td><%= stateArray[0] %></td>
+        </tr>
+    </tbody>
+</table>
+<% } else if(ifChoose&&(target1.length+target2.length+target3.length)) { %>
+<form action="" id="subject_choose_form" method="POST">
+    <table class="table table-fixed table-hover table-bordered text-center">
+        <thead class="thead-light">
+            <tr>
+                <% tableHead.unshift('');
+                    for( let j = 0; j < tableHead.length; j++ ) { %>
+                <th scope="col"><%= tableHead[j] %></th>
+                <% } %>
+            </tr>
+        </thead>
+        <% for( let i = 1; i < data.length; i++ ) { 
+                let target=data[i];
+                for (let j = 0; j < target.length; j++) {
+                    const s = target[j];  %>
+
+        <% } } %>
+        <tbody>
+            <% for( let i = 1; i < data.length; i++ ) { 
+                    let target=data[i];
+                    for (let j = 0; j < target.length; j++) {
+                        const s = target[j];  %>
+            <tr>
+                <td>
+                    <div class="form-group form-row justify-content-around mb-0">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" name="confirm" value="<%= s.id %>" id="identity-<%= s.id %>"
+                                class="custom-control-input" <%= i==1&&j==0?'checked':'' %>>
+                            <label for="identity-<%= s.id %>" class="custom-control-label">选择</label>
+                        </div>
+                    </div>
+                </td>
+                <td><%= s.name %></td>
+                <td><%= s.gender %></td>
+                <td><%= s.specialty %></td>
+                <td><%= s.group %></td>
+                <td><%= s.class %></td>
+                <td><%= s.stuNum %></td>
+                <td><%= s.postgraduate %></td>
+                <td><%= stateArray[i] %></td>
+            </tr>
+            <% } } %>
+        </tbody>
+    </table>
+    <div class="form-row justify-content-center my-5">
+        <button class="btn btn-primary w-50" type="button" data-toggle="modal"
+            data-target="#subject_confirm_modal">选择此学生</button>
+    </div>
+</form>
+<div id="subject_confirm_modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">您确定选择此学生吗？</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="subject_confirm_form" method="POST">
+                    <input type="hidden" name="id" value="<%= id %>">
+                    <input type="hidden" name="confirm" value="">
+                    <div class="form-group form-row">
+                        <input name="password" type="password" class="form-control" placeholder="请输入密码进行确认"
+                            pattern="\w{8,16}" required>
+                    </div>
+                    <div class="form-group form-row justify-content-around">
+                        <button type="reset" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary col-3">确认</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    ((SASEE, $) => {
+        let $chooseForm = $('#subject_choose_form'),
+            $confirmForm = $('#subject_confirm_form');
+        $chooseForm.find('button').click(() => {
+            $confirmForm.find('input[name=confirm]').val($chooseForm[0].confirm.value);
+        });
+        SASEE.formSubmit({
+            selector: '#subject_confirm_form',
+            url: SASEE.URL_SUBJECT + '/confirm',
+            done(msg) {
+                SASEE.requestDone(msg);
+                $chooseForm.find('input:not(:checked)').closest('tr').remove();
+                $chooseForm.find('tr>td:last-child').text('已生效');
+                $chooseForm.find('button').remove();
+                let $modal = $('#subject_confirm_modal');
+                $modal.on('hidden.bs.modal', () => {
+                    $modal.modal('dispose');
+                    $modal.remove();
+                }).modal('hide');
+            }
+        });
+    })(window.SASEE, window.jQuery);
+</script>
+<% } else { %>
+<div class="d-flex justify-content-center align-items-center" style="height: 300px">
+    <h3>暂无人选择此课题。</h3>
+</div>
+<% } %>
