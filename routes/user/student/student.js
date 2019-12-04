@@ -85,7 +85,7 @@ studentViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 
         };
     } else {
         req.renderData = {
-            sql_query: 'SELECT s.name stuName,b.id,notice,teacherFiles,studentFiles FROM bysj b,student s WHERE b.id=s.bysj AND s.id=?;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
+            sql_query: 'SELECT b.*,s.name stuName FROM bysj b,student s WHERE s.id=? AND s.id=b.student;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
             param: [userId, userId],
             file: 'mySubject'
         };

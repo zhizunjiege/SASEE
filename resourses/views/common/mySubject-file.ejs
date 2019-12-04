@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col">
+    <div class="col-12 col-lg-6 mb-3 mb-lg-0">
         <div class="card">
             <header class="card-header">
                 <h5 class="mb-0 text-left">下载文件</h5>
@@ -12,7 +12,7 @@
                         class="list-group-item" download>
                         <small class="d-inline-block w-50 ellipsis"><%= down[i].name %></small>
                         <small
-                            class="ellipsis"><%- isTeacher?down[i].uploader:'<strong>Tag:</strong>'+down[i].tag %></small>
+                            class="d-inline-block w-25 ellipsis"><%- isTeacher?down[i].uploader:'<strong>Tag:</strong>'+down[i].tag %></small>
                         <small class="float-right"><%= down[i].date %></small>
                     </a>
                     <% } %>
@@ -25,7 +25,7 @@
             </div>
         </div>
     </div>
-    <div class="col">
+    <div class="col-12 col-lg-6 mb-3 mb-lg-0">
         <div class="card">
             <div class="card-body">
                 <ul class="list-group list-group-flush" id="upFile_list">
@@ -34,7 +34,7 @@
                     <a href="#" class="list-group-item">
                         <small class="d-inline-block w-50 ellipsis"><%= up[i].name %></small>
                         <% if(isTeacher){ %>
-                        <small class="ellipsis"><%- '<strong>Tag:</strong>'+up[i].tag %></small>
+                        <small class="d-inline-block w-25 ellipsis"><%- '<strong>Tag:</strong>'+up[i].tag %></small>
                         <% } %>
                         <small class="float-right"><%= up[i].date %></small>
                     </a>
@@ -80,8 +80,8 @@
                     </div>
                     <% } %>
                     <div class="form-group form-row justify-content-around">
-                        <button type="reset" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary col-3">提交</button>
+                        <button type="reset" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0">提交</button>
                     </div>
                 </form>
             </div>
@@ -97,13 +97,13 @@
             done: msg => {
                 let $form = $('#file_form'), $upFile_list = $('#upFile_list'),
                     name = $form[0].file.value.match(/\\([^\\\s]+)$/)[1],
-                    tag = $form[0].tag?$form[0].tag.value:null;
+                    tag = $form[0].tag ? $form[0].tag.value : null;
                 SASEE.requestDone(msg);
                 $('#file_modal').modal('hide');
                 $upFile_list.find('div').remove();
                 $(`<a href="#" class="list-group-item">
                     <small class="d-inline-block w-50 ellipsis">${name}</small>
-                    ${tag?`<small class="ellipsis"><strong>Tag:</strong>${tag}</small>`:''}
+                    ${tag ? `<small class="ellipsis"><strong>Tag:</strong>${tag}</small>` : ''}
                     <small class="float-right">${new Date().toISOString().substr(0, 10)}</small>
                 </a>`).prependTo($upFile_list);
             }

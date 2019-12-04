@@ -73,7 +73,7 @@ teacherViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 
         }
     } else {
         req.renderData = {
-            sql_query: 'SELECT id,notice,teacherFiles,studentFiles FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND s.bysj=b.id',
+            sql_query: 'SELECT * FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND s.bysj=b.id',
             param: [id, id],
             file: 'mySubject'
         };

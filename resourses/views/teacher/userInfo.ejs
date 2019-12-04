@@ -1,46 +1,56 @@
+<% let t=data[0]; %>
 <div class="p-3">
-    <div class="mb-1">
+    <div class="mb-3">
         <table class="table table-bordered table-fixed">
             <tbody class="text-center">
                 <tr>
-                    <th>账号</th>
-                    <td><%= data[0].account %></td>
-                    <th>姓名</th>
-                    <td><%= data[0].name %></td>
+                    <th scope="col" colspan="4">基本信息</th>
                 </tr>
                 <tr>
+                    <th>姓名</th>
+                    <td><%= t.name %></td>
                     <th>性别</th>
-                    <td><%= data[0].gender %></td>
-                    <th>联系邮箱</th>
-                    <td><%= data[0].email %></td>
+                    <td><%= t.gender %></td>
+                </tr>
+                <tr>
+                    <th>工号</th>
+                    <td><%= t.teaNum %></td>
+                    <th>职称</th>
+                    <td><%= t.proTitle %></td>
                 </tr>
                 <tr>
                     <th>方向</th>
-                    <td><%= data[0].group %></td>
-                    <th>职称</th>
-                    <td><%= data[0].proTitle %></td>
+                    <td><%= t.group %></td>
                 </tr>
                 <tr>
                     <th>研究领域</th>
-                    <td><%= data[0].field %></td>
+                    <td id="field_1"><%= t.field||'暂无' %></td>
                     <th>办公地点</th>
-                    <td><%= data[0].office %></td>
+                    <td id="office_1"><%= t.office||'暂无' %></td>
+                </tr>
+                <tr>
+                    <th scope="col" colspan="4">账户信息</th>
+                </tr>
+                <tr>
+                    <th>账号</th>
+                    <td><%= t.account %></td>
+                    <th>联系邮箱</th>
+                    <td><%= t.email||'暂无' %></td>
                 </tr>
             </tbody>
         </table>
     </div>
     <div class="mb-3">
         <h5>个人简介</h5>
-        <div class="p-3 border rounded">
-            <%= data[0].resume %>
+        <div class="p-3 border rounded text-indent" id="resume_1">
+            <%= t.resume||'暂无' %>
         </div>
-        <!-- <pre></pre> -->
     </div>
-    <div class="d-flex justify-content-around">
+    <div class="row justify-content-around mb-3">
         <button id="edit_info" data-toggle="modal" data-target="#edit_info_modal"
-            class="btn btn-primary w-25">完善信息</button>
+            class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0">完善信息</button>
         <div id="edit_info_modal" class="modal fade" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">完善信息</h4>
@@ -49,19 +59,19 @@
                     <div class="modal-body">
                         <form action="" name="edit_info" id="edit_info_form" method="POST" class="text-center">
                             <div class="form-group form-row">
-                                <label for="field" class="col-4 col-form-label">研究领域：</label>
-                                <input name="field" id="field" type="text" class="col-8 form-control"
-                                    value="<%= data[0].field %>" placeholder="请输入研究领域" maxlength="255" required>
+                                <label for="field_2" class="col-3 col-lg-2 col-form-label">研究领域：</label>
+                                <input name="field" id="field_2" type="text" class="col-9 col-lg-10 form-control"
+                                    value="<%= t.field %>" placeholder="请输入研究领域" maxlength="255" required>
                             </div>
                             <div class="form-group form-row">
-                                <label for="office" class="col-4 col-form-label">办公地点：</label>
-                                <input name="office" id="office" type="text" class="col-8 form-control"
-                                    value="<%= data[0].office %>" placeholder="请输入办公地点" maxlength="255" required>
+                                <label for="office_2" class="col-3 col-lg-2 col-form-label">办公地点：</label>
+                                <input name="office" id="office_2" type="text" class="col-9 col-lg-10 form-control"
+                                    value="<%= t.office %>" placeholder="请输入办公地点" maxlength="255" required>
                             </div>
                             <div class="form-group form-row">
-                                <label for="resume" class="col-4 col-form-label">个人简介：</label>
-                                <textarea name="resume" id="resume" class="col-8 form-control" rows="8"
-                                    placeholder="请填写个人简介" maxlength="1023" required><%= data[0].resume||'' %></textarea>
+                                <label for="resume_2" class="col-3 col-lg-2 col-form-label">个人简介：</label>
+                                <textarea name="resume" id="resume_2" class="col-9 col-lg-10 form-control" rows="8"
+                                    placeholder="请填写个人简介" maxlength="1023" required><%= t.resume||'' %></textarea>
                             </div>
                             <div class="form-group form-row justify-content-around">
                                 <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
@@ -84,6 +94,9 @@
             done: msg => {
                 $('#edit_info_modal').modal('hide');
                 SASEE.requestDone(msg);
+                $('#field_1').text($('#field_2').val());
+                $('#office_1').text($('#office_2').val());
+                $('#resume_1').text($('#resume_2').val());
             }
         });
     })(window.jQuery, window.SASEE);

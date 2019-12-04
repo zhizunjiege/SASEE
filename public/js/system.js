@@ -1,4 +1,7 @@
 (function ($) {
+    Date.prototype.toLocaleISOString = function () {
+        return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
+    };
     window.SASEE = {
         URL_VIEWS: './views',
 

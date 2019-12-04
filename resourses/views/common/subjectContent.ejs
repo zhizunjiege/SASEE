@@ -43,7 +43,7 @@
 <div class="row mb-3">
     <div class="col">
         <h5 class="text-primary">课题简介</h5>
-        <div class="p-3 border rounded">
+        <div class="p-3 border rounded text-indent">
             <%- subject.introduction _%>
         </div>
         <!-- <pre></pre> -->
@@ -70,12 +70,14 @@
                 <td><%= teacher.proTitle %></td>
             </tr>
             <tr>
-                <th>研究方向</th>
+                <th>方向</th>
+                <td><%= teacher.group %></td>
+                <th>研究领域</th>
                 <td><%= teacher.field %></td>
                 <th>办公地点</th>
                 <td><%= teacher.office %></td>
-                <th colspan="2">联系邮箱</th>
-                <td colspan="2"><%= teacher.email %></td>
+                <th>联系邮箱</th>
+                <td><%= teacher.email %></td>
             </tr>
         </tbody>
     </table>
