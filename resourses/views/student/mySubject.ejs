@@ -1,28 +1,28 @@
-<% let subject=data[0][0],teacher=data[1][0]; %>
+<% let s=data[0][0],t=data[1][0]; %>
 <nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
-    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_teacher">教师</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">课题信息</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_file">文件</a>
 </nav>
 <div class="tab-content p-3">
     <div class="tab-pane fade show active" id="mySubject_notice">
-        <% if (subject.notice.length) { %>
+        <% if (s.notice.length) { %>
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-4 list-group nav nav-pills flex-column">
-                    <% for( let index = 0; index < subject.notice.length; index++ ) { %>
+                <nav class="col-12 col-md-4 list-group nav nav-pills flex-column">
+                    <% for( let index = 0; index < s.notice.length; index++ ) { %>
                     <a href="#myNotice_<%= index %>"
                         class="list-group-item list-group-item-action nav-link <%= index?'':'active' _%>"
                         data-toggle="pill">
-                        <span class="w-50 ellipsis"><%= subject.notice[index].title %></span>
-                        <span class="float-right"><%= subject.notice[index].date %></span>
+                        <span class="w-50 ellipsis"><%= s.notice[index].title %></span>
+                        <span class="float-right"><%= s.notice[index].date %></span>
                     </a>
                     <% } %>
                 </nav>
-                <div class="col-8 tab-content border rounded p-3">
-                    <% for( let index = 0; index < subject.notice.length; index++ ) { %>
+                <div class="col-12 col-md-8 tab-content border rounded p-3">
+                    <% for( let index = 0; index < s.notice.length; index++ ) { %>
                     <div class="tab-pane fade <%= index?'':'show active' _%>" id="myNotice_<%= index %>">
-                        <%- subject.notice[index].content %></div>
+                        <%- s.notice[index].content %></div>
                     <% } %>
                 </div>
             </div>
@@ -33,64 +33,79 @@
         </div>
         <% } %>
     </div>
-    <div class="tab-pane fade" id="mySubject_teacher">
-        <div class="row justify-content-center mb-1">
-            <!-- <div class="col-2">
-                <img src="/pictures/< teacher.profile %>" alt="头像" class="img-thumbnail float-right"
-                    style="height:200px">
-            </div> -->
-            <div class="col-11">
-                <table class="table table-bordered">
+    <div class="tab-pane fade" id="mySubject_info">
+        <div class="p-3">
+            <div class="mb-3">
+                <h5>课题简介</h5>
+                <div class="p-3 border rounded text-indent">
+                    <%= s.introduction||'暂无' %>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h5>课题附件</h5>
+                <div class="p-3 border rounded">
+                    <% if (s.materials) { %>
+                    <a href="./file/download<%= '?id='+s.id+'&filename='+s.materials %>" class=""
+                        download><small><%= s.materials %></small></a>
+                    <% } else { %>
+                    <div class="d-flex justify-content-center" style="height: 80px">
+                        <h3 class="text-muted align-self-center">无附件</h3>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h5>教师信息</h5>
+                <table class="table table-bordered table-fixed">
                     <tbody class="text-center">
                         <tr>
                             <th>姓名</th>
-                            <td><%= teacher.name %></td>
-                            <th>性别</th>
-                            <td><%= teacher.gender %></td>
+                            <td><%= t.name %></td>
+                            <th>联系邮箱</th>
+                            <td><%= t.email||'暂无' %></td>
                         </tr>
                         <tr>
-                            <th>方向</th>
-                            <td><%= teacher.department_des %></td>
+                            <th>性别</th>
+                            <td><%= t.gender %></td>
+                            <th>工号</th>
+                            <td><%= t.teaNum %></td>
+                        </tr>
+                        <tr>
                             <th>职称</th>
-                            <td><%= teacher.proTitle %></td>
+                            <td><%= t.proTitle %></td>
+                            <th>方向</th>
+                            <td><%= t.group %></td>
                         </tr>
                         <tr>
                             <th>研究领域</th>
-                            <td><%= teacher.field %></td>
+                            <td><%= t.field||'暂无' %></td>
                             <th>办公地点</th>
-                            <td><%= teacher.office %></td>
-                        </tr>
-                        <tr>
-                            <th>联系邮箱</th>
-                            <td><%= teacher.email %></td>
-                            <th>联系电话</th>
-                            <td><%= teacher.tele %></td>
+                            <td><%= t.office||'暂无' %></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div>
-            <h5>个人简介</h5>
-            <div class="p-3 border rounded">
-                <%= teacher.resume %>
+            <div class="mb-3">
+                <h5>教师简介</h5>
+                <div class="p-3 border rounded text-indent">
+                    <%= t.resume||'暂无' %>
+                </div>
             </div>
-            <!-- <pre></pre> -->
         </div>
-        <div class="d-flex mt-5 justify-content-around">
+        <div class="row mb-3 justify-content-around">
             <%- include(PATH.VIEWS_COMMON+'/mySubject-sendEmail',{
-                to:teacher,
+                to:t,
                 PATH
             }) %>
         </div>
     </div>
     <div class="tab-pane fade" id="mySubject_file">
         <%- include(PATH.VIEWS_COMMON+'/mySubject-file',{
-            down:subject.teacherFiles,
-            up:subject.studentFiles.filter((element)=>{
-                return element.uploader==subject.stuName;
+            down:s.teacherFiles,
+            up:s.studentFiles.filter((element)=>{
+                return element.uploader==s.stuName;
             }),
-            id:subject.id,
+            id:s.id,
             isTeacher:false,
             PATH
         }) %>

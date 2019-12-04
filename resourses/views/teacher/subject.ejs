@@ -1,5 +1,5 @@
-<div class="sys-content col-12 mx-auto" style="display: none"></div>
-<div class="sys-list px-3">
+<div class="sys-content" style="display: none"></div>
+<div class="sys-list">
     <div class="row justify-content-around" id="card_container">
         <% if(data.length){
         for( let i = 0; i < data.length; i++ ) { %>
@@ -8,7 +8,7 @@
     </div>
     <% if (extraData.ifPermiss&&data.length<extraData.maxProjects) { %>
     <div class="d-flex justify-content-center align-items-center" style="height: 250px">
-        <button class="btn btn-primary col-3" id="subject_submit">发布课题</button>
+        <button class="btn btn-primary col-12 col-md-4 col-lg-3" id="subject_submit">发布课题</button>
     </div>
     <% } %>
 </div>

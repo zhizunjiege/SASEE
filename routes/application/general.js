@@ -11,7 +11,7 @@ function permiss(states) {
         if (req.fsm.permiss(states)) {
             next();
         } else {
-            res.status(403).send('还没到时间哦^_^');
+            res.status(403).send('上甲课不能做乙事哦^_^');
         }
     }
 }

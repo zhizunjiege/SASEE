@@ -1,32 +1,40 @@
+<% let d=data[0]; %>
 <div class="p-3">
-    <div class="row justify-content-center mb-1">
-        <div class="col-11">
-            <table class="table table-bordered table-fixed">
-                <tbody class="text-center">
-                    <tr>
-                        <th>姓名</th>
-                        <td><%= data[0].name %></td>
-                        <th>性别</th>
-                        <td><%= data[0].gender %></td>
-                    </tr>
-                    <tr>
-                        <th>账号</th>
-                        <td><%= data[0].account %></td>
-                        <th>联系邮箱</th>
-                        <td><%= data[0].email||'暂无' %></td>
-                    </tr>
-                    <tr>
-                        <th>方向</th>
-                        <td><%= data[0].group %></td>
-                        <th>职称</th>
-                        <td><%= data[0].proTitle %></td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
+    <div class="mb-1">
+        <table class="table table-bordered table-fixed">
+            <tbody class="text-center">
+                <tr>
+                    <th scope="col" colspan="4">基本信息</th>
+                </tr>
+                <tr>
+                    <th>姓名</th>
+                    <td><%= d.name %></td>
+                    <th>性别</th>
+                    <td><%= d.gender %></td>
+                </tr>
+                <tr>
+                    <th>工号</th>
+                    <td><%= d.teaNum %></td>
+                    <th>职称</th>
+                    <td><%= d.proTitle %></td>
+                </tr>
+                <tr>
+                    <th>方向</th>
+                    <td><%= d.group %></td>
+                </tr>
+                <tr>
+                    <th scope="col" colspan="4">账户信息</th>
+                </tr>
+                <tr>
+                    <th>账号</th>
+                    <td><%= d.account %></td>
+                    <th>联系邮箱</th>
+                    <td><%= d.email||'暂无' %></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="d-flex justify-content-around mt-5">
+    <div class="row justify-content-around mt-3">
         <%- include(PATH.VIEWS_COMMON+'/setEmailAddr') %>
         <%- include(PATH.VIEWS_COMMON+'/modifyPW') %>
     </div>

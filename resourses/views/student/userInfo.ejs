@@ -1,50 +1,91 @@
-<table class="table table-bordered table-fixed text-center col-11 mx-auto">
-    <tbody>
-        <tr>
-            <th scope="col" colspan="6">账户信息</th>
-        </tr>
-        <tr>
-            <th scope="row">账号</th>
-            <td><%= data[0].account %></td>
-            <th scope="row">密码</th>
-            <td>········</td>
-            <th scope="row">邮箱</th>
-            <td><%= data[0].email %></td>
-        </tr>
-        <tr>
-            <th scope="col" colspan="6">学籍信息</th>
-        </tr>
-        <tr>
-            <th scope="row">学号</th>
-            <td><%= data[0].stuNum %></td>
-            <th scope="row">姓名</th>
-            <td><%= data[0].name %></td>
-            <th scope="row">性别</th>
-            <td><%= data[0].gender %></td>
-        </tr>
-        <tr>
-            <th scope="row">专业</th>
-            <td><%= data[0].specialty %></td>
-            <th scope="row">方向</th>
-            <td><%= data[0].group %></td>
-            <th scope="row">小班</th>
-            <td><%= data[0].class %></td>
-        </tr>
-        <tr>
-            <th scope="col" colspan="6">资格审查</th>
-        </tr>
-        <% let conv=(flag)=>flag>-1?'有':'无',warn=(flag)=>flag>-1?'':'text-warning'; %>
-        <tr>
-            <th scope="row">毕业设计</th>
-            <td class="<%= warn(data[0].bysj) %>"><%= conv(data[0].bysj) %></td>
-            <th scope="row">生产实习</th>
-            <td class="<%= warn(data[0].scsx) %>"><%= conv(data[0].scsx) %></td>
-            <th scope="row">综合实验</th>
-            <td class="<%= warn(data[0].zhsy) %>"><%= conv(data[0].zhsy) %></td>
-        </tr>
-    </tbody>
-</table>
-<div class="d-flex justify-content-around mt-5">
-    <%- include(PATH.VIEWS_COMMON+'/setEmailAddr') %>
-    <%- include(PATH.VIEWS_COMMON+'/modifyPW') %>
+<% let s=data[0]; %>
+<div class="p-3">
+    <div class="mb-3">
+        <table class="table table-bordered table-fixed text-center">
+            <tbody>
+                <tr>
+                    <th scope="col" colspan="4">基本信息</th>
+                </tr>
+                <tr>
+                    <th>姓名</th>
+                    <td><%= s.name %></td>
+                    <th>性别</th>
+                    <td><%= s.gender %></td>
+                </tr>
+                <tr>
+                    <th>学号</th>
+                    <td><%= s.stuNum %></td>
+                    <th>小班</th>
+                    <td><%= s.class %></td>
+                </tr>
+                <tr>
+                    <th>专业</th>
+                    <td><%= s.specialty %></td>
+                    <th>方向</th>
+                    <td><%= s.group %></td>
+                </tr>
+                <tr>
+                    <th>是否保研</th>
+                    <td><%= s.postgraduate %></td>
+                </tr>
+                <tr>
+                    <th scope="col" colspan="4">账户信息</th>
+                </tr>
+                <tr>
+                    <th>账号</th>
+                    <td><%= s.account %></td>
+                    <th>邮箱</th>
+                    <td><%= s.email||'暂无' %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-3">
+        <h5>个人简介</h5>
+        <div class="p-3 border rounded text-indent" id="resume_1">
+            <%= s.resume||'暂无' %>
+        </div>
+    </div>
+    <div class="row justify-content-around mt-3">
+        <button id="edit_info" data-toggle="modal" data-target="#edit_info_modal"
+            class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0">完善信息</button>
+        <div id="edit_info_modal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">完善信息</h4>
+                        <button class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" name="edit_info" id="edit_info_form" method="POST" class="text-center">
+                            <div class="form-group form-row">
+                                <label for="resume_2" class="col-3 col-lg-2 col-form-label">个人简介：</label>
+                                <textarea name="resume" id="resume_2" class="col-9 col-lg-10 form-control" rows="8"
+                                    placeholder="请填写个人简介" maxlength="1023" required><%= s.resume||'' %></textarea>
+                            </div>
+                            <div class="form-group form-row justify-content-around">
+                                <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-primary col-3">提交</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include(PATH.VIEWS_COMMON+'/setEmailAddr') %>
+        <%- include(PATH.VIEWS_COMMON+'/modifyPW') %>
+    </div>
 </div>
+<script>
+    (function ($, SASEE) {
+        SASEE.formSubmit({
+            selector: '#edit_info_form',
+            url: './info',
+            done: msg => {
+                $('#edit_info_modal').modal('hide');
+                SASEE.requestDone(msg);
+                $('#resume_1').text($('#resume_2').val());
+            }
+        });
+    })(window.jQuery, window.SASEE);
+</script>

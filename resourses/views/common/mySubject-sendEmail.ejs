@@ -1,6 +1,6 @@
-<button data-toggle="modal" data-target="#sendEmail_modal" class="btn btn-primary w-25">发送邮件</button>
+<button data-toggle="modal" data-target="#sendEmail_modal" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0">发送邮件</button>
 <div id="sendEmail_modal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">发送邮件</h4>
@@ -8,21 +8,11 @@
             </div>
             <div class="modal-body">
                 <form action="" id="subject_sendEmail_form" method="POST">
-                    <% if (Array.isArray(to)) { 
-                         for( let index = 0; index < to.length; index++ ) { %>
-                    <div class="form-group custom-control custom-checkbox">
-                        <input type="checkbox" name="toAddr" class="custom-control-input" id="customCheck<%= index %>"
-                            value="<%= to[index].email %>" checked>
-                        <label class="custom-control-label"
-                            for="customCheck<%= index %>"><%= (to[index].name?to[index].name:'')+'--'+to[index].email %></label>
-                    </div>
-                    <% } 
-                 } else { %>
                     <input type="hidden" name="toAddr" value="<%= to.email %>">
-                    <% } %>
-                    <div class="form-group">
-                        <input type="text" name="title" class="form-control" placeholder="请输入邮件标题" maxlength="255"
-                            required>
+                    <div class="form-group form-row text-center">
+                        <label for="email_title" class="col-4 col-lg-2 col-form-label required">标题：</label>
+                        <input type="text" name="title" id="email_title" class="col-8 col-lg-10 form-control"
+                            placeholder="请输入邮件标题" maxlength="255" required>
                     </div>
                     <div id="emailEditor">
                         <div class="mb-3 editor">
@@ -46,15 +36,6 @@
             editor,
             selector: '#subject_sendEmail_form',
             url: SASEE.URL_EMAIL + '/sendEmail',
-            validate: $form => {
-                return Boolean($form.find(':checkbox:checked')[0].value);
-            },
-            ifNotValid: ($form) => {
-                SASEE.alert({
-                    msg: '收件人不能为空，请选择至少一位收件人！'
-                })
-                return;
-            },
             done: msg => {
                 $('#sendEmail_modal').modal('hide');
                 SASEE.requestDone(msg);
