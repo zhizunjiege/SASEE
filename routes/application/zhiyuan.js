@@ -30,7 +30,7 @@ function check(list) {
 }
 
 
-draw('机电控制与液压');
+
 // let n = [];
 // n.push(check([16000000]));
 // n.push(check([16000000,17000000]));
@@ -52,23 +52,25 @@ function draw(group) {
             scheme1.push(each(list[i].id, 1));
         }
         return Promise.all(scheme1).then(next2 => {
-            console.log('need to draw target2', next2);
+            //console.log('need to draw target2', next2);
             return Promise.resolve(next2);
         })
     }).then(list => {
         for (let i = 0; i < list.length; i++) {
+            if(list[i]!='success')
             scheme2.push(each(list[i], 2));
         }
         return Promise.all(scheme2).then(next3 => {
-            console.log('need to draw target3', next3);
+            //console.log('need to draw target3', next3);
             return Promise.resolve(next3);
         })
     }).then(list => {
         for (let i = 0; i < list.length; i++) {
+            if(list[i]!='success')
             scheme3.push(each(list[i], 3));
         }
         return Promise.all(scheme3).then(next3 => {
-            console.log('target3 no in', next3);
+            //console.log('target3 no in', next3);
             return Promise.resolve(next3);
         })
     });
@@ -87,15 +89,19 @@ function draw(group) {
             }
             [final, fail] = _randomSelect(selected, 1);
             return mysql.transaction().then(conn => {
+                console.log('抽中的学生,',final,'课题',id);
                 return conn.find(update_final, [final, id]);
             }).then(({conn}) => {
                 return conn.find(update_student, [id, final]);
             }).then(({results, conn}) => {
                 return conn.commitPromise(results);
+            }).then(()=>{
+                return 'success'
             })
         })
     }
 }
+draw('机电控制与液压');
 
 // let sql = 'SELECT account FROM student WHERE `group` = ? AND bysj is null AND target2 = ?';
 // mysql.find(sql,['机电控制与液压',1]).then(s=>{console.log(s)});
