@@ -12,32 +12,26 @@ function _randomSelect(selected, capacity) {
     return [selected, failed];
 }
 
-function check(list) {
-    let find_student = [];
-    if (list == null) {
-        return Promise.resolve(find_student)
+const groupArray = [
+    {
+        "num":'自动控制与模式识别',
+        "result": null
+    }, {
+        "num": '自主导航与精确制导',
+        "result": null
+    }, {
+        "num": '检测与自动化过程',
+        "result": null
+    }, {
+        "num": '飞行器控制与仿真',
+        "result": null
+    }, {
+        "num": '机电控制与液压',
+        "result": null
     }
-    //if (list==null){return find_student}
-    let find_no = 'SELECT * FROM student WHERE bysj is null AND account IN ' + '(' + list.toString() + ')';
-    return mysql.find(find_no, list).then(result => {
-        let n = 0;
-        while (n < result.length) {
-            find_student.push(result[n]['account']);
-            n++;
-        }
-        return (find_student)
-    });
-}
-
-
-draw('机电控制与液压');
-// let n = [];
-// n.push(check([16000000]));
-// n.push(check([16000000,17000000]));
-// Promise.all(n).then(res=>{
-//     console.log(res);
-// });
-
+];
+const MAX = 3;
+let count = 0;
 
 function draw(group) {
     let find_student1 = 'SELECT account FROM student WHERE `group` = ? AND bysj is null AND target1 = ?',
@@ -52,25 +46,41 @@ function draw(group) {
             scheme1.push(each(list[i].id, 1));
         }
         return Promise.all(scheme1).then(next2 => {
-            console.log('need to draw target2', next2);
+            //console.log('need to draw target2', next2);
             return Promise.resolve(next2);
         })
     }).then(list => {
         for (let i = 0; i < list.length; i++) {
+            if(list[i]!='success')
             scheme2.push(each(list[i], 2));
         }
         return Promise.all(scheme2).then(next3 => {
-            console.log('need to draw target3', next3);
+            //console.log('need to draw target3', next3);
             return Promise.resolve(next3);
         })
     }).then(list => {
         for (let i = 0; i < list.length; i++) {
+            if(list[i]!='success')
             scheme3.push(each(list[i], 3));
         }
         return Promise.all(scheme3).then(next3 => {
-            console.log('target3 no in', next3);
+            //console.log('target3 no in', next3);
             return Promise.resolve(next3);
         })
+    }).then(result=>{
+        let fail = [];
+        for(let i = 0; i < result.length; i++) {
+            if (result[i] != 'success') {
+                fail.push(result[i]);
+            }
+        }if (fail.length == 0) {
+            console.log('success');
+            return Promise.resolve('该分组抽签完成');
+        }else {
+            //console.log(fail);
+            fail.push('以上为未抽中');
+            return Promise.resolve(fail);
+        }
     });
 
     function each(id, n) {
@@ -87,15 +97,82 @@ function draw(group) {
             }
             [final, fail] = _randomSelect(selected, 1);
             return mysql.transaction().then(conn => {
+                console.log('抽中的学生,',final,'课题',id);
                 return conn.find(update_final, [final, id]);
             }).then(({conn}) => {
                 return conn.find(update_student, [id, final]);
             }).then(({results, conn}) => {
                 return conn.commitPromise(results);
+            }).then(()=>{
+                return 'success'
             })
         })
     }
 }
 
-// let sql = 'SELECT account FROM student WHERE `group` = ? AND bysj is null AND target2 = ?';
-// mysql.find(sql,['机电控制与液压',1]).then(s=>{console.log(s)});
+
+
+function drawAll() {
+    let promiseArray = [];
+    for (let i = 0; i < groupArray.length; i++) {
+        const group = groupArray[i];
+        if (!group.result || group.result.status == 'rejected') {
+            promiseArray.push(draw(group.num));
+        }
+    }
+    if (promiseArray.length > 0) {
+        console.log(`现在正在进行第${count + 1}次抽签···`);
+        if (count == MAX) {
+            return Promise.reject(new Error('抽签失败！'));
+        } else {
+            count++;
+            return allSettled(promiseArray).then(results => {
+                for (let i = 0, j = 0; i < groupArray.length; i++) {
+                    let group = groupArray[i];
+                    if (!group.result || group.result.status == 'rejected') {
+                        group.result = results[j++];
+                    }
+                }
+                return drawAll();
+            });
+        }
+    } else {
+        return Promise.resolve('抽签成功！');
+    }
+}
+
+
+function allSettled(promiseArray) {
+    let len = promiseArray.length,
+        results = new Array(len);
+    return new Promise(resolve => {
+        for (let i = 0; i < len; i++) {
+            let index = i;
+            promiseArray[i].then(value => {
+                results[index] = {
+                    status: 'fulfilled',
+                    value
+                };
+            }).catch(reason => {
+                results[index] = {
+                    status: 'rejected',
+                    reason
+                };
+            }).finally(() => {
+                let flag = true;
+                for (let j = 0; j < len; j++) {
+                    if (!results[j]) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    resolve(results);
+                }
+            });
+        }
+    });
+}
+
+
+module.exports = { drawAll };
