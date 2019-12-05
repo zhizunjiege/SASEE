@@ -14,19 +14,19 @@ function _randomSelect(selected, capacity) {
 
 const groupArray = [
     {
-        "num":'自动控制与模式识别',
+        "num":'1-自动控制与模式识别',
         "result": null
     }, {
-        "num": '自主导航与精确制导',
+        "num": '2-自主导航与精确制导',
         "result": null
     }, {
-        "num": '检测与自动化过程',
+        "num": '3-检测与自动化工程',
         "result": null
     }, {
-        "num": '飞行器控制与仿真',
+        "num": '4-飞行器控制与仿真',
         "result": null
     }, {
-        "num": '机电控制与液压',
+        "num": '5-机电控制与液压',
         "result": null
     }
 ];

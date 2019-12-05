@@ -1,14 +1,16 @@
 const express = require('express'),
-    [mysql, file, email, general, views] = superApp.requireUserModules([
+    [mysql, file, email, general, views, util] = superApp.requireUserModules([
         'mysql',
         'file',
         'email',
         'general',
-        'views'
+        'views',
+        'util'
     ]),
-    { VIEWS_ADMIN, NEWS } = superApp.resourses;
+    { VIEWS_ADMIN, NEWS, LICENSE, MANUAL } = superApp.resourses;
 
-const admin = express();
+const admin = express(),
+    adminViews = express.Router();
 
 admin.set('views', VIEWS_ADMIN);
 admin.get('/', (req, res, next) => {
@@ -27,16 +29,16 @@ admin.post('/login', (req, res) => {
         sql_query = 'SELECT account,password,email FROM admin WHERE account = ? AND password=?';
     mysql.find(sql_query, [account, password])
         .then(data => {
-            if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
+            if (data.length == 0) {
+                res.status(403).send('账号或密码错误，请重试！');
+            } else if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
                 req.session.pinCode = null;
                 res.status(403).send('验证码已失效，请重试！');
-            } else if (data.length == 0) {
-                res.status(403).send('账号或密码错误，请重试！');
             } else {
                 req.session.email = data[0].email;
                 req.session.account = data[0].account;
                 req.session.password = data[0].password;
-                req.session.identity='admin';
+                req.session.identity = 'admin';
                 res.location('/admin/main').send('登陆成功！');
             }
         }); */
@@ -52,16 +54,56 @@ admin.get('/logout', general.logout('/admin'));
 admin.get('/main', (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0',
-        file: 'main',
+        file: 'main'
+    };
+    next();
+}, views.render);
+
+adminViews.get('/submitNotice', (req, res, next) => {
+    req.renderData = {
+        file: 'submitNotice'
+    };
+    next();
+}, views.render);
+adminViews.get('/sendEmail', (req, res, next) => {
+    req.renderData = {
+        file: 'sendEmail'
+    };
+    next();
+}, views.render);
+adminViews.get('/updateState', (req, res, next) => {
+    req.renderData = {
+        file: 'updateState',
         extraData: {
-            initialized:req.fsm.initialized,
+            initialized: req.fsm.initialized,
             now: req.fsm.now(),
             states: req.fsm.info()
         }
     };
     next();
 }, views.render);
-admin.use('/views', views.common);
+adminViews.get('/setLimit', (req, res, next) => {
+    req.renderData = {
+        sql_query: 'SELECT goal,`limit` FROM dean ORDER BY `group`',
+        file: 'setLimit',
+        extraData: superApp.groupMap
+    };
+    next();
+}, views.render);
+adminViews.get('/writeLicense', (req, res, next) => {
+    req.renderData = {
+        file: 'writeLicense'
+    };
+    next();
+}, views.render);
+adminViews.get('/writeManual', (req, res, next) => {
+    req.renderData = {
+        file: 'writeManual'
+    };
+    next();
+}, views.render);
+
+admin.use('/views', views.common, adminViews);
 
 admin.post('/submitNotice', (req, res) => {
     let { top, title, group, content } = req.body,
@@ -71,10 +113,7 @@ admin.post('/submitNotice', (req, res) => {
             if (err) throw err;
             res.send('通知发布成功！');
         });
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('通知发布失败！');
-    });
+    }).catch(util.catchError(res));
 });
 admin.post('/sendEmail', (req, res, next) => {
     let sql_query = 'SELECT email FROM ??';
@@ -83,6 +122,36 @@ admin.post('/sendEmail', (req, res, next) => {
         next();
     });
 }, email.sendEmail);
+
+admin.post('/setLimit', (req, res) => {
+    let sql_update = 'UPDATE dean SET goal=?,`limit`=? WHERE `group`=?;', param = [];
+    for (let i = 0; i < superApp.groupMap.length; i++) {
+        param.push(req.body.goal[i], req.body.limit[i], superApp.groupMap[i]);
+    }
+    mysql.find(sql_update.repeat(superApp.groupMap.length), param).then(() => {
+        res.send('设置成功！');
+    }).catch(util.catchError(res));
+});
+admin.post('/writeLicense', (req, res) => {
+    let { identity, content } = req.body;
+    file.writeFile(LICENSE + '/' + identity + '.ejs', content, err => {
+        if (err) {
+            console.log(err);
+            res.status(403).send('协议发布失败，请稍后重试！');
+        }
+        res.send('协议发布成功！');
+    });
+});
+admin.post('/writeManual', (req, res) => {
+    let { identity, content } = req.body;
+    file.writeFile(MANUAL + '/' + identity + '.ejs', content, err => {
+        if (err) {
+            console.log(err);
+            res.status(403).send('用户手册发布失败，请稍后重试！');
+        }
+        res.send('用户手册发布成功！');
+    });
+});
 
 admin.post('/initState', (req, res) => {
     if (req.fsm.initialized) {
@@ -98,25 +167,18 @@ admin.post('/initState', (req, res) => {
     states.shift();
     req.fsm.initialize(states).then(info => {
         res.send('初始化成功！');
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('操作出错，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 });
-
 admin.post('/updateState', (req, res) => {
     if (!req.fsm.initialized) {
         res.status(403).send('系统尚未初始化！');
         return;
     }
     let { name, start } = req.body;
-    start = new Date(start).Locale2ISO();
+    start = new Date(start).toLocaleISOString();
     req.fsm.update(name, start).then(() => {
         res.send('时间设置更新成功！');
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('操作出错，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 });
 admin.get('/nextState', (req, res) => {
     if (!req.fsm.initialized) {
@@ -129,10 +191,7 @@ admin.get('/nextState', (req, res) => {
     }
     req.fsm.next().then(() => {
         res.send('立即启动成功！');
-    }).catch(err => {
-        console.log(err);
-        res.status(403).send('操作出错，请稍后重试！');
-    });
+    }).catch(util.catchError(res));
 });
 
 module.exports = admin;

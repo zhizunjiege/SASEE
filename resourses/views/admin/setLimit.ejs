@@ -1,0 +1,46 @@
+<% let limit=data,group=extraData; %>
+<form action="" method="POST" id="set_limit_form" class="col-12 col-md-8 col-lg-6 mx-auto mt-3">
+    <table class="table table-fixed table-hover table-bordered text-center">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">分组</th>
+                <th scope="col">课题指标</th>
+                <th scope="col">高工限制</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for( let i = 0; i < group.length; i++ ) { %>
+            <tr>
+                <td><%= group[i] %></td>
+                <td class="table-input">
+                    <div class="form-group justify-content-around mb-0">
+                        <input type="text" name="goal" value="<%= limit[i].goal %>" class="form-control form-control-lg"
+                            required>
+                    </div>
+                </td>
+                <td class="table-input">
+                    <div class="form-group justify-content-around mb-0">
+                        <input type="text" name="limit" value="<%= limit[i].limit %>"
+                            class="form-control form-control-lg" required>
+                    </div>
+                </td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <div class="form-group form-row justify-content-around mb-3">
+        <button type="reset" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0">重置</button>
+        <button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0">确定</button>
+    </div>
+</form>
+
+<script>
+    (function ($, SASEE) {
+        SASEE.formSubmit({
+            selector: '#set_limit_form',
+            url: './setLimit',
+            done: SASEE.requestDone
+        });
+    })(window.jQuery, window.SASEE);
+</script>

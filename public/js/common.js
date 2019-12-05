@@ -76,8 +76,8 @@
                         contentType: false
                     });
                 } else if (editor) {
-                    let data = preprocess ? preprocess($form) : $form.serializeObject();
-                    data.content = editor.txt.html();
+                    let data = preprocess ? preprocess($form, editor) : $form.serializeObject();
+                    preprocess || (data.content = editor.txt.html());
                     ajaxObj = $.json({ url, data });
                 } else {
                     ajaxObj = $.post(url, preprocess ? preprocess($form) : $form.serialize());
@@ -146,17 +146,5 @@
                 ifNotValid && ifNotValid(data);
             }
         });
-    };
-
-    SASEE.getTime = ({dateObj=null,tostring=false,start=0,length=16}={}) => {
-        let date=new Date(Date.now() - new Date().getTimezoneOffset() * 1000 * 60);
-        if(dateObj){
-            return new Date(dateObj).toISOString().substr(start,length);
-        }
-        if(tostring===true){
-            return date.toISOString().substr(start,length);
-        }else{
-            return date;
-        }
     };
 }

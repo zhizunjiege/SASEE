@@ -1,0 +1,140 @@
+<form action="" id="update_state_form" method="POST" class="col-12 col-md-8 col-lg-6 mx-auto">
+    <% let {states,now}=extraData,flag=0;
+        for (let i = 0; i < states.length; i++) {
+                if(now.name==states[i].name){
+                flag=i; 
+                break;                               
+                }
+            }
+            for (index=1;index<states.length;index++) { 
+                let key=states[index].name,
+                value=states[index].description,
+                start=states[index].start; %>
+    <div class="form-group form-row">
+        <label for="_<%= key %>" class="col-3 col-lg-2 text-center col-form-label"><%= value %></label>
+        <div class="input-group col-9 col-lg-10 px-0">
+            <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
+                value="<%= start?start.substr(0,16):'' %>" <%= index<=flag?'disabled':'required' %>>
+            <div class="input-group-append">
+                <% if (index<=flag) { %>
+                <button type="button" class="btn btn-outline-secondary" disabled>不可操作</button>
+                <% } else { %>
+                <button type="button" class="btn btn-outline-secondary update-button" data-toggle="modal"
+                    data-target="#check_modal">更新时间</button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <% } %>
+    <div class="form-group form-row justify-content-around">
+        <% if(!extraData.initialized) {%>
+        <button type="button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0" id="preset_button">预置</button>
+        <button type="button" id="init_button" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
+            data-toggle="modal" data-target="#check_modal">初始化</button>
+        <% } %>
+        <button type="button" id="next_button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0" data-toggle="modal"
+            data-target="#check_modal">下一阶段</button>
+    </div>
+</form>
+<div id="check_modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">您确定执行此操作吗？</h4>
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                此操作将不可恢复，如误触，可选择取消。
+            </div>
+            <div class="modal-footer justify-content-around">
+                <button type="button" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
+                    data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0"
+                    id="submit_button">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function ($, SASEE) {
+        let $presetButton = $('#preset_button'),
+            $initButton = $('#init_button'),
+            $updateButton = $('.update-button'),
+            $nextButton = $('#next_button'),
+            $checkModal = $('#check_modal'),
+            $submitButton = $('#submit_button');
+        let operate = '', event = null, operateFunc = {
+            init() {
+                $('#update_state_form').submit();
+            },
+            update(e) {
+                let $input = $(e.target).closest('.input-group').find('input');
+                $.post('./updateState', {
+                    name: $input[0].name,
+                    start: $input[0].value
+                }).done(SASEE.requestDone).fail(SASEE.requestFail);
+            },
+            next(e) {
+                $.get('./nextState').done(msg => {
+                    let $next = $('.update-button:enabled').eq(0),
+                        $input = $next.closest('.input-group').find('input');
+                    $next.attr('disabled', true);
+                    $next.text('不可操作');
+                    $input.val(new Date().toLocaleISOString().substr(0, 16));
+                    $input.attr('disabled', true);
+                    SASEE.requestDone(msg);
+                    SASEE.updateTime();
+                }).fail(SASEE.requestFail);
+            }
+        };
+        SASEE.formSubmit({
+            selector: '#update_state_form',
+            url: './initState',
+            validate: $form => {
+                let validateArray = $form.serializeArray();
+                if (validateArray.length > 0) {
+                    return validateArray.reduce((accumulator, currentValue, currentIndex, array) => Boolean(accumulator && currentValue.value > array[currentIndex - 1].value));
+                } else {
+                    return false;
+                }
+            },
+            ifNotValid: () => {
+                SASEE.alert({
+                    msg: '时间顺序有误，请检查后再次提交！'
+                })
+                return;
+            },
+            done(msg) {
+                SASEE.requestDone(msg);
+                $presetButton.remove();
+                $initButton.remove();
+            }
+        });
+        if ($presetButton.length > 0) {
+            $presetButton.click(() => {
+                let $updateStateInput = $('#updateState').find('input'),
+                    time = Date.now();
+                $updateStateInput.each(function () {
+                    time += 1000 * 60 * 60 * 2;
+                    $(this).val(new Date(time).toLocaleISOString().substr(0, 16));
+                });
+            });
+        }
+        $initButton.click(e => {
+            operate = 'init';
+            event = e;
+        });
+        $updateButton.click(e => {
+            operate = 'update';
+            event = e;
+        });
+        $nextButton.click(e => {
+            operate = 'next';
+            event = e;
+        });
+        $submitButton.click(() => {
+            operateFunc[operate](event);
+            $checkModal.modal('hide');
+        });
+    })(window.jQuery, window.SASEE);
+</script>

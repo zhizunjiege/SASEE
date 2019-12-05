@@ -1,0 +1,51 @@
+<form action="" id="send_email_form" method="POST">
+    <div class="form-group form-row align-items-center">
+        <div class="col">
+            <div class="form-group">
+                <input type="text" name="title" class="form-control" placeholder="请输入邮件标题" maxlength="255" required>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group form-row justify-content-around">
+                <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任'}; 
+                        for (const [key,value] of Object.entries(idObj)) { %>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" name="identity" value="<%= key %>" id="email_identity-<%= key %>"
+                        class="custom-control-input" <%= key=='student'?'checked':'' %>>
+                    <label for="email_identity-<%= key %>" class="custom-control-label"><%= value %></label>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div id="emailEditor">
+        <div class="mb-3 editor">
+            <p>请在此处输入内容···</p>
+        </div>
+        <div class="form-group form-row justify-content-around">
+            <button type="reset" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0 editor-clear">清空</button>
+            <button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0">发送</button>
+        </div>
+    </div>
+</form>
+<script>
+    (function ($, SASEE) {
+        let emailEditor = SASEE.instEditor('#emailEditor', true);
+        emailEditor.$textContainerElem[0].style.height = '540px';
+        SASEE.formSubmit({
+            editor: emailEditor,
+            selector: '#send_email_form',
+            url: './sendEmail',
+            validate: $form => {
+                return Boolean($form.find(':radio:checked').length);
+            },
+            ifNotValid: () => {
+                SASEE.alert({
+                    msg: '收信用户不能为空，请选择至少一类用户！'
+                })
+                return;
+            },
+            done: SASEE.requestDone
+        });
+    })(window.jQuery, window.SASEE);
+</script>
