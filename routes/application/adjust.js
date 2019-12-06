@@ -65,7 +65,7 @@ function adjust(group) {
             if (student_.length * id_.length != 0) {
                 count++;
                 if (count == MAX) {
-                    return Promise.resolve('调剂失败')
+                    return Promise.reject('调剂失败')
                 }
                 adjust(group);
             }
@@ -86,7 +86,7 @@ function adjust(group) {
     }
 }
 
-adjust('机电控制与液压').then(res => {
+adjust('5-机电控制与液压').then(res => {
     console.log(res);
 });
 

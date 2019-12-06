@@ -1,0 +1,60 @@
+<form action="" id="write_manual_form" method="POST">
+        <div class="form-group form-row justify-content-around align-items-center">
+            <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任'}; 
+                                for (const [key,value] of Object.entries(idObj)) { %>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" name="identity" value="<%= key %>" id="manual_identity-<%= key %>"
+                    class="custom-control-input" <%= key=='student'?'checked':'' %>>
+                <label for="manual_identity-<%= key %>" class="custom-control-label"><%= value %></label>
+            </div>
+            <% } %>
+        </div>
+        <div id="manual_student" class="d-none">
+        </div>
+        <div id="manual_teacher" class="d-none">
+            <%- include(PATH.MANUAL+'/teacher') %>
+        </div>
+        <div id="manual_dean" class="d-none">
+            <%- include(PATH.MANUAL+'/dean') %>
+        </div>
+        <div id="manualEditor">
+            <div class="mb-3 editor">
+                <%- include(PATH.MANUAL+'/student') %>
+            </div>
+            <div class="form-group form-row justify-content-around">
+                <button type="button" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0 editor-clear">清空</button>
+                <button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0">提交</button>
+            </div>
+        </div>
+    </form>
+    <script>
+        (function ($, SASEE) {
+            let manualEditor = SASEE.instEditor('#manualEditor', true),
+                now = 'student';
+            manualEditor.$textContainerElem[0].style.height = '540px';
+            SASEE.formSubmit({
+                editor: manualEditor,
+                selector: '#write_manual_form',
+                url: './writeManual',
+                validate: $form => {
+                    return Boolean($form.find(':radio:checked').length);
+                },
+                ifNotValid: () => {
+                    SASEE.alert({
+                        msg: '用户不能为空，请选择至少一类用户！'
+                    })
+                    return;
+                },
+                done: SASEE.requestDone
+            });
+            $('#write_manual_form').find('label').click(e => {
+                let identity = $(e.target).prev().val();
+                if (now != identity) {
+                    let $elem = $(manualEditor.$textElem[0]);
+                    $elem.children().appendTo($('#manual_' + now));
+                    $('#manual_' + identity).children().appendTo($elem);
+                    now = identity;
+                }
+            });
+        })(window.jQuery, window.SASEE);
+    </script>

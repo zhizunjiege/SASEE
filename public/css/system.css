@@ -73,3 +73,14 @@ caption {
 .text-indent {
     text-indent: 2rem;
 }
+
+.table-input {
+    padding: 0!important;
+}
+
+.table-input input {
+    text-align: center;
+    border: 0!important;
+    border-radius: 0!important;
+    background-color: #eff6ff;
+}

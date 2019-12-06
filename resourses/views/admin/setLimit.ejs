@@ -1,0 +1,125 @@
+<% let info={},groups=extraData;
+    for (let i = 0; i <groups.length; i++) {
+        info[groups[i]]={
+            limit:0,
+            goal:0,
+            totalStu:0,
+            totalTea:0,
+            subject:{
+                '0-通过':0,
+                '1-未审核':0,
+                '2-未通过':0
+            }
+        };
+    }
+    for (let i = 0; i < data[0].length; i++) {
+        info[data[0][i].group].goal=data[0][i].goal;
+        info[data[0][i].group].limit=data[0][i].limit;
+    }
+    for (let i = 0; i < data[1].length; i++) {
+        info[data[1][i].group]?0:(info[data[1][i].group]={});
+        info[data[1][i].group].totalStu=data[1][i].total;
+    }
+    for (let i = 0; i < data[2].length; i++) {
+        info[data[2][i].group].totalTea=data[2][i].total;
+    }
+    for (let i = 0; i < data[3].length; i++) {
+        info[data[3][i].group].subject[data[3][i].state]=data[3][i].total;
+    }
+%>
+<form action="" method="POST" id="set_limit_form" class="col-12 mx-auto mt-3">
+    <table class="table table-fixed table-hover table-bordered text-center mb-5">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">分组</th>
+                <th scope="col">学生人数</th>
+                <th scope="col">教师人数</th>
+                <th scope="col">通过课题</th>
+                <th scope="col">未审核课题</th>
+                <th scope="col">未通过课题</th>
+                <th scope="col">课题指标</th>
+                <th scope="col">高工限制</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% let totalStu=0,totalTea=0,totalPass=0,totalUncheck=0,totalUnpass=0,totalGoal=0,totalLimit=0,totalGaoGong=info['高工'].totalStu;
+            for( let i = 0; i < groups.length; i++ ) { 
+                let group=groups[i];
+                totalStu+=info[group].totalStu;
+                totalTea+=info[group].totalTea;
+                totalPass+=info[group].subject['0-通过'];
+                totalUncheck+=info[group].subject['1-未审核'];
+                totalUnpass+=info[group].subject['2-未通过'];
+                totalGoal+=info[group].goal;
+                totalLimit+=info[group].limit; %>
+            <tr>
+                <th scope="row"><%= group %></th>
+                <td><%= info[group].totalStu %></td>
+                <td><%= info[group].totalTea %></td>
+                <td><%= info[group].subject['0-通过'] %></td>
+                <td><%= info[group].subject['1-未审核'] %></td>
+                <td><%= info[group].subject['2-未通过'] %></td>
+                <td class="table-input">
+                    <div class="form-group justify-content-around mb-0">
+                        <input type="text" name="goal" value="<%= info[group].goal %>"
+                            class="form-control form-control-lg" required>
+                    </div>
+                </td>
+                <td class="table-input">
+                    <div class="form-group justify-content-around mb-0">
+                        <input type="text" name="limit" value="<%= info[group].limit %>"
+                            class="form-control form-control-lg" required>
+                    </div>
+                </td>
+            </tr>
+            <% } %>
+            <tr>
+                <th scope="row">高工</th>
+                <td><%= totalGaoGong %></td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+            </tr>
+            <tr>
+                <th scope="row">总计</th>
+                <td><%= totalStu+totalGaoGong %></td>
+                <td><%= totalTea %></td>
+                <td><%= totalPass %></td>
+                <td><%= totalUncheck %></td>
+                <td><%= totalUnpass %></td>
+                <td id="total_goal"><%= totalGoal %></td>
+                <td id="total_limit"><%= totalLimit %></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group form-row justify-content-around mb-3">
+        <button type="reset" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0">重置</button>
+        <button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0">确定</button>
+    </div>
+</form>
+
+<script>
+    (function ($, SASEE) {
+        SASEE.formSubmit({
+            selector: '#set_limit_form',
+            url: './setLimit',
+            done: SASEE.requestDone
+        });
+        function computeTotal(form, inputName, totalElem) {
+            let $input = $(form).find(`input[name=${inputName}]`);
+            $input.change(e => {
+                let total = 0;
+                for (let j = 0; j < $input.length; j++) {
+                    total += Number($input[j].value) || 0;
+                }
+                $(totalElem).text(total);
+            });
+        }
+        computeTotal('#set_limit_form', 'goal', '#total_goal');
+        computeTotal('#set_limit_form', 'limit', '#total_limit');
+    })(window.jQuery, window.SASEE);
+</script>

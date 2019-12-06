@@ -43,7 +43,7 @@ deanViews.get('/statistics', general.permiss(['submit', 'review', 'modify', 'rel
 }, views.render);
 deanViews.get('/subject', general.permiss(['review', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="未审核" AND `group`=?) total,b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="1-未审核" AND `group`=?) total,b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="1-未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
         param: [req.session.group, req.session.group],
         file: 'subject',
         dir: VIEWS_STUDENT
@@ -52,7 +52,7 @@ deanViews.get('/subject', general.permiss(['review', 'release']), (req, res, nex
 }, views.render);
 deanViews.get('/subjectList', general.permiss(['review', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+        sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="1-未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
         param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
         file: 'subjectList',
         dir: VIEWS_STUDENT

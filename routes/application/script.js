@@ -1,4 +1,4 @@
-const [mysql, email, draw] = superApp.requireUserModules(['mysql', 'email', 'zhiyuan']);
+const [mysql, email, draw] = superApp.requireUserModules(['mysql', 'email', 'draw']);
 
 function queryEmailAddrToArray({ sql, identity, then } = {}) {
     let sql_query = sql || 'SELECT email FROM ??' + (Array.isArray(identity) ? ' UNION SELECT email FROM ??'.repeat(identity.length - 1) : '');
@@ -60,7 +60,7 @@ function sendInfoToAdmin({ sql, title, captionArray = ['学生', '教师', '系�
 }
 
 function deleteSubject() {
-    let sql_delete = "DELETE FROM bysj WHERE state='未通过'";
+    let sql_delete = "DELETE FROM bysj WHERE state='2-未通过'";
     mysql.find(sql_delete).then(info => {
         console.log(info);
         console.log(`废弃课题已全部删除！共删除了${info.affectedRows}个课题。`);

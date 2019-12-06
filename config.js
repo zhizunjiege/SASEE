@@ -1,6 +1,37 @@
 Date.prototype.toLocaleISOString = function () {
     return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
 };
+Promise.allSettled = function (promiseArray) {
+    let len = promiseArray.length,
+        results = new Array(len);
+    return new Promise(resolve => {
+        for (let i = 0; i < len; i++) {
+            let index = i;
+            promiseArray[i].then(value => {
+                results[index] = {
+                    status: 'fulfilled',
+                    value
+                };
+            }).catch(reason => {
+                results[index] = {
+                    status: 'rejected',
+                    reason
+                };
+            }).finally(() => {
+                let flag = true;
+                for (let j = 0; j < len; j++) {
+                    if (!results[j]) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    resolve(results);
+                }
+            });
+        }
+    });
+};
 
 global.superApp = {
     maxProjectsMap: {
@@ -13,13 +44,13 @@ global.superApp = {
         2: '电气',
         3: '高工'
     },
-    groupDesMap: {
-        1: '自动控制与模式识别',
-        2: '自主导航与精确制导',
-        3: '检测与自动化工程',
-        4: '飞行器控制与仿真',
-        5: '机电控制与液压'
-    },
+    groupMap: [
+        '1-自动控制与模式识别',
+        '2-自主导航与精确制导',
+        '3-检测与自动化工程',
+        '4-飞行器控制与仿真',
+        '5-机电控制与液压'
+    ],
     projectTypeMap: {
         1: '科学研究',
         2: '工程设计',
@@ -124,7 +155,9 @@ transObjToPath(superApp.userModules, __dirname, {
             "download": "download",
             "subject": "subject",
             "fsm": "fsm",
-            "script": "script"
+            "script": "script",
+            "adjust": "adjust",
+            "excel": "excel"
         },
         "user": {
             "admin": {
