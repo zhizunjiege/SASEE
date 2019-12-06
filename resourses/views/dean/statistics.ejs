@@ -1,8 +1,8 @@
 <table class="table table-hover text-center col-10 mx-auto table-fixed">
     <% let teachers=data[0],totalStu=data[1][0].totalStu,goal=data[2][0].goal,map=extraData,stateCountObj={
-        '通过':0,
-        '未审核':0,
-        '未通过':0
+        '0-通过':0,
+        '1-未审核':0,
+        '2-未通过':0
     },count=0;
     for (let j = 0; j < data[3].length; j++) {
         count+=stateCountObj[data[3][j].state]=data[3][j].count;
@@ -32,6 +32,6 @@
     <caption class="text-primary">
         本方向共&ensp;<strong><%= totalStu %></strong>&ensp;名学生，<strong><%= teachers.length %></strong>&ensp;位教师，目标课题&ensp;<strong><%= goal||'暂无' %></strong>&ensp;个。
         <br>
-        已有课题&ensp;<strong><%= count %></strong>&ensp;个，其中，通过&ensp;<strong><%= stateCountObj['通过'] %></strong>&ensp;个，未审核&ensp;<strong><%= stateCountObj['未审核'] %></strong>&ensp;个，未通过&ensp;<strong><%= stateCountObj['未通过'] %></strong>&ensp;个。
+        已有课题&ensp;<strong><%= count %></strong>&ensp;个，其中，通过&ensp;<strong><%= stateCountObj['0-通过'] %></strong>&ensp;个，未审核&ensp;<strong><%= stateCountObj['1-未审核'] %></strong>&ensp;个，未通过&ensp;<strong><%= stateCountObj['2-未通过'] %></strong>&ensp;个。
     </caption>
 </table>

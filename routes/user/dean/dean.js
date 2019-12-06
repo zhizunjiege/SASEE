@@ -45,8 +45,7 @@ deanViews.get('/subject', general.permiss(['review', 'release']), (req, res, nex
     req.renderData = {
         sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="1-未审核" AND `group`=?) total,b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="1-未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
         param: [req.session.group, req.session.group],
-        file: 'subject',
-        dir: VIEWS_STUDENT
+        file: 'subject'
     };
     next();
 }, views.render);
@@ -54,8 +53,7 @@ deanViews.get('/subjectList', general.permiss(['review', 'release']), (req, res,
     req.renderData = {
         sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="1-未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
         param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
-        file: 'subjectList',
-        dir: VIEWS_STUDENT
+        file: 'subjectList'
     };
     next();
 }, views.render);

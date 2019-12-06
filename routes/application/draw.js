@@ -1,4 +1,3 @@
-const superApp = require('../../config');
 const mysql = superApp.requireUserModule('mysql');
 
 function _randomSelect(selected) {

@@ -13,7 +13,7 @@ function queryEmailAddrToArray({ sql, identity, then } = {}) {
     });
 }
 
-function queryNumberToTables({ sql, captionArray, then } = {}) {
+/* function queryNumberToTables({ sql, captionArray, then } = {}) {
     return mysql.find(sql).then(results => {
         let paragraph = [];
         if (captionArray.length > 1) {
@@ -29,7 +29,7 @@ function queryNumberToTables({ sql, captionArray, then } = {}) {
             then(paragraph);
         }
     });
-}
+} */
 
 function sendEmail({ sql, identity = 'admin', title, paragraph }) {
     queryEmailAddrToArray({
@@ -44,7 +44,7 @@ function sendEmail({ sql, identity = 'admin', title, paragraph }) {
     });
 }
 
-function sendInfoToAdmin({ sql, title, captionArray = ['学生', '教师', '系主任'] } = {}) {
+/* function sendInfoToAdmin({ sql, title, captionArray = ['学生', '教师', '系主任'] } = {}) {
     queryNumberToTables({
         sql,
         captionArray,
@@ -57,7 +57,7 @@ function sendInfoToAdmin({ sql, title, captionArray = ['学生', '教师', '系�
             });
         }
     });
-}
+} */
 
 function deleteSubject() {
     let sql_delete = "DELETE FROM bysj WHERE state='2-未通过'";
@@ -76,9 +76,18 @@ function drawAll(succeed, fail) {
     });
 }
 
+function adjustAll(succeed, fail) {
+    adjust().then(() => {
+        sendEmail(succeed);
+    }).catch(err => {
+        console.log(err);
+        sendEmail(fail);
+    });
+}
+
 function closeServer(param) {
     sendEmail(param);
     superApp.server.close();
 }
 
-module.exports = { sendEmail, sendInfoToAdmin, deleteSubject, drawAll, closeServer };
+module.exports = { sendEmail, drawAll, closeServer, adjustAll };

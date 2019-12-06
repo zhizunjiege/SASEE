@@ -1,7 +1,5 @@
-const superApp = require('../../config');//引用路径记得改对
 const mysql = superApp.requireUserModule('mysql');
 const nodeExcel = require('excel-export');
-const fs = require('fs');
 
 function excel_exe(query) {
     let conf_all = [];

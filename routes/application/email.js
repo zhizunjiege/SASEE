@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer'),
-    [mysql,util] = superApp.requireUserModules(['mysql','util']);
+    [mysql, util] = superApp.requireUserModules(['mysql', 'util']);
 
 const CONSTANT = {
     SYS_TEST: '此邮件为系统测试邮件，请忽略······',
@@ -16,14 +16,18 @@ function _createSixNum() {
 }
 
 function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
-    const transporter = nodemailer.createTransport({
-        service: '163',
-        auth: {
-            user: from,
-            pass: password
-        }
-    });
-    return transporter.sendMail({ from, to, text, html, subject });
+    try {
+        const transporter = nodemailer.createTransport({
+            service: '163',
+            auth: {
+                user: from,
+                pass: password
+            }
+        });
+        return transporter.sendMail({ from, to, text, html, subject });
+    } catch{
+        console.log('邮箱登陆失败！');
+    }
 }
 
 function _spcmw(req, res, next) {
@@ -75,8 +79,4 @@ function emailTemplate({ title = '通知', paragraph = [], from = '系统' } = {
             `;
 }
 
-function tableTemplate({ caption, tableItems } = {}) {
-    return `` + caption + `\n` + tableItems;
-}
-
-module.exports = { CONSTANT, _spcmw, _send, sendPinCode, sendEmail, emailTemplate, tableTemplate };
+module.exports = { CONSTANT, _spcmw, _send, sendPinCode, sendEmail, emailTemplate };

@@ -1,4 +1,3 @@
-const superApp = require('../../config');//引用路径记得改对
 const mysql = superApp.requireUserModule('mysql');
 
 const MAX = 3;
