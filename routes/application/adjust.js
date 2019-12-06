@@ -20,42 +20,39 @@ function shuffle(array) {
 }
 
 function adjust(group) {
-    let find_student = 'SELECT account FROM student WHERE `group`=? AND bysj is null';
-    let find_id = 'SELECT id FROM bysj WHERE `group` = ? AND student is null';
+    let find_student = 'SELECT id FROM student WHERE `group`=? AND bysj IS NULL';
+    let find_id = `SELECT id FROM bysj WHERE student IS NULL ${group == '高工' ? '' : `AND \`group\` = "${group}"`}`;
     let student = [], student_ = [];
     let id = [], id_ = [];
     let scheme = [];
     return mysql.find(find_student, group).then(res => {
-        let len = res == null ? 0 : res.length;
+        let len = res.length;
         for (let i = 0; i < len; i++) {
-            student.push(res[i]['account']);
+            student.push(res[i].id);
         }
-        return mysql.find(find_id, group).then(res => {
-            let len = res == null ? 0 : res.length;
+        return mysql.find(find_id).then(res => {
+            let len = res.length;
             for (let i = 0; i < len; i++) {
-                id.push(res[i]['id']);
+                id.push(res[i].id);
             }
         });
     }).then(() => {
         id = shuffle(id);
-        let len = student.length;
-        if (id.length < student.length) {
-            len = id.length;
-        }
+        let len = Math.min(id.length, student.length);
         for (let i = 0; i < len; i++) {
             scheme.push(every(student[i], id[i]));
         }
         return Promise.all(scheme);
     }).then(() => {
         return mysql.find(find_student, group).then(res => {
-            let len = res == null ? 0 : res.length;
+            let len = res.length;
             for (let i = 0; i < len; i++) {
-                student_.push(res[i]['account']);
+                student_.push(res[i].id);
             }
-            return mysql.find(find_id, group).then(res => {
-                let len = res == null ? 0 : res.length;
+            return mysql.find(find_id).then(res => {
+                let len = res.length;
                 for (let i = 0; i < len; i++) {
-                    id_.push(res[i]['id']);
+                    id_.push(res[i].id);
                 }
             });
         }).then(() => {
@@ -65,29 +62,48 @@ function adjust(group) {
             if (student_.length * id_.length != 0) {
                 count++;
                 if (count == MAX) {
-                    return Promise.reject('调剂失败')
+                    return Promise.reject('调剂失败');
                 }
-                adjust(group);
+                return adjust(group);
             }
             return Promise.resolve(left);
         })
     });
 
-    function every(account, id) {
-        let update_student = 'UPDATE student SET bysj = ? WHERE account = ?';
+    function every(stuId, id) {
+        let update_student = 'UPDATE student SET bysj = ? WHERE id = ?';
         let update_scheme = "UPDATE bysj SET student = ? WHERE id = ?";
-        return mysql.transaction().then(({conn}) => {
-            return conn.find(update_student, [id, account]);
-        }).then(({conn}) => {
-            return conn.find(update_scheme, [account, id]);
-        }).then(({results, conn}) => {
+        return mysql.transaction().then(conn => {
+            return conn.find(update_student, [id, stuId]);
+        }).then(({ conn }) => {
+            return conn.find(update_scheme, [stuId, id]);
+        }).then(({ results, conn }) => {
             return conn.commitPromise(results);
         })
     }
 }
 
-adjust('5-机电控制与液压').then(res => {
-    console.log(res);
-});
+function adjustAll() {
+    return adjust(superApp.groupMap[0]).then(res => {
+        console.log(res);
+        return adjust(superApp.groupMap[1]);
+    }).then(res => {
+        console.log(res);
+        return adjust(superApp.groupMap[2]);
+    }).then(res => {
+        console.log(res);
+        return adjust(superApp.groupMap[3]);
+    }).then(res => {
+        console.log(res);
+        return adjust(superApp.groupMap[4]);
+    }).then(res => {
+        console.log(res);
+        return adjust('高工');
+    }).then(res => {
+        console.log(res);
+    }).catch(err => {
+        console.log(err);
+    });
+}
 
-module.exports=adjust;
+module.exports = adjustAll;

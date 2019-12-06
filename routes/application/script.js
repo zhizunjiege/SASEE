@@ -1,4 +1,4 @@
-const [mysql, email, draw] = superApp.requireUserModules(['mysql', 'email', 'draw']);
+const [mysql, email, draw, adjust] = superApp.requireUserModules(['mysql', 'email', 'draw', 'adjust']);
 
 function queryEmailAddrToArray({ sql, identity, then } = {}) {
     let sql_query = sql || 'SELECT email FROM ??' + (Array.isArray(identity) ? ' UNION SELECT email FROM ??'.repeat(identity.length - 1) : '');
