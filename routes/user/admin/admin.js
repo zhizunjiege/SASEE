@@ -84,7 +84,7 @@ adminViews.get('/updateState', (req, res, next) => {
 }, views.render);
 adminViews.get('/setLimit', (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT goal,`limit` FROM dean ORDER BY `group`',
+        sql_query: 'SELECT `group`,goal,`limit` FROM dean ORDER BY `group`;SELECT `group`,COUNT(*) total FROM student GROUP BY `group` ORDER BY `group`;SELECT `group`,COUNT(*) total FROM teacher GROUP BY `group` ORDER BY `group`;SELECT `group`,state,COUNT(*) total FROM bysj GROUP BY `group`,state ORDER BY `group`,state',
         file: 'setLimit',
         extraData: superApp.groupMap
     };

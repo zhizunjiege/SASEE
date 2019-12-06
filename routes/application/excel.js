@@ -38,8 +38,8 @@ function excel_exe(keyword, name, table) {
 }
 
 module.exports = excel_exe;
-// let info = ['account', 'bysj'];
-// let name = ['学号','所选课题'];
-// excel_exe(info, name,'student').then(result => {
-//     fs.writeFileSync("./1.xlsx", result, 'binary');
-// });
+let info = ['account', 'bysj'];
+let name = ['学号','所选课题'];
+excel_exe(info, name,'student').then(result => {
+    fs.writeFileSync("./1.xlsx", result, 'binary');
+});

@@ -51,7 +51,7 @@ let getConditions = req => {
 studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, next) => {
     let condition = getConditions(req);
     req.renderData = {
-        sql_query: `SELECT COUNT(*) total FROM bysj WHERE bysj.state="通过"${condition};SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET 0`,
+        sql_query: `SELECT COUNT(*) total FROM bysj WHERE bysj.state="0-通过"${condition};SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="0-通过"${condition} ORDER BY id LIMIT 10 OFFSET 0`,
         file: 'subject'
     };
     next();
@@ -59,7 +59,7 @@ studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, ne
 studentViews.get('/subjectList', general.permiss(['choose', 'final']), (req, res, next) => {
     let condition = getConditions(req);
     req.renderData = {
-        sql_query: `SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="通过"${condition} ORDER BY id LIMIT 10 OFFSET ?`,
+        sql_query: `SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="0-通过"${condition} ORDER BY id LIMIT 10 OFFSET ?`,
         param: ((Number(req.query.page) || 1) - 1) * 10,
         file: 'subjectList'
     };

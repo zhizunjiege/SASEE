@@ -11,7 +11,7 @@ function submit(req, res) {
         { group, account } = req.session,
         materials = req.file ? req.file.filename : '';
     let sql_query = 'SELECT id,proTitle,JSON_LENGTH(bysj) bysjNum FROM teacher WHERE account=? AND password=?',
-        sql_insert = 'INSERT INTO bysj (submitTime,lastModifiedTime,studentFiles,teacherFiles,notice,student,state,title,`group`,introduction,materials,type, source, requirement, difficulty, weight, ability,teacher) VALUES (CURDATE(),CURDATE(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),NULL,"未审核",?,?,?,?,?,?,?,?,?,?,?)',
+        sql_insert = 'INSERT INTO bysj (submitTime,lastModifiedTime,studentFiles,teacherFiles,notice,student,state,title,`group`,introduction,materials,type, source, requirement, difficulty, weight, ability,teacher) VALUES (CURDATE(),CURDATE(),JSON_ARRAY(),JSON_ARRAY(),JSON_ARRAY(),NULL,"1-未审核",?,?,?,?,?,?,?,?,?,?,?)',
         sql_update = 'UPDATE teacher SET bysj=JSON_ARRAY_APPEND(bysj,"$",?) WHERE teacher.id=?;SELECT * FROM bysj WHERE id=?',
         teacher;
 
@@ -53,7 +53,7 @@ function modify(req, res) {
         { allRound, experiment, graphic, data, analysis } = req.body,
         account = req.session.account;
     let sql_query = 'SELECT 1 FROM teacher WHERE account=? AND password=?',
-        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state="未审核" WHERE id=?;SELECT * FROM bysj WHERE id=?';
+        sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state="1-未审核" WHERE id=?;SELECT * FROM bysj WHERE id=?';
     mysql.find(sql_query, [account, password]).then(results => {
         let param = { title, introduction, type, source, requirement, difficulty, weight, ability: JSON.stringify({ allRound, experiment, graphic, data, analysis }) };
         if (results.length) {
@@ -104,7 +104,7 @@ function choose(req, res) {
     let { userId, group } = req.session,
         { id, password, target } = req.body,
         ifFinal = req.fsm.now().name == 'final', ifGaoGong = group == '高工';
-    let sql_query = 'SELECT bysj FROM student WHERE id=? AND password=?;SELECT 1 FROM bysj WHERE id=? AND state="通过" AND student IS NULL' + (ifGaoGong ? ';SELECT COUNT(*) total,(SELECT `limit` FROM dean d WHERE d.`group`=b.`group`) `limit` FROM student s,bysj b WHERE s.`group`="高工" AND (s.bysj=b.id OR s.target1=b.id) AND b.`group`=(SELECT `group` FROM bysj WHERE id=?)' : ''),
+    let sql_query = 'SELECT bysj FROM student WHERE id=? AND password=?;SELECT 1 FROM bysj WHERE id=? AND state="0-通过" AND student IS NULL' + (ifGaoGong ? ';SELECT COUNT(*) total,(SELECT `limit` FROM dean d WHERE d.`group`=b.`group`) `limit` FROM student s,bysj b WHERE s.`group`="高工" AND (s.bysj=b.id OR s.target1=b.id) AND b.`group`=(SELECT `group` FROM bysj WHERE id=?)' : ''),
         sql_update_choose = `UPDATE student SET target${target}=? WHERE id=?`,
         sql_update_final = 'UPDATE student SET bysj=?,target1=NULL,,target2=NULL,target3=NULL WHERE id=?;UPDATE bysj SET student=? WHERE id=?';
     let param = [userId, password, id];
@@ -135,8 +135,8 @@ function choose(req, res) {
 
 function check(req, res) {
     const ifPassObj = {
-        yes: '通过',
-        no: '未通过'
+        yes: '0-通过',
+        no: '2-未通过'
     };
     let { id } = req.body, sql_update = 'UPDATE bysj SET state=?,`check`=? WHERE id=?';
     if (!req.body.extra) {
