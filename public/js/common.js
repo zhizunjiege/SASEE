@@ -1,6 +1,40 @@
 {
     window.SASEE || (window.SASEE = {});
     const { SASEE, $ } = window;
+    $.fn.extend({
+        serializeObject: function () {
+            let dataObj = {},
+                dataArray = this.serializeArray();
+            for (const iterator of dataArray) {
+                let field = dataObj[iterator.name];
+                if (field) {
+                    if (Array.isArray(field)) {
+                        field.push(iterator.value);
+                    } else {
+                        dataObj[iterator.name] = [field, iterator.value];
+                    }
+                } else {
+                    dataObj[iterator.name] = iterator.value;
+                }
+            }
+            return dataObj;
+        }
+    });
+    $.extend({
+        json: function ({ url, data }) {
+            return $.ajax({
+                type: 'POST',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: 'application/json;charset=UTF-8'
+            })
+        }
+    });
+    $.ajaxSetup({
+        headers: {
+            Frame: 'jQuery'
+        }
+    });
     SASEE.alert = ({ msg = '网络错误，请稍后重试！', static = true, count = 0, buttonHide = false } = {}) => {
         $('.alert>span').text(msg);
         if (buttonHide) {
@@ -65,22 +99,27 @@
         $form[0].onsubmit = (e) => {
             e.preventDefault();
             if (!validate || validate($form)) {
-                let ajaxObj = null;
+                let ajaxObj = null, hasPass = $form.find('input[type=password]').length > 0;
                 if (file) {
+                    let data = new FormData($form[0]);
+                    hasPass && data.set('password', objectHash.MD5(data.get('password')));
                     ajaxObj = $.ajax({
                         url: url,
                         type: 'POST',
                         cache: false,
-                        data: preprocess ? preprocess($form) : new FormData($form[0]),
+                        data,
                         processData: false,
                         contentType: false
                     });
-                } else if (editor) {
-                    let data = preprocess ? preprocess($form, editor) : $form.serializeObject();
-                    preprocess || (data.content = editor.txt.html());
-                    ajaxObj = $.json({ url, data });
                 } else {
-                    ajaxObj = $.post(url, preprocess ? preprocess($form) : $form.serialize());
+                    let data = preprocess ? preprocess($form, editor) : $form.serializeObject();
+                    if (hasPass) {
+                        data.password && (data.password = objectHash.MD5(data.password));
+                        data.oldPW && (data.oldPW = objectHash.MD5(data.oldPW));
+                        data.newPW && (data.newPW = objectHash.MD5(data.newPW));
+                    }
+                    editor && (data.content = editor.txt.html());
+                    ajaxObj = $.json({ url, data });
                 }
                 ajaxObj.done(done).fail(fail).always(always);
             } else {

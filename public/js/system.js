@@ -20,41 +20,6 @@
     };
     const SASEE = window.SASEE;
 
-    $.fn.extend({
-        serializeObject: function () {
-            let dataObj = {},
-                dataArray = this.serializeArray();
-            for (const iterator of dataArray) {
-                let field = dataObj[iterator.name];
-                if (field) {
-                    if (Array.isArray(field)) {
-                        field.push(iterator.value);
-                    } else {
-                        dataObj[iterator.name] = [field, iterator.value];
-                    }
-                } else {
-                    dataObj[iterator.name] = iterator.value;
-                }
-            }
-            return dataObj;
-        }
-    });
-    $.extend({
-        json: function ({ url, data }) {
-            return $.ajax({
-                type: 'POST',
-                url: url,
-                data: JSON.stringify(data),
-                contentType: 'application/json;charset=UTF-8'
-            })
-        }
-    });
-    $.ajaxSetup({
-        headers: {
-            Frame: 'jQuery'
-        }
-    });
-
     SASEE._showListOrContent = ({ container, flag = true, title }) => {
         function _show(container, flag = true) {
             let listSel = '#contents_title,' + container + ' .sys-list',

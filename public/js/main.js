@@ -62,13 +62,6 @@
                     location.href = '/';
                 });
             });
-        }
-
-        let hash = objectHash('jiege2020', {
-            algorithm: 'md5'
-        });
-
-        console.log(hash);
-        
+        }        
     });
 })(window.jQuery);

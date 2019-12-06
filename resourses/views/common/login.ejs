@@ -16,7 +16,7 @@
     <div class="container" id="container">
         <div class="row align-items-center justify-content-center" id="row">
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
-                <form action="" method="POST">
+                <form action="" method="POST" id="login_form">
                     <div class="form-group form-row">
                         <label class="col-3 col-form-label" for="account">账号：</label>
                         <input class="form-control col-9" type="text" name="account" id="account"
@@ -27,7 +27,6 @@
                         <input class="form-control col-9" type="password" name="password" id="password"
                             placeholder="Your Password" pattern="\w{8,16}" required>
                     </div>
-
                     <div class="form-group form-row justify-content-around">
                         <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任'}; 
                         for (const [key,value] of Object.entries(idObj)) { %>
@@ -51,22 +50,18 @@
 
     <script src="/frames/others/jquery-3.4.0.js"></script>
     <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/frames/others/object_hash.js"></script>
+    <script src="/js/common.js"></script>
     <script>
-        (function () {
-            let $form = $(document.forms[0]);
-            $form.submit((e) => {
-                e.preventDefault();
-                $.post('/login', $form.serialize()).done((data, textStatus, xhr) => {
+        (function ($, SASEE) {
+            SASEE.formSubmit({
+                selector: '#login_form',
+                url: '/login',
+                done(data, textStatus, xhr) {
                     window.location.href = xhr.getResponseHeader('Location');
-                }).fail(xhr => {
-                    $('.alert>span').text(xhr.responseText || '网络错误，请稍后重试！');
-                    $('.alert-modal').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                });
+                }
             });
-        })();
+        })(Window.jQuery, window.SASEE);
     </script>
 </body>
 
