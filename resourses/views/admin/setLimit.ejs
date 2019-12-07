@@ -52,7 +52,7 @@
                 totalGoal+=info[group].goal;
                 totalLimit+=info[group].limit; %>
             <tr>
-                <th scope="row"><%= group %></th>
+                <th scope="row"><%= group.substr(2) %></th>
                 <td><%= info[group].totalStu %></td>
                 <td><%= info[group].totalTea %></td>
                 <td><%= info[group].subject['0-通过'] %></td>
