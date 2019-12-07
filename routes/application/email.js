@@ -16,18 +16,19 @@ function _createSixNum() {
 }
 
 function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
-    try {
-        const transporter = nodemailer.createTransport({
-            service: '163',
-            auth: {
-                user: from,
-                pass: password
-            }
-        });
-        return transporter.sendMail({ from, to, text, html, subject });
-    } catch{
-        console.log('邮箱登陆失败！');
-    }
+    const transporter = nodemailer.createTransport({
+        service: '163',
+        auth: {
+            user: from,
+            pass: password
+        }
+    });
+    return transporter.sendMail({ from, to, text, html, subject }).then(() => {
+        console.log('邮件发送成功！');
+    }).catch(err => {
+        console.log('邮件发送失败！');
+        console.log(err);
+    });
 }
 
 function _spcmw(req, res, next) {

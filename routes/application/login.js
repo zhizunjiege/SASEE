@@ -29,7 +29,7 @@ function authenticate(req, res) {
 
 function render(req, res) {
     let { identity, group, account } = req.session,
-        condition = `${group == '高工' ? '' : ` WHERE JSON_CONTAINS(\`group\`,JSON_QUOTE("${group}"))`}`,
+        condition = ` WHERE JSON_CONTAINS(\`group\`,JSON_QUOTE("${group}"))`,
         sql_query = `SELECT name,gender,ifReadLicense FROM ?? user WHERE account = ?;SELECT (SELECT COUNT(*) FROM news${condition}) total,n.* FROM news n${condition} ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0`;
     mysql.find(sql_query, [identity, account, group, group,])
         .then(data => {

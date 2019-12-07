@@ -27,7 +27,7 @@ const common = express.Router();
 common.get('/newsList', (req, res, next) => {
     let { group } = req.session;
     req.renderData = {
-        sql_query: `SELECT * FROM news${group == '高工' ? '' : ` WHERE JSON_CONTAINS(\`group\`,JSON_QUOTE("${group}"))`} ORDER BY top DESC,id DESC LIMIT 10 OFFSET ?`,
+        sql_query: `SELECT * FROM news WHERE JSON_CONTAINS(\`group\`,JSON_QUOTE("${group}")) ORDER BY top DESC,id DESC LIMIT 10 OFFSET ?`,
         param: ((Number(req.query.page) || 1) - 1) * 10,
         file: 'newsList',
         dir: VIEWS_COMMON
