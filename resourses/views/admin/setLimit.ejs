@@ -17,7 +17,6 @@
         info[data[0][i].group].limit=data[0][i].limit;
     }
     for (let i = 0; i < data[1].length; i++) {
-        info[data[1][i].group]?0:(info[data[1][i].group]={});
         info[data[1][i].group].totalStu=data[1][i].total;
     }
     for (let i = 0; i < data[2].length; i++) {
@@ -42,8 +41,8 @@
             </tr>
         </thead>
         <tbody>
-            <% let totalStu=0,totalTea=0,totalPass=0,totalUncheck=0,totalUnpass=0,totalGoal=0,totalLimit=0,totalGaoGong=info['高工'].totalStu;
-            for( let i = 0; i < groups.length; i++ ) { 
+            <% let totalStu=0,totalTea=0,totalPass=0,totalUncheck=0,totalUnpass=0,totalGoal=0,totalLimit=0,totalGaoGong=info[groups[6]].totalStu;
+            for( let i = 0; i < groups.length-1; i++ ) { 
                 let group=groups[i];
                 totalStu+=info[group].totalStu;
                 totalTea+=info[group].totalTea;

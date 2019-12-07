@@ -15,19 +15,12 @@
         </div>
         <div class="col-8">
             <div class="form-group form-row justify-content-around">
-                <% const groupObj={
-                        1: '1-自动控制与模式识别',
-                        2: '2-自主导航与精确制导',
-                        3: '3-检测与自动化工程',
-                        4: '4-飞行器控制与仿真',
-                        5: '5-机电控制与液压',
-                        6: '高工'
-                    }; 
-                    for (const [key,value] of Object.entries(groupObj)) { %>
+                <% const groups=extraData; 
+                    for (const [key,value] of groups.entries()) { %>
                 <div class="custom-control custom-checkbox custom-control-inline">
                     <input type="checkbox" name="group" class="custom-control-input" id="customCheck_<%= key %>"
                         value="<%= value %>" checked>
-                    <label class="custom-control-label" for="customCheck_<%= key %>"><%= value %></label>
+                    <label class="custom-control-label" for="customCheck_<%= key %>"><%= value.substr(2) %></label>
                 </div>
                 <% } %>
             </div>

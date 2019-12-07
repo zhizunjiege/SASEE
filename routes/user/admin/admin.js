@@ -61,7 +61,8 @@ admin.get('/main', (req, res, next) => {
 
 adminViews.get('/submitNotice', (req, res, next) => {
     req.renderData = {
-        file: 'submitNotice'
+        file: 'submitNotice',
+        extraData: superApp.groupMap
     };
     next();
 }, views.render);

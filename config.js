@@ -41,7 +41,7 @@ global.superApp = {
     },
     specialtyMap: {
         1: '自动化',
-        2: '电气',
+        2: '电气工程及其自动化',
         3: '高工'
     },
     groupMap: [
@@ -49,7 +49,9 @@ global.superApp = {
         '2-自主导航与精确制导',
         '3-检测与自动化工程',
         '4-飞行器控制与仿真',
-        '5-机电控制与液压'
+        '5-机电控制与液压',
+        '6-电气',
+        '7-高工'
     ],
     projectTypeMap: {
         1: '科学研究',
@@ -141,7 +143,8 @@ transObjToPath(superApp.userModules, __dirname, {
         "service": {
             "file": "file",
             "mysql": "mysql",
-            "util": "util"
+            "util": "util",
+            "object_hash": "hash"
         },
         "application": {
             "email": "email",

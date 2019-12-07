@@ -42,7 +42,7 @@ let optionalObj = {
 };
 let getConditions = req => {
     let { group } = req.session, condition = '';
-    if (group !== '高工') {
+    if (group !== superApp.groupMap[6]) {
         condition += optionalObj.group + '"' + group + '"';
     }
     condition += optionalObj.period;
