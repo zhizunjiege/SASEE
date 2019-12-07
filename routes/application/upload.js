@@ -1,8 +1,8 @@
 const multer = require('multer'),
-    [mysql, file,util] = superApp.requireUserModules(['mysql', 'file','util']),
+    [mysql, file, util] = superApp.requireUserModules(['mysql', 'file', 'util']),
     { FILES } = superApp.resourses;
 
-let receive = multer({
+const receiver = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, superApp.resourses.TMP);
@@ -11,7 +11,9 @@ let receive = multer({
             cb(null, file.originalname);
         }
     })
-}).single('file');
+});
+
+let receive = receiver.single('file');
 
 function upload(req, res) {
     let { id, tag } = req.body,
@@ -27,4 +29,4 @@ function upload(req, res) {
     }).catch(util.catchError(res));
 }
 
-module.exports = { receive, upload };
+module.exports = { receive, upload, receiver };

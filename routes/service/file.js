@@ -36,4 +36,4 @@ function deleteAll(path, rmDir = true) {
     }
 };
 
-module.exports = { move, deleteAll, writeFile: fs.writeFile };
+module.exports = { move, deleteAll, writeFile: fs.writeFile, fs };

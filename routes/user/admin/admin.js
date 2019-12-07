@@ -1,11 +1,13 @@
 const express = require('express'),
-    [mysql, file, email, general, views, util] = superApp.requireUserModules([
+    [mysql, file, email, general, views, util, upload, excelImport] = superApp.requireUserModules([
         'mysql',
         'file',
         'email',
         'general',
         'views',
-        'util'
+        'util',
+        'upload',
+        'excelImport'
     ]),
     { VIEWS_ADMIN, NEWS, LICENSE, MANUAL } = superApp.resourses;
 
@@ -103,6 +105,12 @@ adminViews.get('/writeManual', (req, res, next) => {
     };
     next();
 }, views.render);
+adminViews.get('/importUser', (req, res, next) => {
+    req.renderData = {
+        file: 'importUser'
+    };
+    next();
+}, views.render);
 
 admin.use('/views', views.common, adminViews);
 
@@ -153,6 +161,9 @@ admin.post('/writeManual', (req, res) => {
         res.send('用户手册发布成功！');
     });
 });
+
+admin.post('/importStudent', upload.receiver.single('student'), excelImport.importStudent);
+admin.post('/importTeacher', upload.receiver.single('teacher'), excelImport.importTeacher);
 
 admin.post('/initState', (req, res) => {
     if (req.fsm.initialized) {

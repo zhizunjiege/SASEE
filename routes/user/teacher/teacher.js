@@ -39,7 +39,7 @@ teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'rel
         param: req.session.userId,
         file: 'subject',
         extraData: {
-            maxProjects: superApp.maxProjectsMap[req.session.proTitle],
+            maxProjects: superApp.maxProjectsMap[req.session.proTitle] || 0,
             ifPermiss: req.fsm.now().name == 'submit'
         }
     };

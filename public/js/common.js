@@ -84,7 +84,7 @@
         if (file) {
             let $file = $('input[type=file]', selector);
             $file.change((e) => {
-                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z)$/;
+                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z|xls|xlsx)$/;
                 if (!regexpStr.test(file.name)) {
                     $file[0].value = '';
                     SASEE.alert({ msg: '仅支持zip，rar和7z格式！' });
@@ -92,7 +92,7 @@
                     $file[0].value = '';
                     SASEE.alert({ msg: '文件大小不能超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!' });
                 } else {
-                    $file.next().find('small').text(file.name);
+                    $(e.target).next().find('small').text(file.name);
                 }
             });
         }

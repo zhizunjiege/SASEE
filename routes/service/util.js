@@ -12,7 +12,9 @@ function paramIfValid(param) {
     let flag = true;
     if (Array.isArray(param)) {
         for (let i = 0; i < param.length; i++) {
-            flag = paramIfValid(param[i]);
+            if (!paramIfValid(param[i])) {
+                return false;
+            }
         }
     } else if (isObject(param)) {
         for (const key in param) {

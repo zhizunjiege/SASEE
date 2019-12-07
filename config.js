@@ -160,7 +160,8 @@ transObjToPath(superApp.userModules, __dirname, {
             "fsm": "fsm",
             "script": "script",
             "adjust": "adjust",
-            "excel": "excel"
+            "excel-import": "excelImport",
+            "excel-export": "excelExport"
         },
         "user": {
             "admin": {

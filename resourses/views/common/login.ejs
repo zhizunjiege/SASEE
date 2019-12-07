@@ -20,12 +20,12 @@
                     <div class="form-group form-row">
                         <label class="col-3 col-form-label" for="account">账号：</label>
                         <input class="form-control col-9" type="text" name="account" id="account"
-                            placeholder="Your Account" pattern="\d{8}" required>
+                            placeholder="Your Account" pattern="\w{1,16}" required>
                     </div>
                     <div class="form-group form-row">
                         <label class="col-3 col-form-label" for="password">密码：</label>
                         <input class="form-control col-9" type="password" name="password" id="password"
-                            placeholder="Your Password" pattern="\w{8,16}" required>
+                            placeholder="Your Password" pattern="\w{1,16}" required>
                     </div>
                     <div class="form-group form-row justify-content-around">
                         <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任'}; 
