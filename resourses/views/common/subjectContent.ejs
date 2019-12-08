@@ -1,5 +1,5 @@
 <% let subject=data[0][0],teacher=data[1][0]; %>
-<header class="text-center border-bottom border-secondary my-3">
+<header class="text-center border-bottom border-secondary mb-3">
     <h3 class="mb-0"><%= subject.title %></h3>
 </header>
 <div class="mb-3">
@@ -73,11 +73,11 @@
                 <th>方向</th>
                 <td><%= teacher.group.substr(2) %></td>
                 <th>研究领域</th>
-                <td><%= teacher.field %></td>
+                <td><%= teacher.field||'未填写' %></td>
                 <th>办公地点</th>
-                <td><%= teacher.office %></td>
+                <td><%= teacher.office||'未填写' %></td>
                 <th>联系邮箱</th>
-                <td><%= teacher.email %></td>
+                <td><%= teacher.email||'未填写' %></td>
             </tr>
         </tbody>
     </table>

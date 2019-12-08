@@ -100,7 +100,7 @@ emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 teacher.use('/email', emailRouter);
 
-teacher.post('/info', general.permiss(['info']), info.setGeneralInfo(['field', 'office', 'tele', 'resume']));
+teacher.post('/info', general.permiss(['info']), info.setGeneralInfo(['field', 'office', 'resume']));
 
 teacher.get('/logout', general.logout());
 teacher.post('/password', password.modify);

@@ -25,7 +25,7 @@
             <td><%= teachers[i].teaNum %></td>
             <td><%= teachers[i].proTitle %></td>
             <td><%= teachers[i].submitted+'/'+map[teachers[i].proTitle] %></td>
-            <td><%= teachers[i].email %></td>
+            <td><%= teachers[i].email||'暂无' %></td>
         </tr>
         <% } %>
     </tbody>

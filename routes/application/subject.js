@@ -104,23 +104,23 @@ function choose(req, res) {
     let { userId, group } = req.session,
         { id, password, target } = req.body,
         ifFinal = req.fsm.now().name == 'final', ifGaoGong = group == superApp.groupMap[6];
-    let sql_query = 'SELECT bysj FROM student WHERE id=? AND password=?;SELECT 1 FROM bysj WHERE id=? AND state="0-通过" AND student IS NULL' + (ifGaoGong ? ';SELECT COUNT(*) total,(SELECT `limit` FROM dean d WHERE d.`group`=b.`group`) `limit` FROM student s,bysj b WHERE s.`group`="' + superApp.groupMap[6] + '" AND (s.bysj=b.id OR s.target1=b.id) AND b.`group`=(SELECT `group` FROM bysj WHERE id=?)' : ''),
+    let sql_query = 'SELECT bysj FROM student WHERE id=? AND password=?;SELECT 1 FROM bysj WHERE id=? AND state="0-通过" AND student IS NULL' + (ifGaoGong ? ';SELECT COUNT(*) total,(SELECT `limit` FROM dean d WHERE d.`group`=(SELECT `group` FROM bysj WHERE id=?)) `limit` FROM student s,bysj b WHERE s.`group`="' + superApp.groupMap[6] + '" AND (s.bysj=b.id OR s.target1=b.id) AND b.`group`=(SELECT `group` FROM bysj WHERE id=?)' : ''),
         sql_update_choose = `UPDATE student SET target${target}=? WHERE id=?`,
         sql_update_final = 'UPDATE student SET bysj=?,target1=NULL,,target2=NULL,target3=NULL WHERE id=?;UPDATE bysj SET student=? WHERE id=?';
-    let param = [userId, password, id];
+    let param = [userId, password, id, id];
     ifGaoGong && param.push(id);
     mysql.find(sql_query, param).then(results => {
-        let { bysj } = results[0][0];
         if (results[0].length == 0) {
             return Promise.reject(10);
         }
+        let { bysj } = results[0][0];
         if (results[1].length == 0) {
             return Promise.reject(13);
         }
         if (bysj) {
             return Promise.reject(18);
         }
-        if (ifGaoGong && results[2][0].total >= results[2][0].limit) {
+        if (ifGaoGong && results[2][0].total >= results[2][0].limit && target == 1) {
             return Promise.reject(17);
         }
         return mysql.transaction().then(conn => {

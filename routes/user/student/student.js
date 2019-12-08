@@ -104,6 +104,8 @@ emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 student.use('/email', emailRouter);
 
+student.post('/info', general.permiss(['info', 'choose']), info.setGeneralInfo(['resume']));
+
 student.post('/choose', general.permiss(['choose', 'final']), subject.choose);
 
 module.exports = student;

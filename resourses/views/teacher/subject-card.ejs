@@ -1,9 +1,10 @@
 <% const stateObj={'未通过':'modifySubject','未审核':'modifySubject','通过':'mySubject'},
-colorObj={'未通过':'warning','未审核':'primary','通过':'success'}; %>
-<div class="card my-3 list-group-item-action subject-card" data-type="<%= stateObj[state] %>" data-id="<%= id %>">
+colorObj={'未通过':'warning','未审核':'primary','通过':'success'},
+_state=state.substr(2); %>
+<div class="card my-3 list-group-item-action subject-card" data-type="<%= stateObj[_state] %>" data-id="<%= id %>">
     <header class="card-header d-flex align-items-center justify-content-between"><span
             class="d-inline-block w-75 ellipsis"><%= title %></span><span
-            class="badge badge-pill badge-<%= colorObj[state] %>"><%= state %></span></header>
+            class="badge badge-pill badge-<%= colorObj[_state] %>"><%= _state %></span></header>
     <div class="card-body row">
         <p class="card-text multi-ellipsis"><%= introduction %></p>
         <table class="table mb-0 text-center">

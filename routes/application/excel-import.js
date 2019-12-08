@@ -13,7 +13,7 @@ function importStudent(req, res) {
         class_id = index.indexOf('班级'),
         specialty_id = index.indexOf('专业'),
         group_id = index.indexOf('分组'),
-        identityNum_id = index.indexOf('身份证'),
+        identityNum_id = index.indexOf('身份证号'),
         postgraduate_id = index.indexOf('是否保研');
 
     let raw = sheet[0].data, data = [];
@@ -61,12 +61,12 @@ function importTeacher(req, res) {
             group = remove_space(raw[i][group_id]),
             depart = remove_space(raw[i][depart_id]),
             password = hash.MD5('' + account);
-        let param = [account, password, name, gender, account, proTtle, group, depart];
+        let param = [account, password, name, gender, account, proTtle, group, depart, '[]'];
         if (util.paramIfValid(param)) {
             data.push(param);
         }
     }
-    sqlInsert('teacher', 'account, password, name, gender, teaNum, proTitle, `group`, department', data)
+    sqlInsert('teacher', 'account, password, name, gender, teaNum, proTitle, `group`, department,bysj', data)
         .then(() => {
             file.fs.unlinkSync(path);
             res.send('教师信息导入成功！');
