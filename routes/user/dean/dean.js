@@ -1,16 +1,17 @@
 const express = require('express'),
-    [login, email, general, views, subject, password, info] = superApp.requireUserModules([
+    [login, email, general, views, subject, password, info, download] = superApp.requireUserModules([
         'login',
         'email',
         'general',
         'views',
         'subject',
         'password',
-        'info'
+        'info',
+        'download'
     ]),
     { VIEWS_DEAN, VIEWS_STUDENT } = superApp.resourses;
 
-const dean = express(), emailRouter = express.Router();
+const dean = express(), emailRouter = express.Router(), fileRouter = express.Router();
 
 dean.set('views', VIEWS_DEAN);
 dean.use(general.auth({ url: '/', identity: 'dean' }));
@@ -67,6 +68,10 @@ deanViews.get('/subjectContent', general.permiss(['review', 'release']), (req, r
 }, views.render);
 
 dean.use('/views', views.common, deanViews);
+
+
+fileRouter.get('/download', download.download);
+dean.use('/file', general.permiss(['review', 'release', 'general']), fileRouter);
 
 emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
 emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);

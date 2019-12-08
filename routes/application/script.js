@@ -68,7 +68,7 @@ function deleteSubject() {
 }
 
 function drawAll(succeed, fail) {
-    draw().then(() => {
+    draw.drawAll().then(() => {
         sendEmail(succeed);
     }).catch(err => {
         console.log(err);
@@ -77,7 +77,7 @@ function drawAll(succeed, fail) {
 }
 
 function adjustAll(succeed, fail) {
-    adjust().then(() => {
+    adjust.adjustAll().then(() => {
         sendEmail(succeed);
     }).catch(err => {
         console.log(err);

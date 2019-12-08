@@ -60,13 +60,13 @@
                 <td><%= info[group].subject['2-未通过'] %></td>
                 <td class="table-input">
                     <div class="form-group justify-content-around mb-0">
-                        <input type="text" name="goal" value="<%= info[group].goal %>"
+                        <input type="text" name="goal" value="<%= info[group].goal||0 %>"
                             class="form-control form-control-lg" required>
                     </div>
                 </td>
                 <td class="table-input">
                     <div class="form-group justify-content-around mb-0">
-                        <input type="text" name="limit" value="<%= info[group].limit %>"
+                        <input type="text" name="limit" value="<%= info[group].limit||0 %>"
                             class="form-control form-control-lg" required>
                     </div>
                 </td>

@@ -14,7 +14,7 @@ let count = 0;
 
 //对所有分组进行抽签
 function draw() {
-    let find_id = 'SELECT id FROM bysj WHERE state="1-通过" AND student IS NULL',
+    let find_id = 'SELECT id FROM bysj WHERE state="0-通过" AND student IS NULL',
         update_clear = 'UPDATE student SET target1=NULL,target2=NULL,target3=NULL';
     let scheme1 = [], scheme2 = [], scheme3 = [];
 

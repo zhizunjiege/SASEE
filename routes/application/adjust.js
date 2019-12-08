@@ -20,7 +20,7 @@ function shuffle(array) {
 
 function adjust(group) {
     let find_student = 'SELECT id FROM student WHERE `group`=? AND bysj IS NULL';
-    let find_id = `SELECT id FROM bysj WHERE student IS NULL ${group == superApp.groupMap[6] ? '' : `AND \`group\` = "${group}"`}`;
+    let find_id = `SELECT id FROM bysj WHERE state="0-通过" AND student IS NULL ${group == superApp.groupMap[6] ? '' : `AND \`group\` = "${group}"`}`;
     let student = [], student_ = [];
     let id = [], id_ = [];
     let scheme = [];
@@ -108,4 +108,4 @@ function adjustAll() {
     });
 }
 
-module.exports = adjustAll;
+module.exports = { adjustAll };
