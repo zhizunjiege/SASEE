@@ -50,9 +50,10 @@ function importTeacher(req, res) {
         account_id = index.indexOf('工号'),
         proTtle_id = index.indexOf('职称'),
         group_id = index.indexOf('分组'),
-        depart_id = index.indexOf('系别');
+        depart_id = index.indexOf('系别'),
+        dean_id = index.indexOf('是否负责人');
 
-    let raw = sheet[0].data, data = [];
+    let raw = sheet[0].data, data = [], dean = [];
     for (let i = 1; i < raw.length; i++) {
         let name = remove_space(raw[i][name_id]),
             gender = remove_space(raw[i][gender_id]),
@@ -64,14 +65,22 @@ function importTeacher(req, res) {
         let param = [account, password, name, gender, account, proTtle, group, depart, '[]'];
         if (util.paramIfValid(param)) {
             data.push(param);
+            if (dean_id > 0 && remove_space(raw[i][dean_id]) == '是') {
+                dean.push([account, password, name, gender, group]);
+            }
         }
     }
     sqlInsert('teacher', 'account, password, name, gender, teaNum, proTitle, `group`, department,bysj', data)
         .then(() => {
+            if (dean.length) {
+                return sqlInsert('dean', 'account, password, name, gender,`group`', dean);
+            } else {
+                return Promise.resolve();
+            }
+        }).then(() => {
             file.fs.unlinkSync(path);
             res.send('教师信息导入成功！');
         }).catch(util.catchError(res));
-
 }
 
 function sqlInsert(table, col, data) {

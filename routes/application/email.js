@@ -23,7 +23,8 @@ function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = ''
             pass: password
         }
     });
-    return transporter.sendMail({ from, to, text, html, subject }).then(() => {
+    // Array.isArray(to) ? to.push(from) : (to = [to].push(from));
+    return transporter.sendMail({ from, to, text, html, subject, cc: from }).then(() => {
         console.log('邮件发送成功！');
     }).catch(err => {
         console.log('邮件发送失败！');

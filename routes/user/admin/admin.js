@@ -70,7 +70,8 @@ adminViews.get('/submitNotice', (req, res, next) => {
 }, views.render);
 adminViews.get('/sendEmail', (req, res, next) => {
     req.renderData = {
-        file: 'sendEmail'
+        file: 'sendEmail',
+        extraData: superApp.groupMap
     };
     next();
 }, views.render);
@@ -105,9 +106,21 @@ adminViews.get('/writeManual', (req, res, next) => {
     };
     next();
 }, views.render);
-adminViews.get('/importUser', (req, res, next) => {
+adminViews.get('/importInfo', (req, res, next) => {
     req.renderData = {
-        file: 'importUser'
+        file: 'importInfo'
+    };
+    next();
+}, views.render);
+adminViews.get('/exportInfo', (req, res, next) => {
+    req.renderData = {
+        file: 'exportInfo'
+    };
+    next();
+}, views.render);
+adminViews.get('/editInfo', (req, res, next) => {
+    req.renderData = {
+        file: 'editInfo'
     };
     next();
 }, views.render);
@@ -125,7 +138,7 @@ admin.post('/submitNotice', (req, res) => {
     }).catch(util.catchError(res));
 });
 admin.post('/sendEmail', (req, res, next) => {
-    let sql_query = 'SELECT email FROM ??';
+    let sql_query = 'SELECT email FROM dean WHERE `group`=?';
     mysql.find(sql_query, [req.body.identity]).then(results => {
         req.body.toAddr = results.map(x => x.email);
         next();
@@ -164,6 +177,13 @@ admin.post('/writeManual', (req, res) => {
 
 admin.post('/importStudent', upload.receiver.single('student'), excelImport.importStudent);
 admin.post('/importTeacher', upload.receiver.single('teacher'), excelImport.importTeacher);
+
+admin.get('/searchInfo',(req,res)=>{
+    
+});
+admin.post('/editInfo',(req,res)=>{
+
+});
 
 admin.post('/initState', (req, res) => {
     if (req.fsm.initialized) {
