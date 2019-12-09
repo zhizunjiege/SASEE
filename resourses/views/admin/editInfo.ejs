@@ -1,0 +1,135 @@
+<nav class="nav nav-tabs nav-justified sticky-top bg-white">
+    <a data-toggle="tab" class="nav-item nav-link active" href="#edit_user">用户信息</a>
+    <a data-toggle="tab" class="nav-item nav-link" href="#edit_subject">课题信息</a>
+</nav>
+<div class="tab-content py-3">
+    <div class="tab-pane fade show active" id="edit_user">
+        <form action="" method="POST" id="search_user_form" class="navbar navbar-light bg-light form-inline mb-3 mx-0">
+            <div class="form-group col-5 justify-content-around">
+                <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任',"admin":'管理员'}; 
+                            for (const [key,value] of Object.entries(idObj)) { %>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" name="identity" value="<%= key %>" id="identity-<%= key %>"
+                        class="custom-control-input" <%= key=='student'?'checked':'' %>>
+                    <label for="identity-<%= key %>" class="custom-control-label"><%= value %></label>
+                </div>
+                <% } %>
+            </div>
+            <div class="form-group col-5 justify-content-around">
+                <input class="form-control mr-md-3 col-8" name="account" type="search" placeholder="输入账号进行搜索" required>
+                <button class="btn btn-outline-success my-2 my-md-0 col-3" type="submit">搜索</button>
+            </div>
+        </form>
+        <form action="" method="POST" id="edit_user_form" class="mb-3" style="display: none;">
+            <input type="hidden" name="identity" value="student">
+            <table class="table table-fixed table-hover table-bordered text-center mb-5">
+                <thead class="thead-light">
+                    <tr data-user="student" style="display:none">
+                        <th scope="col">学号</th>
+                        <th scope="col">密码</th>
+                        <th scope="col">邮箱</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">性别</th>
+                        <th scope="col">专业</th>
+                        <th scope="col">分组</th>
+                        <th scope="col">班级</th>
+                        <th scope="col">是否保研</th>
+                    </tr>
+                    <tr data-user="teacher" style="display:none">
+                        <th scope="col">工号</th>
+                        <th scope="col">密码</th>
+                        <th scope="col">邮箱</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">性别</th>
+                        <th scope="col">分组</th>
+                        <th scope="col">职称</th>
+                        <th scope="col">系别</th>
+                    </tr>
+                    <tr data-user="dean" style="display:none">
+                        <th scope="col">账号</th>
+                        <th scope="col">密码</th>
+                        <th scope="col">邮箱</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">性别</th>
+                        <th scope="col">分组</th>
+                    </tr>
+                    <tr data-user="admin" style="display:none">
+                        <th scope="col">账号</th>
+                        <th scope="col">密码</th>
+                        <th scope="col">邮箱</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="form-group form-row justify-content-around mb-3">
+                <button type="reset" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0">重置</button>
+                <button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0">提交</button>
+            </div>
+        </form>
+    </div>
+    <div class="tab-pane fade show" id="edit_subject">
+        <form action="" method="POST" id="search_subject_form" class="navbar navbar-light bg-light form-inline mb-3 mx-0">
+            <div class="form-group col-5 justify-content-around">
+                <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任',"admin":'管理员'}; 
+                                    for (const [key,value] of Object.entries(idObj)) { %>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" name="identity" value="<%= key %>" id="identity-<%= key %>"
+                        class="custom-control-input" <%= key=='student'?'checked':'' %>>
+                    <label for="identity-<%= key %>" class="custom-control-label"><%= value %></label>
+                </div>
+                <% } %>
+            </div>
+            <div class="form-group col-5 justify-content-around">
+                <input class="form-control mr-md-3 col-8" name="account" type="search" placeholder="输入教师账号进行搜索" required>
+                <button class="btn btn-outline-success my-2 my-md-0 col-3" type="submit">搜索</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    (function ($, SASEE) {
+        const userMap = {
+            student: ['account', 'password', 'email', 'name', 'gender', 'specialty', 'group', 'class', 'postgraduate'],
+            teacher: ['account', 'password', 'email', 'name', 'gender', 'group', 'proTitle', 'department'],
+            dean: ['account', 'password', 'email', 'name', 'gender', 'group'],
+            admin: ['account', 'password', 'email']
+        };
+        let $editUserForm = $('#edit_user_form'),
+            $editSubjectForm = $('#edit_subject_form');
+        SASEE.formSubmit({
+            selector: '#search_user_form',
+            url: './searchUserInfo',
+            done(data) {
+                if (data && $.isPlainObject(data)) {
+                    let html = `<tr>`;
+                    for (const name of userMap[data.identity]) {
+                        html += `<td class="table-input">
+                            <div class="form-group justify-content-around mb-0">
+                                <input type="text" name="${name}" value="${data[name] || ''}" class="form-control form-control-lg" pattern="${name == 'password' ? `\\w{1,16}` : `.{1,63}`}">
+                            </div>
+                        </td>`;
+                    }
+                    html += `</tr>`;
+                    $editUserForm.find('input[name=identity]').val(data.identity);
+                    $editUserForm.find('tbody').html(html);
+                    $editUserForm.find('thead').children().hide();
+                    $editUserForm.find('thead').children(`[data-user=${data.identity}]`).show();
+                    $editUserForm.show();
+                } else {
+                    SASEE.alert({ msg: '找不到该用户！' });
+                }
+            }
+        });
+        SASEE.formSubmit({
+            selector: '#edit_user_form',
+            url: './editUserInfo',
+            done: SASEE.requestDone
+        });
+        SASEE.formSubmit({
+            selector: '#edit_subject_form',
+            url: './editSubjectInfo',
+            done: SASEE.requestDone
+        });
+    })(window.jQuery, window.SASEE);
+</script>

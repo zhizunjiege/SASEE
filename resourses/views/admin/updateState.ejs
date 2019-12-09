@@ -1,41 +1,43 @@
-<form action="" id="update_state_form" method="POST" class="col-12 col-md-8 col-lg-6 mx-auto">
-    <% let {states,now}=extraData,flag=0;
-        for (let i = 0; i < states.length; i++) {
-                if(now.name==states[i].name){
-                flag=i; 
-                break;                               
+<div class="p-3">
+    <form action="" id="update_state_form" method="POST" class="col-12 col-md-8 col-lg-6 mx-auto">
+        <% let {states,now}=extraData,flag=0;
+            for (let i = 0; i < states.length; i++) {
+                    if(now.name==states[i].name){
+                    flag=i; 
+                    break;                               
+                    }
                 }
-            }
-            for (index=1;index<states.length;index++) { 
-                let key=states[index].name,
-                value=states[index].description,
-                start=states[index].start; %>
-    <div class="form-group form-row">
-        <label for="_<%= key %>" class="col-3 col-lg-2 text-center col-form-label"><%= value %></label>
-        <div class="input-group col-9 col-lg-10 px-0">
-            <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
-                value="<%= start?start.substr(0,16):'' %>" <%= index<=flag?'disabled':'required' %>>
-            <div class="input-group-append">
-                <% if (index<=flag) { %>
-                <button type="button" class="btn btn-outline-secondary" disabled>不可操作</button>
-                <% } else { %>
-                <button type="button" class="btn btn-outline-secondary update-button" data-toggle="modal"
-                    data-target="#check_modal">更新时间</button>
-                <% } %>
+                for (index=1;index<states.length;index++) { 
+                    let key=states[index].name,
+                    value=states[index].description,
+                    start=states[index].start; %>
+        <div class="form-group form-row">
+            <label for="_<%= key %>" class="col-3 col-lg-2 text-center col-form-label"><%= value %></label>
+            <div class="input-group col-9 col-lg-10 px-0">
+                <input name="<%= key %>" id="_<%= key %>" type="datetime-local" class="form-control"
+                    value="<%= start?start.substr(0,16):'' %>" <%= index<=flag?'disabled':'required' %>>
+                <div class="input-group-append">
+                    <% if (index<=flag) { %>
+                    <button type="button" class="btn btn-outline-secondary" disabled>不可操作</button>
+                    <% } else { %>
+                    <button type="button" class="btn btn-outline-secondary update-button" data-toggle="modal"
+                        data-target="#check_modal">更新时间</button>
+                    <% } %>
+                </div>
             </div>
         </div>
-    </div>
-    <% } %>
-    <div class="form-group form-row justify-content-around">
-        <% if(!extraData.initialized) {%>
-        <button type="button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0" id="preset_button">预置</button>
-        <button type="button" id="init_button" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
-            data-toggle="modal" data-target="#check_modal">初始化</button>
         <% } %>
-        <button type="button" id="next_button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0" data-toggle="modal"
-            data-target="#check_modal">下一阶段</button>
-    </div>
-</form>
+        <div class="form-group form-row justify-content-around">
+            <% if(!extraData.initialized) {%>
+            <button type="button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0" id="preset_button">预置</button>
+            <button type="button" id="init_button" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
+                data-toggle="modal" data-target="#check_modal">初始化</button>
+            <% } %>
+            <button type="button" id="next_button" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0"
+                data-toggle="modal" data-target="#check_modal">下一阶段</button>
+        </div>
+    </form>
+</div>
 <div id="check_modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

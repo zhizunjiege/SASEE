@@ -99,10 +99,10 @@
         $form[0].onsubmit = (e) => {
             e.preventDefault();
             if (!validate || validate($form)) {
-                let ajaxObj = null, hasPass = $form.find('input[type=password]').length > 0;
+                let ajaxObj = null;
                 if (file) {
                     let data = new FormData($form[0]);
-                    hasPass && data.set('password', objectHash.MD5(data.get('password')));
+                    data.has('password') && data.set('password', objectHash.MD5(data.get('password')));
                     ajaxObj = $.ajax({
                         url: url,
                         type: 'POST',
@@ -113,11 +113,9 @@
                     });
                 } else {
                     let data = preprocess ? preprocess($form, editor) : $form.serializeObject();
-                    if (hasPass) {
-                        data.password && (data.password = objectHash.MD5(data.password));
-                        data.oldPW && (data.oldPW = objectHash.MD5(data.oldPW));
-                        data.newPW && (data.newPW = objectHash.MD5(data.newPW));
-                    }
+                    data.password && (data.password = objectHash.MD5(data.password));
+                    data.oldPW && (data.oldPW = objectHash.MD5(data.oldPW));
+                    data.newPW && (data.newPW = objectHash.MD5(data.newPW));
                     editor && (data.content = editor.txt.html());
                     ajaxObj = $.json({ url, data });
                 }

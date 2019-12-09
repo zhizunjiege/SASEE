@@ -178,10 +178,54 @@ admin.post('/writeManual', (req, res) => {
 admin.post('/importStudent', upload.receiver.single('student'), excelImport.importStudent);
 admin.post('/importTeacher', upload.receiver.single('teacher'), excelImport.importTeacher);
 
-admin.get('/searchInfo',(req,res)=>{
-    
+const editUserInfoSql = {
+    student: 'SELECT account,email,name,gender,specialty,`group`,class,postgraduate FROM student WHERE account=?',
+    teacher: 'SELECT account,email,name,gender,`group`,proTitle,department FROM teacher WHERE account=?',
+    dean: 'SELECT account,email,name,gender,`group` FROM dean WHERE account=?',
+    admin: 'SELECT account,email FROM admin WHERE account=?'
+};
+admin.post('/searchUserInfo', (req, res) => {
+    let { identity, account } = req.body;
+    mysql.find(editUserInfoSql[identity], account)
+        .then(result => {
+            if (result.length) {
+                req.session.tmp = account;
+                result[0].identity = identity;
+                res.json(result[0]);
+            } else {
+                res.end();
+            }
+        }).catch(util.catchError(res));
 });
-admin.post('/editInfo',(req,res)=>{
+admin.post('/editUserInfo', (req, res) => {
+    let { identity, account } = req.body,
+        oldAccount = req.session.tmp;
+    sql_update = 'UPDATE ?? SET ? WHERE account=?';
+    for (const [key, value] of Object.entries(req.body)) {
+        if (!value) {
+            delete req.body[key];
+        }
+    }
+    if (identity == 'student') {
+        req.body.stuNum = account;
+    }
+    if (identity == 'teacher') {
+        req.body.teaNum = account;
+    }
+    delete req.body.identity;
+    mysql.find(sql_update, [identity, req.body, oldAccount || account])
+        .then(() => {
+            res.send('修改信息成功！');
+        }).catch(err => {
+            console.log(err);
+            res.status(403).send('修改失败，请仔细检查数据格式是否符合要求。');
+        });
+});
+
+admin.post('/searchSubjectInfo', (req, res) => {
+
+});
+admin.post('/editSubjectInfo', (req, res) => {
 
 });
 
