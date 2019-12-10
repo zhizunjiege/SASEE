@@ -69,22 +69,21 @@
         </form>
     </div>
     <div class="tab-pane fade show" id="edit_subject">
-        <form action="" method="POST" id="search_subject_form" class="navbar navbar-light bg-light form-inline mb-3 mx-0">
-            <div class="form-group col-5 justify-content-around">
-                <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任',"admin":'管理员'}; 
-                                    for (const [key,value] of Object.entries(idObj)) { %>
-                <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio" name="identity" value="<%= key %>" id="identity-<%= key %>"
-                        class="custom-control-input" <%= key=='student'?'checked':'' %>>
-                    <label for="identity-<%= key %>" class="custom-control-label"><%= value %></label>
-                </div>
-                <% } %>
+        <form action="" method="POST" id="search_subject_form"
+            class="navbar navbar-light bg-light form-inline mb-3 mx-0">
+            <div class="form-group col-5">
+                <select class="custom-select w-100" name="id" id="search_subject_id">
+                </select>
             </div>
             <div class="form-group col-5 justify-content-around">
-                <input class="form-control mr-md-3 col-8" name="account" type="search" placeholder="输入教师账号进行搜索" required>
+                <input class="form-control mr-md-3 col-8" name="account" type="search" placeholder="输入教师账号进行搜索"
+                    required>
                 <button class="btn btn-outline-success my-2 my-md-0 col-3" type="submit">搜索</button>
             </div>
         </form>
+        <div class="p-0 p-md-3">
+
+        </div>
     </div>
 </div>
 <script>
@@ -122,14 +121,37 @@
             }
         });
         SASEE.formSubmit({
+            selector: '#search_subject_form',
+            url: './searchSubjectInfo',
+            done(data) {
+                if (data) {
+                    if (Array.isArray(data)) {
+                        let html = ``;
+                        for (const iterator of data) {
+                            html += `<option value="${iterator.id}">${iterator.title}</option>`;
+                        }
+                        $('#search_subject_form').find('select').html(html);
+                    } else {
+                        $('#edit_subject>div').html(data);
+                        SASEE.formSubmit({
+                            file: true,
+                            selector: '#edit_subject_form',
+                            url: './editSubjectInfo',
+                            done: SASEE.requestDone
+                        });
+                    }
+                } else {
+                    $('#search_subject_form').find('select').empty();
+                    $('#edit_subject>div').empty();
+                    SASEE.alert({ msg: '找不到该用户或该用户未发布课题！' });
+                }
+            }
+        });
+        SASEE.formSubmit({
             selector: '#edit_user_form',
             url: './editUserInfo',
             done: SASEE.requestDone
         });
-        SASEE.formSubmit({
-            selector: '#edit_subject_form',
-            url: './editSubjectInfo',
-            done: SASEE.requestDone
-        });
+
     })(window.jQuery, window.SASEE);
 </script>

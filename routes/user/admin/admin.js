@@ -9,7 +9,8 @@ const express = require('express'),
         'upload',
         'excelImport'
     ]),
-    { VIEWS_ADMIN, NEWS, LICENSE, MANUAL } = superApp.resourses;
+    { VIEWS_ADMIN, VIEWS_COMMON, NEWS, LICENSE, MANUAL, FILES } = superApp.resourses,
+    groupMap = superApp.groupMap;
 
 const admin = express(),
     adminViews = express.Router();
@@ -64,14 +65,14 @@ admin.get('/main', (req, res, next) => {
 adminViews.get('/submitNotice', (req, res, next) => {
     req.renderData = {
         file: 'submitNotice',
-        extraData: superApp.groupMap
+        extraData: groupMap
     };
     next();
 }, views.render);
 adminViews.get('/sendEmail', (req, res, next) => {
     req.renderData = {
         file: 'sendEmail',
-        extraData: superApp.groupMap
+        extraData: groupMap
     };
     next();
 }, views.render);
@@ -90,7 +91,7 @@ adminViews.get('/setLimit', (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT `group`,goal,`limit` FROM dean ORDER BY `group`;SELECT `group`,COUNT(*) total FROM student GROUP BY `group` ORDER BY `group`;SELECT `group`,COUNT(*) total FROM teacher GROUP BY `group` ORDER BY `group`;SELECT `group`,state,COUNT(*) total FROM bysj GROUP BY `group`,state ORDER BY `group`,state',
         file: 'setLimit',
-        extraData: superApp.groupMap
+        extraData: groupMap
     };
     next();
 }, views.render);
@@ -147,10 +148,10 @@ admin.post('/sendEmail', (req, res, next) => {
 
 admin.post('/setLimit', (req, res) => {
     let sql_update = 'UPDATE dean SET goal=?,`limit`=? WHERE `group`=?;', param = [];
-    for (let i = 0; i < superApp.groupMap.length; i++) {
-        param.push(req.body.goal[i], req.body.limit[i], superApp.groupMap[i]);
+    for (let i = 0; i < groupMap.length; i++) {
+        param.push(req.body.goal[i], req.body.limit[i], groupMap[i]);
     }
-    mysql.find(sql_update.repeat(superApp.groupMap.length), param).then(() => {
+    mysql.find(sql_update.repeat(groupMap.length), param).then(() => {
         res.send('设置成功！');
     }).catch(util.catchError(res));
 });
@@ -223,10 +224,50 @@ admin.post('/editUserInfo', (req, res) => {
 });
 
 admin.post('/searchSubjectInfo', (req, res) => {
-
+    let { id, account } = req.body,
+        sql_query = `SELECT ${id ? '*' : 'b.id,b.title'} FROM bysj b,teacher t WHERE t.account=? AND ${id ? `b.id=${id}` : `b.teacher=t.id`}`;
+    mysql.find(sql_query, account)
+        .then(results => {
+            if (results.length) {
+                if (id) {
+                    res.render(VIEWS_COMMON + '/subject-form', {
+                        data: results[0],
+                        extraData: {
+                            formId: 'edit_subject_form',
+                            ifNeedPass: false
+                        }
+                    });
+                } else {
+                    res.json(results);
+                }
+            } else {
+                res.end();
+            }
+        }).catch(util.catchError(res));
 });
-admin.post('/editSubjectInfo', (req, res) => {
-
+admin.post('/editSubjectInfo', upload.receive, (req, res) => {
+    let { id, title, introduction, type, source, requirement, difficulty, weight } = req.body,
+        { allRound, experiment, graphic, data, analysis } = req.body;
+    let sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE() WHERE id=?;SELECT id,`group` FROM bysj WHERE id=? ',
+        param = { title, introduction, type, source, requirement, difficulty, weight, ability: JSON.stringify({ allRound, experiment, graphic, data, analysis }) };
+    if (req.file) {
+        param.materials = req.file.filename;
+    }
+    mysql.find(sql_update, [param, id, id])
+        .then(results => {
+            if (req.file) {
+                let from = req.file.path,
+                    toDir = FILES + '/' + results[1][0].group + '/subject' + results[1][0].id + '/teacher/',
+                    to = toDir + req.file.originalname;
+                file.deleteAll(toDir);
+                file.move(from, to, (err) => {
+                    if (err) throw err;
+                    res.send('修改课题成功！');
+                });
+            } else {
+                res.send('修改课题成功！');
+            }
+        }).catch(util.catchError(res));
 });
 
 admin.post('/initState', (req, res) => {
