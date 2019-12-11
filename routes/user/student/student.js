@@ -108,4 +108,6 @@ student.post('/info', general.permiss(['info', 'choose']), info.setGeneralInfo([
 
 student.post('/choose', general.permiss(['choose', 'final']), subject.choose);
 
+student.get('/editorImg', general.editorImg);
+
 module.exports = student;

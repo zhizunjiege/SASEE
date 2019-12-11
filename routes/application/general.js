@@ -1,4 +1,4 @@
-const [mysql, util] = superApp.requireUserModules(['mysql', 'util']);
+const [mysql, util, file] = superApp.requireUserModules(['mysql', 'util', 'file']);
 
 function notFound(req, res) {
     res.type('text/html');
@@ -67,4 +67,33 @@ function serverTime(req, res) {
     });
 }
 
-module.exports = { notFound, permiss, logout, redirect, auth, agreeLicense, disagreeLicense, serverTime };
+function editorImg(req, res) {
+    if (req.method.toUpperCase() == 'POST') {
+        if (req.file) {
+            let from = req.file.path,
+                editName = '' + Date.now() + req.file.originalname,
+                to = superApp.resourses.EDITOR_IMG + '/' + editName;
+            file.move(from, to, (err) => {
+                if (err) console.log(err);
+                res.json({
+                    "errno": 0,
+                    "data": ['./editorImg?file=' + editName]
+                });
+            });
+        } else {
+            res.json({
+                "errno": 1,
+                "data": []
+            });
+        }
+    } else {
+        res.sendFile(superApp.resourses.EDITOR_IMG + '/' + req.query.file, err => {
+            if (err) {
+                console.log(err);
+                res.end();
+            }
+        });
+    }
+}
+
+module.exports = { notFound, permiss, logout, redirect, auth, agreeLicense, disagreeLicense, serverTime, editorImg };

@@ -94,6 +94,7 @@
 
 .subject-card {
     width: 375px;
+    min-height: 400px;
 }
 
 .card-text{

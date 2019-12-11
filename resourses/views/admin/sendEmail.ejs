@@ -9,14 +9,15 @@
             <div class="col-8">
                 <div class="form-group form-row justify-content-around">
                     <% const idObj=extraData;
-                            for (const value of idObj) { %>
+                            for (const value of idObj) { 
+                                if(value!=extraData[6]){ %>
                     <div class="custom-control custom-checkbox custom-control-inline">
                         <input type="checkbox" name="identity" value="<%= value %>"
                             id="email_identity-<%= value.substr(0,1) %>" class="custom-control-input" checked>
                         <label for="email_identity-<%= value.substr(0,1) %>"
                             class="custom-control-label"><%= value.substr(2) %></label>
                     </div>
-                    <% } %>
+                    <% } } %>
                 </div>
             </div>
         </div>

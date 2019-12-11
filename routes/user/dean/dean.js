@@ -79,4 +79,6 @@ dean.use('/email', emailRouter);
 
 dean.post('/check', general.permiss(['review', 'release']), subject.check);
 
+dean.get('/editorImg', general.editorImg);
+
 module.exports = dean;

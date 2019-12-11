@@ -93,7 +93,16 @@
 
     SASEE.instEditor = (container, full = false) => {
         let editor = new window.wangEditor(container + ' .editor');
-        editor.customConfig.uploadImgShowBase64 = true;
+        // editor.customConfig.uploadImgShowBase64 = true;
+        editor.customConfig.uploadImgServer = './editorImg';
+        editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+        editor.customConfig.uploadImgMaxLength = 1;
+        editor.customConfig.uploadImgTimeout = 3000;
+        editor.customConfig.uploadFileName = 'file';
+        editor.customConfig.customAlert = function (info) {
+            SASEE.alert(info)
+        }
+
         editor.customConfig.zIndex = 1000;
 
         let featureBase = [
@@ -120,7 +129,7 @@
             'code',  // 插入代码
         ];
         editor.customConfig.menus = full ? featureBase.concat(featureExtend) : featureBase;
-        //editor.customConfig.uploadImgServer
+
         editor.create();
         $(container + ' .editor-clear').click(() => {
             editor.txt.clear();

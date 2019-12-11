@@ -35,7 +35,7 @@ teacherViews.get('/userInfo', (req, res, next) => {
 }, views.render);
 teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release', 'choose', 'draw', 'publicity', 'final', 'general']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT b.id,title,introduction,difficulty,weight,submitTime,lastModifiedTime,state FROM bysj b,teacher t WHERE t.id=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
+        sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,state,`check` FROM bysj b,teacher t WHERE t.id=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
         param: req.session.userId,
         file: 'subject',
         extraData: {
@@ -104,5 +104,7 @@ teacher.post('/info', general.permiss(['info']), info.setGeneralInfo(['field', '
 
 teacher.get('/logout', general.logout());
 teacher.post('/password', password.modify);
+
+teacher.get('/editorImg', general.editorImg);
 
 module.exports = teacher;

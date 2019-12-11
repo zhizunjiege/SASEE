@@ -5,20 +5,34 @@ _state=state.substr(2); %>
     <header class="card-header d-flex align-items-center justify-content-between"><span
             class="d-inline-block w-75 ellipsis"><%= title %></span><span
             class="badge badge-pill badge-<%= colorObj[_state] %>"><%= _state %></span></header>
-    <div class="card-body row">
-        <p class="card-text multi-ellipsis"><%= introduction %></p>
-        <table class="table mb-0 text-center">
-            <tbody>
-                <tr>
-                    <th>题目难度</th>
-                    <td><%= difficulty %></td>
-                </tr>
-                <tr>
-                    <th>题目份量</th>
-                    <td><%= weight %></td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="card-body">
+        <% if(check){
+            let chooseObj={yes:'是',no:'否'}; %>
+        <div class="d-flex justify-content-between align-items-center">
+            <p class="mb-0">1、要求、任务、内容是否明确具体:</p><strong class="text-primary"><%= chooseObj[check.ifClear] %></strong>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="d-flex justify-content-between align-items-center">
+            <p class="mb-0">2、工作量是否饱满，题目难度是否适中:</p><strong
+                class="text-primary"><%= chooseObj[check.ifDifficultyProper] %></strong>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="d-flex justify-content-between align-items-center">
+            <p class="mb-0">3、能否满足综合训练学生的基本教学要求:</p><strong
+                class="text-primary"><%= chooseObj[check.ifMeetGoal] %></strong>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="d-flex justify-content-between align-items-center">
+            <p class="mb-0">4、做本题目的条件是否满足:</p><strong
+                class="text-primary"><%= chooseObj[check.ifConditionWell] %></strong>
+        </div>
+        <div class="dropdown-divider"></div>
+        <p class="card-text mt-2"><%= check.extra %></p>
+        <% } else { %>
+        <div class="d-flex justify-content-center align-items-center">
+            <h5>暂无审查结果</h5>
+        </div>
+        <% } %>
     </div>
     <div class="card-footer d-flex justify-content-between">
         <small class="text-muted">发布于<%= submitTime||'----/--/--' %></small>

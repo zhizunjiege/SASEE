@@ -11,6 +11,8 @@
                 <td><%= subject.type %></td>
                 <th>题目来源</th>
                 <td><%= subject.source %></td>
+            </tr>
+            <tr>
                 <th>题目难度</th>
                 <td><%= subject.difficulty %></td>
                 <th>题目份量</th>
@@ -44,14 +46,14 @@
     <div class="col">
         <h5 class="text-primary">课题简介</h5>
         <div class="p-3 border rounded text-indent">
-            <%- subject.introduction _%>
+            <%- subject.introduction||'未填写' _%>
         </div>
         <!-- <pre></pre> -->
     </div>
     <div class="col">
         <h5 class="text-primary">学生要求</h5>
         <div class="p-3 border rounded">
-            <%- subject.requirement _%>
+            <%- subject.requirement||'未填写' _%>
         </div>
     </div>
 </div>
@@ -64,6 +66,8 @@
                 <td><%= teacher.name %></td>
                 <th>性别</th>
                 <td><%= teacher.gender %></td>
+            </tr>
+            <tr>
                 <th>工号</th>
                 <td><%= teacher.teaNum %></td>
                 <th>职称</th>
@@ -74,6 +78,8 @@
                 <td><%= teacher.group.substr(2) %></td>
                 <th>研究领域</th>
                 <td><%= teacher.field||'未填写' %></td>
+            </tr>
+            <tr>
                 <th>办公地点</th>
                 <td><%= teacher.office||'未填写' %></td>
                 <th>联系邮箱</th>
@@ -85,7 +91,7 @@
 <div class="mb-3">
     <h5 class="text-primary">教师简介</h5>
     <div class="p-3 border rounded">
-        <%- teacher.resume _%>
+        <%- teacher.resume||'未填写' _%>
     </div>
 </div>
 

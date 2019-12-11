@@ -34,7 +34,13 @@ function render(req, res) {
     mysql.find(sql_query, [identity, account])
         .then(data => {
             let [[user], news] = data;
-            user.profile = (user.gender == '男' ? 'man' : 'woman') + '_' + identity + '.png';
+            if (req.session.account == '17375433') {
+                user.profile = 'coder_chen.png';
+            } else if (req.session.account == '17375372') {
+                user.profile = 'coder_du.png';
+            } else {
+                user.profile = (user.gender == '男' ? 'man' : 'woman') + '_' + identity + '.png';
+            }
             user.identity = identity;
             res.render(VIEWS_COMMON + '/user', { PATH: superApp.resourses, user, news });
         }).catch(util.catchError(res));

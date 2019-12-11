@@ -135,8 +135,10 @@ transObjToPath(superApp.resourses, __dirname, {
         },
         "documents": {
             "license": "LICENSE",
-            "manual": "MANUAL"
-        }
+            "manual": "MANUAL",
+            "config": "CONFIG"
+        },
+        "editorImg": "EDITOR_IMG"
     },
     "tmp": "TMP",
     "fsm.json": "fsm"

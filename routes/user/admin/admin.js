@@ -27,7 +27,7 @@ admin.get('/sendPinCode', (req, res, next) => {
     next();
 }, email._spcmw, email.sendPinCode);
 admin.post('/login', (req, res) => {
-    /* let { account, password } = req.body,
+    let { account, password } = req.body,
         { pinCode } = req.session,
         sql_query = 'SELECT account,password,email FROM admin WHERE account = ? AND password=?';
     mysql.find(sql_query, [account, password])
@@ -37,6 +37,8 @@ admin.post('/login', (req, res) => {
             } else if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
                 req.session.pinCode = null;
                 res.status(403).send('验证码已失效，请重试！');
+            } else if (req.body.pinCode != pinCode.code) {
+                res.status(403).send('验证码错误，请重试！');
             } else {
                 req.session.email = data[0].email;
                 req.session.account = data[0].account;
@@ -44,12 +46,12 @@ admin.post('/login', (req, res) => {
                 req.session.identity = 'admin';
                 res.location('/admin/main').send('登陆成功！');
             }
-        }); */
-    let { account, password } = req.body;
+        });
+    /* let { account, password } = req.body;
     req.session.account = account;
     req.session.password = password;
     req.session.identity = 'admin';
-    res.location('/admin/main').send('登陆成功！');
+    res.location('/admin/main').send('登陆成功！'); */
 });
 admin.use(general.auth({ url: '/admin', identity: 'admin' }));
 admin.get('/logout', general.logout('/admin'));
@@ -310,5 +312,8 @@ admin.get('/nextState', (req, res) => {
         res.send('立即启动成功！');
     }).catch(util.catchError(res));
 });
+
+admin.post('/editorImg', upload.receive, general.editorImg);
+admin.get('/editorImg', general.editorImg);
 
 module.exports = admin;
