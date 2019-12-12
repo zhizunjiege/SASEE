@@ -27,7 +27,7 @@ function importStudent(req, res) {
             identityNum = remove_space(raw[i][identityNum_id]).toUpperCase(),
             postgraduate = remove_space(raw[i][postgraduate_id]),
             password = hash.MD5('' + account + (identityNum.substr(-4) || ''));
-        let param = [account, password, name, gender, account, specialty, _class, group, postgraduate]
+        let param = [account, password, name, gender, account, specialty, _class, group, postgraduate || '否']
         if (util.paramIfValid(param)) {
             data.push(param);
         }

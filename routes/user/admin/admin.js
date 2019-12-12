@@ -27,7 +27,7 @@ admin.get('/sendPinCode', (req, res, next) => {
     next();
 }, email._spcmw, email.sendPinCode);
 admin.post('/login', (req, res) => {
-    let { account, password } = req.body,
+    /* let { account, password } = req.body,
         { pinCode } = req.session,
         sql_query = 'SELECT account,password,email FROM admin WHERE account = ? AND password=?';
     mysql.find(sql_query, [account, password])
@@ -46,12 +46,12 @@ admin.post('/login', (req, res) => {
                 req.session.identity = 'admin';
                 res.location('/admin/main').send('登陆成功！');
             }
-        });
-    /* let { account, password } = req.body;
+        }); */
+    let { account, password } = req.body;
     req.session.account = account;
     req.session.password = password;
     req.session.identity = 'admin';
-    res.location('/admin/main').send('登陆成功！'); */
+    res.location('/admin/main').send('登陆成功！');
 });
 admin.use(general.auth({ url: '/admin', identity: 'admin' }));
 admin.get('/logout', general.logout('/admin'));
