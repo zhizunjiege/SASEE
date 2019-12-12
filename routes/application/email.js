@@ -15,21 +15,22 @@ function _createSixNum() {
     return Num;
 }
 
-function _send({ from = 'sasee_lab@163.com', password = '880424d', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
+function _send({ from = 'cjason@buaa.edu.cn', password = 'mW7xFGDkkGFDf9AW', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
     const transporter = nodemailer.createTransport({
-        service: '163',
+        host: 'smtp.buaa.edu.cn',
+        port: 25,
+        secure: false,
         auth: {
             user: from,
             pass: password
-        }
+        },
+        tls: { rejectUnauthorized: false }
     });
-    // Array.isArray(to) ? to.push(from) : (to = [to].push(from));
-    return transporter.sendMail({ from, to, text, html, subject, cc: from }).then(() => {
-        console.log('邮件发送成功！');
-    }).catch(err => {
-        console.log('邮件发送失败！');
-        console.log(err);
-    });
+    if (to.length) {
+        return transporter.sendMail({ from, to, text, html, subject, cc: from });
+    } else {
+        return Promise.reject(21);
+    }
 }
 
 function _spcmw(req, res, next) {
@@ -54,7 +55,7 @@ function sendPinCode(req, res) {
             time: new Date().getTime()
         };
         res.send('验证码已发送至' + email.replace(/(\S{2,})(\S{4,4})(@.*)/, '$1****$3'));
-    }).catch(util.catchError(res));
+    }).catch(util.catchError(res, superApp.errorMap));
 }
 
 function sendEmail(req, res) {
@@ -65,7 +66,7 @@ function sendEmail(req, res) {
         subject: title
     }).then(info => {
         res.send('邮件发送成功！');
-    }).catch(util.catchError(res));
+    }).catch(util.catchError(res, superApp.errorMap));
 }
 
 function emailTemplate({ title = '通知', paragraph = [], from = '系统' } = {}) {

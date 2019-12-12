@@ -20,7 +20,7 @@
             selector: '#write_license_form',
             url: './writeLicense',
             validate: $form => {
-                return Boolean($($licenseEditor.$textElem[0]).children().length);
+                return Boolean($(licenseEditor.$textElem[0]).children().length);
             },
             ifNotValid: () => {
                 SASEE.alert({

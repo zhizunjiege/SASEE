@@ -141,8 +141,9 @@ admin.post('/submitNotice', (req, res) => {
     }).catch(util.catchError(res));
 });
 admin.post('/sendEmail', (req, res, next) => {
-    let sql_query = 'SELECT email FROM dean WHERE `group`=?';
-    mysql.find(sql_query, [req.body.identity]).then(results => {
+    let { identity } = req.body,
+        sql_query = 'SELECT email FROM dean WHERE `group`=?';
+    mysql.find(sql_query, identity).then(results => {
         req.body.toAddr = results.map(x => x.email);
         next();
     });
@@ -159,7 +160,7 @@ admin.post('/setLimit', (req, res) => {
 });
 admin.post('/writeLicense', (req, res) => {
     let { identity, content } = req.body;
-    file.writeFile(LICENSE + '/' + identity + '.ejs', content, err => {
+    file.writeFile(LICENSE + '/license.ejs', content, err => {
         if (err) {
             console.log(err);
             res.status(403).send('协议发布失败，请稍后重试！');

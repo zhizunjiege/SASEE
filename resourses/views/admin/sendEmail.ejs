@@ -11,9 +11,10 @@
                     <% const idObj=extraData;
                             for (const value of idObj) { 
                                 if(value!=extraData[6]){ %>
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" name="identity" value="<%= value %>"
-                            id="email_identity-<%= value.substr(0,1) %>" class="custom-control-input" checked>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" name="identity" value="<%= value %>"
+                            id="email_identity-<%= value.substr(0,1) %>" class="custom-control-input"
+                            <%= value==extraData[0]?'checked':'' %>>
                         <label for="email_identity-<%= value.substr(0,1) %>"
                             class="custom-control-label"><%= value.substr(2) %></label>
                     </div>
@@ -41,7 +42,7 @@
             selector: '#send_email_form',
             url: './sendEmail',
             validate: $form => {
-                return Boolean($form.find(':checkbox:checked').length);
+                return Boolean($form.find(':radio:checked').length);
             },
             ifNotValid: () => {
                 SASEE.alert({
