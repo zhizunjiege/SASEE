@@ -5,10 +5,10 @@
 //在connection层次上可以配置nestTables选项
 let mysql = require('mysql');
 let pool = mysql.createPool({
-    host: '127.0.0.1',
+    host: 'localhost',
     user: 'root',
     multipleStatements: true, //配置true一次可以执行多条语句
-    password: 'mysql',
+    password: 'sasee2016',
     database: 'app',
     port: 3306,
     dateStrings: true,

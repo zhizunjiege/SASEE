@@ -27,7 +27,7 @@ function retrieve(req, res) {
         res.status(403).send('验证码已失效，请重试！');
     } else if (req.body.pinCode == pinCode.code) {
         mysql.find(sql_update, [identity, newPW, account]).then(() => {
-            res.send('已成功更新邮箱地址！');
+            res.send('已成功设置密码！');
         }).catch(util.catchError(res));
     } else {
         res.status(403).send('验证码不匹配,请重试！');

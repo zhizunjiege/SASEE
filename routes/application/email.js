@@ -15,7 +15,7 @@ function _createSixNum() {
     return Num;
 }
 
-function _send({ from = 'cjason@buaa.edu.cn', password = 'mW7xFGDkkGFDf9AW', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
+function _send({ from = 'benke03@buaa.edu.cn', password = 'zXYnJxAqvHfNdE3c', to, text = '', html = CONSTANT.SYS_TEST, subject = CONSTANT.SYS_SUBJECT } = {}) {
     const transporter = nodemailer.createTransport({
         host: 'smtp.buaa.edu.cn',
         port: 25,
@@ -27,7 +27,7 @@ function _send({ from = 'cjason@buaa.edu.cn', password = 'mW7xFGDkkGFDf9AW', to,
         tls: { rejectUnauthorized: false }
     });
     if (to.length) {
-        return transporter.sendMail({ from, to, text, html, subject, cc: from });
+        return transporter.sendMail({ from, to, text, html, subject });
     } else {
         return Promise.reject(21);
     }
@@ -37,9 +37,13 @@ function _spcmw(req, res, next) {
     let { identity, account } = req.query,
         sql_query = 'SELECT email FROM ?? WHERE account=?';
     mysql.find(sql_query, [identity, account]).then(results => {
-        req.query.email = results[0].email;
+        if (results.length) {
+            req.query.email = results[0].email;
+        } else {
+            return Promise.reject(22);
+        }
         next();
-    }).catch(util.catchError(res));
+    }).catch(util.catchError(res, superApp.errorMap));
 }
 
 function sendPinCode(req, res) {
@@ -47,7 +51,7 @@ function sendPinCode(req, res) {
         email = req.query.email;
     _send({
         to: email,
-        html: '这是本次验证码：' + pinCode + '。此验证码在五分钟内有效。',
+        html: '这是本次验证码：' + pinCode + '。此验证码在五分钟内有效。' + CONSTANT.SYS_FOOTER,
         subject: '邮箱验证'
     }).then(info => {
         req.session.pinCode = {
