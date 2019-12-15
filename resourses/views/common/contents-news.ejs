@@ -1,10 +1,10 @@
-<% if (news.length) { %>
+<% if (data.length) { %>
 <div class="sys-content col-10 mx-auto" style="display: none"></div>
 <div class="sys-list">
     <ul class="list-group list-group-flush col-10 mx-auto">
-        <%- include(PATH.VIEWS_COMMON+'/newsList',{PATH,data:news}) %>
+        <%- include(PATH.VIEWS_COMMON+'/newsList',{PATH,data}) %>
     </ul>
-    <nav id="news_pagination" class="sys-pagination rel-bottom" data-total="<%= news[0].total %>">
+    <nav id="news_pagination" class="sys-pagination rel-bottom" data-total="<%= data[0].total %>">
         <ul class="pagination pagination-lg">
             <li class="page-item previous"><a class="page-link" href="#"><span>&laquo;</span></a></li>
             <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
@@ -14,6 +14,30 @@
         </ul>
     </nav>
 </div>
+<script>
+    (($, SASEE) => {
+        $('#news>.sys-list>ul').click(e => {
+            SASEE._loadContent({
+                container: '#news .sys-content',
+                url: SASEE.URL_VIEWS + '/newsContent',
+                data: {
+                    id: $(e.target).closest('li').data('id')
+                },
+                done: () => {
+                    SASEE._showListOrContent({
+                        container: '#news',
+                        flag: false
+                    });
+                }
+            });
+        });
+        SASEE.instPagination({
+            container: '#news>.sys-list>ul',
+            pagination: '#news .sys-pagination',
+            url: SASEE.URL_VIEWS + '/newsList'
+        });
+    })(window.jQuery, window.SASEE);
+</script>
 <% } else { %>
 <div class="d-flex justify-content-center" style="height: 250px">
     <h1 class="text-muted align-self-center">暂时没有通知</h1>

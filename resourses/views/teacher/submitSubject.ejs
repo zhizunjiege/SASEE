@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <div class="row">
+    <div class="row mt-3">
         <%- include(PATH.VIEWS_COMMON+'/subject-form',{PATH,data:data?data[0]:{
                 id:'',
                 title:'',
@@ -7,16 +7,16 @@
                 source:'',
                 introduction:'',
                 requirement:'',
-                difficulty:'',
-                weight:'',
+                difficulty:'一般',
+                weight:'一般',
                 ability:{
-                    allRound:'',
-                    experiment:'',
-                    graphic:'',
-                    data:'',
-                    analysis:''
+                    allRound:'一般',
+                    experiment:'一般',
+                    graphic:'一般',
+                    data:'一般',
+                    analysis:'一般'
                 },
-                materials:'请上传zip，rar或7z文件，不超过5M'
+                materials:'可选的、对课题的补充说明或相关资料，支持word、表格和压缩包，小于5M'
                 },extraData:{
                     formId:'subject_form',
                     ifNeedPass:true

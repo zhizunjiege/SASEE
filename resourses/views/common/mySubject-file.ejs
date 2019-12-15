@@ -10,15 +10,17 @@
                     <% for( let i = 0; i < down.length; i++ ) { %>
                     <a href="./file/download<%= '?id='+id+'&filename='+down[i].name+(isTeacher?'&uploader='+down[i].uploader:'') %>"
                         class="list-group-item" download>
-                        <small class="d-inline-block w-50 ellipsis"><%= down[i].name %></small>
-                        <small
-                            class="d-inline-block w-25 ellipsis"><%- isTeacher?down[i].uploader:'<strong>Tag:</strong>'+down[i].tag %></small>
-                        <small class="float-right"><%= down[i].date %></small>
+                        <div class="row justify-content-between align-items-center">
+                            <small class="d-inline-block w-50 ellipsis"><%= down[i].name %></small>
+                            <small
+                                class="d-inline-block w-25 ellipsis"><%- isTeacher?down[i].uploader:'<strong>Tag:</strong>'+down[i].tag %></small>
+                            <small class="float-right"><%= down[i].date %></small>
+                        </div>
                     </a>
                     <% } %>
                 </ul>
                 <% } else { %>
-                <div class="d-flex justify-content-center" style="height: 150px">
+                <div class="d-flex justify-content-center" style="height: 200px">
                     <h3 class="text-muted align-self-center">暂无可下载文件</h3>
                 </div>
                 <% } %>
@@ -32,15 +34,17 @@
                     <% if (up.length) { 
                           for( let i = 0; i < up.length; i++ ) { %>
                     <a href="#" class="list-group-item">
-                        <small class="d-inline-block w-50 ellipsis"><%= up[i].name %></small>
-                        <% if(isTeacher){ %>
-                        <small class="d-inline-block w-25 ellipsis"><%- '<strong>Tag:</strong>'+up[i].tag %></small>
-                        <% } %>
-                        <small class="float-right"><%= up[i].date %></small>
+                        <div class="row justify-content-between align-items-center">
+                            <small class="d-inline-block w-50 ellipsis"><%= up[i].name %></small>
+                            <% if(isTeacher){ %>
+                            <small class="d-inline-block w-25 ellipsis"><%- '<strong>Tag:</strong>'+up[i].tag %></small>
+                            <% } %>
+                            <small><%= up[i].date %></small>
+                        </div>
                     </a>
                     <% } 
                  } else { %>
-                    <div class="d-flex justify-content-center" style="height: 150px">
+                    <div class="d-flex justify-content-center" style="height: 200px">
                         <h3 class="text-muted align-self-center">未上传文件</h3>
                     </div>
                     <% } %>
@@ -48,7 +52,7 @@
             </div>
             <footer class="card-footer d-flex align-items-center justify-content-end">
                 <a class="" data-toggle="modal" href="#file_modal">
-                    <h5 class="mb-0 d-inline-block">上传文件</h5>
+                    <h5 class="mb-0 mr-3 d-inline-block">上传文件</h5>
                 </a>
             </footer>
         </div>
@@ -70,7 +74,7 @@
                             <input type="file" name="file" class="custom-file-input d-none" id="file_new_input"
                                 required>
                             <label for="file_new_input" class="custom-file-label text-left"><small
-                                    class="form-text text-muted">请上传zip，rar或7z文件，不超过5M</small></label>
+                                    class="form-text text-muted">请上传word、excel、zip，rar或7z文件，不超过5M</small></label>
                         </div>
                     </div>
                     <% if (isTeacher) { %>
@@ -80,7 +84,8 @@
                     </div>
                     <% } %>
                     <div class="form-group form-row justify-content-around">
-                        <button type="reset" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0" data-dismiss="modal">取消</button>
+                        <button type="reset" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
+                            data-dismiss="modal">取消</button>
                         <button type="submit" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0">提交</button>
                     </div>
                 </form>

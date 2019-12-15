@@ -150,7 +150,18 @@
         SASEE.formSubmit({
             selector: '#edit_user_form',
             url: './editUserInfo',
-            done: SASEE.requestDone
+            done: msg => {
+                SASEE.counter({
+                    count: 1,
+                    done: () => {
+                        SASEE._loadContent({
+                            container: '#editInfo',
+                            url: SASEE.URL_VIEWS + '/editInfo'
+                        });
+                    }
+                });
+                SASEE.requestDone(msg);
+            }
         });
 
     })(window.jQuery, window.SASEE);

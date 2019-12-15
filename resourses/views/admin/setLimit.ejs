@@ -108,7 +108,18 @@
         SASEE.formSubmit({
             selector: '#set_limit_form',
             url: './setLimit',
-            done: SASEE.requestDone
+            done: msg => {
+                SASEE.counter({
+                    count: 1,
+                    done: () => {
+                        SASEE._loadContent({
+                            container: '#setLimit',
+                            url: SASEE.URL_VIEWS + '/setLimit'
+                        });
+                    }
+                });
+                SASEE.requestDone(msg);
+            }
         });
         function computeTotal(form, inputName, totalElem) {
             let $input = $(form).find(`input[name=${inputName}]`);

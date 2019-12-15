@@ -8,7 +8,7 @@ function setGeneralInfo(fieldArray) {
         for (let i = 0; i < fieldArray.length; i++) {
             const element = fieldArray[i];
             if (req.body[element]) {
-                param[element] = req.body[element];
+                param[element] = req.body[element].replace(/\r/g, '');
             }
         }
         if (util.paramIfValid(param)) {

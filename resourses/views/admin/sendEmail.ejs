@@ -3,7 +3,7 @@
         <div class="form-group form-row align-items-center">
             <div class="col-4">
                 <div class="form-group">
-                    <input type="text" name="title" class="form-control" placeholder="请输入邮件标题" maxlength="255" required>
+                    <input type="text" name="title" class="form-control" placeholder="邮件标题，最大255个字符" maxlength="255" required>
                 </div>
             </div>
             <div class="col-8">
@@ -36,7 +36,7 @@
 <script>
     (function ($, SASEE) {
         let emailEditor = SASEE.instEditor('#emailEditor', true);
-        emailEditor.$textContainerElem[0].style.height = '540px';
+        emailEditor.$textContainerElem[0].style.height = '575px';
         SASEE.formSubmit({
             editor: emailEditor,
             selector: '#send_email_form',

@@ -32,11 +32,11 @@ deanViews.get('/userInfo', (req, res, next) => {
     };
     next();
 }, views.render);
-deanViews.get('/statistics', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
-    let { group, userId } = req.session;
+deanViews.get('/statistics', general.permiss([]), (req, res, next) => {
+    let { group } = req.session;
     req.renderData = {
-        sql_query: 'SELECT name,gender,teaNum,proTitle,JSON_LENGTH(bysj) submitted,email FROM teacher WHERE `group`=? ORDER BY teaNum;SELECT COUNT(*) totalStu FROM student WHERE `group`=?;SELECT goal FROM dean WHERE id=?;SELECT state,COUNT(*) count FROM bysj WHERE `group`=? GROUP BY state;',
-        param: [group, group, userId, group],
+        sql_query: 'SELECT name,gender,teaNum,proTitle,JSON_LENGTH(bysj) submitted,email FROM teacher WHERE `group`=? ORDER BY teaNum;SELECT COUNT(*) totalStu FROM student WHERE `group`=?;SELECT goal FROM goal WHERE `group`=?;SELECT state,COUNT(*) count FROM bysj WHERE `group`=? GROUP BY state;',
+        param: [group, group, group, group],
         file: 'statistics',
         extraData: superApp.maxProjectsMap
     };
@@ -73,8 +73,8 @@ dean.use('/views', views.common, deanViews);
 fileRouter.get('/download', download.download);
 dean.use('/file', general.permiss(['review', 'release', 'general']), fileRouter);
 
-emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
-emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
+emailRouter.get('/sendPinCode', general.permiss([]), email.sendPinCode);
+emailRouter.post('/setEmailAddr', general.permiss([]), info.setEmailAddr);
 dean.use('/email', emailRouter);
 
 dean.post('/check', general.permiss(['review', 'release']), subject.check);

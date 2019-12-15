@@ -158,14 +158,14 @@ proto.permiss = function (param) {
         }
         return stateSet.has(this.states[this._curState].name);
     }
-    throw new Error('参数错误！');
+    return true;
 };
 proto.now = function () {
     return { name, description, start, end } = this.states[this._curState];
 };
 proto.info = function () {
     return this.states.map(cur => {
-        return { name, description, start, end }= cur;
+        return { name, description, start, end } = cur;
     });
 }
 

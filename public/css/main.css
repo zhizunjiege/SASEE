@@ -19,8 +19,12 @@
 }
 
 #contents_body {
-    overflow-y: scroll;
-    height: 614px;
+    overflow: hidden auto;
+    /* height: 614px; */
+}
+
+body {
+    overflow: hidden;
 }
 
 .page-1 {
@@ -43,19 +47,19 @@
 
 @media (min-width: 992px) {
     .aside, #navigator {
-        width: 24%;
+        width: 20%;
     }
     #contents {
-        width: 76%;
+        width: 80%;
     }
     #navigator {
         left: 0;
         bottom: 0;
         top: 65px;
     }
-    #contents_body {
+    /* #contents_body {
         height: 660px;
-    }
+    } */
     .page-1 {
         display: block;
     }
@@ -66,26 +70,26 @@
 
 @media (min-width: 1200px) {
     .aside, #navigator {
-        width: 20%;
-    }
-    #contents {
-        width: 80%;
-    }
-    #contents_body {
-        height: 660px;
-    }
-}
-
-@media (min-width: 1450px) {
-    .aside, #navigator {
         width: 16%;
     }
     #contents {
         width: 84%;
     }
-    #contents_body {
+    /* #contents_body {
         height: 660px;
+    } */
+}
+
+@media (min-width: 1450px) {
+    .aside, #navigator {
+        width: 12%;
     }
+    #contents {
+        width: 88%;
+    }
+    /* #contents_body {
+        height: 660px;
+    } */
 }
 
 #account_info:hover {
@@ -97,7 +101,14 @@
     min-height: 400px;
 }
 
-.card-text{
-    text-indent:2em;
-    height: 120px;
+/* .card-text {
+    min-height: 120px;
+} */
+
+body {
+    padding-right: 15px!important;
+}
+
+header, footer {
+    padding-right: 0!important;
 }

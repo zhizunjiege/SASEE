@@ -6,16 +6,20 @@
         function _loadFrame({ $target, done, fail = SASEE.requestFail } = {}) {
             let href = $target.attr('href'),
                 type = $target[0].dataset.type;
-            if (href && !$(href).length) {
+            if (href) {
                 $.get(SASEE.URL_VIEWS + '/' + type).fail(fail).done((html) => {
-                    $('<div>', {
-                        "id": href.substring(1),
-                        "class": "collapse",
-                        "data-parent": "#contents"
-                    }).appendTo('#contents>div>div').collapse({
-                        parent: '#contents',
-                        toggle: true
-                    }).append(html);
+                    if (!$(href).length) {
+                        $('<div>', {
+                            "id": href.substring(1),
+                            "class": "collapse",
+                            "data-parent": "#contents"
+                        }).appendTo('#contents_body').collapse({
+                            parent: '#contents',
+                            toggle: true
+                        }).append(html);
+                    } else {
+                        $(href).html(html).collapse('show');
+                    }
                     done($target);
                 });
             } else {
@@ -23,7 +27,10 @@
             }
         }
 
-        SASEE.initNewsFrame();
+        SASEE._loadContent({
+            container: '#news',
+            url: SASEE.URL_VIEWS + '/news'
+        });
 
         $('#_toggle_user_info,#navigator a[href="#manual"],#navigator a[href="#news"],#navigator ul>a[data-type]').each((index, element) => {
             var $element = $(element);
@@ -62,6 +69,19 @@
                     location.href = '/';
                 });
             });
-        }        
+        }
+
+        function setWindowSize(e) {
+            let offset1 = 65 + 1, offset2 = 0;
+            if ($(window).width() < 992) {
+                offset2 = $('#navigator>.page-2').height();
+            } else {
+                offset2 = 0;
+            }
+            $('#contents').height($(window).height() - offset1 - offset2);
+        }
+
+        setWindowSize();
+        $(window).resize(setWindowSize);
     });
 })(window.jQuery);

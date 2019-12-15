@@ -1,17 +1,42 @@
-<div class="d-flex justify-content-center align-items-center" style="height: 300px">
-    <% let {target1,target2,target3,bysj}=data[0],ifChoose=extraData;
-    if (bysj) { %>
-    <h3>已生效：&ensp;<strong><%= bysj %></strong>&ensp;</h3>
+<div class="sys-content" style="display: none"></div>
+<div class="sys-list row justify-content-center align-items-center" style="height: 400px">
+    <% let [bysj,target1,target2,target3]=data,ifChoose=extraData;
+    if (bysj.length) { %>
+    <a href="#" data-id="<%= bysj[0].id %>"
+        class="h3 d-block ellipsis text-success">已生效：&ensp;<strong><%= bysj[0].title %></strong>&ensp;</a>
     <% }else if(ifChoose){  %>
     <div>
-        <h3 class="mb-3 text-<%= target1?'primary':'info' %> ellipsis">
-            第一志愿：&ensp;<strong><%= target1||'暂无' %></strong>&ensp;</h3>
-        <h3 class="mb-3 text-<%= target2?'primary':'info' %> ellipsis">
-            第二志愿：&ensp;<strong><%= target2||'暂无' %></strong>&ensp;</h3>
-        <h3 class="mb-3 text-<%= target3?'primary':'info' %> ellipsis">
-            第三志愿：&ensp;<strong><%= target3||'暂无' %></strong>&ensp;</h3>
+        <% let desArray=['一','二','三'];
+        for( let [index,value] of [target1,target2,target3].entries()) {
+            if(value.length){ %>
+        <a href="#" data-id="<%= value[0].id %>" class="h3 d-block mb-3 ellipsis text-primary a">
+            平行志愿<%= desArray[index]%>：&ensp;<strong><%= value[0].title %></strong>&ensp;</a href="#">
+        <% } else { %>
+        <h3 class="mb-3 ellipsis text-info">
+            平行志愿<%= desArray[index]%>：&ensp;<strong>暂无</strong>&ensp;</h3>
+        <% }  } %>
     </div>
     <% }else{ %>
-    <h1>暂无选择</h1>
+    <h1>无生效课题，请进行补选。</h1>
     <% } %>
 </div>
+<script>
+    (function ($, SASEE) {
+        $('#bysj_mySubject>.sys-list a').click(e => {
+            let id = $(e.currentTarget).data('id');
+            if (id) {
+                SASEE._loadContent({
+                    container: '#bysj_mySubject .sys-content',
+                    url: SASEE.URL_VIEWS + '/subjectContent',
+                    data: { id, extra: 0 },
+                    done: () => {
+                        SASEE._showListOrContent({
+                            container: '#bysj_mySubject',
+                            flag: false
+                        });
+                    }
+                });
+            }
+        });
+    })(window.jQuery, window.SASEE);
+</script>

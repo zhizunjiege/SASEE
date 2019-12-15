@@ -11,36 +11,34 @@
     <title>登陆</title>
 </head>
 
-<body>
-    <div class="container" id="container">
-        <div class="row align-items-center justify-content-center" id="row">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
-                <form action="" id="login_form" method="POST">
-                    <div class="form-group form-row">
-                        <label class="col-3 col-form-label" for="account">账号：</label>
-                        <input class="form-control col-9" type="text" name="account" id="account" pattern="\w{1,16}"
-                            placeholder="Your Account" required>
-                    </div>
-                    <div class="form-group form-row">
-                        <label class="col-3 col-form-label" for="password">密码：</label>
-                        <input class="form-control col-9" type="password" name="password" id="password"
-                            placeholder="Your Password" pattern="\w{1,16}" required>
-                    </div>
-                    <div class="form-group form-row">
-                        <label for="pin_code" class="col-3 col-form-label">验证码：</label>
-                        <div class="input-group col-9 px-0">
-                            <input name="pinCode" id="pin_code" type="text" class="form-control" pattern="\d{6}"
-                                placeholder="请输入验证码" required>
-                            <div class="input-group-append">
-                                <button type="button" id="pin_code_send" class="btn btn-outline-primary">发送验证码</button>
-                            </div>
+<body class="container" id="container">
+    <div class="row align-items-center justify-content-center" id="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+            <form action="" id="login_form" method="POST">
+                <div class="form-group form-row">
+                    <label class="col-3 col-form-label" for="account">账号：</label>
+                    <input class="form-control col-9" type="text" name="account" id="account" pattern="\w{1,16}"
+                        placeholder="Your Account" required>
+                </div>
+                <div class="form-group form-row">
+                    <label class="col-3 col-form-label" for="password">密码：</label>
+                    <input class="form-control col-9" type="password" name="password" id="password"
+                        placeholder="Your Password" pattern="\w{1,16}" required>
+                </div>
+                <div class="form-group form-row">
+                    <label for="pin_code" class="col-3 col-form-label">验证码：</label>
+                    <div class="input-group col-9 px-0">
+                        <input name="pinCode" id="pin_code" type="text" class="form-control" pattern="\d{6}"
+                            placeholder="请输入6位验证码" required>
+                        <div class="input-group-append">
+                            <button type="button" id="pin_code_send" class="btn btn-outline-primary">发送验证码</button>
                         </div>
                     </div>
-                    <div class="form-row justify-content-end mb-3">
-                        <button class="btn btn-primary col-6" type="submit">登陆</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="form-row justify-content-end mb-3">
+                    <button class="btn btn-primary col-6" type="submit">登陆</button>
+                </div>
+            </form>
         </div>
     </div>
     <%- include(PATH.VIEWS_COMMON+'/alert') %>

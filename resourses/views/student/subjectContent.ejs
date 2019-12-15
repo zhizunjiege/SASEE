@@ -1,5 +1,6 @@
 <div class="p-3">
     <%- include(PATH.VIEWS_COMMON+'/subjectContent',{PATH,data}) %>
+    <% if (!extraData.extra) { %>
     <div id="subject_check_modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -11,12 +12,12 @@
                     <form action="" id="subject_check_form" method="POST">
                         <input name="id" type="hidden" value="<%= data[0][0].id %>">
                         <div class="form-group form-row">
-                            <input name="password" type="password" class="form-control" placeholder="请输入密码进行确认"
+                            <input name="password" type="password" class="form-control" placeholder="请输入密码确认身份"
                                 pattern="\w{1,16}" required>
                         </div>
-                        <% if(extraData){ %>
+                        <% if(extraData.ifChoose){ %>
                         <div class="form-group form-row justify-content-around">
-                            <% const numObj={"1":'一志愿',"2":'二志愿',"3":'三志愿'}; 
+                            <% const numObj={"1":'平行志愿一',"2":'平行志愿二',"3":'平行志愿三'}; 
                             for (const [key,value] of Object.entries(numObj)) { %>
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" name="target" value="<%= key %>" id="target-<%= key %>"
@@ -40,16 +41,32 @@
         <button type="button" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" data-toggle="modal"
             data-target="#subject_check_modal">选择此课题</button>
     </div>
+    <script>
+        (function ($, SASEE) {
+            SASEE.formSubmit({
+                selector: '#subject_check_form',
+                url: './choose',
+                done: msg => {
+                    $('#subject_check_modal').modal('hide');
+                    SASEE.requestDone(msg);
+                    SASEE.counter({
+                        count: 1,
+                        done: () => {
+                            SASEE._loadContent({
+                                container: '#bysj_subject',
+                                url: SASEE.URL_VIEWS + '/subject',
+                                done() {
+                                    SASEE._showListOrContent({
+                                        container: 'bysj_subject',
+                                        title: '选题'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                },
+            });
+        })(window.jQuery, window.SASEE);
+    </script>
+    <% } %>
 </div>
-<script>
-    (function ($, SASEE) {
-        SASEE.formSubmit({
-            selector: '#subject_check_form',
-            url: './choose',
-            done: msg => {
-                $('#subject_check_modal').modal('hide');
-                SASEE.requestDone(msg);
-            },
-        });
-    })(window.jQuery, window.SASEE);
-</script>

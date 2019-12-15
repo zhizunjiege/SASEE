@@ -3,7 +3,7 @@ const [mysql, util, file] = superApp.requireUserModules(['mysql', 'util', 'file'
 function notFound(req, res) {
     res.type('text/html');
     res.status(404);
-    res.send(`您要的东西没找到哦-_-`);
+    res.send(`您要的东西没找到哦-_-，看看网址是不是输错了？`);
 }
 
 function permiss(states) {
@@ -11,7 +11,7 @@ function permiss(states) {
         if (req.fsm.permiss(states)) {
             next();
         } else {
-            res.status(403).send('上甲课不能做乙事哦^_^');
+            res.status(403).send('现在访问不了哦，还没到时间或者时间已过。');
         }
     }
 }
@@ -25,8 +25,13 @@ function logout(path = '/') {
     }
 }
 function redirect(req, res) {
-    if (req.session.identity) {
-        res.redirect('/' + req.session.identity + '/');
+    let { identity } = req.session;
+    if (identity) {
+        if (identity == 'admin') {
+            res.redirect('/admin/main');
+        } else {
+            res.redirect('/' + identity + '/');
+        }
     } else {
         res.render('login');
     }
@@ -37,7 +42,7 @@ function auth({ url = '/', identity } = {}) {
             next();
         } else {
             if (req.get('Frame') == 'jQuery') {
-                res.location(url).status(403).send('登陆信息失效，请重新登陆！');
+                res.location(url).status(403).send('登陆信息失效啦，请重新登陆一下。');
             } else {
                 res.redirect(url);
             }
@@ -63,7 +68,7 @@ function serverTime(req, res) {
     res.json({
         now: new Date().toLocaleString(),
         description: cur.description,
-        end: cur.end
+        end: cur.end || undefined
     });
 }
 

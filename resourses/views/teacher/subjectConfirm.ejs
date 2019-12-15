@@ -30,18 +30,18 @@ if(bysj.length) {
         <table class="table table-fixed table-hover table-bordered text-center mb-3">
             <thead class="thead-light">
                 <tr>
-                    <% tableHead.unshift('');
-                        for( let j = 0; j < tableHead.length; j++ ) { %>
+                    <% tableHead.unshift('点击进行选择');
+                        for( let j = 0; j < tableHead.length-1; j++ ) { %>
                     <th scope="col"><%= tableHead[j] %></th>
                     <% } %>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="accordion" id="resume_container">
                 <% for( let i = 1; i < data.length; i++ ) { 
                         let target=data[i];
                         for (let j = 0; j < target.length; j++) {
                             const s = target[j];  %>
-                <tr data-toggle="collapse" data-target="#student_<%= i %>_<%= j %>">
+                <tr class="point" data-toggle="collapse" data-target="#student_<%= i %>_<%= j %>">
                     <td>
                         <div class="form-group form-row justify-content-around mb-0">
                             <div class="custom-control custom-radio custom-control-inline">
@@ -58,22 +58,16 @@ if(bysj.length) {
                     <td><%= s.class %></td>
                     <td><%= s.stuNum %></td>
                     <td><%= s.postgraduate %></td>
-                    <td><%= stateArray[i] %></td>
+                </tr>
+                <tr id="student_<%= i %>_<%= j %>" class="collapse" data-parent="#resume_container">
+                    <td colspan="<%= tableHead.length-1 %>">
+                        <pre class="text-left p-3" style="min-height:100px"><%= s.resume||'暂无' %></pre>
+                    </td>
                 </tr>
                 <% } } %>
             </tbody>
         </table>
-        <h5>学生个人简介</h5>
-        <div id="resume_container" class="border rounded" style="height:200px">
-            <% for( let i = 1; i < data.length; i++ ) { 
-                        let target=data[i];
-                        for (let j = 0; j < target.length; j++) {
-                            const s = target[j];  %>
-            <div id="student_<%= i %>_<%= j %>" class="p-3 collapse" data-parent="#resume_container">
-                <%= s.resume||'暂无' %>
-            </div>
-            <% } } %>
-        </div>
+
         <div class="form-row justify-content-center my-5">
             <button class="btn btn-primary col-12 col-md-6" type="button" data-toggle="modal"
                 data-target="#subject_confirm_modal">选择此学生</button>
@@ -116,17 +110,39 @@ if(bysj.length) {
             selector: '#subject_confirm_form',
             url: SASEE.URL_SUBJECT + '/confirm',
             done(msg) {
-                SASEE.requestDone(msg);
-                $chooseForm.find('input:not(:checked)').closest('tr').remove();
-                $chooseForm.find('tr>td:last-child').text('已生效');
-                $chooseForm.find('button').remove();
                 let $modal = $('#subject_confirm_modal');
                 $modal.on('hidden.bs.modal', () => {
                     $modal.modal('dispose');
                     $modal.remove();
                 }).modal('hide');
+                SASEE.counter({
+                    count: 1,
+                    done: () => {
+                        SASEE._loadContent({
+                            container: '#bysj_subject .sys-content',
+                            url: SASEE.URL_VIEWS + '/mySubject',
+                            data: {
+                                id: $confirmForm[0].id.value
+                            }
+                        });
+                    }
+                });
+                SASEE.requestDone(msg);
+                /* $chooseForm.find('input:not(:checked)').closest('tr').remove();
+               $chooseForm.find('tr>td:last-child').text('已生效');
+               $chooseForm.find('button').remove();
+               let $modal = $('#subject_confirm_modal');
+               $modal.on('hidden.bs.modal', () => {
+                   $modal.modal('dispose');
+                   $modal.remove();
+               }).modal('hide'); */
             }
         });
+        /* $('#resume_container').find('[data-toggle=collapse]').click(e => {
+            $($(e.currentTarget).data('target')).collapse({
+                parent: '#resume_container'
+            });
+        }); */
     })(window.SASEE, window.jQuery);
 </script>
 <% } else { %>

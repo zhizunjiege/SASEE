@@ -1,4 +1,5 @@
-<% let s=data[0][0],t=data[1][0]; %>
+<% if(data[0].length){
+     let s=data[0][0],t=data[1][0]; %>
 <nav id="mySubject_nav" class="nav nav-tabs nav-justified sticky-top bg-white">
     <a data-toggle="tab" class="nav-item nav-link active" href="#mySubject_notice">通知墙</a>
     <a data-toggle="tab" class="nav-item nav-link" href="#mySubject_info">课题信息</a>
@@ -87,9 +88,7 @@
             </div>
             <div class="mb-3">
                 <h5>教师简介</h5>
-                <div class="p-3 border rounded text-indent">
-                    <%= t.resume||'暂无' %>
-                </div>
+                <pre class="p-3 border rounded"><%- t.resume||'暂无' %></pre>
             </div>
         </div>
         <div class="row mb-3 justify-content-around">
@@ -111,3 +110,8 @@
         }) %>
     </div>
 </div>
+<% } else { %>
+<div class="d-flex justify-content-center align-items-center" style="height: 300px">
+    <h1>你没有生效的课题！</h1>
+</div>
+<% } %>

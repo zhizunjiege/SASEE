@@ -144,17 +144,14 @@
         </aside>
 
         <div class="aside invisible">占位</div>
-        <div id="contents" class="py-3 px-0 px-lg-3">
-            <div class="card">
-                <header id="contents_header" class="card-header">
-                    <button id="contents_back" class="btn" style="display: none"><span
-                            class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
-                    <h3 id="contents_title" class="mb-0 text-center">通知公告</h3>
-                </header>
-                <div id="contents_body">
-                    <div id="news" class="collapse show" data-parent="#contents">
-                        <%- include(PATH.VIEWS_COMMON+'/contents-news',{PATH,news}) %>
-                    </div>
+        <div id="contents" class="card">
+            <header id="contents_header" class="card-header">
+                <button id="contents_back" class="btn" style="display: none"><span
+                        class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
+                <h3 id="contents_title" class="mb-0 text-center">通知公告</h3>
+            </header>
+            <div id="contents_body" class="pb-4">
+                <div id="news" class="collapse show" data-parent="#contents">
                 </div>
             </div>
         </div>
@@ -162,7 +159,7 @@
     </div>
 
     <footer class="d-none d-lg-block fixed-bottom text-right">
-        <p class="mr-3 mb-2"><span class="mr-3">北京航空航天大学</span><span>自动化科学与电气工程学院</span></p>
+        <p class="mr-4 mb-1"><span class="mr-3">北京航空航天大学</span><span>自动化科学与电气工程学院</span></p>
     </footer>
 
     <%- include('./alert') %>

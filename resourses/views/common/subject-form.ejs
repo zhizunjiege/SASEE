@@ -32,12 +32,12 @@
         <div class="form-group form-row">
             <label class="col-4 col-form-label required required" for="subject_introduction">简介</label>
             <textarea name="introduction" id="subject_introduction" class="form-control col-8" rows="8"
-                placeholder="请填写题目简介···" maxlength="1023" required><%= data.introduction %></textarea>
+                placeholder="请填写题目简介,最大1023个字符（或汉字）" maxlength="1023" required><%= data.introduction %></textarea>
         </div>
         <div class="form-group form-row">
             <label class="col-4 col-form-label required required" for="subject_requirement">要求</label>
             <textarea name="requirement" id="subject_requirement" class="form-control col-8" rows="8"
-                placeholder="请填写对学生的要求···" maxlength="1023" required><%= data.requirement %></textarea>
+                placeholder="请填写对学生的要求,最大1023个字符（或汉字）" maxlength="1023" required><%= data.requirement %></textarea>
         </div>
 
         <div class="form-group form-row">
@@ -88,7 +88,7 @@
             <div class="custom-file mb-3 col-8">
                 <input type="file" name="file" id="subject_file" class="custom-file-input d-none">
                 <label for="subject_file" class="custom-file-label text-left"><small
-                        class="form-text text-muted"><%= data.materials||'无' %></small></label>
+                        class="form-text text-muted"><%= data.materials||'暂无' %></small></label>
             </div>
         </div>
         <% if (extraData.ifNeedPass) { %>

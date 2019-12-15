@@ -29,7 +29,7 @@
     (function ($, SASEE) {
         $('#bysj_subject>.sys-list tbody').click(e => {
             SASEE._loadContent({
-                container: '#bysj_subject',
+                container: '#bysj_subject .sys-content',
                 url: SASEE.URL_VIEWS + '/subjectContent',
                 data: {
                     id: $(e.target).closest('tr').data('id')
@@ -52,6 +52,6 @@
 
 <% } else { %>
 <div class="d-flex justify-content-center" style="height: 200px">
-    <h1 class="text-muted align-self-center">暂无需要审核的课题</h1>
+    <h1 class="text-muted align-self-center">暂无可选课题</h1>
 </div>
 <% } %>

@@ -11,14 +11,14 @@
                 <form action="" name="edit_email" id="edit_email_form" method="POST" class="text-center">
                     <div class="form-group form-row">
                         <label for="email" class="col-4 col-form-label">邮箱：</label>
-                        <input name="email" id="email" type="email" class="col-8 form-control" placeholder="请输入邮箱地址"
+                        <input name="email" id="email" type="email" class="col-8 form-control" placeholder="请输入有效的邮箱地址"
                             required>
                     </div>
                     <div class="form-group form-row">
                         <label for="pin_code" class="col-4 col-form-label">验证码：</label>
                         <div class="input-group col-8 px-0">
                             <input name="pinCode" id="pin_code" type="text" class="form-control" pattern="\d{6}"
-                                placeholder="请输入收到的验证码" required>
+                                placeholder="请输入6位验证码" required>
                             <div class="input-group-append">
                                 <button type="button" id="pin_code_send" class="btn btn-outline-primary">发送验证码</button>
                             </div>
@@ -66,6 +66,15 @@
             selector: '#edit_email_form',
             url: SASEE.URL_EMAIL + '/setEmailAddr',
             done: msg => {
+                SASEE.counter({
+                    count: 1,
+                    done: () => {
+                        SASEE._loadContent({
+                            container: '#user_info',
+                            url: SASEE.URL_VIEWS + '/userInfo'
+                        });
+                    }
+                });
                 $('#edit_email_modal').modal('hide');
                 SASEE.requestDone(msg);
             }

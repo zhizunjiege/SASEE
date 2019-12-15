@@ -42,9 +42,7 @@
     </div>
     <div class="mb-3">
         <h5>个人简介</h5>
-        <div class="p-3 border rounded text-indent" id="resume_1">
-            <%= s.resume||'暂无' %>
-        </div>
+        <pre class="p-3 border rounded" id="resume_1"><%- s.resume||'暂无' %></pre>
     </div>
     <div class="row justify-content-around mt-3">
         <button id="edit_info" data-toggle="modal" data-target="#edit_info_modal"
@@ -60,8 +58,8 @@
                         <form action="" name="edit_info" id="edit_info_form" method="POST" class="text-center">
                             <div class="form-group form-row">
                                 <label for="resume_2" class="col-3 col-lg-2 col-form-label">个人简介：</label>
-                                <textarea name="resume" id="resume_2" class="col-9 col-lg-10 form-control" rows="8"
-                                    placeholder="请填写个人简介" maxlength="1023" required><%= s.resume||'' %></textarea>
+                                <textarea name="resume" id="resume_2" class="col-9 col-lg-10 form-control" rows="16"
+                                    placeholder="请输入10~1023个字符（或汉字）" minlength="10" maxlength="1023" required><%= s.resume||'' %></textarea>
                             </div>
                             <div class="form-group form-row justify-content-around">
                                 <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">取消</button>

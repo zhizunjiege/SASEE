@@ -2,9 +2,9 @@ html, body, #container, #row {
     height: 100%;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     display: none
-}
+} */
 
 .alert {
     position: fixed;
@@ -83,4 +83,8 @@ caption {
     border: 0!important;
     border-radius: 0!important;
     background-color: #eff6ff;
+}
+
+.w-e-text {
+    overflow-y: auto!important;
 }

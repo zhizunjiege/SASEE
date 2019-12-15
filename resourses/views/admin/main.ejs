@@ -9,26 +9,31 @@
     <link rel="stylesheet" href="/frames/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/system.css">
     <style type="text/css">
+        body {
+            overflow: hidden;
+        }
+
+        #contents {
+            height: 100%;
+        }
+
         #contents_body {
-            height: 750px;
-            overflow-y: scroll;
+            overflow: hidden auto;
         }
     </style>
     <title>系统管理</title>
 </head>
-<!-- 发布通知，查看通知，发送邮件,更新系统状态， -->
 
 <body class="container-fluid p-0">
     <div id="contents" class="card">
         <header id="contents_header" class="card-header">
             <button id="contents_back" class="btn" style="display: none"><span
                     class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
-            <h3 id="contents_title" class="mb-0 text-center">通知</h3>
+            <h3 id="contents_title" class="mb-0 text-center">查看通知</h3>
         </header>
 
-        <div id="contents_body" class="p-0">
+        <div id="contents_body" class="pb-0">
             <div id="news" class="collapse show" data-parent="#contents">
-                <%- include(PATH.VIEWS_COMMON+'/contents-news',{news:data}) %>
             </div>
         </div>
     </div>
@@ -78,16 +83,20 @@
         (function ($, SASEE) {
             function _loadFrame({ $target, done, fail = SASEE.requestFail } = {}) {
                 let type = $target.data('target');
-                if (type && !$(type).length) {
+                if (type) {
                     $.get(SASEE.URL_VIEWS + '/' + type.substring(1)).fail(fail).done((html) => {
-                        $('<div>', {
-                            "id": type.substring(1),
-                            "class": "collapse",
-                            "data-parent": "#contents"
-                        }).appendTo('#contents_body').collapse({
-                            parent: '#contents',
-                            toggle: true
-                        }).append(html).collapse('show');
+                        if (!$(type).length) {
+                            $('<div>', {
+                                "id": type.substring(1),
+                                "class": "collapse",
+                                "data-parent": "#contents"
+                            }).appendTo('#contents_body').collapse({
+                                parent: '#contents',
+                                toggle: true
+                            }).append(html);
+                        } else {
+                            $(type).html(html).collapse('show');
+                        }
                         done && done($target);
                     });
                 } else {
@@ -115,7 +124,11 @@
                 }
                 $('#menu_modal').modal('hide');
             });
-            SASEE.initNewsFrame();
+
+            SASEE._loadContent({
+                container: '#news',
+                url: SASEE.URL_VIEWS + '/news'
+            });
 
             SASEE.updateTime();
         })(window.jQuery, window.SASEE);

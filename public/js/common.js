@@ -84,10 +84,10 @@
         if (file) {
             let $file = $('input[type=file]', selector);
             $file.change((e) => {
-                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z|xls|xlsx)$/;
+                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z|xls|xlsx|doc|docx)$/;
                 if (!regexpStr.test(file.name)) {
                     $file[0].value = '';
-                    SASEE.alert({ msg: '仅支持zip，rar和7z格式！' });
+                    SASEE.alert({ msg: '仅支持doc、docx、xls、xlsx、zip，rar和7z格式！' });
                 } else if (file.size > SASEE.FILE_MAXSIZE) {
                     $file[0].value = '';
                     SASEE.alert({ msg: '文件大小不能超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!' });
@@ -141,15 +141,16 @@
         return returnObj;
     };
 
-    SASEE.counter = ({ count, doing = () => { }, done = () => { } } = {}) => {
+    SASEE.counter = ({ count, doing, done } = {}) => {
         function _countDown() {
             if (count) {
-                doing(count--);
+                doing && doing(count);
+                count--;
                 setTimeout(() => {
                     _countDown();
                 }, 1000);
             } else {
-                done();
+                done && done();
             }
         }
         _countDown();

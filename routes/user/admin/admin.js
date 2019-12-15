@@ -27,7 +27,7 @@ admin.get('/sendPinCode', (req, res, next) => {
     next();
 }, email._spcmw, email.sendPinCode);
 admin.post('/login', (req, res) => {
-    let { account, password } = req.body,
+    /* let { account, password } = req.body,
         { pinCode } = req.session,
         sql_query = 'SELECT account,password,email FROM admin WHERE account = ? AND password=?';
     mysql.find(sql_query, [account, password])
@@ -46,19 +46,18 @@ admin.post('/login', (req, res) => {
                 req.session.identity = 'admin';
                 res.location('/admin/main').send('登陆成功！');
             }
-        });
-    /* let { account, password } = req.body;
+        }); */
+    let { account, password } = req.body;
     req.session.account = account;
     req.session.password = password;
     req.session.identity = 'admin';
-    res.location('/admin/main').send('登陆成功！'); */
+    res.location('/admin/main').send('登陆成功！');
 });
 admin.use(general.auth({ url: '/admin', identity: 'admin' }));
 admin.get('/logout', general.logout('/admin'));
 
 admin.get('/main', (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM news) total,n.* FROM news n ORDER BY top DESC,id DESC LIMIT 10 OFFSET 0',
         file: 'main'
     };
     next();
@@ -91,7 +90,7 @@ adminViews.get('/updateState', (req, res, next) => {
 }, views.render);
 adminViews.get('/setLimit', (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT `group`,goal,`limit` FROM dean ORDER BY `group`;SELECT `group`,COUNT(*) total FROM student GROUP BY `group` ORDER BY `group`;SELECT `group`,COUNT(*) total FROM teacher GROUP BY `group` ORDER BY `group`;SELECT `group`,state,COUNT(*) total FROM bysj GROUP BY `group`,state ORDER BY `group`,state',
+        sql_query: 'SELECT `group`,goal,`limit` FROM goal ORDER BY `group`;SELECT `group`,COUNT(*) total FROM student GROUP BY `group` ORDER BY `group`;SELECT `group`,COUNT(*) total FROM teacher GROUP BY `group` ORDER BY `group`;SELECT `group`,state,COUNT(*) total FROM bysj GROUP BY `group`,state ORDER BY `group`,state',
         file: 'setLimit',
         extraData: groupMap
     };
@@ -150,11 +149,11 @@ admin.post('/sendEmail', (req, res, next) => {
 }, email.sendEmail);
 
 admin.post('/setLimit', (req, res) => {
-    let sql_update = 'UPDATE dean SET goal=?,`limit`=? WHERE `group`=?;', param = [];
-    for (let i = 0; i < groupMap.length; i++) {
+    let sql_update = 'UPDATE goal SET goal=?,`limit`=? WHERE `group`=?;', param = [];
+    for (let i = 0; i < groupMap.length - 1; i++) {
         param.push(req.body.goal[i], req.body.limit[i], groupMap[i]);
     }
-    mysql.find(sql_update.repeat(groupMap.length), param).then(() => {
+    mysql.find(sql_update.repeat(groupMap.length - 1), param).then(() => {
         res.send('设置成功！');
     }).catch(util.catchError(res));
 });

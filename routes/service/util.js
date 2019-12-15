@@ -43,7 +43,6 @@ function catchError(res, errCodeMap) {
                 }
             }
         }
-        console.log(msg);
         res && res.status(403).send(msg);
         return;
     }

@@ -1,13 +1,32 @@
 <div class="sys-content" style="display: none"></div>
 <div class="sys-list">
-    <div class="row justify-content-around" id="card_container">
-        <% if(data.length){
-        for( let i = 0; i < data.length; i++ ) { %>
+    <% if(data.length){ %>
+    <div class="row justify-content-around p-3" id="card_container">
+        <% for( let i = 0; i < data.length; i++ ) { %>
         <%- include('./subject-card',data[i]) %>
-        <% } } %>
+        <% } %>
     </div>
+    <div id="check_extra_modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">其他意见</h4>
+                    <button class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <pre id="extra_container"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% }  else { %>
+    <div class="d-flex justify-content-center" style="height: 200px">
+        <h1 class="text-muted align-self-center">您没有发布课题</h1>
+    </div>
+    <% } %>
+
     <% if (extraData.ifPermiss&&data.length<extraData.maxProjects) { %>
-    <div class="d-flex justify-content-center align-items-center" style="height: 250px">
+    <div class="d-flex justify-content-center align-items-center" style="height: 200px">
         <button class="btn btn-primary col-12 col-md-4 col-lg-3" id="subject_submit">发布课题</button>
     </div>
     <% } %>
@@ -16,7 +35,7 @@
     (function ($, SASEE) {
         function _loadSubjectContent(type, data = null) {
             SASEE._loadContent({
-                container: '#bysj_subject',
+                container: '#bysj_subject .sys-content',
                 url: SASEE.URL_VIEWS + '/' + type,
                 data,
                 done: () => {
@@ -35,12 +54,17 @@
                 }
             }
         });
-
-        let $subject_submit = $('#subject_submit');
-        if ($subject_submit.length) {
-            $subject_submit.click(() => {
-                _loadSubjectContent('submitSubject');
-            });
-        }
+        let $trigger = $('#card_container').find('[data-toggle="modal"]').parent().parent();
+        $trigger.click(e => {
+            e.stopPropagation();
+            let content = $(e.target).data('content');
+            if (content) {
+                $('#extra_container').text(content);
+                $('#check_extra_modal').modal();
+            }
+        });
+        $('#subject_submit').click(() => {
+            _loadSubjectContent('submitSubject');
+        });
     })(window.jQuery, window.SASEE);
 </script>

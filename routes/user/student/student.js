@@ -65,29 +65,36 @@ studentViews.get('/subjectList', general.permiss(['choose', 'final']), (req, res
     };
     next();
 }, views.render);
-studentViews.get('/subjectContent', general.permiss(['choose', 'final']), (req, res, next) => {
+studentViews.get('/subjectContent', general.permiss(['choose', 'publicity', 'final']), (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?',
         param: [req.query.id, req.query.id],
         file: 'subjectContent',
-        extraData: req.fsm.now().name == 'choose'
+        extraData: {
+            extra: 'extra' in req.query,
+            ifChoose: req.fsm.now().name == 'choose'
+        }
     };
     next();
 }, views.render);
 studentViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res, next) => {
     let { userId } = req.session, period = req.fsm.now().name;
-    if (period == 'choose' || period == 'publicity' || period == 'final') {
-        req.renderData = {
-            sql_query: 'SELECT (SELECT title FROM bysj b WHERE b.id=s.target1) target1,(SELECT title FROM bysj b WHERE b.id=s.target2) target2,(SELECT title FROM bysj b WHERE b.id=s.target3) target3,(SELECT title FROM bysj b WHERE b.id=s.bysj) bysj FROM student s WHERE s.id=?',
-            param: userId,
-            file: 'mySubjectPublic',
-            extraData: period == 'choose'
-        };
+    if (period == 'general') {
+    req.renderData = {
+        sql_query: 'SELECT b.*,s.name stuName FROM bysj b,student s WHERE s.id=? AND s.id=b.student;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
+        param: [userId, userId],
+        file: 'mySubject'
+    };
+
     } else {
         req.renderData = {
-            sql_query: 'SELECT b.*,s.name stuName FROM bysj b,student s WHERE s.id=? AND s.id=b.student;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
-            param: [userId, userId],
-            file: 'mySubject'
+            sql_query: `SELECT b.id,title FROM bysj b,student s WHERE b.id=s.bysj AND s.id=?;
+            SELECT b.id,title FROM bysj b,student s WHERE b.id=s.target1 AND s.id=?;
+            SELECT b.id,title FROM bysj b,student s WHERE b.id=s.target2 AND s.id=?;
+            SELECT b.id,title FROM bysj b,student s WHERE b.id=s.target3 AND s.id=?;`,
+            param: new Array(4).fill(userId),
+            file: 'mySubjectPublic',
+            extraData: period == 'choose'
         };
     }
     next();
@@ -99,12 +106,12 @@ fileRouter.post('/upload', general.permiss(['general']), upload.receive, upload.
 fileRouter.get('/download', general.permiss(['choose', 'final', 'general']), download.download);
 student.use('/file', fileRouter);
 
-emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
-emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
+emailRouter.get('/sendPinCode', general.permiss([]), email.sendPinCode);
+emailRouter.post('/setEmailAddr', general.permiss([]), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 student.use('/email', emailRouter);
 
-student.post('/info', general.permiss(['info', 'choose']), info.setGeneralInfo(['resume']));
+student.post('/info', general.permiss([]), info.setGeneralInfo(['resume']));
 
 student.post('/choose', general.permiss(['choose', 'final']), subject.choose);
 

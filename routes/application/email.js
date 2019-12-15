@@ -73,17 +73,16 @@ function sendEmail(req, res) {
     }).catch(util.catchError(res, superApp.errorMap));
 }
 
-function emailTemplate({ title = '通知', paragraph = [], from = '系统' } = {}) {
+function emailTemplate({ title = '通知', paragraph = [] } = {}) {
     let p = ``;
     for (let i = 0; i < paragraph.length; i++) {
         p += `<p>${paragraph[i]}</p>`;
     }
     return `
-        <h3>${title}</h3>
+        <h3 style="text-align:center;">${title}</h3>
         ${p}
-        <p>${from}</p>
-        <p>${new Date().toLocaleString()}</p>
-            `;
+        <p style="text-align:center;">系统时间：${new Date().toLocaleString()}</p>
+            ${CONSTANT.SYS_FOOTER}`;
 }
 
 module.exports = { CONSTANT, _spcmw, _send, sendPinCode, sendEmail, emailTemplate };

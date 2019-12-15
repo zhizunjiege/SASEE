@@ -61,7 +61,13 @@ teacherViews.get('/modifySubject', general.permiss(['submit', 'modify']), (req, 
 }, views.render);
 teacherViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res, next) => {
     let { id } = req.query, period = req.fsm.now().name;
-    if (period == 'choose' || period == 'publicity' || period == 'final') {
+    if (period == 'general') {
+        req.renderData = {
+            sql_query: 'SELECT * FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND s.bysj=b.id',
+            param: [id, id],
+            file: 'mySubject'
+        };
+    } else {
         req.renderData = {
             sql_query: 'SELECT * FROM student WHERE bysj=?;SELECT * FROM student WHERE target1=?;SELECT * FROM student WHERE target2=?;SELECT * FROM student WHERE target3=?',
             param: [id, id, id, id],
@@ -70,12 +76,6 @@ teacherViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 
                 id,
                 ifChoose: period == 'choose'
             }
-        }
-    } else {
-        req.renderData = {
-            sql_query: 'SELECT * FROM bysj WHERE id=?;SELECT s.* FROM student s,bysj b WHERE b.id=? AND s.bysj=b.id',
-            param: [id, id],
-            file: 'mySubject'
         };
     }
     next();
@@ -90,17 +90,25 @@ teacher.use('/file', general.permiss(['general']), fileRouter);
 subjectRouter.get('/query', general.permiss(['submit']), subject.query);
 subjectRouter.post('/submit', general.permiss(['submit']), upload.receive, subject.submit);
 subjectRouter.post('/modify', general.permiss(['submit', 'modify']), upload.receive, subject.modify);
-subjectRouter.post('/confirm', general.permiss(['choose']), subject.confirm);
+subjectRouter.post('/confirm', general.permiss(['choose']), subject.confirm, (req, res) => {
+    email._send({
+        to: req.body.to,
+        html: req.body.html,
+        subject: req.body.subject + email.CONSTANT.SYS_FOOTER
+    }).catch(err => {
+        console.log(err);
+    });
+});
 subjectRouter.post('/notice', general.permiss(['general']), subject.notice);
 subjectRouter.post('/mark', general.permiss(['general']), subject.mark);
 teacher.use('/subject', subjectRouter);
 
-emailRouter.get('/sendPinCode', general.permiss(['info']), email.sendPinCode);
-emailRouter.post('/setEmailAddr', general.permiss(['info']), info.setEmailAddr);
+emailRouter.get('/sendPinCode', general.permiss([]), email.sendPinCode);
+emailRouter.post('/setEmailAddr', general.permiss([]), info.setEmailAddr);
 emailRouter.post('/sendEmail', general.permiss(['general']), email.sendEmail);
 teacher.use('/email', emailRouter);
 
-teacher.post('/info', general.permiss(['info']), info.setGeneralInfo(['field', 'office', 'resume']));
+teacher.post('/info', general.permiss([]), info.setGeneralInfo(['field', 'office', 'resume']));
 
 teacher.get('/logout', general.logout());
 teacher.post('/password', password.modify);

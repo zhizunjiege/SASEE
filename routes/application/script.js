@@ -67,7 +67,7 @@ function deleteSubject() {
     });
 }
 
-function drawAll(succeed, fail) {
+function drawAll({ succeed, fail }) {
     draw.drawAll().then(() => {
         sendEmail(succeed);
     }).catch(err => {
@@ -76,7 +76,7 @@ function drawAll(succeed, fail) {
     });
 }
 
-function adjustAll(succeed, fail) {
+function adjustAll({ succeed, fail }) {
     adjust.adjustAll().then(() => {
         sendEmail(succeed);
     }).catch(err => {

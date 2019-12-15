@@ -47,7 +47,7 @@
     }
     SASEE._loadContent = ({ container, url, data, done, fail = SASEE.requestFail }) => {
         $.get(url, data).done(html => {
-            $(container).find('.sys-content').html(html);
+            $(container).html(html);
             done && done();
         }).fail(fail);
     };
@@ -137,33 +137,11 @@
         return editor;
     };
 
-    SASEE.initNewsFrame = () => {
-        $('#news>.sys-list>ul').click(e => {
-            SASEE._loadContent({
-                container: '#news',
-                url: SASEE.URL_VIEWS + '/newsContent',
-                data: {
-                    id: $(e.target).closest('li').data('id')
-                },
-                done: () => {
-                    SASEE._showListOrContent({
-                        container: '#news',
-                        flag: false
-                    });
-                }
-            });
-        });
-        SASEE.instPagination({
-            container: '#news>.sys-list>ul',
-            pagination: '#news .sys-pagination',
-            url: SASEE.URL_VIEWS + '/newsList'
-        });
-    };
-
     SASEE.serverTimeObj = {
         $serverTime: $('#_serverTime'),
         $nowState: $('#_nowState'),
         $restTime: $('#_restTime'),
+        description: '',
         refreshCount: 0,
         updaterId: null,
         counterId: null,
@@ -196,6 +174,24 @@
             clearTimeout(timeObj.updaterId);
         }
         $.getJSON('/serverTime').done(data => {
+            if (timeObj.description) {
+                if (timeObj.description != data.description) {
+                    SASEE.counter({
+                        count: 5,
+                        done() {
+                            alert(timeObj.description);
+                            window.location.reload(true);
+                        }
+                    });
+                    SASEE.alert({
+                        msg: '服务器状态发生变化，请勿继续操作，页面将在5秒后自动刷新。',
+                        buttonHide: true
+                    });
+                    return;
+                }
+            } else {
+                timeObj.description = data.description;
+            }
             if (timeObj.counterId) {
                 clearTimeout(timeObj.counterId);
             }
@@ -204,7 +200,7 @@
             timeObj.updaterId = setTimeout(SASEE.updateTime, 5 * 60 * 1000);
         }).fail(() => {
             if (timeObj.refreshCount == 3) {
-                SASEE.alert({ msg: '与服务端失去连接，请刷新重试！' });
+                SASEE.alert({ msg: '与服务端失去连接，请刷新页面重试！' });
                 return;
             }
             timeObj.refreshCount++;
