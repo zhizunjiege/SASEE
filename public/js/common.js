@@ -80,7 +80,14 @@
     }
 
     SASEE.formSubmit = ({ file = false, editor = null, selector, url, validate, ifNotValid, preprocess = null, done, fail = SASEE.requestFail, always } = {}) => {
+        //需要防止连续提交，利用flag
+        let flag = true;
         let $form = $(selector);
+        let $popover = $form.find('button[type=submit]').popover({
+            content: '已经提交过了哦，请等待返回的结果',
+            container: $form,
+            placement: 'top',
+        }).popover('disable');
         if (file) {
             let $file = $('input[type=file]', selector);
             $file.change((e) => {
@@ -98,30 +105,41 @@
         }
         $form[0].onsubmit = (e) => {
             e.preventDefault();
-            if (!validate || validate($form)) {
-                let ajaxObj = null;
-                if (file) {
-                    let data = new FormData($form[0]);
-                    data.has('password') && data.set('password', objectHash.MD5(data.get('password')));
-                    ajaxObj = $.ajax({
-                        url: url,
-                        type: 'POST',
-                        cache: false,
-                        data,
-                        processData: false,
-                        contentType: false
+            console.log(flag);
+
+            if (flag) {
+                if (!validate || validate($form)) {
+                    let ajaxObj = null;
+                    if (file) {
+                        let data = new FormData($form[0]);
+                        data.has('password') && data.set('password', objectHash.MD5(data.get('password')));
+                        ajaxObj = $.ajax({
+                            url: url,
+                            type: 'POST',
+                            cache: false,
+                            data,
+                            processData: false,
+                            contentType: false
+                        });
+                    } else {
+                        let data = preprocess ? preprocess($form, editor) : $form.serializeObject();
+                        data.password && (data.password = objectHash.MD5(data.password));
+                        data.oldPW && (data.oldPW = objectHash.MD5(data.oldPW));
+                        data.newPW && (data.newPW = objectHash.MD5(data.newPW));
+                        editor && (data.content = editor.txt.html());
+                        ajaxObj = $.json({ url, data });
+                    }
+                    ajaxObj.done(done).fail(fail).always(() => {
+                        flag = true;
+                        $popover.length && $popover.popover('hide').popover('disable');
+                        always && always();
                     });
+                    flag = false;
                 } else {
-                    let data = preprocess ? preprocess($form, editor) : $form.serializeObject();
-                    data.password && (data.password = objectHash.MD5(data.password));
-                    data.oldPW && (data.oldPW = objectHash.MD5(data.oldPW));
-                    data.newPW && (data.newPW = objectHash.MD5(data.newPW));
-                    editor && (data.content = editor.txt.html());
-                    ajaxObj = $.json({ url, data });
+                    ifNotValid && ifNotValid($form);
                 }
-                ajaxObj.done(done).fail(fail).always(always);
             } else {
-                ifNotValid && ifNotValid($form);
+                $popover.length && $popover.popover('enable').popover('show');
             }
         };
     };
