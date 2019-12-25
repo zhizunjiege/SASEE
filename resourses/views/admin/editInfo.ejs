@@ -139,6 +139,24 @@
                             url: './editSubjectInfo',
                             done: SASEE.requestDone
                         });
+                        let $curSubject = $('#subject_id');
+                        $('#delete_submit_button').click(e => {
+                            $.get('./deleteSubject', { id: $curSubject[0].value }).done((msg) => {
+                                $('#delete_check_modal').modal('hide');
+                                $('#delete_check_modal').on('hidden.bs.modal', () => {
+                                    SASEE.counter({
+                                        count: 1,
+                                        done: () => {
+                                            SASEE._loadContent({
+                                                container: '#editInfo',
+                                                url: SASEE.URL_VIEWS + '/editInfo'
+                                            });
+                                        }
+                                    });
+                                    SASEE.requestDone(msg);
+                                });
+                            });
+                        });
                     }
                 } else {
                     $('#search_subject_form').find('select').empty();

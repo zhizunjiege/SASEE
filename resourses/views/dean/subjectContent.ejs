@@ -1,4 +1,12 @@
 <div class="p-3">
+    <% let check=data[0][0].check||{
+        ifClear:'yes',
+        ifDifficultyProper:'yes',
+        ifMeetGoal:'yes',
+        ifConditionWell:'yes',
+        ifPass:'yes',
+        extra:''
+    }; %>
     <%- include(PATH.VIEWS_COMMON+'/subjectContent',{PATH,data}) %>
     <div id="subject_check_modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -42,20 +50,20 @@
                         <div class="form-group form-row justify-content-around">
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" name="<%= name %>" id="check_<%= name %>_y"
-                                    class="custom-control-input" value="yes" checked>
+                                    class="custom-control-input" value="yes" <%= check[name]=='yes'?'checked':'' %>>
                                 <label class="custom-control-label" for="check_<%= name %>_y"><%- yes %></label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" name="<%= name %>" id="check_<%= name %>_n"
-                                    class="custom-control-input" value="no">
+                                    class="custom-control-input" value="no" <%= check[name]=='no'?'checked':'' %>>
                                 <label class="custom-control-label" for="check_<%= name %>_n"><%- no %></label>
                             </div>
                         </div>
                         <% } %>
                         <label>&ensp;6、其他意见</label>
                         <div class="form-group">
-                            <textarea name="extra" id="check_extra" class="form-control" rows="8" placeholder="选填，最大1023个字符（或汉字）"
-                                maxlength="1023"></textarea>
+                            <textarea name="extra" id="check_extra" class="form-control" rows="8"
+                                placeholder="选填，最大1023个字符（或汉字）" maxlength="1023"><%= check.extra %></textarea>
                         </div>
                         <div class="form-group form-row justify-content-around">
                             <button type="reset" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
@@ -74,22 +82,32 @@
 </div>
 <script>
     (function ($, SASEE) {
+        const colorObj = {
+            yes: 'bg-success',
+            no: 'bg-warning'
+        };
         SASEE.formSubmit({
             selector: '#subject_check_form',
             url: './check',
             done(msg) {
                 let $container = $('#bysj_subject>.sys-list tbody'),
-                    $form = $('#subject_check_form');
-                if ($container.children().length == 1) {
+                    $form = $('#subject_check_form'),
+                    $tr = $container.find('tr[data-id="' + $form[0].id.value + '"]');
+                /* if ($container.children().length == 1) {
                     $('#bysj_subject .sys-list').replaceWith(`
                     <div class="d-flex justify-content-center" style="height: 250px">
                         <h1 class="text-muted align-self-center">课题审查完成！</h1>
                     </div>`);
                 } else {
                     $container.find('tr[data-id="' + $form[0].id.value + '"]').remove();
-                }
+                } */
+                $tr.removeClass(colorObj.yes);
+                $tr.removeClass(colorObj.no);
+                $tr.addClass(colorObj[$form[0].ifPass.value]);
+                $tr.find('td:first-child').removeClass('text-primary');
+                $tr.find('td:first-child').addClass('text-dark');
+                $tr.appendTo($container);
                 $('#subject_check_modal').modal('hide');
-                SASEE.requestDone(msg);
                 SASEE._showListOrContent({
                     container: '#bysj_subject'
                 });

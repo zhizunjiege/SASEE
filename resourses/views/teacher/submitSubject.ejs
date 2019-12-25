@@ -31,7 +31,7 @@
             selector: '#subject_form',
             url: SASEE.URL_SUBJECT + ($curSubject[0].value ? SASEE.URL_MODIFY : SASEE.URL_SUBMIT),
             done: data => {
-                let $container = $('#card_container');
+                /* let $container = $('#card_container');
                 if ($curSubject[0].value) {
                     $('#card_container>[data-id=' + $curSubject[0].value + ']').remove();
                 }
@@ -43,8 +43,30 @@
                     if ($container.children().length >= Number(data)) {
                         $('#subject_submit').parent().remove();
                     }
+                }); */
+                SASEE._loadContent({
+                    container: '#bysj_subject',
+                    url: SASEE.URL_VIEWS + '/subject'
+                });
+                SASEE._showListOrContent({
+                    container: '#bysj_subject'
                 });
             }
+        });
+
+        $('#delete_submit_button').click(e => {
+            $.get(SASEE.URL_SUBJECT + '/delete', { id: $curSubject[0].value }).done(() => {
+                $('#delete_check_modal').modal('hide');
+                $('#delete_check_modal').on('hidden.bs.modal', () => {
+                    SASEE._loadContent({
+                        container: '#bysj_subject',
+                        url: SASEE.URL_VIEWS + '/subject'
+                    });
+                    SASEE._showListOrContent({
+                        container: '#bysj_subject'
+                    });
+                });
+            });
         });
     })(window.jQuery, window.SASEE);
 </script>

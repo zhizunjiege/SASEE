@@ -91,10 +91,10 @@
         if (file) {
             let $file = $('input[type=file]', selector);
             $file.change((e) => {
-                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z|xls|xlsx|doc|docx)$/;
+                let file = $file[0].files[0], regexpStr = /\.(?:zip|rar|7z|xls|xlsx|doc|docx|pdf|tar\.gz|txt)$/;
                 if (!regexpStr.test(file.name)) {
                     $file[0].value = '';
-                    SASEE.alert({ msg: '仅支持doc、docx、xls、xlsx、zip，rar和7z格式！' });
+                    SASEE.alert({ msg: '仅支持pdf、doc、docx、xls、xlsx、zip、rar、tar.gz和7z格式！' });
                 } else if (file.size > SASEE.FILE_MAXSIZE) {
                     $file[0].value = '';
                     SASEE.alert({ msg: '文件大小不能超过' + SASEE.FILE_MAXSIZE / 1048576 + 'M!' });
@@ -105,8 +105,6 @@
         }
         $form[0].onsubmit = (e) => {
             e.preventDefault();
-            console.log(flag);
-
             if (flag) {
                 if (!validate || validate($form)) {
                     let ajaxObj = null;

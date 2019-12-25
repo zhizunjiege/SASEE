@@ -3,7 +3,7 @@
     <% if(data.length){ %>
     <div class="row justify-content-around p-3" id="card_container">
         <% for( let i = 0; i < data.length; i++ ) { %>
-        <%- include('./subject-card',data[i]) %>
+        <%- include('./subject-card',{data:data[i],ifPermiss:extraData.ifPermiss}) %>
         <% } %>
     </div>
     <div id="check_extra_modal" class="modal fade" tabindex="-1">

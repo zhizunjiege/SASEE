@@ -27,31 +27,33 @@ admin.get('/sendPinCode', (req, res, next) => {
     next();
 }, email._spcmw, email.sendPinCode);
 admin.post('/login', (req, res) => {
-    /* let { account, password } = req.body,
+    let { account, password } = req.body,
         { pinCode } = req.session,
         sql_query = 'SELECT account,password,email FROM admin WHERE account = ? AND password=?';
     mysql.find(sql_query, [account, password])
         .then(data => {
             if (data.length == 0) {
                 res.status(403).send('账号或密码错误，请重试！');
-            } else if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
+            } /* else if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
                 req.session.pinCode = null;
                 res.status(403).send('验证码已失效，请重试！');
             } else if (req.body.pinCode != pinCode.code) {
                 res.status(403).send('验证码错误，请重试！');
-            } else {
+            }  */else {
                 req.session.email = data[0].email;
                 req.session.account = data[0].account;
                 req.session.password = data[0].password;
                 req.session.identity = 'admin';
+                req.session.tmp = {};
                 res.location('/admin/main').send('登陆成功！');
             }
-        }); */
-    let { account, password } = req.body;
+        });
+    /* let { account, password } = req.body;
     req.session.account = account;
     req.session.password = password;
     req.session.identity = 'admin';
-    res.location('/admin/main').send('登陆成功！');
+    req.session.tmp = {};
+    res.location('/admin/main').send('登陆成功！'); */
 });
 admin.use(general.auth({ url: '/admin', identity: 'admin' }));
 admin.get('/logout', general.logout('/admin'));
@@ -192,7 +194,7 @@ admin.post('/searchUserInfo', (req, res) => {
     mysql.find(editUserInfoSql[identity], account)
         .then(result => {
             if (result.length) {
-                req.session.tmp = account;
+                req.session.tmp.account = account;
                 result[0].identity = identity;
                 res.json(result[0]);
             } else {
@@ -202,7 +204,7 @@ admin.post('/searchUserInfo', (req, res) => {
 });
 admin.post('/editUserInfo', (req, res) => {
     let { identity, account } = req.body,
-        oldAccount = req.session.tmp;
+        oldAccount = req.session.tmp.account;
     sql_update = 'UPDATE ?? SET ? WHERE account=?';
     for (const [key, value] of Object.entries(req.body)) {
         if (!value) {
@@ -227,11 +229,12 @@ admin.post('/editUserInfo', (req, res) => {
 
 admin.post('/searchSubjectInfo', (req, res) => {
     let { id, account } = req.body,
-        sql_query = `SELECT ${id ? '*' : 'b.id,b.title'} FROM bysj b,teacher t WHERE t.account=? AND ${id ? `b.id=${id}` : `b.teacher=t.id`}`;
+        sql_query = `SELECT ${id ? 'b.*' : 'b.id,b.title'} FROM bysj b,teacher t WHERE t.account=? AND ${id ? `b.id=${id}` : `b.teacher=t.id`}`;
     mysql.find(sql_query, account)
         .then(results => {
             if (results.length) {
                 if (id) {
+                    req.session.tmp.teaNum = account;
                     res.render(VIEWS_COMMON + '/subject-form', {
                         data: results[0],
                         extraData: {
@@ -270,6 +273,29 @@ admin.post('/editSubjectInfo', upload.receive, (req, res) => {
                 res.send('修改课题成功！');
             }
         }).catch(util.catchError(res));
+});
+
+admin.get('/deleteSubject', (req, res) => {
+    let { id } = req.query,
+        account = req.session.tmp.teaNum,
+        sql_query = 'SELECT bysj FROM teacher WHERE account=?',
+        sql_del = 'DELETE FROM bysj WHERE id=?',
+        sql_update = 'UPDATE teacher SET bysj=? WHERE account=?';
+
+    mysql.find(sql_query, account).then(results => {
+        return mysql.transaction().then(conn => {
+            return conn.find(sql_del, id);
+        }).then(({ conn }) => {
+            let bysj = results[0].bysj,
+                index = bysj.indexOf(Number(id));
+            bysj.splice(index, 1);
+            return conn.find(sql_update, [JSON.stringify(bysj), account]);
+        }).then(({ conn }) => {
+            return conn.commitPromise();
+        }).then(() => {
+            res.send('课题已成功删除！');
+        })
+    }).catch(util.catchError(res));
 });
 
 admin.post('/initState', (req, res) => {

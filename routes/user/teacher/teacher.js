@@ -34,24 +34,25 @@ teacherViews.get('/userInfo', (req, res, next) => {
     next();
 }, views.render);
 teacherViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release', 'choose', 'draw', 'publicity', 'final', 'general']), (req, res, next) => {
+    let name = req.fsm.now().name;
     req.renderData = {
         sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,state,`check` FROM bysj b,teacher t WHERE t.id=? AND JSON_CONTAINS(t.bysj,CONCAT("",b.id))',
         param: req.session.userId,
         file: 'subject',
         extraData: {
             maxProjects: superApp.maxProjectsMap[req.session.proTitle] || 0,
-            ifPermiss: req.fsm.now().name == 'submit'
+            ifPermiss: name == 'submit' || name == 'review' || name == 'modify' || name == 'release'
         }
     };
     next();
 }, views.render);
-teacherViews.get('/submitSubject', general.permiss(['submit']), (req, res, next) => {
+teacherViews.get('/submitSubject', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
         file: 'submitSubject'
     };
     next();
 }, views.render);
-teacherViews.get('/modifySubject', general.permiss(['submit', 'modify']), (req, res, next) => {
+teacherViews.get('/modifySubject', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT id,title,introduction,type,source,requirement,difficulty,weight,ability,materials FROM bysj WHERE id=?',
         param: req.query.id,
@@ -87,18 +88,25 @@ fileRouter.post('/upload', upload.receive, upload.upload);
 fileRouter.get('/download', download.download);
 teacher.use('/file', general.permiss(['general']), fileRouter);
 
-subjectRouter.get('/query', general.permiss(['submit']), subject.query);
-subjectRouter.post('/submit', general.permiss(['submit']), upload.receive, subject.submit);
-subjectRouter.post('/modify', general.permiss(['submit', 'modify']), upload.receive, subject.modify);
+subjectRouter.get('/query', general.permiss(['submit', 'review', 'modify', 'release']), subject.query);
+subjectRouter.post('/submit', general.permiss(['submit', 'review', 'modify', 'release']), upload.receive, subject.submit);
+subjectRouter.post('/modify', general.permiss(['submit', 'review', 'modify', 'release']), upload.receive, subject.modify);
 subjectRouter.post('/confirm', general.permiss(['choose']), subject.confirm, (req, res) => {
-    email._send({
-        to: req.body.to,
-        html: req.body.html,
-        subject: req.body.subject + email.CONSTANT.SYS_FOOTER
-    }).catch(err => {
-        console.log(err);
-    });
+    if (req.body.to.length) {
+        email._send({
+            to: req.body.to,
+            html: req.body.html,
+            subject: req.body.subject + email.CONSTANT.SYS_FOOTER
+        }).catch(err => {
+            if (err instanceof Error) {
+                console.log(err);
+            }
+            return;
+        });
+    }
+    res.send('确认成功！');
 });
+subjectRouter.get('/delete', general.permiss(['submit', 'review', 'modify', 'release']), subject.del);
 subjectRouter.post('/notice', general.permiss(['general']), subject.notice);
 subjectRouter.post('/mark', general.permiss(['general']), subject.mark);
 teacher.use('/subject', subjectRouter);

@@ -1,5 +1,6 @@
-<% const stateObj={'未通过':'modifySubject','未审核':'modifySubject','通过':'mySubject'},
+<% const stateObj={'未通过':'modifySubject','未审核':'modifySubject','通过':ifPermiss?'modifySubject':'mySubject'},
 colorObj={'未通过':'warning','未审核':'primary','通过':'success'},
+{id,check,state,title,submitTime,lastModifiedTime}=data,
 _state=state.substr(2); %>
 <div class="card my-3 list-group-item-action subject-card" data-type="<%= stateObj[_state] %>" data-id="<%= id %>">
     <header class="card-header d-flex align-items-center justify-content-between"><span

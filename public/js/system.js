@@ -179,7 +179,6 @@
                     SASEE.counter({
                         count: 5,
                         done() {
-                            alert(timeObj.description);
                             window.location.reload(true);
                         }
                     });

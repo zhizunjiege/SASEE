@@ -7,7 +7,15 @@ function render(req, res) {
     let path = dir ? dir + '/' + file : file;
     if (sql_query) {
         mysql.find(sql_query, param).then(data => {
-            res.render(path, { PATH: superApp.resourses, data, extraData });
+            res.render(path, { PATH: superApp.resourses, data, extraData }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    console.log(req);
+                    res.status(403).send('页面渲染出错！');
+                } else {
+                    res.send(html);
+                }
+            });
         }).catch(util.catchError(res));
     } else if (path) {
         res.render(path, { PATH: superApp.resourses, data: null, extraData }, (err, html) => {

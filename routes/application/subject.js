@@ -43,7 +43,7 @@ function submit(req, res) {
                 to = FILES + '/' + result.group + '/subject' + result.id + '/teacher/' + req.file.filename;
             file.move(from, to, (err) => {
                 if (err) throw err;
-                res.render('subject-card', result);
+                res.send('课题发布成功！');
             });
         } else {
             res.render('subject-card', result);
@@ -55,6 +55,8 @@ function modify(req, res) {
     let { id, title, introduction, type, source, requirement, difficulty, weight, password } = req.body,
         { allRound, experiment, graphic, data, analysis } = req.body,
         account = req.session.account;
+    introduction = introduction.replace(/\r/g, '');
+    requirement = requirement.replace(/\r/g, '');
     let sql_query = 'SELECT 1 FROM teacher WHERE account=? AND password=?',
         sql_update = 'UPDATE bysj SET ?,lastModifiedTime=CURDATE(),state="1-未审核" WHERE id=?;SELECT * FROM bysj WHERE id=?';
     mysql.find(sql_query, [account, password]).then(results => {
@@ -75,7 +77,7 @@ function modify(req, res) {
             file.deleteAll(toDir);
             file.move(from, to, (err) => {
                 if (err) throw err;
-                res.render('subject-card', results[1][0]);
+                res.send('修改课题成功！');
             });
         } else {
             res.render('subject-card', results[1][0]);
@@ -180,7 +182,6 @@ function confirm(req, res, next) {
         }).then(({ conn }) => {
             return conn.commitPromise();
         }).then(() => {
-            res.send('确认成功！');
             let to = [];
             for (let i = 0; i < results[2].length; i++) {
                 results[2][i].email && to.push(results[2][i].email);
@@ -193,4 +194,27 @@ function confirm(req, res, next) {
     }).catch(util.catchError(res, errorMap));
 }
 
-module.exports = { query, submit, modify, notice, mark, choose, check, confirm };
+function del(req, res) {
+    let { id } = req.query,
+        { account } = req.session,
+        sql_query = 'SELECT bysj FROM teacher WHERE account=?',
+        sql_del = 'DELETE FROM bysj WHERE id=?',
+        sql_update = 'UPDATE teacher SET bysj=? WHERE account=?';
+
+    mysql.find(sql_query, account).then(results => {
+        return mysql.transaction().then(conn => {
+            return conn.find(sql_del, id);
+        }).then(({ conn }) => {
+            let bysj = results[0].bysj,
+                index = bysj.indexOf(Number(id));
+            bysj.splice(index, 1);
+            return conn.find(sql_update, [JSON.stringify(bysj), account]);
+        }).then(({ conn }) => {
+            return conn.commitPromise();
+        }).then(() => {
+            res.send('课题已成功删除！');
+        })
+    }).catch(util.catchError(res));
+}
+
+module.exports = { query, submit, modify, notice, mark, choose, check, confirm, del };

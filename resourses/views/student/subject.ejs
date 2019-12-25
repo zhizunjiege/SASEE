@@ -28,19 +28,22 @@
 <script>
     (function ($, SASEE) {
         $('#bysj_subject>.sys-list tbody').click(e => {
-            SASEE._loadContent({
-                container: '#bysj_subject .sys-content',
-                url: SASEE.URL_VIEWS + '/subjectContent',
-                data: {
-                    id: $(e.target).closest('tr').data('id')
-                },
-                done: () => {
-                    SASEE._showListOrContent({
-                        container: '#bysj_subject',
-                        flag: false
-                    });
-                }
-            })
+            let id = $(e.target).closest('tr').data('id');
+            if (id) {
+                SASEE._loadContent({
+                    container: '#bysj_subject .sys-content',
+                    url: SASEE.URL_VIEWS + '/subjectContent',
+                    data: {
+                        id
+                    },
+                    done: () => {
+                        SASEE._showListOrContent({
+                            container: '#bysj_subject',
+                            flag: false
+                        });
+                    }
+                })
+            }
         });
         SASEE.instPagination({
             container: '#bysj_subject>.sys-list tbody',

@@ -42,23 +42,23 @@ deanViews.get('/statistics', general.permiss([]), (req, res, next) => {
     };
     next();
 }, views.render);
-deanViews.get('/subject', general.permiss(['review', 'release']), (req, res, next) => {
+deanViews.get('/subject', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE bysj.state="1-未审核" AND `group`=?) total,b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="1-未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
+        sql_query: 'SELECT (SELECT COUNT(*) FROM bysj WHERE `group`=?) total,b.id,title,submitTime,lastModifiedTime,state,`check`,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET 0',
         param: [req.session.group, req.session.group],
         file: 'subject'
     };
     next();
 }, views.render);
-deanViews.get('/subjectList', general.permiss(['review', 'release']), (req, res, next) => {
+deanViews.get('/subjectList', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
-        sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE b.state="1-未审核" AND `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
+        sql_query: 'SELECT b.id,title,submitTime,lastModifiedTime,state,`check`,(SELECT name FROM teacher t WHERE t.id=b.teacher) teaName,(SELECT proTitle FROM teacher t WHERE t.id=b.teacher) proTitle FROM bysj b WHERE `group`=? ORDER BY submitTime,b.id LIMIT 10 OFFSET ?',
         param: [req.session.group, ((Number(req.query.page) || 1) - 1) * 10],
         file: 'subjectList'
     };
     next();
 }, views.render);
-deanViews.get('/subjectContent', general.permiss(['review', 'release']), (req, res, next) => {
+deanViews.get('/subjectContent', general.permiss(['submit', 'review', 'modify', 'release']), (req, res, next) => {
     req.renderData = {
         sql_query: 'SELECT * FROM bysj WHERE id=?;SELECT t.* FROM teacher t,bysj b WHERE b.teacher=t.id AND b.id=?',
         param: [req.query.id, req.query.id],
@@ -71,13 +71,13 @@ dean.use('/views', views.common, deanViews);
 
 
 fileRouter.get('/download', download.download);
-dean.use('/file', general.permiss(['review', 'release', 'general']), fileRouter);
+dean.use('/file', general.permiss(['submit', 'review', 'modify', 'release', 'general']), fileRouter);
 
 emailRouter.get('/sendPinCode', general.permiss([]), email.sendPinCode);
 emailRouter.post('/setEmailAddr', general.permiss([]), info.setEmailAddr);
 dean.use('/email', emailRouter);
 
-dean.post('/check', general.permiss(['review', 'release']), subject.check);
+dean.post('/check', general.permiss(['submit', 'review', 'modify', 'release']), subject.check);
 
 dean.get('/editorImg', general.editorImg);
 
