@@ -48,7 +48,7 @@ let getConditions = req => {
     condition += optionalObj.period;
     return condition;
 };
-studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, next) => {
+studentViews.get('/subject', general.permiss(['choose', 'publicity', 'final']), (req, res, next) => {
     let condition = getConditions(req);
     req.renderData = {
         sql_query: `SELECT COUNT(*) total FROM bysj WHERE bysj.state="0-通过"${condition};SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="0-通过"${condition} ORDER BY id LIMIT 10 OFFSET 0`,
@@ -56,7 +56,7 @@ studentViews.get('/subject', general.permiss(['choose', 'final']), (req, res, ne
     };
     next();
 }, views.render);
-studentViews.get('/subjectList', general.permiss(['choose', 'final']), (req, res, next) => {
+studentViews.get('/subjectList', general.permiss(['choose', 'publicity', 'final']), (req, res, next) => {
     let condition = getConditions(req);
     req.renderData = {
         sql_query: `SELECT b.id,\`group\`,title,(SELECT COUNT(*) FROM student WHERE target1=b.id OR target2=b.id OR target3=b.id) chosen,(SELECT name FROM teacher t WHERE t.id=b.teacher) teacher FROM bysj b WHERE state="0-通过"${condition} ORDER BY id LIMIT 10 OFFSET ?`,
@@ -80,12 +80,11 @@ studentViews.get('/subjectContent', general.permiss(['choose', 'publicity', 'fin
 studentViews.get('/mySubject', general.permiss(['choose', 'publicity', 'final', 'general']), (req, res, next) => {
     let { userId } = req.session, period = req.fsm.now().name;
     if (period == 'general') {
-    req.renderData = {
-        sql_query: 'SELECT b.*,s.name stuName FROM bysj b,student s WHERE s.id=? AND s.id=b.student;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
-        param: [userId, userId],
-        file: 'mySubject'
-    };
-
+        req.renderData = {
+            sql_query: 'SELECT b.*,s.name stuName FROM bysj b,student s WHERE s.id=? AND s.id=b.student;SELECT t.* FROM teacher t,bysj b,student s WHERE s.id=? AND s.bysj=b.id AND b.teacher=t.id',
+            param: [userId, userId],
+            file: 'mySubject'
+        };
     } else {
         req.renderData = {
             sql_query: `SELECT b.id,title FROM bysj b,student s WHERE b.id=s.bysj AND s.id=?;

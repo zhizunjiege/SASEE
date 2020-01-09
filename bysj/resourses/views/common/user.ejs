@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh_ch">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="/pictures/favicon.ico">
+    <link rel="stylesheet" href="/frames/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/system.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <title>毕业设计选题系统</title>
+</head>
+
+<body class="container-fluid">
+    <header id="header" class="row bg-primary text-light align-items-center justify-content-between fixed-top">
+        <div class="col-12 col-md-6 col-lg-5 col-xl-4 d-flex align-items-center">
+            <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
+        </div>
+        <div class="page-3 col-md-6 col-lg-4 col-xl text-center">
+            <p class="mb-0">系统时间：<span id="_serverTime"></span></p>
+            <p class="mb-0">距&ensp;<strong id="_nowState"></strong>&ensp;结束还有&ensp;<strong id="_restTime"></strong></p>
+        </div>
+        <div class="page-1 col-lg-3 col-xl-2 px-0 dropdown">
+            <div id="account_info"
+                class="dropdown-toggle p-2 mr-3 d-flex align-items-center justify-content-around point"
+                data-toggle="dropdown" data-display="static">
+                <img src=<%= '../pictures/'+user.profile %> class="float-left rounded-circle" alt="profile"
+                    width="48px">
+                <div>
+                    <div class="h5 my-0"><%= user.name %></div>
+                    <% const identity={'student':'学生','teacher':'教师','dean':'系主任'}; %>
+                    <div class="d-flex justify-content-center">
+                        <span class="badge badge-pill badge-info"><%= identity[user.identity] %></span>
+                    </div>
+                </div>
+            </div>
+            <ul class="dropdown-menu text-center w-75">
+                <a id="_toggle_user_info" href="#user_info" class="dropdown-item" data-toggle="collapse"
+                    data-type="userInfo">个人信息</a>
+                <div class="dropdown-divider"></div>
+                <a href="./logout" class="dropdown-item">退出登陆</a>
+            </ul>
+        </div>
+    </header>
+
+    <div class="row">
+        <aside id="navigator" class="aside border-right border-light">
+            <div class="page-1">
+                <dl class="list-group list-group-flush" id="accordion_nav">
+                    <dt class="list-group-item">
+                        <a data-toggle="collapse" href="#manual" data-type="manual"><span
+                                class="glyphicon glyphicon-th mr-2"></span>用户手册<span
+                                class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    </dt>
+                    <dd class="list-group-item">
+                        <a data-toggle="collapse" href="#news" data-type="news"><span
+                                class="glyphicon glyphicon-exclamation-sign mr-2"></span>通知公告<span
+                                class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    </dd>
+                    <dd class="list-group-item">
+                        <a data-toggle="collapse" href="#bysj"><span
+                                class="glyphicon glyphicon-eye-open mr-2"></span>毕业设计<span
+                                class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                        <div id="bysj" class="collapse" data-parent="#accordion_nav">
+                            <ul class="list-group list-group-flush">
+                                <% const contentObj={
+                                    student:[{key:'subject',value:'选题'},{key:'mySubject',value:'我的课题'}],
+                                    teacher:[{key:'subject',value:'我的课题'}],
+                                    dean:[{key:'statistics',value:'信息统计'},{key:'subject',value:'课题审核'}]
+                                }, content=contentObj[user.identity];
+                                for( const element of content ) { %>
+                                <a href="#bysj_<%= element.key %>" class="list-group-item list-group-item-action"
+                                    data-toggle="collapse"
+                                    data-type="<%= element.key %>"><small><%= element.value %></small></a>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </dd>
+                    <!-- <dd class="list-group-item">
+                    <a class="" data-toggle="collapse" href="#scsx"><span
+                            class="glyphicon glyphicon-fire mr-2"></span>生产实习<span
+                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    <div id="scsx" class="collapse" data-parent="#accordion_nav">
+                        <ul class="list-group list-group-flush">
+                            <a href="#scsx_xyqk" class="list-group-item list-group-item-action"><small>学业情况</small></a>
+                            <a href="#scsx_kxkt" class="list-group-item list-group-item-action"><small>可选课题</small></a>
+                            <a href="#scsx_wdkt" class="list-group-item list-group-item-action"><small>我的课题</small></a>
+                            <a href="#scsx_zltj" class="list-group-item list-group-item-action"><small>资料提交</small></a>
+                        </ul>
+                    </div>
+                </dd>
+                <dd class="list-group-item">
+                    <a class="" data-toggle="collapse" href="#zhsy"><span
+                            class="glyphicon glyphicon-leaf mr-2"></span>综合实验<span
+                            class="glyphicon glyphicon-chevron-right float-right"></span></a>
+                    <div id="zhsy" class="collapse" data-parent="#accordion_nav">
+                        <ul class="list-group list-group-flush">
+                            <a href="#zhsy-xyqk" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>学业情况</small></a>
+                            <a href="#zhsy-kxkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>可选课题</small></a>
+                            <a href="#zhsy-wdkt" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>我的课题</small></a>
+                            <a href="#zhsy-zltj" class="list-group-item list-group-item-action"
+                                data-toggle="collapse"><small>资料提交</small></a>
+                        </ul>
+                    </div>
+                </dd> -->
+                </dl>
+            </div>
+            <div class="page-2">
+                <div class="d-flex row text-center text-primary">
+                    <div class="col point border-top border-right dropup">
+                        <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">系统相关</div>
+                        <ul class="dropdown-menu">
+                            <a href="#news" class="dropdown-item" data-toggle="collapse" data-type="news">通知公告</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#manual" class="dropdown-item" data-toggle="collapse" data-type="manual">用户手册</a>
+                        </ul>
+                    </div>
+                    <div class="col point border-top border-right dropup">
+                        <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">毕业设计</div>
+                        <ul class="dropdown-menu">
+                            <% for( const [index,element] of content.entries() ) { %>
+                            <a href="#bysj_<%= element.key %>" class="dropdown-item" data-toggle="collapse"
+                                data-type="<%= element.key %>"><%= element.value %></a>
+                            <% if(index<content.length-1) { %>
+                            <div class="dropdown-divider"></div>
+                            <% } } %>
+                        </ul>
+                    </div>
+                    <div class="col point border-top border-right dropup">
+                        <div class="dropdown-toggle p-3 w-100" data-toggle="dropdown" data-display="static">我的</div>
+                        <ul class="dropdown-menu text-center">
+                            <a href="#user_info" class="dropdown-item" data-toggle="collapse"
+                                data-type="userInfo">个人信息</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="./logout" class="dropdown-item">退出登陆</a>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="aside invisible">占位</div>
+        <div id="contents" class="card">
+            <header id="contents_header" class="card-header">
+                <button id="contents_back" class="btn" style="display: none"><span
+                        class="glyphicon glyphicon-chevron-left float-left"></span>返回</button>
+                <h3 id="contents_title" class="mb-0 text-center">通知公告</h3>
+            </header>
+            <div id="contents_body" class="pb-4">
+                <div id="news" class="collapse show" data-parent="#contents">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="d-none d-lg-block fixed-bottom text-right">
+        <p class="mr-4 mb-1"><span class="mr-3">北京航空航天大学</span><span>自动化科学与电气工程学院</span></p>
+    </footer>
+
+    <%- include('./alert') %>
+    <% if(user.ifReadLicense=='N'){ %>
+    <%- include('./license',{PATH}) %>
+    <% } %>
+
+    <script src="/frames/others/jquery-3.4.0.js"></script>
+    <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/frames/others/wangEditor.min.js"></script>
+    <script src="/frames/others/object_hash.js"></script>
+    <script src="/js/system.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+
+</html>

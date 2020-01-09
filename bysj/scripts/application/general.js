@@ -24,18 +24,7 @@ function logout(path = '/') {
         });
     }
 }
-function redirect(req, res) {
-    let { identity } = req.session;
-    if (identity) {
-        if (identity == 'admin') {
-            res.redirect('/admin/main');
-        } else {
-            res.redirect('/' + identity + '/');
-        }
-    } else {
-        res.render('login');
-    }
-}
+
 function auth({ url = '/', identity } = {}) {
     return (req, res, next) => {
         if (req.session.account && req.session.identity == identity) {

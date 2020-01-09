@@ -1,0 +1,26 @@
+{
+    "errors": {
+        "1001": "账号或密码错误！",
+        "1002": "密码错误！",
+        "1003": "用户不存在！",
+        "1101": "用户不存在或未绑定邮箱！",
+        "1102": "验证码已失效！",
+        "1103": "验证码不匹配！"
+    },
+    "paths": {
+        "public": "PUBLIC",
+        "resourses": {
+            "views": "VIEWS"
+        },
+        "tmp": "TMP",
+        "scripts": {
+            "file": "file",
+            "mysql": "mysql",
+            "util": "util",
+            "object_hash": "hash",
+            "email": "email",
+            "user": "user",
+            "common": "common"
+        }
+    }
+}

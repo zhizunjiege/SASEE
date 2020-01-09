@@ -77,6 +77,6 @@ typings/
 # WebStorm ide
 .idea
 
-toJSON.js
+cmd.js
 demo.js
 demo/

@@ -1,3 +1,5 @@
+/* 与网络请求无关的工函数 */
+
 function paramIfValid(param) {
     function _check(value) {
         if (!value) {
@@ -30,7 +32,7 @@ function isObject(obj) {
     return Object.prototype.toString.call(obj) == '[object Object]';
 }
 
-function catchError(res, errCodeMap) {
+/* function catchError(res, errCodeMap) {
     return err => {
         let msg = '服务器出现错误，请稍后重试！';
         if (err instanceof Error) {
@@ -46,6 +48,6 @@ function catchError(res, errCodeMap) {
         res && res.status(403).send(msg);
         return;
     }
-}
+} */
 
-module.exports = { paramIfValid, isObject, catchError };
+module.exports = { paramIfValid, isObject };
