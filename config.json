@@ -14,13 +14,17 @@
         },
         "tmp": "TMP",
         "scripts": {
-            "file": "file",
-            "mysql": "mysql",
-            "util": "util",
-            "object_hash": "hash",
-            "email": "email",
-            "user": "user",
-            "common": "common"
+            "service": {
+                "file": "file",
+                "mysql": "mysql",
+                "util": "util",
+                "object_hash": "hash",
+                "email": "email"
+            },
+            "system": {
+                "user": "user",
+                "common": "common"
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 /* 用户账户相关 */
 
-const [mysql, email] = superApp.requireUserModules(['mysql', 'email']);
+const [mysql, email, util] = superApp.requireUserModules(['mysql', 'email', 'util']);
 
 function redirect(req, res) {
     if (req.session.identity) {
@@ -8,6 +8,10 @@ function redirect(req, res) {
     } else {
         res.render('login', { admin: req.path == '/admin' });
     }
+}
+
+function register(req, res) {
+    res.send('ok');
 }
 
 function login(req, res) {
@@ -151,4 +155,4 @@ function setEmailAddr(req, res) {
     });
 }
 
-module.exports = { redirect, login, main, logout, password, sendPinCode, retrieve, modify, setGeneralInfo, setEmailAddr };
+module.exports = { redirect, register, login, main, logout, password, sendPinCode, retrieve, modify, setGeneralInfo, setEmailAddr };

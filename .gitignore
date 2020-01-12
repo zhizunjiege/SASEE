@@ -80,3 +80,4 @@ typings/
 cmd.js
 demo.js
 demo/
+node_modules

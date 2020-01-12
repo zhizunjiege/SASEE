@@ -139,11 +139,17 @@ app.get('/password', user.password);
 app.get('/sendPinCode', user.sendPinCode);
 app.post('/retrieve', user.retrieve);
 
+app.get('/register', user.register);
+
 /* 验证、更新session */
 app.use(common.update);
 
 app.get('/main', user.main);
 app.post('/modify', user.modify);
+
+app.post('/setGeneralInfo', user.setGeneralInfo);
+app.post('/setEmailAddr', user.setEmailAddr);
+
 app.get('/logout', user.logout);
 
 app.get('/serverTime', common.serverTime);

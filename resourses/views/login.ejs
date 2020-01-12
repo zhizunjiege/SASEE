@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh_ch">
+<html lang="zh_cn">
 
 <head>
     <meta charset="UTF-8">
@@ -8,61 +8,70 @@
     <link rel="icon" href="/pictures/favicon.ico">
     <link rel="stylesheet" href="/frames/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/system.css">
-    <style>
-        body {
-            padding-right: 15px !important;
-        }
-    </style>
     <title>登陆</title>
 </head>
 
-<body class="container" id="container">
-    <div class="row align-items-center justify-content-center" id="row">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
-            <form action="" method="POST" id="login_form">
-                <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="account">账号：</label>
-                    <input class="form-control col-9" type="text" name="account" id="account" placeholder="Your Account"
-                        pattern="\w{1,16}" required>
-                </div>
-                <div class="form-group form-row">
-                    <label class="col-3 col-form-label" for="password">密码：</label>
-                    <input class="form-control col-9" type="password" name="password" id="password"
-                        placeholder="Your Password" pattern="\w{1,16}" required>
-                </div>
-                <div class="form-group form-row justify-content-around">
-                    <% const idObj={"student":'学生',"teacher":'教师',"dean":'系主任'}; 
-                        for (const [key,value] of Object.entries(idObj)) { %>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" name="identity" value="<%= key %>" id="identity-<%= key %>"
-                            class="custom-control-input" <%= key=='student'?'checked':'' %>>
-                        <label for="identity-<%= key %>" class="custom-control-label"><%= value %></label>
+<body>
+    <app-container id="app" class="app-container row align-items-center justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <app-form action="/login" :fields="form.fields" :validate="form.validate">
+                <template #body="{fields}">
+                    <input-account v-model="fields.account"></input-account>
+                    <input-password v-model="fields.password"></input-password>
+                    <input-radio v-model="fields.identity" name="identity"
+                        :radios="[{ val: 'student', des: '学生' }, { val: 'teacher', des: '教师' }]"
+                        class=" form-group form-row justify-content-around">
+                    </input-radio>
+                </template>
+                <template #button="{fields}">
+                    <div class="form-row justify-content-around align-items-center mb-3">
+                        <input-checkbox v-model="fields.save" name="save" :checkboxs="[{ val: 'save', des: '记住密码' }]"
+                            class="col-6 col-md-6 mb-3 mb-md-0 ">
+                        </input-checkbox>
+                        <button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit">登陆</button>
                     </div>
-                    <% } %>
-                </div>
-                <div class="form-row justify-content-between align-items-center mb-3">
-                    <a href="/password" class="text-center col-12 col-md-6 mb-3 mb-md-0">忘记密码</a>
-                    <button class="btn btn-primary col-12 col-md-6 mb-3 mb-md-0" type="submit">登陆</button>
-                </div>
-            </form>
-            <%- include('./alert') %>
+                </template>
+            </app-form>
+            <div class="row justify-content-between align-items-center mb-3">
+                <a href="/register" class="text-center col-6 mb-3 mb-md-0">用户注册</a>
+                <a href="/password" class="text-center col-6 mb-3 mb-md-0">找回密码</a>
+            </div>
         </div>
-    </div>
+    </app-container>
 
     <script src="/frames/others/jquery-3.4.0.js"></script>
-    <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/frames/others/object_hash.js"></script>
-    <script src="/js/common.js"></script>
+    <script src="/frames/others/js.cookie.js"></script>
+    <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/frames/vue/vue.js"></script>
+    <script src="/js/component.js"></script>
+    <script src="/js/util.js"></script>
     <script>
-        (function ($, SASEE) {
-            SASEE.formSubmit({
-                selector: '#login_form',
-                url: '/login',
-                done(data, textStatus, xhr) {
-                    window.location.href = xhr.getResponseHeader('Location');
-                }
+        (function ($, util) {
+            let app = new Vue({
+                el: '#app',
+                data: {
+                    form: {
+                        fields: {
+                            account: Cookies.get('account') || 'aaa',
+                            password: Cookies.get('password') || '',
+                            identity: Cookies.get('identity') || 'student',
+                            save: true/* Cookies.get('saver') == 'user' */
+                        },
+                        validate: {
+                            password(val) {
+                                /* {pass,val,msg} */
+                                return {
+                                    pass: true,
+                                    val: objectHash.MD5(val)
+                                };
+                            }
+                        }
+                    }
+                },
+                mixins:[]
             });
-        })(Window.jQuery, window.SASEE);
+        })(Window.jQuery, window.util);
     </script>
 </body>
 

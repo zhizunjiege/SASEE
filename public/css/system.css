@@ -1,5 +1,10 @@
-html, body, #container, #row {
+html, body, .app-container {
     height: 100%;
+}
+
+body {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
 }
 
 /* ::-webkit-scrollbar {
