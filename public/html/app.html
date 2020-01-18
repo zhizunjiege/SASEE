@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh_ch">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="/pictures/favicon.ico">
+    <link rel="stylesheet" href="/frames/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/system.css">
+    <title>毕业设计综合系统</title>
+</head>
+
+<body class="p-0">
+    <div id="app" class="app-container">
+        <app-head class="app-head row text-light align-items-center justify-content-between">
+            <head-logo class="col-12 col-md-6 col-lg-5 col-xl-4"></head-logo>
+            <head-user :online="online" :user="user" class="col-lg-3 col-xl-2"></head-user>
+        </app-head>
+        <app-body class="app-body">
+            <main-page v-if="online" class="main-page">
+                <main-sidebar :modules="modules" class="main-sidebar"></main-sidebar>
+                <main-content class="main-content">
+                    <content-title v-bind="content.title"></content-title>
+                    <content-body>
+                        <router-view></router-view>
+                    </content-body>
+                </main-content>
+            </main-page>
+            <start-page v-else class="start-page"></start-page>
+            <router-view name="system"></router-view>
+        </app-body>
+        <app-foot class="app-foot fixed-bottom row justify-content-between align-items-center">
+            <foot-time :time="time" class="col-12 col-md-4 col-lg-4"></foot-time>
+            <foot-link :links="links" class="col-12 col-md-8 col-lg-6 text-center">
+            </foot-link>
+        </app-foot>
+        <app-alert v-show="alert.show" v-bind="alert" class="app-alert"></app-alert>
+        <app-backdrop v-show="loading" class="app-backdrop"></app-backdrop>
+    </div>
+
+
+
+    <script src="/frames/others/jquery-3.4.0.js"> </script>
+    <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/frames/others/wangEditor.min.js"></script>
+    <script src="/frames/others/object_hash.js"></script>
+    <script src="/frames/others/js.cookie.js"></script>
+    <script src="/frames/vue/vue.js"></script>
+    <script src="/frames/vue/vue-router.js"></script>
+    <script type="module" src="/js/extend.js"></script>
+    <script type="module" src="/js/app.js"></script>
+</body>
+
+</html>

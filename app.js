@@ -130,10 +130,49 @@ app.use(session({
 }));
 
 /* 路由 */
-app.get('/', user.redirect);
+app.get('/', (req, res) => {
+    res.sendFile('app.html', {
+        root: PUBLIC + '/html'
+    }, function (err) {
+        if (err) console.log(err);
+    });
+});
 app.get('/admin', user.redirect);
 
-app.post('/login', user.login);
+app.post('/login', (req, res) => {
+    console.log(req.body);
+
+    res.json({
+        pass: true,
+        modules: [{
+            name: 'bysj', icon: 'glyphicon-eye-open', des: '毕业设计',
+            subModules: [{
+                name: 'xt', des: '选题', component: 'bysj-xt',
+                subModules: [{
+                    
+                }]
+            }, {
+                name: 'wdkt', des: '我的课题', component: 'bysj-wdkt'
+            }]
+        }/* , {
+            name: 'zhsy', icon: 'glyphicon-leaf', des: '综合实验',
+            subModules: [{
+                name: 'xt', des: '选题', component: 'zhsy-xt'
+            }, {
+                name: 'wdkt', des: '我的课题', component: 'zhsy-wdkt'
+            }]
+        } */]
+    });
+});
+
+app.get('/bysj', (req, res) => {
+    res.sendFile(req.query.file, {
+        root: __dirname + '/bysj'
+    }, function (err) {
+        if (err) console.log(err);
+    });
+});
+/* app.use('/bysj', superApp.requireUserModule('bysj')); */
 
 app.get('/password', user.password);
 app.get('/sendPinCode', user.sendPinCode);

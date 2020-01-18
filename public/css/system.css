@@ -3,28 +3,97 @@ html, body, .app-container {
 }
 
 body {
-    padding-left: 15px !important;
-    padding-right: 15px !important;
+    overflow: hidden;
 }
 
-/* ::-webkit-scrollbar {
-    display: none
-} */
+.app-head {
+    background-color: rgba(39, 39, 184, 1);
+    height: 8%;
+}
 
-.alert {
+.app-body {
+    background-color: red;
+    height: 88%;
+    position: relative;
+}
+
+.app-foot {
+    background-color: rgba(63, 52, 62, 0.199);
+    height: 4%;
+}
+
+.main-page {
+    height: 100%;
+    overflow: hidden;
+}
+
+.start-page {
+    height: 100%;
+    background: fixed url("/pictures/start-page.png") center/cover no-repeat;
+}
+
+.main-sidebar {
+    width: 20%;
+    height: 100%;
+    float: left;
+}
+
+.main-content {
+    width: 80%;
+    height: 100%;
+    float: left;
+}
+
+.app-modal {
+    background-color: rgba(204, 219, 219, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 12000;
+}
+
+.app-alert {
+    min-width: 375px;
+    max-width: 500px;
+    border-radius: .5rem;
     position: fixed;
-    min-width: 50%;
-    z-index: 10000;
     left: 50%;
     top: 25%;
     transform: translate(-50%, -50%);
+    z-index: 15000;
 }
 
-.rel-bottom {
+.app-backdrop {
+    background-color: rgb(196, 208, 209);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20000;
+}
+
+.required::before {
+    content: "*";
+    color: red;
+}
+
+.center {
     position: absolute;
-    bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.dropdown-menu {
+    min-width: 100%;
+    text-align: center;
+    z-index: 13000;
 }
 
 a:hover {
@@ -33,6 +102,13 @@ a:hover {
 
 a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:hover {
     cursor: pointer;
+}
+
+/* .rel-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 pre {
@@ -59,15 +135,7 @@ pre {
     -webkit-box-orient: vertical;
 }
 
-.dropdown-menu {
-    min-width: 100%;
-    text-align: center;
-}
 
-.required::before {
-    content: "*";
-    color: red;
-}
 
 caption {
     text-align: center;
@@ -92,4 +160,4 @@ caption {
 
 .w-e-text {
     overflow-y: auto!important;
-}
+} */

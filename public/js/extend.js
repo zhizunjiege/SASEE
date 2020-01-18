@@ -1,119 +1,42 @@
-(function ($) {
-    window.util = {};
-    const util = window.util;
-
-    Date.prototype.toLocaleISOString = function () {
-        return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
-    };
-    /* $.fn.extend({
-        serializeObject: function () {
-            let dataObj = {},
-                dataArray = this.serializeArray();
-            for (const iterator of dataArray) {
-                let field = dataObj[iterator.name];
-                if (field) {
-                    if (Array.isArray(field)) {
-                        field.push(iterator.value);
-                    } else {
-                        dataObj[iterator.name] = [field, iterator.value];
-                    }
-                } else {
-                    dataObj[iterator.name] = iterator.value;
-                }
-            }
-            return dataObj;
-        }
-    }); */
-    $.extend({
-        json: function (url, data) {
-            return $.ajax({
-                type: 'POST',
-                url: url,
-                data: JSON.stringify(data),
-                contentType: 'application/json;charset=UTF-8'
+Date.prototype.toLocaleISOString = function () {
+    return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
+};
+$.extend({
+    ajaxPromise(options) {
+        return new Promise((resolve, reject) => {
+            $.ajax(options).done(data => {
+                resolve(data);
+            }).fail(err => {
+                reject(err);
             });
-        }
-    });
-    $.ajaxSetup({
-        headers: {
-            Frame: 'jQuery'
-        }
-    });
-
-    util.timeDifference = (date1, date2) => {
-        let time1 = new Date(date1).valueOf(),
-            time2 = new Date(date2).valueOf(),
-            time = time2 - time1,
-            _time = time;
-
-        let divMap = [1000, 60, 60, 24, 365, 100], nameMap = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'years'], returnObj = {};
-        for (const [index, value] of divMap.entries()) {
-            returnObj[nameMap[index]] = _time % value;
-            _time = Math.floor(_time / value);
-        }
-        returnObj.time = time;
-        return returnObj;
-    };
-    util.counter = ({ count, doing, done } = {}) => {
-        function _countDown() {
-            if (count) {
-                doing && doing(count);
-                count--;
-                setTimeout(() => {
-                    _countDown();
-                }, 1000);
-            } else {
-                done && done();
-            }
-        }
-        _countDown();
-    };
-
-    /* util.alert = ({ msg = '网络错误，请稍后重试！', static = true, count = 0, buttonShow = true } = {}) => {
-        $('#alert>span').text(msg);
-        if (buttonHide) {
-            $('#alert>button').hide();
-        } else {
-            $('.alert>button').show();
-        }
-        $('#alert_modal').modal(static ? {
-            backdrop: 'static',
-            keyboard: false
-        } : null);
-        count && util.counter({
-            count: count,
-            done: () => {
-                $('#alert_modal').modal('hide');
-            }
         });
-    };
-    util.requestDone = msg => {
-        util.alert({
-            msg: msg,
-            static: false,
-            count: 2,
-            buttonHide: true
+    },
+    getPromise(url, query) {
+        return this.ajaxPromise({
+            type: 'GET',
+            url,
+            data: query,
+            contentType: 'application/x-www-form-urlencoded;charset=UTF-8'
         });
-    };
-    util.requestFail = xhr => {
-        let location = xhr.getResponseHeader('Location'),
-            buttonHide = false;
-        if (location) {
-            buttonHide = true;
-            util.counter({
-                count: 2,
-                done: () => {
-                    window.location.href = location;
-                }
-            });
-        }
-        util.alert({
-            msg: xhr.responseText,
-            buttonHide: buttonHide
-        })
-    } */
+    },
+    postPromise(url, data) {
+        return this.ajaxPromise({
+            type: 'POST',
+            url,
+            data: JSON.stringify(data),
+            contentType: 'application/json;charset=UTF-8'
+        });
+    }
+});
+$.ajaxSetup({
+    headers: {
+        Frame: 'jQuery'
+    }
+});
 
-    util.instEditor = (container, full = false) => {
+
+
+/*     util.instEditor = (container, full = false) => {
         let editor = new window.wangEditor(container + ' .editor');
         // editor.customConfig.uploadImgShowBase64 = true;
         editor.customConfig.uploadImgServer = './editorImg';
@@ -259,6 +182,4 @@
                 $popover.length && $popover.popover('enable').popover('show');
             }
         };
-    };
-
-})(window.jQuery);
+    }; */
