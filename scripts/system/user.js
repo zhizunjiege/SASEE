@@ -2,65 +2,75 @@
 
 const [mysql, email, util] = superApp.requireUserModules(['mysql', 'email', 'util']);
 
-function redirect(req, res) {
+/* function redirect(req, res) {
     if (req.session.identity) {
         res.redirect('/main');
     } else {
         res.render('login', { admin: req.path == '/admin' });
     }
-}
+} */
 
 function register(req, res) {
     res.send('ok');
 }
 
+const identityDes = { student: '学生', teacher: '老师', admin: '管理员' };
 function login(req, res) {
     let { account, password, identity } = req.body,
-        sql_query = 'SELECT id FROM ?? WHERE account = ? AND password=?';
-    if (!util.paramIfValid([account, password, identity])) {
-        res.status(403).send('数据无效，请重新输入！');
-        return;
-    }
+        sql_query = `SELECT id,name,gender,ifReadLicense FROM ?? user WHERE account = ? AND password=?`;
+    console.log(req.body);
 
     res.do(async () => {
+        if (!util.paramIfValid([account, password, identity])) {
+            throw 1000;
+        }
         let data = await mysql.find(sql_query, [identity, account, password]);
+        console.log(data);
+        
         if (data.length == 0) throw 1001;
         //设置session
-        req.session.userId = data[0].id;
+        let [user] = data;
+        req.session.userId = user.id;
         req.session.account = account;
         req.session.identity = identity;
         /* req.session.group = data[0].group;
         data[0].specialty && (req.session.specialty = data[0].specialty);
         data[0].proTitle && (req.session.proTitle = data[0].proTitle); */
-        res.location('/main').send('登陆成功！');
+        res.json({
+            status: true,
+            msg: '登陆成功！',
+            user: {
+                profile: `${user.gender == '男' ? 'man' : 'woman'}_${identity}.png`,
+                name: user.name,
+                identity: identityDes[identity]
+            },
+            modules: superApp.modules
+        });
     });
-}
-
-function main(req, res) {
-    res.render(req.session.identity == 'admin' ? 'admin' : 'main');
 }
 
 function logout(req, res) {
-    let path = req.session.identity == 'admin' ? '/admin' : '/';
-    req.session.destroy(err => {
-        if (err) {
-            return console.log(err);
-        }
-        res.redirect(path);
+    res.do(async () => {
+        await new Promise((resolve, reject) => {
+            req.session.destroy(err => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+        res.json({
+            status: true,
+            msg: '登出成功！'
+        });
     });
 }
 
-function password(req, res) {
-    res.render('password');
-};
-
 function sendPinCode(req, res) {
     let pinCode = email.createSixNum(),
-        addr = req.query.email,
-        sql_query = 'SELECT email FROM ?? WHERE account=?';
+        addr = req.query.email;
     res.do(async () => {
-        if (!email) {
+        if (!addr) {
             let { identity, account } = req.query,
+                sql_query = 'SELECT email FROM ?? WHERE account=?',
                 data = await mysql.find(sql_query, [identity, account]);
             if (data.length) {
                 addr = data[0].email;
@@ -77,8 +87,11 @@ function sendPinCode(req, res) {
             code: pinCode,
             time: new Date().getTime()
         };
-        res.send(`验证码已发送至${addr.replace(/(\S{2,})(\S{4,4})(@.*)/, '$1****$3')}`);
-    })
+        res.json({
+            status: true,
+            msg: `验证码已发送至${addr.replace(/(\S{2,})(\S{4,4})(@.*)/, '$1****$3')}`
+        });
+    });
 }
 
 function retrieve(req, res) {
@@ -155,4 +168,4 @@ function setEmailAddr(req, res) {
     });
 }
 
-module.exports = { redirect, register, login, main, logout, password, sendPinCode, retrieve, modify, setGeneralInfo, setEmailAddr };
+module.exports = { register, login, logout, sendPinCode, retrieve, modify, setGeneralInfo, setEmailAddr };

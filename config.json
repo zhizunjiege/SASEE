@@ -1,5 +1,6 @@
 {
     "errors": {
+        "1000": "数据不合法！",
         "1001": "账号或密码错误！",
         "1002": "密码错误！",
         "1003": "用户不存在！",
@@ -36,27 +37,32 @@
                 {
                     "name": "xt",
                     "des": "选题",
-                    "component": "bysj-xt"
+                    "component": "kt-list",
+                    "routes": [
+                        {
+                            "path": "",
+                            "component": "kt-list"
+                        },
+                        {
+                            "path": "content",
+                            "component": "kt-content"
+                        }
+                    ]
                 },
                 {
                     "name": "wdkt",
                     "des": "我的课题",
-                    "component": "bysj-wdkt"
-                }
-            ]
-        },
-        {
-            "name": "zhsy",
-            "icon": "glyphicon-leaf",
-            "des": "综合实验",
-            "subModules": [
-                {
-                    "name": "xt",
-                    "des": "选题"
-                },
-                {
-                    "name": "wdkt",
-                    "des": "我的课题"
+                    "component": "kt-content",
+                    "routes": [
+                        {
+                            "path": "",
+                            "component": "kt-list"
+                        },
+                        {
+                            "path": "content",
+                            "component": "kt-content"
+                        }
+                    ]
                 }
             ]
         }

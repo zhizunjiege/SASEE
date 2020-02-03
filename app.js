@@ -39,13 +39,14 @@ Promise.allSettled = function (promiseArray) {
 
 global.superApp = {
     server: null,
-    errors: {},
-    resourses: {
+    errors: null,
+    PATH: {
         root: {}
     },
+    modules: null,
     startTime: new Date(),
     requireUserModule(name, path = 'root') {
-        return require(this.resourses[path][name]);
+        return require(this.PATH[path][name]);
     },
     requireUserModules(names, path) {
         let modules = [];
@@ -81,22 +82,22 @@ let config = JSON.parse(fs.readFileSync(__dirname + '/config.json', {
     encoding: 'utf8'
 }));
 superApp.errors = config.errors;
-superApp.transObjToPath(superApp.resourses.root, __dirname, config.paths);
+superApp.modules = config.modules;
+superApp.transObjToPath(superApp.PATH.root, __dirname, config.paths);
 
 const [common, user] = superApp.requireUserModules([
     'common',
     'user'
 ], 'root');
 
-const { VIEWS, PUBLIC } = superApp.resourses.root;
+const { /* VIEWS,  */PUBLIC } = superApp.PATH.root;
 
 /* 增强express的response对象 */
-
-express.response.do = function (asyncFunc) {
-    asyncFunc().catch(err => {
+express.response.do = function (func) {
+    new Promise(resolve => resolve(func())).catch(err => {
         let msg = '服务器出现错误，请稍后重试！';
         if (err instanceof Error) {
-            console.log(err);
+            console.error(err);
         } else {
             for (const [errCode, errMsg] of Object.entries(superApp.errors)) {
                 if (err == errCode) {
@@ -105,17 +106,20 @@ express.response.do = function (asyncFunc) {
                 }
             }
         }
-        this.status(403).send(msg);
+        this.json({
+            status: false,
+            msg
+        });
         return;
     });
 };
 
 const app = express();
 
-app.set('views', VIEWS);
-app.set('view engine', 'ejs');
+// app.set('views', VIEWS);
+// app.set('view engine', 'ejs');
 app.set('strict routing', true);
-app.set('env', 'production');
+// app.set('env', 'production');
 
 app.use(express.static(PUBLIC));
 app.use(express.urlencoded({ extended: false }));
@@ -125,73 +129,64 @@ app.use(session({
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
-        maxAge: app.get('env') == 'development' ? 60 * 60 * 1000 : 15 * 60 * 1000,//设置cookie的过期时间
+        maxAge: app.get('env') == 'development' ? 20 * 1000 : 30 * 60 * 1000,//设置cookie的过期时间
     }
 }));
 
+/* function logErr(err) {
+    if (err) console.log(err);
+} */
+
 /* 路由 */
 app.get('/', (req, res) => {
-    res.sendFile('app.html', {
-        root: PUBLIC + '/html'
-    }, function (err) {
-        if (err) console.log(err);
-    });
-});
-app.get('/admin', user.redirect);
-
-app.post('/login', (req, res) => {
-    console.log(req.body);
-
-    res.json({
-        pass: true,
-        modules: [{
-            name: 'bysj', icon: 'glyphicon-eye-open', des: '毕业设计',
-            subModules: [{
-                name: 'xt', des: '选题', component: 'bysj-xt',
-                subModules: [{
-                    
-                }]
-            }, {
-                name: 'wdkt', des: '我的课题', component: 'bysj-wdkt'
-            }]
-        }/* , {
-            name: 'zhsy', icon: 'glyphicon-leaf', des: '综合实验',
-            subModules: [{
-                name: 'xt', des: '选题', component: 'zhsy-xt'
-            }, {
-                name: 'wdkt', des: '我的课题', component: 'zhsy-wdkt'
-            }]
-        } */]
+    res.do(() => {
+        res.sendFile('app.html', {
+            root: PUBLIC + '/html'
+        });
     });
 });
 
-app.get('/bysj', (req, res) => {
-    res.sendFile(req.query.file, {
-        root: __dirname + '/bysj'
-    }, function (err) {
-        if (err) console.log(err);
-    });
-});
-/* app.use('/bysj', superApp.requireUserModule('bysj')); */
+app.post('/register', user.register);
+app.post('/login', user.login);
 
-app.get('/password', user.password);
 app.get('/sendPinCode', user.sendPinCode);
 app.post('/retrieve', user.retrieve);
 
-app.get('/register', user.register);
-
+app.get('/serverTime', common.serverTime);
 /* 验证、更新session */
 app.use(common.update);
 
-app.get('/main', user.main);
-app.post('/modify', user.modify);
+app.get('/resourses', (req, res) => {
+    console.log(req.query);
+    res.do(() => {
+        let { module, component, net } = req.query,
+            { identity } = req.session,
+            file = '', root = '';
+        if (component) {
+            file = component;
+            root = `${__dirname}/${module}/components/${identity}`;
+        } else {
+            file = `${identity}.js`;
+            root = `${__dirname}/${module}/net`;
+        }
+        res.sendFile(file, { root });
+    });
+});
 
+/* app.use('/bysj', superApp.requireUserModule('bysj')); */
+app.post('/bysj/data', (req, res) => {
+    console.log(req.body);
+    res.json({
+        msg: 'ok'
+    });
+});
+
+app.post('/modify', user.modify);
 app.post('/setGeneralInfo', user.setGeneralInfo);
 app.post('/setEmailAddr', user.setEmailAddr);
 
 app.get('/logout', user.logout);
 
-app.get('/serverTime', common.serverTime);
 app.use(common.notFound);
 
 superApp.server = app.listen(3000, '::', () => {

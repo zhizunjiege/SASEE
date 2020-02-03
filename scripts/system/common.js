@@ -6,16 +6,19 @@ function update(req, res, next) {
         req.session.touch();
         next();
     } else {
-        if (req.get('Frame') == 'jQuery') {
-            res.location('/').status(403).send('登陆信息失效啦，请重新登陆。');
-        } else {
-            res.redirect('/');
-        }
+        res.json({
+            offline: true,
+            status: false,
+            msg: '登陆信息失效，请重新登陆！'
+        });
     }
 }
 
 function serverTime(req, res) {
-    res.send(new Date().toLocaleString());
+    res.json({
+        status: true,
+        time: Date.now()
+    });
 }
 
 function notFound(req, res) {

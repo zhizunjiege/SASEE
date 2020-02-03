@@ -1,107 +1,122 @@
-import _ from './baseComponents.js'
-import { components, routes } from './extendComponents.js'
-import router from './router.js'
+import { components, routes } from './components.js'
+import netRouter from './netRouter.js'
 
-const appData = {
-    online: false,
-    loading: false,
-    user: {
-        profile: '',
-        name: '陈智杰',
-        identity: '学生'
-    },
-    time: new Date().toLocaleISOString(),
-    modules: [{
-        name: 'system', icon: 'glyphicon-eye-open', des: '系统相关',
-        subModules: [{
-            name: 'news', des: '通知公告'
-        }]
-    }, {
-        name: 'user', icon: 'glyphicon-eye-open', des: '个人空间',
-        subModules: [{
-            name: 'info', des: '个人信息'
-        }]
-    }],
-    links: [{
-        to: '/help', des: '获取帮助'
-    }, {
-        to: '/feedback', des: '用户反馈'
-    }, {
-        to: '/sasee', des: '学院教务'
-    }],
-    content: {
-        title: {
-            text: '我的课题',
-            s_back: true,
-            s_forward: false,
-            back() {
-                console.log('ccc');
-            },
-            forward() {
-                console.log('ddd');
-            }
-        }
-    },
-    alert: {
-        show: false,
-        type: 'success',
-        msg: '修改密码成功!',
-        count: 0,
-        ok: () => {
-            console.log('aaa');
-        },
-        cancel: () => {
-            console.log('bbb');
-        }
-    },
-    events: {}
+Date.prototype.toLocaleISOString = function () {
+    return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().substr(0, 19).replace('T', ' ');
 };
-
-Vue.prototype.$net = router.net;
-Vue.prototype.$alert = {
-    warn({ msg, ok, cancel } = {}) {
-        Object.assign(appData.alert, {
-            show: true,
-            type: 'warn',
-            msg,
-            count: 0,
-            ok: ok ? ok : () => { },
-            cancel: cancel ? cancel : () => { }
+$.extend({
+    ajaxPromise(options) {
+        return new Promise((resolve, reject) => $.ajax(options).done(data => resolve(data)).fail(err => reject(err)));
+    },
+    getPromise(url, query) {
+        return this.ajaxPromise({
+            type: 'GET',
+            url,
+            data: query,
+            contentType: 'application/x-www-form-urlencoded;charset=UTF-8'
         });
     },
-    success({ msg, ok, cancel } = {}) {
-        Object.assign(appData.alert, {
-            show: true,
-            type: 'success',
-            msg,
-            count: 2,
-            ok: ok ? ok : () => { },
-            cancel: cancel ? cancel : () => { }
+    postPromise(url, data) {
+        return this.ajaxPromise({
+            type: 'POST',
+            url,
+            data: JSON.stringify(data),
+            contentType: 'application/json;charset=UTF-8'
         });
     },
-    error({ msg, ok, cancel } = {}) {
-        Object.assign(appData.alert, {
-            show: true,
-            type: 'error',
-            msg,
-            count: 0,
-            ok: ok ? ok : () => { },
-            cancel: cancel ? cancel : () => { }
+    filePromise(url, data) {
+        return this.ajaxPromise({
+            type: 'POST',
+            url,
+            data,
+            contentType: 'multipart/form-data;charset=UTF-8'
         });
-    },
-    hide() {
-        appData.alert.show = false;
     }
+});
+
+Vue.mixin({
+    $module: 'system',
+    created() {
+        this.$module = this.$options.$module;
+    }
+});
+Vue.prototype.$net = netRouter.net;
+Vue.prototype.$get = function (url, data) {
+    return $.getPromise(`${this.$module == 'system' ? '' : '/' + this.$module}${url}`, data).then(netRouter.pre().bind(this));
+};
+Vue.prototype.$post = function (url, data) {
+    return $.postPromise(`${this.$module == 'system' ? '' : '/' + this.$module}${url}`, data);
+};
+Vue.prototype.$file = function (url, data) {
+    return $.filePromise(`${this.$module == 'system' ? '' : '/' + this.$module}${url}`, data);
 };
 
-router.local('/login', function (data) {
+const _push = VueRouter.prototype.push;
+VueRouter.prototype.push = function (to) {
+    return _push.call(this, to).catch(err => err);
+}
+
+let _data = JSON.parse(localStorage.getItem('status'));
+if (!(_data && Date.now() - _data.time < 5 * 60 * 1000)) {
+    _data = {
+        online: false,
+        loading: false,
+        user: {
+            profile: '',
+            name: '',
+            identity: ''
+        },
+        time: Date.now(),
+        modules: [{
+            name: 'system', icon: 'glyphicon-eye-open', des: '系统相关',
+            subModules: [{
+                name: 'news', des: '通知公告'
+            }]
+        }, {
+            name: 'user', icon: 'glyphicon-eye-open', des: '个人空间',
+            subModules: [{
+                name: 'info', des: '个人信息'
+            }]
+        }]
+    };
+}
+const appData = _data;
+window.addEventListener('beforeunload', e => {
+    let msg = '离开页面将可能丢失数据，请谨慎操作！';
+    e.returnValue = msg;
+    return msg;
+});
+window.addEventListener('unload', e => {
+    appData.time = Date.now();
+    localStorage.setItem('status', JSON.stringify(appData));
+});
+
+netRouter.pre(function (result) {
+    if (result.offline) {
+        this.$alert.warn('登陆信息失效，请重新登陆！');
+        appData.online = false;
+        app.loading = false;
+        app.modules.splice(2);
+        this.$router.push({ path: '/' });
+        throw new Error('offline');
+    } else {
+        return result;
+    }
+});
+
+netRouter.local('/login', function () {
     return {
-        account: Cookies.get('account') || '',
-        password: Cookies.get('password') || '',
-        identity: Cookies.get('identity') || 'student',
-        save: Cookies.get('save') == 'user'
+        account: localStorage.getItem('account') || '',
+        password: localStorage.getItem('password') || '',
+        identity: localStorage.getItem('identity') || 'student',
+        save: localStorage.getItem('save') == 'user'
     };
 });
+netRouter.get('/serverTime', async function () {
+    let result = await this.$get('/serverTime');
+    return result;
+});
+
 
 const app = new Vue({
     el: '#app',
@@ -112,23 +127,112 @@ const app = new Vue({
     })
 });
 
-router.post('/login', async function (data) {
-    let result = await $.postPromise('/login', data);
-    if (result.pass) {
-        appData.modules.push(...result.modules);
+Vue.prototype.$alert = {
+    warn(msg, ok, cancel) {
+        app.$refs.alert.show({ type: 'warn', msg, ok, cancel });
+    },
+    success(msg = '操作成功！') {
+        app.$refs.alert.show({ type: 'success', msg, count: 2 });
+    },
+    error(msg = '操作失败！') {
+        app.$refs.alert.show({ type: 'error', msg });
+    }
+};
+
+app.$router.beforeEach((to, from, next) => {
+    if (to.path == '/login') {
+        app.online = false;
+    }
+    next();
+});
+
+function bindModule(module, component) {
+    return () => import(`/resourses?module=${module}&component=${component}.js`).then(_ => new Promise(resolve => {
+        _.default.$module = module;
+        resolve(_);
+    }))
+}
+
+netRouter.post('/register', async function (data) {
+
+});
+
+netRouter.post('/login', async function (data) {
+    //`this` bind to vue instance
+    let _data = Object.assign({}, data);
+    delete _data.save;
+    _data.password = objectHash.MD5(_data.password);
+    let result = await this.$post('/login', _data);
+    if (result.status) {
         let routes = [];
+        app.loading = true;
+        app.modules.push(...result.modules);
         for (const module of result.modules) {
             for (const subModule of module.subModules) {
-                let path = `/${module.name}/${subModule.name}`;
-                routes.push({
-                    path,
-                    component: () => import(`/${module.name}?file=${subModule.component}.js`)
-                });
+                let _module = {
+                    path: `/${module.name}/${subModule.name}`,
+                    components: {
+                        default: bindModule(module.name, subModule.component),
+                        system: components.appEmpty
+                    },
+                    children: []
+                };
+                routes.push(_module);
+                for (const route of subModule.routes) {
+                    _module.children.push({
+                        path: route.path,
+                        components: {
+                            default: bindModule(module.name, route.component),
+                            system: components.appEmpty
+                        }
+                    });
+                }
+            }
+            try {
+                netRouter.load(module.name, (await import(`/resourses?module=${module.name}&net=net.js`)).default);
+            } catch (err) {
+                console.log(err);
             }
         }
         app.$router.addRoutes(routes);
         app.user = result.user;
         app.online = true;
         app.$router.push({ path: '/' });
+        app.loading = false;
+
+        localStorage.setItem('account', data.account);
+        localStorage.setItem('identity', data.identity);
+        if (data.save) {
+            localStorage.setItem('password', data.password);
+            localStorage.setItem('save', 'user');
+        } else {
+            localStorage.removeItem('password', data.password);
+            localStorage.setItem('save', 'auto');
+        }
+    } else {
+        app.$alert.error(result.msg);
     }
+    return result.status;
+});
+
+netRouter.get('/logout', async function () {
+    let result = await this.$get('/logout');
+    if (result.status) {
+        app.online = false;
+        app.loading = false;
+        app.modules.splice(2);
+        app.$router.push({ path: '/' });
+    }
+    this.$alert[result.status ? 'success' : 'error'](result.msg);
+    return result.status;
+});
+
+netRouter.get('/sendPinCode', async function (data) {
+    let result = await this.$get('/sendPinCode', data);
+    this.$alert[result.status ? 'success' : 'error'](result.msg);
+    return result.status;
+});
+
+netRouter.post('/retrieve', async function (data) {
+
 });
