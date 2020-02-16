@@ -6,7 +6,8 @@
         "1003": "用户不存在！",
         "1101": "用户不存在或未绑定邮箱！",
         "1102": "验证码已失效！",
-        "1103": "验证码不匹配！"
+        "1103": "验证码不匹配！",
+        "1200": "未找到该组件！"
     },
     "paths": {
         "public": "PUBLIC",
@@ -30,39 +31,43 @@
     },
     "modules": [
         {
-            "name": "bysj",
+            "name": "system",
+            "des": "系统相关",
             "icon": "glyphicon-eye-open",
+            "subModules": [
+                {
+                    "name": "news",
+                    "des": "通知公告",
+                    "component": "news-list"
+                }
+            ]
+        },
+        {
+            "name": "user",
+            "des": "个人空间",
+            "icon": "glyphicon-eye-open",
+            "subModules": [
+                {
+                    "name": "info",
+                    "des": "个人信息",
+                    "component": "user-info"
+                }
+            ]
+        },
+        {
+            "name": "bysj",
             "des": "毕业设计",
+            "icon": "glyphicon-eye-open",
             "subModules": [
                 {
                     "name": "xt",
                     "des": "选题",
-                    "component": "kt-list",
-                    "routes": [
-                        {
-                            "path": "",
-                            "component": "kt-list"
-                        },
-                        {
-                            "path": "content",
-                            "component": "kt-content"
-                        }
-                    ]
+                    "component": "kt-list"
                 },
                 {
                     "name": "wdkt",
                     "des": "我的课题",
-                    "component": "kt-content",
-                    "routes": [
-                        {
-                            "path": "",
-                            "component": "kt-list"
-                        },
-                        {
-                            "path": "content",
-                            "component": "kt-content"
-                        }
-                    ]
+                    "component": "kt-content"
                 }
             ]
         }

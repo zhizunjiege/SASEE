@@ -1,5 +1,4 @@
 /* 增强原生内置对象 */
-
 Date.prototype.toLocaleISOString = function () {
     return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
 };
@@ -36,7 +35,6 @@ Promise.allSettled = function (promiseArray) {
 };
 
 /* 自定义全局对象 */
-
 global.superApp = {
     server: null,
     errors: null,
@@ -146,6 +144,14 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/query', (req, res) => {
+    let flag = false;
+    if (req.session.userId) {
+        flag = true;
+    }
+    res.json({ online: flag });
+});
+
 app.post('/register', user.register);
 app.post('/login', user.login);
 
@@ -156,20 +162,15 @@ app.get('/serverTime', common.serverTime);
 /* 验证、更新session */
 app.use(common.update);
 
-app.get('/resourses', (req, res) => {
+app.get('/components', (req, res) => {
     console.log(req.query);
     res.do(() => {
-        let { module, component, net } = req.query,
-            { identity } = req.session,
-            file = '', root = '';
+        let { module, component } = req.query;
         if (component) {
-            file = component;
-            root = `${__dirname}/${module}/components/${identity}`;
+            res.sendFile(component, { root: `${__dirname}/modules/${module}/components` });
         } else {
-            file = `${identity}.js`;
-            root = `${__dirname}/${module}/net`;
+            throw 1200;
         }
-        res.sendFile(file, { root });
     });
 });
 

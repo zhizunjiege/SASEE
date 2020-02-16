@@ -13,27 +13,63 @@
 
 <body class="p-0">
     <div id="app" class="app-container">
-        <app-head class="app-head row text-light align-items-center justify-content-between">
-            <head-logo class="col-12 col-md-6 col-lg-5 col-xl-4"></head-logo>
-            <head-user :online="online" :user="user" class="col-lg-3 col-xl-2"></head-user>
-        </app-head>
-        <app-body class="app-body">
-            <main-page v-if="online" class="main-page">
-                <main-sidebar :modules="modules" class="main-sidebar"></main-sidebar>
-                <main-content class="main-content">
-                    <router-view></router-view>
-                </main-content>
-            </main-page>
-            <start-page v-else class="start-page"></start-page>
-            <router-view name="system"></router-view>
-        </app-body>
-        <app-foot class="app-foot fixed-bottom row justify-content-between align-items-center">
-            <foot-time :time="time" class="col-12 col-md-4 col-lg-4"></foot-time>
-            <foot-link class="col-12 col-md-8 col-lg-6 text-center">
-            </foot-link>
-        </app-foot>
-        <app-alert ref='alert' class="app-alert"></app-alert>
-        <app-backdrop v-show="loading" class="app-backdrop"></app-backdrop>
+        <header class="app-head row text-light align-items-center justify-content-between">
+            <div class="d-flex align-items-center point col-12 col-md-6 col-lg-5 col-xl-4"
+                @click="$router.push({path:'/'})">
+                <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
+            </div>
+            <bs4-dropdown :menu="userMenu"
+                :subclass="['h-100','mr-3','d-flex','align-items-center','justify-content-around']"
+                class="h-100 text-center border-left border-dark point col-lg-3 col-xl-2"
+                :class="[online?'bg-primary':'bg-secondary']">
+                <template #toggle>
+                    <img :src="userProfileUrl" class="float-left rounded-circle" alt="profile" width="48px">
+                    <div v-if="online">
+                        <div class="h5 my-0">{{user.name}}</div>
+                        <div class="d-flex justify-content-center">
+                            <span class="badge badge-pill badge-info">{{user.identity}}</span>
+                        </div>
+                    </div>
+                    <h5 v-else class="my-0">未登录</h5>
+                </template>
+                <template #item="{item}">
+                    <router-link v-if="item.to" :to="item.to" class="d-block">{{item.des}}</router-link>
+                    <a v-else href="#" @click.prevent="item.event" class="d-block">{{item.des}}</a>
+                </template>
+            </bs4-dropdown>
+        </header>
+        <main class="app-body">
+            <router-view :modules="modules" @login="login"></router-view>
+        </main>
+        <footer class="app-foot fixed-bottom row justify-content-between align-items-center">
+            <div class="col-12 col-md-4 col-lg-4">
+                <p class="mb-0 ml-3">系统时间：<span>{{footTime}}</span></p>
+            </div>
+            <div class="col-12 col-md-8 col-lg-6 text-center">
+                <div v-for="link in footLinks" style="min-width:25%;max-width: 25%;display:inline-block;">
+                    <router-link v-if="link.to" :to="link.to" class="d-block px-3">{{link.des}}</router-link>
+                    <a v-else :href="link.href" class="d-block px-3">{{link.des}}</a>
+                </div>
+            </div>
+        </footer>
+        <div class="app-alert" v-show="alert.show_" :class="alertColor">
+            <h4 class="alert-heading p-3 mb-0">{{alert.title}}</h4>
+            <p class="px-3" style="text-indent:2rem">{{alert.msg}}</p>
+            <p v-if="Boolean(alert.count)" class="px-3 py-2 mb-0 border-top border-info">
+                消息框将在<strong class="px-1">{{alert.count}}</strong>秒后自动消失,点击
+                <a href="#" @click.prevent="alertHide" class="alert-link">此处</a>可立即关闭。
+            </p>
+            <div v-else class="border-top border-info btn-group w-100">
+                <button @click="alertOk" class="btn btn-outline-secondary w-50 border-0"
+                    style="border-radius:0 0 0 .5rem">关闭</button>
+                <div class="border-left border-info"></div>
+                <button @click="alertCancel" class="btn btn-outline-primary w-50 border-0"
+                    style="border-radius:0 0 .5rem 0">确定</button>
+            </div>
+        </div>
+        <div v-show="loading" class="app-backdrop row justify-content-center align-items-center h-100 w-100">
+            <div class="spinner-border spinner-border-lg text-primary"></div>
+        </div>
     </div>
 
     <script src="/frames/others/jquery-3.4.0.js"> </script>
@@ -42,6 +78,7 @@
     <script src="/frames/others/object_hash.js"></script>
     <script src="/frames/vue/vue.js"></script>
     <script src="/frames/vue/vue-router.js"></script>
+    <script src="/frames/axios/axios.js"></script>
     <script type="module" src="/js/app.js"></script>
 </body>
 
