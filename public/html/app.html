@@ -20,7 +20,7 @@
             </div>
             <bs4-dropdown :menu="userMenu"
                 :subclass="['h-100','mr-3','d-flex','align-items-center','justify-content-around']"
-                class="h-100 text-center border-left border-dark point col-lg-3 col-xl-2"
+                class="h-100 text-center border-left border-dark point col-12 col-md-4 col-lg-3 col-xl-2"
                 :class="[online?'bg-primary':'bg-secondary']">
                 <template #toggle>
                     <img :src="userProfileUrl" class="float-left rounded-circle" alt="profile" width="48px">
@@ -42,10 +42,10 @@
             <router-view :modules="modules" @login="login"></router-view>
         </main>
         <footer class="app-foot fixed-bottom row justify-content-between align-items-center">
-            <div class="col-12 col-md-4 col-lg-4">
+            <div class="col-12 col-md-5 col-lg-3">
                 <p class="mb-0 ml-3">系统时间：<span>{{footTime}}</span></p>
             </div>
-            <div class="col-12 col-md-8 col-lg-6 text-center">
+            <div class="col-12 col-md-7 col-lg-6 text-center">
                 <div v-for="link in footLinks" style="min-width:25%;max-width: 25%;display:inline-block;">
                     <router-link v-if="link.to" :to="link.to" class="d-block px-3">{{link.des}}</router-link>
                     <a v-else :href="link.href" class="d-block px-3">{{link.des}}</a>
@@ -53,7 +53,7 @@
             </div>
         </footer>
         <div class="app-alert" v-show="alert.show_" :class="alertColor">
-            <h4 class="alert-heading p-3 mb-0">{{alert.title}}</h4>
+            <h4 class="alert-heading p-3 mb-0">{{alertTitle}}</h4>
             <p class="px-3" style="text-indent:2rem">{{alert.msg}}</p>
             <p v-if="Boolean(alert.count)" class="px-3 py-2 mb-0 border-top border-info">
                 消息框将在<strong class="px-1">{{alert.count}}</strong>秒后自动消失,点击
@@ -71,6 +71,7 @@
             <div class="spinner-border spinner-border-lg text-primary"></div>
         </div>
     </div>
+
 
     <script src="/frames/others/jquery-3.4.0.js"> </script>
     <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>

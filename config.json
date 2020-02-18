@@ -4,68 +4,86 @@
         "1001": "账号或密码错误！",
         "1002": "密码错误！",
         "1003": "用户不存在！",
+        "1004": "用户已注册！",
+        "1005": "用户名已被占用！",
         "1101": "用户不存在或未绑定邮箱！",
-        "1102": "验证码已失效！",
-        "1103": "验证码不匹配！",
+        "1102": "验证码已失效或验证失败！",
         "1200": "未找到该组件！"
     },
     "paths": {
         "public": "PUBLIC",
         "tmp": "TMP",
         "scripts": {
-            "service": {
-                "file": "file",
-                "mysql": "mysql",
-                "util": "util",
-                "object_hash": "hash",
-                "email": "email"
-            },
-            "system": {
-                "user": "user",
-                "common": "common"
-            }
+            "file": "file",
+            "mysql": "mysql",
+            "util": "util",
+            "object_hash": "hash",
+            "email": "email",
+            "common": "common"
         },
-        "bysj": {
-            "index.js": "bysj"
+        "modules": {
+            "system": {
+                "index.js": "system"
+            },
+            "user": {
+                "index.js": "user"
+            },
+            "bysj": {
+                "index.js": "bysj"
+            }
         }
     },
-    "modules": [
+    "routes": [
         {
-            "name": "system",
+            "path": "system",
             "des": "系统相关",
             "icon": "glyphicon-eye-open",
-            "subModules": [
+            "subs": [
                 {
-                    "name": "news",
+                    "path": "news",
                     "des": "通知公告",
                     "component": "news-list"
+                },
+                {
+                    "path": "manual",
+                    "des": "用户手册",
+                    "component": "manual"
+                },
+                {
+                    "path": "feedback",
+                    "des": "用户反馈",
+                    "component": "feedback"
+                },
+                {
+                    "path": "news-content",
+                    "component": "news-content"
                 }
             ]
         },
         {
-            "name": "user",
+            "path": "user",
             "des": "个人空间",
             "icon": "glyphicon-eye-open",
-            "subModules": [
+            "subs": [
                 {
-                    "name": "info",
+                    "path": "info",
                     "des": "个人信息",
                     "component": "user-info"
                 }
             ]
         },
         {
-            "name": "bysj",
+            "path": "bysj",
             "des": "毕业设计",
             "icon": "glyphicon-eye-open",
-            "subModules": [
+            "subs": [
                 {
-                    "name": "xt",
+                    "path": "xt",
                     "des": "选题",
                     "component": "kt-list"
                 },
                 {
-                    "name": "wdkt",
+                    "path": "wdkt",
                     "des": "我的课题",
                     "component": "kt-content"
                 }

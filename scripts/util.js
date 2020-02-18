@@ -1,4 +1,4 @@
-/* 与网络请求无关的工函数 */
+/* 与网络请求无关的工具函数 */
 
 function paramIfValid(param) {
     function _check(value) {
@@ -27,27 +27,8 @@ function paramIfValid(param) {
     }
     return flag;
 }
-
 function isObject(obj) {
     return Object.prototype.toString.call(obj) == '[object Object]';
 }
-
-/* function catchError(res, errCodeMap) {
-    return err => {
-        let msg = '服务器出现错误，请稍后重试！';
-        if (err instanceof Error) {
-            console.log(err);
-        } else if (isObject(errCodeMap)) {
-            for (const [errCode, errMsg] of Object.entries(errCodeMap)) {
-                if (err == errCode) {
-                    msg = errMsg;
-                    break;
-                }
-            }
-        }
-        res && res.status(403).send(msg);
-        return;
-    }
-} */
 
 module.exports = { paramIfValid, isObject };

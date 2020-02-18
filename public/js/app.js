@@ -1,46 +1,42 @@
-import components from './components.js'
-// import axios from '/frames/axios/axios.js'
+import components, { counter } from './components.js'
 
 Date.prototype.toLocaleISOString = function () {
     return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().substr(0, 19).replace('T', ' ');
 };
-function counter({ count, doing, done } = {}) {
-    let _ = { id: null };
-    function _countDown() {
-        if (count) {
-            doing && doing(count);
-            count--;
-            _.id = setTimeout(() => {
-                _countDown();
-            }, 1000);
-        } else {
-            done && done();
-        }
-    }
-    _countDown();
-    return _;
-}
 
 const _push = VueRouter.prototype.push;
 VueRouter.prototype.push = function (to) {
     return _push.call(this, to).catch(err => err);
 };
 
+Vue.prototype.$axios = axios;
+Vue.prototype.$axiosGet = function (url, params) {
+    return this.$axios({
+        url, params,
+        method: 'get'
+    });
+};
+Vue.prototype.$axiosPost = function (url, data) {
+    return this.$axios({
+        url, data,
+        method: 'post'
+    });
+};
+const routes = [{
+    path: '/', component: components.startPage
+}, {
+    path: '/login', component: components.appLogin
+}, {
+    path: '/register', component: components.appRegister
+}, {
+    path: '/retrieve', component: components.appRetrieve
+}, {
+    path: '/license', component: components.appLicense
+}, {
+    path: '*', component: components.appNotFound
+}];
 const app = new Vue({
-    el: '#app',
-    router: new VueRouter({
-        routes: [{
-            path: '/', component: components.startPage
-        }, {
-            path: '/login', component: components.appLogin
-        }, {
-            path: '/register', component: components.appRegister
-        }, {
-            path: '/retrieve', component: components.appRetrieve
-        }, {
-            path: '*', component: components.appNotfound
-        }]
-    }),
+    router: new VueRouter({ routes }),
     data: {
         online: false,
         loading: false,
@@ -68,11 +64,13 @@ const app = new Vue({
             refresh: 0
         },
         footLinks: [{
-            to: '/help', des: '获取帮助'
+            to: '/license', des: '用户协议'
         }, {
-            to: '/feedback', des: '用户反馈'
+            href: 'http://www.buaa.edu.cn/', des: '学校官网'
         }, {
-            href: '/sasee', des: '学院教务'
+            href: 'http://dept3.buaa.edu.cn/', des: '学院官网'
+        }, {
+            href: 'http://10.200.21.61:7001/', des: '本科教务'
         }]
     },
     computed: {
@@ -87,6 +85,8 @@ const app = new Vue({
         },
         userMenu() {
             return this.online ? [{
+                to: '/system/news', des: '返回主页', divide: true
+            },{
                 event: this.logout.bind(this), des: '退出登陆'
             }] : [{
                 to: '/login', des: '登陆', divide: true
@@ -153,48 +153,60 @@ const app = new Vue({
                 }
             }
         },
-        login(result) {
-            console.log('login');
-            console.log(result);
+        async getModules() {
+            let result = await this.$axiosGet('/modules');
             if (result.status) {
                 let modules = [], routes = [];
-                this.loading = true;
-                for (const module of result.modules) {
+                for (const module of result.routes) {
                     let _module = {
-                        name: module.name,
+                        name: module.path,
                         des: module.des,
                         icon: module.icon,
                         subModules: []
                     }, _route = {
-                        path: `/${module.name}`,
+                        path: `/${module.path}`,
                         component: components.mainPage,
                         children: []
                     };
                     modules.push(_module);
                     routes.push(_route);
-                    for (const subModule of module.subModules) {
+                    for (const subModule of module.subs) {
                         if (subModule.des) {
                             _module.subModules.push({
-                                name: subModule.name,
+                                name: subModule.path,
                                 des: subModule.des
                             });
                         }
                         if (subModule.component) {
                             _route.children.push({
-                                path: subModule.name,
-                                component: () => import(`/components?module=${module.name}&component=${subModule.component}.js`)
+                                path: subModule.path,
+                                component: () => import(`/components?module=${module.path}&component=${subModule.component}.js`)
                             });
                         }
                     }
                 }
                 this.modules = modules;
                 this.$router.addRoutes(routes);
-                this.user = result.user;
-                this.online = true;
-                this.$router.push({ path: '/system/news' });
+                return true;
+            } else {
+                this.$alertError(result.msg);
+                this.$router.push({ path: `/?prevent=${this.$route.path}` });
+                return false;
+            }
+        },
+        async login(result) {
+            console.log('login');
+            console.log(result);
+            if (result.status) {
+                this.loading = true;
+                if (await this.getModules()) {
+                    this.online = true;
+                    this.user = result.user;
+                    this.$router.push({ path: '/system/news' });
+                }
                 this.loading = false;
             } else {
-                this.$alert.error(result.msg);
+                this.$alertError(result.msg);
             }
         },
         async logout() {
@@ -204,9 +216,9 @@ const app = new Vue({
                 this.online = false;
                 this.loading = false;
                 this.modules = [];
-                this.$router.push({ path: `/?preventBack=${this.$route.path}` });
+                this.$router.push({ path: `/?prevent=${this.$route.path}` });
             }
-            this[`$alert${result.status ? 'Success' : 'Error'}`](result.msg);
+            this.$alertResult(result);
         }
     },
     alertColor: {
@@ -228,7 +240,10 @@ window.addEventListener('beforeunload', e => {
 });
 window.addEventListener('unload', e => {
     app.lastWriteTime = Date.now();
-    localStorage.setItem('status', JSON.stringify(app.$data));
+    localStorage.setItem('status', JSON.stringify({
+        online: app.online,
+        user: app.user
+    }));
 });
 
 axios.interceptors.response.use(response => {
@@ -243,19 +258,7 @@ axios.interceptors.response.use(response => {
 }, err => {
     return Promise.reject(err);
 });
-Vue.prototype.$axios = axios;
-Vue.prototype.$axiosGet = function (url, params) {
-    return this.$axios({
-        url, params,
-        method: 'get'
-    });
-};
-Vue.prototype.$axiosPost = function (url, data) {
-    return this.$axios({
-        url, data,
-        method: 'post'
-    });
-};
+
 Vue.prototype.$alertWarn = function (msg, ok, cancel) {
     app.alertShow({ type: 'warn', msg, ok, cancel });
 };
@@ -265,9 +268,12 @@ Vue.prototype.$alertSuccess = function (msg = '操作成功！') {
 Vue.prototype.$alertError = function (msg = '操作失败！') {
     app.alertShow({ type: 'error', msg });
 };
+Vue.prototype.$alertResult = function (result) {
+    this[`$alert${result.status ? 'Success' : 'Error'}`](result.msg);
+};
 
 app.$router.beforeEach((to, from, next) => {
-    if (to.path === from.query.preventBack) {
+    if (to.path === from.query.prevent) {
         next(false);
     } else {
         if (to.path == '/login') {
@@ -277,94 +283,18 @@ app.$router.beforeEach((to, from, next) => {
     }
 });
 
-app.$router.push({ path: '/' });
+//挂载
+app.$mount('#app');
 app.timeCount();
 app.timeUpdate();
 
-app.$axiosGet('/query').then(res => {
+app.$axiosGet('/query').then(async res => {
     if (res.online) {
         let data = JSON.parse(localStorage.getItem('status'));
         if (data) {
             app.online = data.online;
             app.user = data.user;
-            app.modules = data.modules;
         }
+        await app.getModules();
     }
 });
-
-
-/* netRouter.post('/login', async function (data) {
-    //`this` bind to vue instance
-    let _data = Object.assign({}, data);
-    delete _data.save;
-    _data.password = objectHash.MD5(_data.password);
-    let result = await this.$post('/login', _data);
-    if (result.status) {
-        let routes = [];
-        app.loading = true;
-        app.modules.push(...result.modules);
-        for (const module of result.modules) {
-            for (const subModule of module.subModules) {
-                let _module = {
-                    path: `/${module.name}/${subModule.name}`,
-                    components: {
-                        default: import(`/resourses?module=${module.name}&component=${component}.js`),
-                        system: components.appEmpty
-                    },
-                    children: []
-                };
-                routes.push(_module);
-                for (const route of subModule.routes) {
-                    _module.children.push({
-                        path: route.path,
-                        components: {
-                            default: bindModule(module.name, route.component),
-                            system: components.appEmpty
-                        }
-                    });
-                }
-            }
-            try {
-                netRouter.load(module.name, (await import(`/resourses?module=${module.name}&net=net.js`)).default);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-        app.$router.addRoutes(routes);
-        app.user = result.user;
-        app.online = true;
-        app.$router.push({ path: '/' });
-        app.loading = false;
-
-        localStorage.setItem('account', data.account);
-        localStorage.setItem('identity', data.identity);
-        if (data.save) {
-            localStorage.setItem('password', data.password);
-            localStorage.setItem('save', 'user');
-        } else {
-            localStorage.removeItem('password', data.password);
-            localStorage.setItem('save', 'auto');
-        }
-    } else {
-        app.$alert.error(result.msg);
-    }
-    return result.status;
-}); */
-
-/* netRouter.get('/logout', async function () {
-    let result = await this.$get('/logout');
-    if (result.status) {
-        app.online = false;
-        app.loading = false;
-        app.modules.splice(2);
-        app.$router.push({ path: '/' });
-    }
-    this.$alert[result.status ? 'success' : 'error'](result.msg);
-    return result.status;
-});
-
-netRouter.get('/sendPinCode', async function (data) {
-    let result = await this.$get('/sendPinCode', data);
-    this.$alert[result.status ? 'success' : 'error'](result.msg);
-    return result.status;
-}); */

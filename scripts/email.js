@@ -43,7 +43,7 @@ function send({ from = 'benke03@buaa.edu.cn', password = 'zXYnJxAqvHfNdE3c', to,
     }).catch(util.catchError(res, superApp.errorMap));
 } */
 function pinCodeTemp(code) {
-    return `这是本次验证码：${code}。<br/>此验证码在五分钟内有效。' + CONSTANT.SYS_FOOTER`;
+    return `这是本次验证码：${code}。<br/>此验证码在五分钟内有效。<br/>${CONSTANT.FOOTER}`;
 }
 function emailTemp({ title = '通知', paragraph = [] } = {}) {
     let p = ``;

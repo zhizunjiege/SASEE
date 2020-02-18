@@ -1,10 +1,11 @@
 const fs = require('fs');
 
+//移动
 function move(from, to, callback) {
     _mkdir(to);
     fs.rename(from, to, callback);
 }
-
+//递归创建目录
 function _mkdir(filepath) {
     const dirCache = {};
     const arr = filepath.split('/');
@@ -17,7 +18,7 @@ function _mkdir(filepath) {
         dir = dir + '/' + arr[i];
     }
 }
-
+//删除全部
 function deleteAll(path, rmDir = true) {
     let files = [];
     if (fs.existsSync(path)) {
@@ -36,4 +37,4 @@ function deleteAll(path, rmDir = true) {
     }
 };
 
-module.exports = { move, deleteAll, writeFile: fs.writeFile, fs };
+module.exports = { move, deleteAll, fs };

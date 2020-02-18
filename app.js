@@ -41,22 +41,22 @@ global.superApp = {
     PATH: {
         root: {}
     },
-    modules: null,
+    routes: null,
     startTime: new Date(),
     requireUserModule(name, path = 'root') {
         return require(this.PATH[path][name]);
     },
     requireUserModules(names, path) {
-        let modules = [];
+        let modules = {};
         for (const iterator of names) {
-            modules.push(this.requireUserModule(iterator, path));
+            modules[iterator] = this.requireUserModule(iterator, path);
         }
         return modules;
     },
     requireAll(names) {
-        let modules = [];
+        let modules = {};
         for (const iterator of names) {
-            modules.push(require(iterator));
+            modules[iterator] = require(iterator);
         }
         return modules;
     },
@@ -74,21 +74,16 @@ global.superApp = {
 /* fs模块使用cwd路径为根目录，随脚本启动位置不同而变化；而require函数使用__dirname，以文件间相对路径关系为准。
 故模块加载只要使用相对路径即可，而资源定位需要绝对路径。为确保准确，本程序均使用绝对路径。 */
 
-const [fs, express, session] = superApp.requireAll(['fs', 'express', 'express-session']);
+const { fs, express, 'express-session': session } = superApp.requireAll(['fs', 'express', 'express-session']);
 
 let config = JSON.parse(fs.readFileSync(__dirname + '/config.json', {
     encoding: 'utf8'
 }));
 superApp.errors = config.errors;
-superApp.modules = config.modules;
+superApp.routes = config.routes;
 superApp.transObjToPath(superApp.PATH.root, __dirname, config.paths);
 
-const [common, user] = superApp.requireUserModules([
-    'common',
-    'user'
-], 'root');
-
-const { /* VIEWS,  */PUBLIC } = superApp.PATH.root;
+const { PUBLIC, TMP } = superApp.PATH.root;
 
 /* 增强express的response对象 */
 express.response.do = function (func) {
@@ -114,11 +109,8 @@ express.response.do = function (func) {
 
 const app = express();
 
-// app.set('views', VIEWS);
-// app.set('view engine', 'ejs');
-app.set('strict routing', true);
 // app.set('env', 'production');
-
+app.set('strict routing', true);
 app.use(express.static(PUBLIC));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -127,13 +119,9 @@ app.use(session({
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
     cookie: {
-        maxAge: app.get('env') == 'development' ? 20 * 1000 : 30 * 60 * 1000,//设置cookie的过期时间
+        maxAge: app.get('env') == 'development' ? 20 * 60 * 1000 : 30 * 60 * 1000,//设置cookie的过期时间
     }
 }));
-
-/* function logErr(err) {
-    if (err) console.log(err);
-} */
 
 /* 路由 */
 app.get('/', (req, res) => {
@@ -143,7 +131,6 @@ app.get('/', (req, res) => {
         });
     });
 });
-
 app.get('/query', (req, res) => {
     let flag = false;
     if (req.session.userId) {
@@ -152,43 +139,62 @@ app.get('/query', (req, res) => {
     res.json({ online: flag });
 });
 
-app.post('/register', user.register);
-app.post('/login', user.login);
+const common = superApp.requireUserModule('common', 'root');
+app.post('/login', common.login);
+app.post('/register', common.register);
+app.get('/sendPinCode', common.sendPinCode);
+app.post('/retrieve', common.retrieve);
 
-app.get('/sendPinCode', user.sendPinCode);
-app.post('/retrieve', user.retrieve);
+app.get('/serverTime', (req, res) => {
+    res.json({
+        status: true,
+        time: Date.now()
+    });
+});
 
-app.get('/serverTime', common.serverTime);
 /* 验证、更新session */
-app.use(common.update);
+app.use((req, res, next) => {
+    if (req.session.userId) {
+        req.session._garbage = Date();
+        req.session.touch();
+        next();
+    } else {
+        res.json({
+            offline: true,
+            status: false,
+            msg: '登陆信息失效，请重新登陆！'
+        });
+    }
+});
 
+const modules = superApp.requireUserModules(['system', 'user', 'bysj'], 'root');
+for (const iterator of Object.values(modules)) {
+    app.use(iterator.route, iterator.app); 6
+}
+app.get('/modules', common.getModules);
 app.get('/components', (req, res) => {
     console.log(req.query);
-    res.do(() => {
+    res.do(async () => {
         let { module, component } = req.query;
         if (component) {
-            res.sendFile(component, { root: `${__dirname}/modules/${module}/components` });
+            let file = modules[module].getComponentName(req.session.identity, component);
+            res.sendFile(file, { root: `${__dirname}/modules/${module}/components` });
         } else {
             throw 1200;
         }
     });
 });
 
-/* app.use('/bysj', superApp.requireUserModule('bysj')); */
-app.post('/bysj/data', (req, res) => {
-    console.log(req.body);
-    res.json({
-        msg: 'ok'
-    });
+app.post('/modify', common.modify);
+app.post('/setGeneralInfo', common.setGeneralInfo);
+app.post('/setEmailAddr', common.setEmailAddr);
+app.get('/logout', common.logout);
+
+app.use((req, res) => {
+    res.type('text/html');
+    res.status(404);
+    res.send(`您要的东西没找到哦-_-，看看地址是不是输错了？`);
 });
-
-app.post('/modify', user.modify);
-app.post('/setGeneralInfo', user.setGeneralInfo);
-app.post('/setEmailAddr', user.setEmailAddr);
-
-app.get('/logout', user.logout);
-
-app.use(common.notFound);
 
 superApp.server = app.listen(3000, '::', () => {
     console.log('express is running on localhost:3000')
