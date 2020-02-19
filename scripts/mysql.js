@@ -13,8 +13,11 @@ const pool = mysql.createPool({
     port: 3306,
     dateStrings: true,
     typeCast: (field, next) => {
-        if (field.type == 'JSON') return JSON.parse(next());
-        else return next();
+        switch (field.type) {
+            case 'JSON': return JSON.parse(field.string());
+            case 'TINY': return field.string() == '1';
+            default: return next();
+        }
     }
 });
 

@@ -1,7 +1,17 @@
 export default {
     template: `
-    <div class="d-flex align-items-center point" @click="$router.push({path:'/'})">
-        <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
+    <div class="app-container app-scroll row justify-content-center py-3">
+        <div class="col-12 col-md-11" v-html="content"></div>
     </div>
-    `
+    `,
+    data() {
+        return {
+            content: ''
+        };
+    },
+    async mounted() {
+        let id = this.$route.query.id;
+        if (id) this.content = await this.$axiosGet('/system/news-content', { id });
+        else this.$router.push({ path: '/system' });
+    }
 }

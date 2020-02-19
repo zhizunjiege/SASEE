@@ -40,7 +40,7 @@
             "icon": "glyphicon-eye-open",
             "subs": [
                 {
-                    "path": "news",
+                    "path": "news-list",
                     "des": "通知公告",
                     "component": "news-list"
                 },
@@ -53,6 +53,10 @@
                     "path": "feedback",
                     "des": "用户反馈",
                     "component": "feedback"
+                },
+                {
+                    "path": "",
+                    "component": "news-list"
                 },
                 {
                     "path": "news-content",
@@ -80,12 +84,52 @@
                 {
                     "path": "xt",
                     "des": "选题",
-                    "component": "kt-list"
+                    "component": "xt",
+                    "requirement": {
+                        "identity": "student"
+                    }
                 },
                 {
                     "path": "wdkt",
                     "des": "我的课题",
-                    "component": "kt-content"
+                    "component": "wdkt",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
+                    "path": "fbkt",
+                    "des": "发布课题",
+                    "component": "fbkt",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "wdkt",
+                    "des": "我的课题",
+                    "component": "wdkt",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "ktsh",
+                    "des": "课题审核",
+                    "component": "ktsh",
+                    "requirement": {
+                        "identity": "teacher",
+                        "ifDean": "是"
+                    }
+                },
+                {
+                    "path": "xxtj",
+                    "des": "信息统计",
+                    "component": "xxtj",
+                    "requirement": {
+                        "identity": "teacher",
+                        "ifDean": "是"
+                    }
                 }
             ]
         }

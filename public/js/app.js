@@ -9,34 +9,22 @@ VueRouter.prototype.push = function (to) {
     return _push.call(this, to).catch(err => err);
 };
 
-Vue.prototype.$axios = axios;
-Vue.prototype.$axiosGet = function (url, params) {
-    return this.$axios({
-        url, params,
-        method: 'get'
-    });
-};
-Vue.prototype.$axiosPost = function (url, data) {
-    return this.$axios({
-        url, data,
-        method: 'post'
-    });
-};
-const routes = [{
-    path: '/', component: components.startPage
-}, {
-    path: '/login', component: components.appLogin
-}, {
-    path: '/register', component: components.appRegister
-}, {
-    path: '/retrieve', component: components.appRetrieve
-}, {
-    path: '/license', component: components.appLicense
-}, {
-    path: '*', component: components.appNotFound
-}];
 const app = new Vue({
-    router: new VueRouter({ routes }),
+    router: new VueRouter({
+        routes: [{
+            path: '/', component: components.startPage
+        }, {
+            path: '/login', component: components.appLogin
+        }, {
+            path: '/register', component: components.appRegister
+        }, {
+            path: '/retrieve', component: components.appRetrieve
+        }, {
+            path: '/license', component: components.appLicense
+        }, {
+            path: '*', component: components.appNotFound
+        }]
+    }),
     data: {
         online: false,
         loading: false,
@@ -85,8 +73,8 @@ const app = new Vue({
         },
         userMenu() {
             return this.online ? [{
-                to: '/system/news', des: '返回主页', divide: true
-            },{
+                to: '/system', des: '返回主页', divide: true
+            }, {
                 event: this.logout.bind(this), des: '退出登陆'
             }] : [{
                 to: '/login', des: '登陆', divide: true
@@ -146,7 +134,7 @@ const app = new Vue({
                 console.log(err);
                 if (this.serverTime.refresh <= 3) {
                     this.serverTime.refresh++;
-                    this.serverTime.updater_ = setTimeout(this.timeUpdate.bind(this), 3 * 1000);
+                    this.serverTime.updater_ = setTimeout(this.timeUpdate.bind(this), 8 * 1000);
                 } else {
                     clearTimeout(this.serverTime.updater_);
                     this.$alertWarn('与服务器失去连接！');
@@ -202,7 +190,7 @@ const app = new Vue({
                 if (await this.getModules()) {
                     this.online = true;
                     this.user = result.user;
-                    this.$router.push({ path: '/system/news' });
+                    this.$router.push({ path: '/system' });
                 }
                 this.loading = false;
             } else {
@@ -246,6 +234,7 @@ window.addEventListener('unload', e => {
     }));
 });
 
+axios.defaults.timeout = 2000;
 axios.interceptors.response.use(response => {
     if (response.data.offline) {
         app.$alertWarn('登陆信息失效，请重新登陆！');
@@ -258,6 +247,19 @@ axios.interceptors.response.use(response => {
 }, err => {
     return Promise.reject(err);
 });
+Vue.prototype.$axios = axios;
+Vue.prototype.$axiosGet = function (url, params) {
+    return this.$axios({
+        url, params,
+        method: 'get'
+    });
+};
+Vue.prototype.$axiosPost = function (url, data) {
+    return this.$axios({
+        url, data,
+        method: 'post'
+    });
+};
 
 Vue.prototype.$alertWarn = function (msg, ok, cancel) {
     app.alertShow({ type: 'warn', msg, ok, cancel });
@@ -276,14 +278,15 @@ app.$router.beforeEach((to, from, next) => {
     if (to.path === from.query.prevent) {
         next(false);
     } else {
-        if (to.path == '/login') {
+        /* if (to.path == '/login') {
             app.online = false;
-        }
+        } */
         next();
     }
 });
 
 //挂载
+app.loading = true;
 app.$mount('#app');
 app.timeCount();
 app.timeUpdate();
@@ -296,5 +299,8 @@ app.$axiosGet('/query').then(async res => {
             app.user = data.user;
         }
         await app.getModules();
+    } else {
+        app.$router.push({ path: '/' });
     }
+    app.loading = false;
 });

@@ -18,19 +18,24 @@
                 @click="$router.push({path:'/'})">
                 <h3 class="mb-0 ml-sm-1 ml-md-2 ml-lg-3">自动化科学与电气工程学院</h3>
             </div>
-            <bs4-dropdown :menu="userMenu"
-                :subclass="['h-100','mr-3','d-flex','align-items-center','justify-content-around']"
-                class="h-100 text-center border-left border-dark point col-12 col-md-4 col-lg-3 col-xl-2"
-                :class="[online?'bg-primary':'bg-secondary']">
+            <!-- <div v-if="online" class="d-flex align-items-center h-100 text-secondary" style="font-size: 2rem;">
+                <a href="#" class="d-block"><span>&laquo;</span>后退</a>
+                <a href="#" class="d-block mx-3">刷新</a>
+                <a href="#" class="d-block">前进<span>&raquo;</span></a>
+            </div> -->
+            <bs4-dropdown :menu="userMenu" :class="[online?'bg-primary':'bg-secondary']"
+                class="col-12 col-md-4 col-lg-3 col-xl-2 h-100 text-center border-left border-dark point">
                 <template #toggle>
-                    <img :src="userProfileUrl" class="float-left rounded-circle" alt="profile" width="48px">
-                    <div v-if="online">
-                        <div class="h5 my-0">{{user.name}}</div>
-                        <div class="d-flex justify-content-center">
-                            <span class="badge badge-pill badge-info">{{user.identity}}</span>
+                    <div class="d-flex align-items-center justify-content-around h-100 mr-4">
+                        <img :src="userProfileUrl" class="float-left rounded-circle" alt="profile" width="64px">
+                        <div v-if="online">
+                            <div class="h5 my-0">{{user.name}}</div>
+                            <div class="d-flex justify-content-center">
+                                <span class="badge badge-pill badge-info">{{user.identity}}</span>
+                            </div>
                         </div>
+                        <h5 v-else class="my-0">未登录</h5>
                     </div>
-                    <h5 v-else class="my-0">未登录</h5>
                 </template>
                 <template #item="{item}">
                     <router-link v-if="item.to" :to="item.to" class="d-block">{{item.des}}</router-link>
@@ -39,7 +44,9 @@
             </bs4-dropdown>
         </header>
         <main class="app-body">
-            <router-view :modules="modules" @login="login"></router-view>
+            <keep-alive>
+                <router-view :modules="modules" @login="login"></router-view>
+            </keep-alive>
         </main>
         <footer class="app-foot fixed-bottom row justify-content-between align-items-center">
             <div class="col-12 col-md-5 col-lg-3">
@@ -72,6 +79,18 @@
         </div>
     </div>
 
+    <!--     <nav>
+        <ul class="pagination pagination-lg">
+            <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+            <li class="page-item"><a class="page-link" href="#">{{now_}}</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">···</a></li>
+            <li class="page-item"><a class="page-link" href="#">{{}}</a></li>
+            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+        </ul>
+    </nav> -->
 
     <script src="/frames/others/jquery-3.4.0.js"> </script>
     <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>

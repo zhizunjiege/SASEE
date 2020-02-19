@@ -173,7 +173,6 @@ for (const iterator of Object.values(modules)) {
 }
 app.get('/modules', common.getModules);
 app.get('/components', (req, res) => {
-    console.log(req.query);
     res.do(async () => {
         let { module, component } = req.query;
         if (component) {

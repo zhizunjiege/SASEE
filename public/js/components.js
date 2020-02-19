@@ -71,7 +71,51 @@ const appNews = {
     methods: {
         submit() { }
     }
-}; */
+}; 
+ Vue.component('bs4-pagination', {
+    inheritAttrs: false,
+    model: {
+        prop: 'now',
+        event: 'change'
+    },
+    props: {
+        flush: {
+            type: Boolean,
+            default: true
+        },
+        action: {
+            type: Boolean,
+            default: false
+        },
+        total: Number,
+        now: Number,
+        items: Array
+    },
+    data() {
+        return {
+            start_: 1,
+            now_: 1,
+            end_: 2
+        }
+    },
+    watch: {
+        now() {
+            this.now_ = this.now;
+        },
+        now_() {
+            this.$emit('change', this.now_);
+        }
+    },
+    template: `
+    <dl class="list-group" :class="{'list-group-flush':flush}">
+        <dd class="list-group-item" :class="{'list-group-item-action':action}" v-for="item in items">
+            <slot :item="item"></slot>
+        </dd>
+    </dl> 
+    `
+}); 
+*/
+
 //工具函数
 function counter({ count, doing, done } = {}) {
     let _ = { id: null };
@@ -111,7 +155,6 @@ Vue.component('input-text', {
     </div>
     `
 });
-
 Vue.component('input-radio', {
     inheritAttrs: false,
     model: {
@@ -201,9 +244,7 @@ Vue.component('input-textarea', {
     </div>
     `
 });
-/* Vue.component('input-file', {
-
-}); */
+/* Vue.component('input-file', {}); */
 Vue.component('input-pincode', {
     inheritAttrs: false,
     props: {
@@ -263,7 +304,7 @@ Vue.component('input-pincode', {
 Vue.component('bs4-dropdown', {
     template: `
     <div class="dropdown">
-        <div :class="subclass" class="dropdown-toggle" data-toggle="dropdown" :data-display="display">
+        <div class="dropdown-toggle h-100" data-toggle="dropdown" :data-display="display">
             <slot name="toggle"></slot>
         </div>
         <ul class="dropdown-menu">
@@ -305,11 +346,65 @@ Vue.component('bs4-listgroup', {
         items: Array
     }
 });
+Vue.component('app-scroll', {
+    template: `
+    <div class="app-scroll" @scroll="scroll">
+        <slot></slot>
+        <div v-if="status" class="row justify-content-center align-items-center w-100" style="height:50px">
+            <span v-if="status=='loading'" class="spinner-border spinner-border-lg text-primary"></span>
+            <span v-if="status=='end'" class="text-secondary">到底了~</span>
+            <span v-if="status=='error'" class="text-warning">网络错误-_-</span>
+        </div>
+    </div>
+    `,
+    props: {
+        status: { type: String, default: '' },
+        mode: { type: String, default: 'continue'/* single */ },
+        top: { type: Number, default: 100 },
+        bottom: { type: Number, default: 100 },
+        factor: { type: Number, default: 4 }
+    },
+    data() {
+        return {
+            lastTop_: 0,
+            factorCount_: 0,
+            upTriggered_: false,
+            downTriggered_: false
+        };
+    },
+    methods: {
+        scroll(e) {
+            if (this.factorCount_ >= this.factor) {
+                let { scrollHeight, clientHeight, scrollTop } = e.target, scrollDown = scrollHeight - clientHeight - scrollTop;
+                if (scrollTop > this.lastTop_) {
+                    //scrollUp
+                    if (scrollDown <= this.bottom) {
+                        this.mode != 'continue' && this.upTriggered_ || this.$emit('scroll::up');
+                        this.mode != 'continue' && (this.upTriggered_ = true);
+                    }
+                    this.mode != 'continue' && scrollTop > this.top && (this.downTriggered_ = false);
+                }
+                else {
+                    //scrollDown
+                    if (scrollTop <= this.top) {
+                        this.mode != 'continue' && this.downTriggered_ || this.$emit('scroll::down');
+                        this.mode != 'continue' && (this.downTriggered_ = true);
+                    }
+                    this.mode != 'continue' && scrollDown > this.bottom && (this.upTriggered_ = false);
+                }
+                this.lastTop_ = scrollTop;
+                this.factorCount_ = 0;
+            } else {
+                this.factorCount_++;
+            }
+        }
+    }
+});
 
 //局部组件
 const mainPage = {
     template: `
-    <div class="main-page">
+    <div class="app-container">
         <aside class="main-sidebar border-right border-light">
             <bs4-listgroup id="accordion_sidebar" :items="modules" v-slot="{item}">
                 <a data-toggle="collapse" :href="'#'+item.name">
@@ -342,7 +437,7 @@ const startPage = {
 };
 const appLogin = {
     template: `
-    <div class="main-page row align-items-center justify-content-center">
+    <div class="app-container row align-items-center justify-content-center">
         <form class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center" 
             @submit.prevent="submit">
             <input-text v-model="fields.username" label="用户名" placeholder="1~16位字母、数字或下划线" pattern="\\w{1,16}" required></input-text>
@@ -394,7 +489,7 @@ const appLogin = {
 };
 const appRegister = {
     template: `
-    <div class="main-page row align-items-center justify-content-center">
+    <div class="app-container app-scroll row align-items-center justify-content-center">
         <form class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center mt-3" @submit.prevent="submit">
             <input-radio v-model="fields.identity" class="form-group form-row justify-content-around"
                 :radios="[{ val: 'student', des: '学生' }, { val: 'teacher', des: '教师' }]">
@@ -529,7 +624,7 @@ const appRetrieve = {
 };
 const appLicense = {
     template: `
-    <div class="main-page row justify-content-center p-0 p-md-3">
+    <div class="app-container app-scroll row justify-content-center p-0 p-md-3">
         <div class="col-12 col-md-10 col-lg-8" v-html="content"></div>
     </div>
     `,

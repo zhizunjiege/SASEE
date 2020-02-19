@@ -27,7 +27,6 @@ function login(req, res) {
             throw 1000;
         }
         let data = await mysql.find(sql_query, [identity, username, password]);
-        console.log(data);
 
         if (!data.length) throw 1001;
         //设置session
@@ -47,10 +46,25 @@ function login(req, res) {
     });
 }
 function getModules(req, res) {
-    res.do(() => {
+    let { identity, userId } = req.session,
+        sql_query = 'SELECT * FROM ?? WHERE id=?';
+    res.do(async () => {
+        let [user] = await mysql.find(sql_query, [identity, userId]),
+            routes = JSON.parse(JSON.stringify(superApp.routes));
+        user.identity = identity;
+        for (const iterator of routes) {
+            iterator.subs = iterator.subs.filter(element => {
+                if (!element.requirement) return true;
+                for (const [key, value] of Object.entries(element.requirement)) {
+                    if (user[key] != value) return false;
+                }
+                delete element.requirement;
+                return true;
+            });
+        }
         res.json({
             status: true,
-            routes: superApp.routes
+            routes
         });
     });
 }
@@ -75,9 +89,9 @@ function sendPinCode(req, res) {
         if (!addr) {
             let { identity, username } = req.query,
                 sql_query = 'SELECT email FROM ?? WHERE username=?',
-                data = await mysql.find(sql_query, [identity, username]);
+                [user] = await mysql.find(sql_query, [identity, username]);
             if (data.length) {
-                addr = data[0].email;
+                addr = user.email;
             } else {
                 throw 1101;
             }
