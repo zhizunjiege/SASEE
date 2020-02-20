@@ -4,7 +4,7 @@ const express = require('express'),
 const app = express();
 
 function getComponentName(identity, component) {
-    return component;
+    return component + '.js';
 }
 
 app.get('/manual', (req, res) => {

@@ -167,6 +167,8 @@ app.use((req, res, next) => {
     }
 });
 
+app.get('/logout', common.logout);
+
 const modules = superApp.requireUserModules(['system', 'user', 'bysj'], 'root');
 for (const iterator of Object.values(modules)) {
     app.use(iterator.route, iterator.app); 6
@@ -183,11 +185,6 @@ app.get('/components', (req, res) => {
         }
     });
 });
-
-app.post('/modify', common.modify);
-app.post('/setGeneralInfo', common.setGeneralInfo);
-app.post('/setEmailAddr', common.setEmailAddr);
-app.get('/logout', common.logout);
 
 app.use((req, res) => {
     res.type('text/html');

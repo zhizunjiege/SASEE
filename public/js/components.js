@@ -113,6 +113,72 @@ const appNews = {
         </dd>
     </dl> 
     `
+});
+
+Vue.component('bs4-table', {
+    template: `
+    <table class="table" :class="classObj">
+        <thead v-if="head" class="thead-light">
+            <tr v-for="row in head">
+                <template v-for="item in row">
+                    <th v-if="item.scope" :[item.scope+'span']="item.span||1">{{item.content}}</th>
+                    <td v-else>{{item.content}}</td>
+                </template>
+            </tr>
+        </thead>
+        <tbody v-if="body">
+            <tr v-for="row in body">
+                <template v-for="item in row">
+                    <th v-if="item.scope" :[item.scope+'span']="item.span||1">{{item.content}}</th>
+                    <td v-else>{{item.content}}</td>
+                </template>
+            </tr>
+        </tbody>
+        <tfoot v-if="foot">
+
+        </tfoot>
+    </table>
+    `,
+    props: {
+        border: {
+            type: String,
+            default: ''
+        },
+        stripe: {
+            type: Boolean,
+            default: false
+        },
+        hover: {
+            type: Boolean,
+            default: false
+        },
+        fixed: {
+            type: Boolean,
+            default: false
+        },
+        responsive: {
+            type: Boolean,
+            default: false
+        },
+        head: Array,
+        default:[[{
+            
+        }]],
+        body: Array,
+        foot: Array
+    },
+    data() {
+        return {
+            classObj: {
+                'table-bordered': this.border == 'border',
+                'table-borderless': this.border == 'none',
+                'table-striped': this.stripe,
+                'table-hover': this.hover,
+                'table-fixed': this.fixed,
+                'table-responsive': this.responsive
+            }
+        }
+    }
 }); 
 */
 
@@ -400,6 +466,54 @@ Vue.component('app-scroll', {
         }
     }
 });
+Vue.component('app-button', {
+    template: `
+    <button @click.prevent.stop="onclick"></button>
+    `,
+    props: {
+        interval: {
+            type: Number,
+            default: 500
+        }
+    },
+    data() {
+        return {
+            lastTime: 0
+        }
+    },
+    methods: {
+        onclick(e) {
+            let now = Date.now();
+            if (now - this.lastTime < this.interval) this.$alertWarn('点击过于频繁！');
+            else this.$emit('click', e);
+            this.lastTime = now;
+        }
+    }
+});
+/* Vue.component('app-table-input', {
+    inheritAttrs: false,
+    props: {
+        value: String,
+        type: {
+            type: String,
+            default: 'text'
+        }
+    },
+    data() {
+        return {
+            dbclicked: false
+        }
+    },
+    template: `
+    <td v-if="dbclicked">{{value}}</td>
+    <td v-else class="table-input">
+        <div class="form-group justify-content-around mb-0">
+            <input v-bind="$attrs" :type="type" :value="value" @input="$emit('input',$event.target.value)"
+                class="form-control form-control-lg">
+        </div>
+    </td>
+    `,
+}); */
 
 //局部组件
 const mainPage = {
@@ -482,8 +596,10 @@ const appLogin = {
                     localStorage.removeItem('password', data.password);
                     localStorage.setItem('save', 'auto');
                 }
+                this.$root.$emit('login', result);
+            } else {
+                this.$alertError(result.msg);
             }
-            this.$emit('login', result);
         }
     }
 };
@@ -513,6 +629,12 @@ const appRegister = {
             <input-text v-model="fields.tel" label="手机号" placeholder="11位数字" pattern="^[1]([3-9])[0-9]{9}$">
             <input-text v-model="fields.homepage" label="个人主页" placeholder="请输入正确的网址，不超过255位字符"></input-text>
             </input-text>
+            <template v-if="fields.identity=='teacher'">
+            <input-text v-model="fields.office" label="办公地点" placeholder="不超过255个字符（或汉字）"></input-text>
+            </input-text>
+            <input-text v-model="fields.field" label="研究领域" placeholder="不超过255个字符（或汉字）"></input-text>
+            </input-text>
+            </template>
             <input-textarea v-model="fields.resume" label="个人简介" rows="12" placeholder="不超过1023个字符（或汉字）" maxlength="1023"></input-textarea>
             <div class="form-row justify-content-between align-items-center mb-3">
                 <input-checkbox v-model="fields.license" :checkboxs="[{ val: 'license', des: '我已阅读并同意用户协议' }]"
@@ -539,21 +661,20 @@ const appRegister = {
                 tel: '',
                 homepage: '',
                 resume: '',
+                office: '',
+                field: '',
                 license: false
             }
         };
     },
     methods: {
         async submit() {
-            console.log('register');
             let fields = this.fields;
-            console.log(fields);
             if (fields.password !== fields.repeatPW) {
                 this.$alertWarn('密码不一致！');
                 return;
             }
             let data = Object.assign({}, fields);
-            console.log(data);
             data.password = objectHash.MD5(fields.password);
             /*             if (fields.wechat) data.wechat = fields.wechat;
                         if (fields.tel) data.tel = fields.tel;
@@ -562,7 +683,6 @@ const appRegister = {
             console.log(data);
 
             let result = await this.$axiosPost('/register', data);
-            console.log(result);
             if (result.status) {
                 this.$router.push({ path: '/login' });
             }

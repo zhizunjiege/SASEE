@@ -70,8 +70,27 @@
             "icon": "glyphicon-eye-open",
             "subs": [
                 {
-                    "path": "info",
+                    "path": "user-info",
                     "des": "个人信息",
+                    "component": "user-info"
+                },
+                {
+                    "path": "set-email",
+                    "des": "绑定邮箱",
+                    "component": "set-email"
+                },
+                {
+                    "path": "set-password",
+                    "des": "修改密码",
+                    "component": "set-password"
+                },
+                {
+                    "path": "perfect-info",
+                    "des": "完善信息",
+                    "component": "perfect-info"
+                },
+                {
+                    "path": "",
                     "component": "user-info"
                 }
             ]

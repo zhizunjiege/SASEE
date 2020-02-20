@@ -1,13 +1,12 @@
 const express = require('express'), app = express();
 
 function getComponentName(identity, component) {
-    return component;
+    switch (component) {
+        case 'user-info':
+        case 'perfect-info': return `${component}-${identity}.js`;
+        default: return component + '.js';
+    }
 }
 
-app.get('/manual', (req, res) => {
-    res.do(async () => {
-        res.sendFile(`manual-${req.session.identity}.html`, { root: `${__dirname}/resources` });
-    });
-});
 
 module.exports = { getComponentName, app, route: '/bysj' };

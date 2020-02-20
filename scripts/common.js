@@ -1,44 +1,31 @@
 /* 用户账户相关 */
 const { mysql, email, util } = superApp.requireUserModules(['mysql', 'email', 'util']);
 
-//工具函数
-function pinValidate(code) {
-    if (!this) return false;
-    if (Date.now() - this.time > 5 * 60 * 1000) {
-        this.code = '';
-        this.time = 0;
-        return false;
-    } else if (code !== this.code) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 //账户操作
 const identityDes = { student: '学生', teacher: '老师', admin: '管理员' };
 function login(req, res) {
-    let { username, password, identity } = req.body,
+    let { identity, username, password } = req.body,
         sql_query = `SELECT id,name,gender FROM ?? user WHERE username = ? AND password=?`;
-    console.log(req.body);
-
     res.do(async () => {
-        if (!util.paramIfValid([username, password, identity])) {
-            throw 1000;
-        }
+        if (!util.paramValidate([username, password, identity])) throw 1000;
         let data = await mysql.find(sql_query, [identity, username, password]);
-
         if (!data.length) throw 1001;
         //设置session
         let [user] = data;
         req.session.userId = user.id;
         req.session.username = username;
         req.session.identity = identity;
+        let profile = `${user.gender == '男' ? 'man' : 'woman'}_${identity}.png`;
+        if (username == 'jason') {
+            profile = 'coder_chen.png';
+        } else if (username == 'du') {
+            profile = 'coder_du.png';
+        }
         res.json({
             status: true,
             msg: '登陆成功！',
             user: {
-                profile: `${user.gender == '男' ? 'man' : 'woman'}_${identity}.png`,
+                profile,
                 name: user.name,
                 identity: identityDes[identity]
             }
@@ -121,7 +108,7 @@ function register(req, res) {
         if (!data[0].length) throw 1003;
         if (data[0][0].username) throw 1004;
         if (data[1].length) throw 1005;
-        if (!pinValidate.call(req.session.pin, pinCode)) throw 1102;
+        if (!util.pinValidate(req.session.pin, pinCode)) throw 1102;
 
         let params = { username, password, email };
         if (wechat) params.wechat = wechat;
@@ -140,7 +127,7 @@ function retrieve(req, res) {
         sql_update = 'UPDATE ?? SET password=? WHERE username=?';
 
     res.do(async () => {
-        if (pinValidate.call(req.session.pin, pinCode)) {
+        if (util.pinValidate(req.session.pin, pinCode)) {
             await mysql.find(sql_update, [identity, newPW, username]);
             res.json({
                 status: true,
@@ -152,63 +139,4 @@ function retrieve(req, res) {
     });
 }
 
-
-
-
-function modify(req, res) {
-    let { identity, username } = req.session,
-        { oldPW, newPW } = req.body,
-        sql_query = 'SELECT password FROM ?? WHERE username=?',
-        sql_update = 'UPDATE ?? SET password=? WHERE username=?';
-    res.do(async () => {
-        let result = await mysql.find(sql_query, [identity, username]);
-        if (oldPW == result[0].password) {
-            await mysql.find(sql_update, [identity, newPW, username]);
-        } else {
-            throw 1002;
-        }
-        if (!res.headersSent) {
-            req.session.destroy();
-            res.send('修改密码成功！');
-        }
-    });
-}
-
-const fieldsMap = {
-    student: ['resume', 'tel'],
-    teacher: ['field', 'office', 'resume', 'tel']
-};
-function setGeneralInfo(req, res) {
-    let { identity, username } = req.session,
-        sql_update = 'UPDATE ?? SET ? WHERE username=?',
-        param = {};
-    for (let i = 0; i < fieldsMap[identity].length; i++) {
-        const element = fieldsMap[identity][i];
-        if (req.body[element]) {
-            param[element] = req.body[element].replace(/\r/g, '');
-        }
-    }
-    res.do(async () => {
-        await mysql.find(sql_update, [identity, param, username]);
-        res.send('已更新信息！');
-    });
-}
-
-function setEmailAddr(req, res) {
-    let { identity, pinCode, username } = req.session,
-        addr = req.body.email,
-        sql_update = 'UPDATE ?? SET email=? WHERE username=?';
-    res.do(async () => {
-        if (!pinCode || Date.now() - pinCode.time > 5 * 60 * 1000) {
-            req.session.pin = null;
-            throw 1102;
-        } else if (code != pinCode.code) {
-            throw 1103;
-        } else {
-            await mysql.find(sql_update, [identity, addr, username]);
-            res.send('已成功更新邮箱地址！');
-        }
-    });
-}
-
-module.exports = { login, getModules, logout, sendPinCode, register, retrieve, modify, setGeneralInfo, setEmailAddr };
+module.exports = { login, getModules, logout, sendPinCode, register, retrieve };

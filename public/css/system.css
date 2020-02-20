@@ -24,7 +24,7 @@ body {
 
 .start-page {
     height: 100%;
-    background: fixed url("/pictures/start-page.png") center/cover no-repeat;
+    background: fixed url("/img/start-page.png") center/cover no-repeat;
 }
 
 .main-sidebar {
@@ -131,6 +131,23 @@ a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:ho
     text-overflow: ellipsis;
 }
 
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* .table-input {
+    padding: 0!important;
+    background-color: #5197f1;
+}
+
+.table-input input {
+    text-align: center;
+    border: 0!important;
+    border-radius: 0!important;
+    background-color: #eff6ff;
+} */
+
 /* .rel-bottom {
     position: absolute;
     bottom: 0;
@@ -138,10 +155,7 @@ a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:ho
     transform: translateX(-50%);
 }
 
-pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
+
 
 .table-fixed {
     table-layout: fixed;
@@ -168,17 +182,6 @@ caption {
 
 .text-indent {
     text-indent: 2rem;
-}
-
-.table-input {
-    padding: 0!important;
-}
-
-.table-input input {
-    text-align: center;
-    border: 0!important;
-    border-radius: 0!important;
-    background-color: #eff6ff;
 }
 
 .w-e-text {

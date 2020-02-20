@@ -69,13 +69,17 @@ const app = new Vue({
             return this.$options.alertTitle[this.alert.type];
         },
         userProfileUrl() {
-            return `../pictures/${this.online ? this.user.profile : 'offline.png'}`;
+            return `../img/${this.online ? this.user.profile : 'offline.png'}`;
         },
         userMenu() {
             return this.online ? [{
                 to: '/system', des: '返回主页', divide: true
             }, {
-                event: this.logout.bind(this), des: '退出登陆'
+                listener: async () => {
+                    let result = await this.$axiosGet('/logout');
+                    if (result.status) this.$emit('logout', '/');
+                    this.$alertResult(result);
+                }, des: '退出登陆'
             }] : [{
                 to: '/login', des: '登陆', divide: true
             }, {
@@ -137,7 +141,7 @@ const app = new Vue({
                     this.serverTime.updater_ = setTimeout(this.timeUpdate.bind(this), 8 * 1000);
                 } else {
                     clearTimeout(this.serverTime.updater_);
-                    this.$alertWarn('与服务器失去连接！');
+                    this.$alertError('与服务器失去连接！');
                 }
             }
         },
@@ -168,7 +172,7 @@ const app = new Vue({
                         if (subModule.component) {
                             _route.children.push({
                                 path: subModule.path,
-                                component: () => import(`/components?module=${module.path}&component=${subModule.component}.js`)
+                                component: () => import(`/components?module=${module.path}&component=${subModule.component}`)
                             });
                         }
                     }
@@ -181,32 +185,6 @@ const app = new Vue({
                 this.$router.push({ path: `/?prevent=${this.$route.path}` });
                 return false;
             }
-        },
-        async login(result) {
-            console.log('login');
-            console.log(result);
-            if (result.status) {
-                this.loading = true;
-                if (await this.getModules()) {
-                    this.online = true;
-                    this.user = result.user;
-                    this.$router.push({ path: '/system' });
-                }
-                this.loading = false;
-            } else {
-                this.$alertError(result.msg);
-            }
-        },
-        async logout() {
-            console.log('logout');
-            let result = await this.$axiosGet('/logout');
-            if (result.status) {
-                this.online = false;
-                this.loading = false;
-                this.modules = [];
-                this.$router.push({ path: `/?prevent=${this.$route.path}` });
-            }
-            this.$alertResult(result);
         }
     },
     alertColor: {
@@ -234,10 +212,10 @@ window.addEventListener('unload', e => {
     }));
 });
 
-axios.defaults.timeout = 2000;
+// axios.defaults.timeout = 5000;
 axios.interceptors.response.use(response => {
     if (response.data.offline) {
-        app.$alertWarn('登陆信息失效，请重新登陆！');
+        app.$alertError('登陆信息失效，请重新登陆！');
         app.online = false;
         app.loading = false;
         app.modules.splice(2);
@@ -278,11 +256,25 @@ app.$router.beforeEach((to, from, next) => {
     if (to.path === from.query.prevent) {
         next(false);
     } else {
-        /* if (to.path == '/login') {
-            app.online = false;
-        } */
         next();
     }
+});
+
+//监听
+app.$on('login', async function (result) {
+    this.loading = true;
+    if (await this.getModules()) {
+        this.online = true;
+        this.user = result.user;
+        this.$router.push({ path: '/system' });
+    }
+    this.loading = false;
+});
+app.$on('logout', async function (path) {
+    this.online = false;
+    this.loading = false;
+    this.modules = [];
+    this.$router.push({ path, query: { prevent: this.$route.path } });
 });
 
 //挂载
