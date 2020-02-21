@@ -468,12 +468,14 @@ Vue.component('app-scroll', {
 });
 Vue.component('app-button', {
     template: `
-    <button @click.prevent.stop="onclick"></button>
+    <button @click="onclick">
+        <slot></slot>
+    </button>
     `,
     props: {
         interval: {
             type: Number,
-            default: 500
+            default: 3000
         }
     },
     data() {
@@ -484,8 +486,11 @@ Vue.component('app-button', {
     methods: {
         onclick(e) {
             let now = Date.now();
-            if (now - this.lastTime < this.interval) this.$alertWarn('点击过于频繁！');
-            else this.$emit('click', e);
+            if (now - this.lastTime < this.interval) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.$alertWarn('点击过于频繁,请3秒后再次尝试！');
+            }
             this.lastTime = now;
         }
     }
@@ -564,7 +569,7 @@ const appLogin = {
                 <input-checkbox v-model="fields.save" :checkboxs="[{ val: 'save', des: '记住密码' }]"
                     class="col-6 col-md-6 mb-3 mb-md-0">
                 </input-checkbox>
-                <button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit">登陆</button>
+                <app-button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit">登陆</app-button>
             </div>
         </form>
     </div>
@@ -640,8 +645,8 @@ const appRegister = {
                 <input-checkbox v-model="fields.license" :checkboxs="[{ val: 'license', des: '我已阅读并同意用户协议' }]"
                     class="col-12 col-md-7 mb-3 mb-md-0">
                 </input-checkbox>
-                <button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" :disabled="!fields.license"
-                    type="submit">注册</button>
+                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" :disabled="!fields.license"
+                    type="submit">注册</app-button>
             </div>
         </form>
     </div>
@@ -706,7 +711,7 @@ const appRetrieve = {
             <input-text v-model="fields.repeatPW" type="password" label="重复密码" placeholder="1~16位字母、数字或下划线"
                 pattern="\\w{1,16}" required></input-text>
             <div class="form-row justify-content-end align-items-center mb-3">
-                <button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">提交</button>
+                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">提交</app-button>
             </div>
         </form>
     </div>

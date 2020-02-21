@@ -6,7 +6,7 @@ export default {
             </input-text>
             <input-pincode v-model="fields.pinCode" :extra="{email:fields.email}" required></input-pincode>
             <div class="form-row justify-content-end align-items-center mb-3">
-                <button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">绑定</button>
+                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">绑定</app-button>
             </div>
         </form>
     </div>

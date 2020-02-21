@@ -10,7 +10,7 @@ export default {
             <input-textarea v-model="fields.resume" label="个人简介" rows="12" placeholder="不超过1023个字符（或汉字）"
                 maxlength="1023"></input-textarea>
             <div class="form-row justify-content-end align-items-center mb-3">
-                <button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">提交</button>
+                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">提交</app-button>
             </div>
         </form>
     </div>

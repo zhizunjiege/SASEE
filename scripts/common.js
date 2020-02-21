@@ -32,6 +32,20 @@ function login(req, res) {
         });
     });
 }
+
+//动态模块
+function routesFilter(routes, user) {
+    function _filter(element) {
+        if (element.subs) element.subs = element.subs.filter(_filter);
+        if (!element.requirement) return true;
+        for (const [key, value] of Object.entries(element.requirement)) {
+            if (user[key] != value) return false;
+        }
+        delete element.requirement;
+        return true;
+    }
+    return routes.filter(_filter);
+}
 function getModules(req, res) {
     let { identity, userId } = req.session,
         sql_query = 'SELECT * FROM ?? WHERE id=?';
@@ -39,16 +53,7 @@ function getModules(req, res) {
         let [user] = await mysql.find(sql_query, [identity, userId]),
             routes = JSON.parse(JSON.stringify(superApp.routes));
         user.identity = identity;
-        for (const iterator of routes) {
-            iterator.subs = iterator.subs.filter(element => {
-                if (!element.requirement) return true;
-                for (const [key, value] of Object.entries(element.requirement)) {
-                    if (user[key] != value) return false;
-                }
-                delete element.requirement;
-                return true;
-            });
-        }
+        routes = routesFilter(routes, user);
         res.json({
             status: true,
             routes
