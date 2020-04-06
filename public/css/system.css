@@ -125,6 +125,10 @@ a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:ho
     cursor: pointer;
 }
 
+.table-fixed {
+    table-layout: fixed;
+}
+
 .table-fixed th, .table-fixed td, .ellipsis {
     white-space: nowrap;
     overflow: hidden;
@@ -157,9 +161,6 @@ pre {
 
 
 
-.table-fixed {
-    table-layout: fixed;
-}
 
 
 

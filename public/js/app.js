@@ -52,8 +52,6 @@ const app = new Vue({
             refresh: 0
         },
         footLinks: [{
-            to: '/license', des: '用户协议'
-        }, {
             href: 'http://www.buaa.edu.cn/', des: '学校官网'
         }, {
             href: 'http://dept3.buaa.edu.cn/', des: '学院官网'
@@ -172,7 +170,7 @@ const app = new Vue({
                         if (subModule.component) {
                             _route.children.push({
                                 path: subModule.path,
-                                component: () => import(`/components?module=${module.path}&component=${subModule.component}`)
+                                component: () => this.$getComponent(module.path, subModule.component)
                             });
                         }
                     }
@@ -238,7 +236,9 @@ Vue.prototype.$axiosPost = function (url, data) {
         method: 'post'
     });
 };
-
+Vue.prototype.$getComponent = function (module, component) {
+    return import(`/components?module=${module}&component=${component}`);
+};
 Vue.prototype.$alertWarn = function (msg, ok, cancel) {
     app.alertShow({ type: 'warn', msg, ok, cancel });
 };
@@ -262,13 +262,13 @@ app.$router.beforeEach((to, from, next) => {
 
 //监听
 app.$on('login', async function (result) {
-    this.loading = true;
+    // this.loading = true;
     if (await this.getModules()) {
         this.online = true;
         this.user = result.user;
         this.$router.push({ path: '/system' });
     }
-    this.loading = false;
+    // this.loading = false;
 });
 app.$on('logout', async function (path) {
     this.online = false;

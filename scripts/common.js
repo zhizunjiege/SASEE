@@ -12,7 +12,7 @@ function login(req, res) {
         if (!data.length) throw 1001;
         //设置session
         let [user] = data;
-        req.session.userId = user.id;
+        req.session.uid = user.id;
         req.session.username = username;
         req.session.identity = identity;
         let profile = `${user.gender == '男' ? 'man' : 'woman'}_${identity}.png`;
@@ -32,8 +32,7 @@ function login(req, res) {
         });
     });
 }
-
-//动态模块
+const moduleCache = {};
 function routesFilter(routes, user) {
     function _filter(element) {
         if (element.subs) element.subs = element.subs.filter(_filter);
@@ -47,10 +46,10 @@ function routesFilter(routes, user) {
     return routes.filter(_filter);
 }
 function getModules(req, res) {
-    let { identity, userId } = req.session,
+    let { identity, uid } = req.session,
         sql_query = 'SELECT * FROM ?? WHERE id=?';
     res.do(async () => {
-        let [user] = await mysql.find(sql_query, [identity, userId]),
+        let [user] = await mysql.find(sql_query, [identity, uid]),
             routes = JSON.parse(JSON.stringify(superApp.routes));
         user.identity = identity;
         routes = routesFilter(routes, user);

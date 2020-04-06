@@ -51,7 +51,10 @@ export default {
                         <th>电话</th>
                         <td>{{user.tel}}</td>
                         <th>个人主页</th>
-                        <td>{{user.homepage}}</td>
+                        <td>
+                            <a v-if="user.homepage" :href="user.homepage">{{user.homepage}}</a>
+                            <span v-else>无</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -68,7 +71,6 @@ export default {
                 email: '无',
                 wechat: '无',
                 tel: '无',
-                homepage: '无',
                 resume: '无'
             }
         }

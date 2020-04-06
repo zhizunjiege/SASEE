@@ -155,6 +155,21 @@
                     }
                 },
                 {
+                    "path": "project-content",
+                    "component": "project-content",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
+                    "path": "yxkt",
+                    "des": "已选课题",
+                    "component": "project-chosen",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
                     "path": "wdkt",
                     "des": "我的课题",
                     "component": "project-mine",
@@ -178,8 +193,15 @@
                     }
                 },
                 {
+                    "path": "yykt",
+                    "des": "已有课题",
+                    "component": "project-submitted",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
                     "path": "wdkt",
-                    "des": "我的课题",
                     "component": "project-mine",
                     "requirement": {
                         "identity": "teacher"
@@ -189,6 +211,14 @@
                     "path": "ktsh",
                     "des": "课题审核",
                     "component": "project-list",
+                    "requirement": {
+                        "identity": "teacher",
+                        "ifDean": "是"
+                    }
+                },
+                {
+                    "path": "",
+                    "component": "project-content",
                     "requirement": {
                         "identity": "teacher",
                         "ifDean": "是"

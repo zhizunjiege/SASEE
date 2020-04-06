@@ -1,5 +1,4 @@
 /* 与网络请求无关的工具函数 */
-
 function paramValidate(param) {
     function _check(value) {
         if (!value) {
@@ -27,7 +26,6 @@ function paramValidate(param) {
     }
     return flag;
 }
-
 function pinValidate(pin, code) {
     if (!pin) return false;
     if (Date.now() - pin.time > 5 * 60 * 1000) {
@@ -40,9 +38,22 @@ function pinValidate(pin, code) {
         return true;
     }
 }
-
+function dataFilter(data, fields) {
+    for (const key of fields) {
+        if (!data[key]) delete data[key];
+    }
+    return data;
+}
+function dataExtracter(from, to, fields) {
+    for (const key of fields) {
+        if (from[key]) {
+            to[value] = from[key];
+        }
+    }
+    return to;
+}
 function isObject(obj) {
     return Object.prototype.toString.call(obj) == '[object Object]';
 }
 
-module.exports = { paramValidate, pinValidate, isObject };
+module.exports = { paramValidate, pinValidate, dataFilter, dataExtracter, isObject };

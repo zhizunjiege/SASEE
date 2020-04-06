@@ -4,11 +4,7 @@ const express = require('express'),
 const app = express();
 
 function getComponentName(identity, component) {
-    switch (component) {
-        case 'project-list':
-        case 'project-content': return `${component}-${identity}.js`;
-        default: return component + '.js';
-    }
+    return component + '.js';
 }
 
 app.get('/manual', (req, res) => {

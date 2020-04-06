@@ -1,4 +1,9 @@
 /* 增强原生内置对象 */
+Array.prototype.remove = function (val) {
+    let index = this.indexOf(val);
+    if (index >= 0) this.splice(index, 1);
+    return this;
+};
 Date.prototype.toLocaleISOString = function () {
     return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
 };
@@ -74,11 +79,10 @@ global.superApp = {
 /* fs模块使用cwd路径为根目录，随脚本启动位置不同而变化；而require函数使用__dirname，以文件间相对路径关系为准。
 故模块加载只要使用相对路径即可，而资源定位需要绝对路径。为确保准确，本程序均使用绝对路径。 */
 
-const { fs, express, 'express-session': session } = superApp.requireAll(['fs', 'express', 'express-session']);
+const { express, 'express-session': session } = superApp.requireAll(['express', 'express-session']),
+    file = require('./scripts/file');
 
-let config = JSON.parse(fs.readFileSync(__dirname + '/config.json', {
-    encoding: 'utf8'
-}));
+let config = file.json(__dirname + '/config.json');
 superApp.errors = config.errors;
 superApp.routes = config.routes;
 superApp.transObjToPath(superApp.PATH.root, __dirname, config.paths);
@@ -92,7 +96,7 @@ express.response.do = function (func) {
         if (err instanceof Error) {
             console.error(err);
         } else {
-            for (const [errCode, errMsg] of Object.entries(superApp.errors)) {
+            for (const [errCode, errMsg] of Object.entries(this.errors)) {
                 if (err == errCode) {
                     msg = errMsg;
                     break;
@@ -123,6 +127,10 @@ app.use(session({
     }
 }));
 
+app.use((req, res, next) => {
+    res.errors = superApp.errors;
+    next();
+});
 /* 路由 */
 app.get('/', (req, res) => {
     res.do(() => {
@@ -133,7 +141,7 @@ app.get('/', (req, res) => {
 });
 app.get('/query', (req, res) => {
     let flag = false;
-    if (req.session.userId) {
+    if (req.session.uid) {
         flag = true;
     }
     res.json({ online: flag });
@@ -154,7 +162,7 @@ app.get('/serverTime', (req, res) => {
 
 /* 验证、更新session */
 app.use((req, res, next) => {
-    if (req.session.userId) {
+    if (req.session.uid) {
         req.session._garbage = Date();
         req.session.touch();
         next();

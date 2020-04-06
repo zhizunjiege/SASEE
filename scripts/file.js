@@ -1,5 +1,11 @@
 const fs = require('fs');
 
+//读json文件
+function json(path) {
+    return JSON.parse(fs.readFileSync(path, {
+        encoding: 'utf8'
+    }));
+}
 //移动
 function move(from, to, callback) {
     _mkdir(to);
@@ -19,7 +25,7 @@ function _mkdir(filepath) {
     }
 }
 //删除全部
-function deleteAll(path, rmDir = true) {
+/* function deleteAll(path, rmDir = true) {
     let files = [];
     if (fs.existsSync(path)) {
         files = fs.readdirSync(path);
@@ -35,6 +41,6 @@ function deleteAll(path, rmDir = true) {
             fs.rmdirSync(path);
         }
     }
-};
+}; */
 
-module.exports = { move, deleteAll, fs };
+module.exports = { json, move };

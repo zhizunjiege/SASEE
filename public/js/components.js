@@ -201,13 +201,42 @@ function counter({ count, doing, done } = {}) {
 }
 
 //全局组件
+Vue.component('app-button', {
+    template: `
+    <button @click="onclick">
+        <slot></slot>
+    </button>
+    `,
+    props: {
+        interval: {
+            type: Number,
+            default: 3000
+        }
+    },
+    data() {
+        return {
+            lastTime: 0
+        }
+    },
+    methods: {
+        onclick(e) {
+            let now = Date.now();
+            if (now - this.lastTime < this.interval) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.$alertWarn('点击过于频繁，请3秒后再次尝试！');
+            }
+            this.lastTime = now;
+        }
+    }
+});
 Vue.component('input-text', {
     inheritAttrs: false,
     props: {
         value: String,
         label: {
             type: String,
-            required: true
+            default: ''
         },
         type: {
             type: String,
@@ -216,8 +245,8 @@ Vue.component('input-text', {
     },
     template: `
     <div class="form-group form-row">
-        <label class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
-        <input v-bind="$attrs" :value="value" :type="type" @input="$emit('input',$event.target.value)" class="form-control col-9">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
+        <input v-bind="$attrs" :value="value" :type="type" @input="$emit('input',$event.target.value)" class="form-control" :class="{'col-9':label}">
     </div>
     `
 });
@@ -245,7 +274,7 @@ Vue.component('input-radio', {
     <div>
         <div v-for="(radio,index) of radios" class="custom-control custom-radio custom-control-inline">
             <input v-bind="$attrs" v-model="in_checked" :value="radio.val" type="radio" name="radios" :id="'radio-'+index+'-'+radio.val" class="custom-control-input" required>
-            <label :for="'radio-'+index+'-'+radio.val" class="custom-control-label">{{radio.des}}</label>
+            <label :for="'radio-'+index+'-'+radio.val" class="custom-control-label" v-html="radio.des"></label>
         </div>
     </div>
     `
@@ -274,7 +303,7 @@ Vue.component('input-checkbox', {
     <div>
         <div v-for="(checkbox,index) of checkboxs" class="custom-control custom-checkbox custom-control-inline">
             <input v-bind="$attrs" v-model="in_checked" :value="checkbox.val" type="checkbox" :id="'checkbox-'+index+'-'+checkbox.val" class="custom-control-input">
-            <label :for="'checkbox-'+index+'-'+checkbox.val" class="custom-control-label">{{checkbox.des}}</label>
+            <label :for="'checkbox-'+index+'-'+checkbox.val" class="custom-control-label" v-html="checkbox.des"></label>
         </div>
     </div>
     `
@@ -289,7 +318,7 @@ Vue.component('input-textarea', {
         value: String,
         label: {
             type: String,
-            required: true
+            default: ''
         }
     },
     data() {
@@ -305,16 +334,55 @@ Vue.component('input-textarea', {
     },
     template: `
     <div class="form-group form-row">
-        <label class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
-        <textarea class="col-9 form-control" v-bind="$attrs" v-model="in_value"></textarea>
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
+        <textarea v-bind="$attrs" v-model="in_value" class="form-control" :class="{'col-9':label}"></textarea>
     </div>
     `
 });
-/* Vue.component('input-file', {}); */
+Vue.component('input-file', {
+    model: {
+        prop: 'value',
+        event: 'change'
+    },
+    props: {
+        value: Object,
+        label: {
+            type: String,
+            default: ''
+        },
+        placeholder: {
+            type: String,
+            default: '请上传文档、表格或压缩文件，不超过5M'
+        },
+        max: {
+            type: Number,
+            default: 5
+        },
+        accept: {
+            type: String,
+            default: '.doc,.docx,.xml,application/msword,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        }
+    },
+    template: `
+    <div class="form-group form-row">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
+        <div class="custom-file" :class="{'col-9':label}">
+            <input v-bind="$attrs" @change="$emit('change',$event.target.files)" type="file" class="custom-file-input">
+            <label class="custom-file-label text-left">
+                <small class="form-text text-muted">{{placeholder}}</small>
+            </label>
+        </div>
+    </div>
+    `
+});
 Vue.component('input-pincode', {
     inheritAttrs: false,
     props: {
         value: String,
+        label: {
+            type: String,
+            default: ''
+        },
         extra: {
             type: Object,
             default: {}
@@ -322,10 +390,10 @@ Vue.component('input-pincode', {
     },
     template: `
     <div class="form-group form-row">
-        <label class="col-3 col-form-label" :class="{'required':'required' in $attrs}">验证码：</label>
-        <div class="input-group col-9 px-0">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}:</label>
+        <div class="input-group px-0" :class="{'col-9':label}">
             <input v-bind="$attrs" :value="value" @input="$emit('input',$event.target.value)" class="form-control px-1" type="text" placeholder="6位验证码，5分钟内有效"
-            pattern="\\d{6}" required>
+            pattern="\\d{6}">
             <div class="input-group-append">
                 <button @click="send" type="button" class="btn btn-outline-primary" :disabled="sent">{{sent?''+count+'s':'发送验证码'}}</button>
             </div>
@@ -466,35 +534,6 @@ Vue.component('app-scroll', {
         }
     }
 });
-Vue.component('app-button', {
-    template: `
-    <button @click="onclick">
-        <slot></slot>
-    </button>
-    `,
-    props: {
-        interval: {
-            type: Number,
-            default: 3000
-        }
-    },
-    data() {
-        return {
-            lastTime: 0
-        }
-    },
-    methods: {
-        onclick(e) {
-            let now = Date.now();
-            if (now - this.lastTime < this.interval) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.$alertWarn('点击过于频繁,请3秒后再次尝试！');
-            }
-            this.lastTime = now;
-        }
-    }
-});
 /* Vue.component('app-table-input', {
     inheritAttrs: false,
     props: {
@@ -628,7 +667,7 @@ const appRegister = {
                 pattern="\\w{1,16}" required></input-text>
             <input-text v-model="fields.email" type="email" label="邮箱" placeholder="请输入正确的邮箱地址" required>
             </input-text>
-            <input-pincode v-model="fields.pinCode" :extra="{email:fields.email}" required></input-pincode>
+            <input-pincode v-model="fields.pinCode" label="验证码" :extra="{email:fields.email}" required></input-pincode>
             <input-text v-model="fields.wechat" label="微信" placeholder="1~255位字母或数字" pattern="[a-zA-Z0-9]{1,255}">
             </input-text>
             <input-text v-model="fields.tel" label="手机号" placeholder="11位数字" pattern="^[1]([3-9])[0-9]{9}$">
@@ -642,7 +681,7 @@ const appRegister = {
             </template>
             <input-textarea v-model="fields.resume" label="个人简介" rows="12" placeholder="不超过1023个字符（或汉字）" maxlength="1023"></input-textarea>
             <div class="form-row justify-content-between align-items-center mb-3">
-                <input-checkbox v-model="fields.license" :checkboxs="[{ val: 'license', des: '我已阅读并同意用户协议' }]"
+                <input-checkbox v-model="fields.license" :checkboxs="checkboxs"
                     class="col-12 col-md-7 mb-3 mb-md-0">
                 </input-checkbox>
                 <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" :disabled="!fields.license"
@@ -653,6 +692,7 @@ const appRegister = {
     `,
     data() {
         return {
+            checkboxs: [{ val: 'license', des: '我已阅读并同意<a href="#/license">用户协议</a>' }],
             fields: {
                 identity: 'student',
                 name: '',
@@ -704,7 +744,7 @@ const appRetrieve = {
             </input-radio>
             <input-text v-model="fields.username" label="用户名" placeholder="1~16位字母、数字或下划线" pattern="\\w{1,16}" required>
             </input-text>
-            <input-pincode v-model="fields.pinCode" :extra="{username:fields.username,identity:fields.identity}"
+            <input-pincode v-model="fields.pinCode" label="验证码" :extra="{username:fields.username,identity:fields.identity}"
                 required></input-pincode>
             <input-text v-model="fields.newPW" type="password" label="新密码" placeholder="1~16位字母、数字或下划线"
                 pattern="\\w{1,16}" required></input-text>
@@ -750,7 +790,9 @@ const appRetrieve = {
 const appLicense = {
     template: `
     <div class="app-container app-scroll row justify-content-center p-0 p-md-3">
-        <div class="col-12 col-md-10 col-lg-8" v-html="content"></div>
+        <div class="col-12 col-md-10 col-lg-9 mb-3" v-html="content"></div>
+        <button type="button" class="btn btn-primary col-8 col-md-6 col-lg-4 mb-3"
+            @click="$router.back()">返回前页</button>
     </div>
     `,
     data() {
