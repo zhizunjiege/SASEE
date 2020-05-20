@@ -74,9 +74,7 @@
                     style="border-radius:0 0 .5rem 0">确定</button>
             </div>
         </div>
-        <div v-show="loading" class="app-backdrop row justify-content-center align-items-center h-100 w-100">
-            <div class="spinner-border spinner-border-lg text-primary"></div>
-        </div>
+        <app-backdrop :loading="loading"></app-backdrop>
     </div>
 
     <!--     <nav>
@@ -156,6 +154,7 @@
             </div>
         </div>
     </div> -->
+
 
 
 

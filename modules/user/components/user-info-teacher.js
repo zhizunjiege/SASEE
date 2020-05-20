@@ -1,8 +1,8 @@
 export default {
     template: `
     <div class="p-3">
-        <div class="mb-3">
-            <table class="table table-bordered table-fixed text-center">
+        <div class="mb-3 text-center">
+            <table class="table table-bordered table-fixed">
                 <tbody>
                     <tr>
                         <th scope="col" colspan="4">身份信息</th>
@@ -79,7 +79,7 @@ export default {
                 email: '无',
                 wechat: '无',
                 tel: '无',
-                homepage: '无',
+                homepage: '',
                 resume: '无'
             }
         }

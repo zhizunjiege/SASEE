@@ -140,6 +140,11 @@ pre {
     word-wrap: break-word;
 }
 
+.rel-bottom {
+    position: absolute;
+    bottom: 0;
+}
+
 /* .table-input {
     padding: 0!important;
     background-color: #5197f1;

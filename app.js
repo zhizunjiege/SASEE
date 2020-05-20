@@ -140,11 +140,7 @@ app.get('/', (req, res) => {
     });
 });
 app.get('/query', (req, res) => {
-    let flag = false;
-    if (req.session.uid) {
-        flag = true;
-    }
-    res.json({ online: flag });
+    res.json({ online: req.session.uid?true:false });
 });
 
 const common = superApp.requireUserModule('common', 'root');
@@ -179,7 +175,7 @@ app.get('/logout', common.logout);
 
 const modules = superApp.requireUserModules(['system', 'user', 'bysj'], 'root');
 for (const iterator of Object.values(modules)) {
-    app.use(iterator.route, iterator.app); 6
+    app.use(iterator.route, iterator.app); 
 }
 app.get('/modules', common.getModules);
 app.get('/components', (req, res) => {

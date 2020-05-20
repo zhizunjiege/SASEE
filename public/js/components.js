@@ -534,6 +534,16 @@ Vue.component('app-scroll', {
         }
     }
 });
+Vue.component('app-backdrop', {
+    template: `
+    <div v-show="loading" class="app-backdrop row justify-content-center align-items-center h-100 w-100">
+        <div class="spinner-border spinner-border-lg text-primary"></div>
+    </div>
+    `,
+    props: {
+        loading: Boolean
+    }
+});
 /* Vue.component('app-table-input', {
     inheritAttrs: false,
     props: {

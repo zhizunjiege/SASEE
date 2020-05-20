@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 app.get('/project-list', (req, res) => {
     let { length: limit, start: offset } = req.query,
         { uid } = req.session,
-        sql_query = 'SELECT b.id,b.title,SUBSTR(t.`group`,3) `group`,t.`name`,(IFNULL(JSON_LENGTH(b.target1),0)+IFNULL(JSON_LENGTH(b.target2),0)+IFNULL(JSON_LENGTH(b.target3),0)) chosen FROM bysj b INNER JOIN teacher t ON b.teacher=t.id INNER JOIN student s ON t.`group`=s.`group`||s.`group`="7-高工" WHERE s.id=? AND b.state="0-通过" AND b.student IS NULL ORDER BY b.id LIMIT ? OFFSET ?';
+        sql_query = 'SELECT b.id,title,teacher,t.`name`,SUBSTR(t.`group`,3) `group`,(IFNULL(JSON_LENGTH(b.target1),0)+IFNULL(JSON_LENGTH(b.target2),0)+IFNULL(JSON_LENGTH(b.target3),0)) chosen FROM bysj b INNER JOIN teacher t ON b.teacher=t.id INNER JOIN student s ON t.`group`=s.`group`||s.`group`="7-高工" WHERE s.id=? AND b.state="0-通过" AND b.student IS NULL ORDER BY b.id LIMIT ? OFFSET ?';
     res.do(async () => {
         let projects = await mysql.find(sql_query, [uid, Number(limit), Number(offset)]);
         res.json({
@@ -22,22 +22,31 @@ app.get('/project-list', (req, res) => {
     });
 });
 
-app.get('/project-content', (req, res) => {
-    let { id } = req.query,
-        sql_query = 'SELECT b.id,title,type,source,difficulty,weight,ability,requirement,introduction,materials,submitTime,lastModifiedTime,t.`name`,gender,schoolNum,proTitle,SUBSTR(`group`,3) `group`,department,field,office,email,homepage,wechat,tel,resume FROM bysj b INNER JOIN teacher t ON b.teacher=t.id WHERE b.id=?';
+app.get('/info-project', (req, res) => {
+    let sql_query = 'SELECT id,title,type,source,difficulty,weight,ability,requirement,introduction,materials,submitTime,lastModifiedTime FROM bysj WHERE id=?';
     res.do(async () => {
-        let [project] = await mysql.find(sql_query, id);
-        project = util.dataFilter(project, ['wechat', 'tel', 'homepage', 'resume', 'office', 'field']);
+        let [project] = await mysql.find(sql_query, req.query.id);
         res.json({
             status: true,
             project
         });
     });
 });
+app.get('/info-teacher', (req, res) => {
+    let sql_query = 'SELECT `name`,gender,schoolNum,proTitle,SUBSTR(`group`,3) `group`,department,field,office,email,homepage,wechat,tel,resume FROM teacher WHERE id=?';
+    res.do(async () => {
+        let [teacher] = await mysql.find(sql_query, req.query.id);
+        teacher = util.dataFilter(teacher, ['wechat', 'tel', 'homepage', 'resume', 'office', 'field']);
+        res.json({
+            status: true,
+            teacher
+        });
+    });
+});
 
 app.get('/project-chosen', (req, res) => {
     let { uid } = req.session,
-        start = 'SELECT b.id,title,t.`name`,SUBSTR(`group`,3) `group`,(IFNULL(JSON_LENGTH(b.target1),0)+IFNULL(JSON_LENGTH(b.target2),0)+IFNULL(JSON_LENGTH(b.target3),0)) chosen FROM bysj b INNER JOIN teacher t ON b.teacher=t.id WHERE JSON_CONTAINS(b.target',
+        start = 'SELECT b.id,title,teacher,t.`name`,SUBSTR(`group`,3) `group`,(IFNULL(JSON_LENGTH(b.target1),0)+IFNULL(JSON_LENGTH(b.target2),0)+IFNULL(JSON_LENGTH(b.target3),0)) chosen FROM bysj b INNER JOIN teacher t ON b.teacher=t.id WHERE JSON_CONTAINS(b.target',
         end = ',CONCAT("",?))',
         sql_query = '';
     res.do(async () => {
@@ -51,6 +60,45 @@ app.get('/project-chosen', (req, res) => {
         res.json({
             status: true,
             projects
+        });
+    });
+});
+
+app.get('/project-mine', (req, res) => {
+    let { uid } = req.session,
+        sql_query = 'SELECT id,teacher FROM bysj WHERE student=?';
+    res.do(async () => {
+        let [result] = await mysql.find(sql_query, uid);
+        if (!result) throw 21;
+        let { id: pid, teacher: tid } = result;
+        res.json({
+            status: true,
+            pid, tid
+        });
+    });
+});
+
+app.get('/project-notice', (req, res) => {
+    let { pid } = req.query,
+        sql_query = 'SELECT notice FROM bysj WHERE id=?';
+    res.do(async () => {
+        let [{notice:notices}] = await mysql.find(sql_query, pid);
+        res.json({
+            status: true,
+            notices
+        });
+    });
+});
+
+app.get('/project-file', (req, res) => {
+    let { pid } = req.query,
+        sql_query = 'SELECT studentFiles,teacherFiles FROM bysj WHERE id=?';
+    res.do(async () => {
+        let [files] = await mysql.find(sql_query, pid);
+        res.json({
+            status: true,
+            studentFiles: files.studentFiles,
+            teacherFiles: files.teacherFiles
         });
     });
 });
@@ -103,9 +151,12 @@ function getComponentName(identity, component) {
     switch (component) {
         case 'project-list':
         case 'project-content':
-        case 'project-mine': return `${component}-${identity}.js`;
-        default: return component + '.js';
+        case 'project-mine':
+            component += `-${identity}`;
+            break;
+        default: ;
     }
+    return component + '.js';
 }
 
 module.exports = { getComponentName, app, route: '/bysj' };

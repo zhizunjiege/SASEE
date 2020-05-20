@@ -170,7 +170,7 @@ const app = new Vue({
                         if (subModule.component) {
                             _route.children.push({
                                 path: subModule.path,
-                                component: () => this.$getComponent(module.path, subModule.component)
+                                component: () => import(`/components?module=${module.path}&component=${subModule.component}`)
                             });
                         }
                     }
@@ -236,9 +236,9 @@ Vue.prototype.$axiosPost = function (url, data) {
         method: 'post'
     });
 };
-Vue.prototype.$getComponent = function (module, component) {
+/* Vue.prototype.$getComponent = function (module, component) {
     return import(`/components?module=${module}&component=${component}`);
-};
+}; */
 Vue.prototype.$alertWarn = function (msg, ok, cancel) {
     app.alertShow({ type: 'warn', msg, ok, cancel });
 };

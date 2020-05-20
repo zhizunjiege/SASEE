@@ -14,7 +14,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in projects" class="point" :data-id="item.id" @click.stop="loadContent">
+                <tr v-for="item in projects" class="point" :data-id="item.id" :data-teacher="item.teacher" @click.stop="loadContent">
                     <td class="text-primary text-left ellipsis">{{item.title}}</td>
                     <td>{{item.group}}</td>
                     <td>{{item.name}}</td>
@@ -53,7 +53,11 @@ export default {
         loadContent(e) {
             this.$router.push({
                 path: '/bysj/project-content',
-                query: { id: e.currentTarget.dataset.id }
+                query: {
+                    id: e.currentTarget.dataset.id,
+                    teacher: e.currentTarget.dataset.teacher,
+                    choseUsable: true
+                }
             });
         }
     },

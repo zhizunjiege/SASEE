@@ -24,9 +24,9 @@ export default {
                 </table>
             </div>
             <div class="row align-items-center justify-content-around">
-                <app-button :disabled="project.id<0" @click.native="revoke(project.id,index)" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0"
+                <app-button :disabled="project.id<=0" @click.native="revoke(project.id,index)" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0"
                     type="button">退选</app-button>
-                <app-button :disabled="project.id<0" @click.native="detail(project.id,index)" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0"
+                <app-button :disabled="project.id<=0" @click.native="detail(project.id,project.teacher)" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0"
                     type="button">详细信息</app-button>
             </div>
         </div>
@@ -41,7 +41,7 @@ export default {
     },
     data() {
         return {
-            projects: [this.$options.project, this.$options.project, this.$options.project]
+            projects: Array(3).fill(this.$options.project)
         };
     },
     methods: {
@@ -52,8 +52,8 @@ export default {
             }
             this.$alertResult(result);
         },
-        detail(id, index) {
-            this.$router.push({ path: `/bysj/project-content?id=${id}` });
+        detail(id, teacher) {
+            this.$router.push({ path: `/bysj/project-content?id=${id}&teacher=${teacher}&choseUsable=false` });
         }
     },
     async mounted() {
