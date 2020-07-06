@@ -1,33 +1,27 @@
 export default {
     template: `
-    <div v-if="notices.length" class="container-fluid">
+    <div v-if="identity=='teacher'||notices.length" class="container-fluid">
         <div class="row p-3">
-            <nav class="col-12 col-md-4 list-group nav nav-pills flex-column">
+            <nav class="col-12 col-md-3 list-group nav nav-pills flex-column">
+                <a v-if="identity=='teacher'" class="list-group-item list-group-item-action nav-link"
+                    :class="{'active':!notices.length}" data-toggle="pill" href="#submit_notice">发布新通知</a>
                 <a v-for="(notice,index) in notices" :href="'#notice-'+index" :class="{'active':!index}"
                     class="list-group-item list-group-item-action nav-link" data-toggle="pill">
                     <span class="d-inline-block w-50 ellipsis">{{notice.title}}</span>
                     <span class="float-right">{{notice.date}}</span>
                 </a>
-                <a v-if="identity=='teacher'" class="list-group-item list-group-item-action nav-link rel-bottom"
-                    data-toggle="pill" href="#submit_notice">发布新通知</a>
             </nav>
-            <div class="col-12 col-md-8 tab-content border rounded p-3">
-                <div v-html="notice.content" v-for="(notice,index) in notices" :id="'notice-'+index" :class="{'show active':!index}"
-                    class="tab-pane fade"></div>
-                <div id="submit_notice" class="tab-pane fade">
-                    <div class="mb-3 editor">
-                        <p>请在此处输入内容···</p>
-                    </div>
-                    <form action="" method="POST">
-                        <div class="form-group form-row text-center">
-                            <label for="notice_title" class="col-3 col-lg-2 col-form-label required">标题：</label>
-                            <input type="text" name="title" id="notice_title" class="col-9 col-lg-10 form-control"
-                                placeholder="请输入标题" maxlength="255" required>
-                        </div>
-                        <div class="form-group form-row justify-content-around">
-                            <button class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0 editor-clear"
-                                type="reset">清空</button>
-                            <button class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0" type="submit">发布</button>
+            <div class="col-12 col-md-9 tab-content border rounded p-3">
+                <div v-for="(notice,index) in notices" v-html="notice.content" :id="'notice-'+index"
+                    :class="{'show active':!index}" class="tab-pane fade"></div>
+                <div id="submit_notice" class="tab-pane fade" :class="{'show active':!notices.length}">
+                    <wang-editor v-model="content" eid="teacher_notice_editor"></wang-editor>
+                    <form @submit.prevent="submit" class="text-center">
+                        <input-text v-model="title" label="标题" placeholder="不超过255个字符（或汉字）" maxlength="255" required>
+                        </input-text>
+                        <div class="form-group form-row justify-content-end">
+                            <app-button class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="submit" warn="您确定发布该通知吗？">发布
+                            </app-button>
                         </div>
                     </form>
                 </div>
@@ -39,17 +33,27 @@ export default {
     </div>
     `,
     props: {
-        pid: String,
+        pid: [Number, String],
         identity: String
     },
     data() {
         return {
-            notices: []
+            notices: [],
+            title: '',
+            content: ''
         };
     },
     methods: {
         async submit() {
-            this.$alertResult(await this.$axiosPost('/bysj/submit-notice'));
+            if (this.content.length > 20) {
+                this.$alertResult(await this.$axiosPost('/bysj/notice', {
+                    content: this.content,
+                    title: this.title,
+                    pid: this.pid
+                }));
+            } else {
+                this.$alertWarn('请输入通知内容！');
+            }
         }
     },
     async created() {

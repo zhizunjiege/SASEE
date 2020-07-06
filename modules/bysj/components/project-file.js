@@ -2,16 +2,16 @@ export default {
     template: `
     <div class="row p-3">
         <div class="col-12 col-lg-6 mb-3 mb-lg-0">
-            <div class="card">
+            <div class="card bg-main">
                 <header class="card-header">
                     <h5 class="mb-0 text-left">下载文件</h5>
                 </header>
                 <div class="card-body">
                     <ul v-if="files.down.length" class="list-group list-group-flush">
                         <a v-for="file in files.down" class="list-group-item"
-                            :href="'/bysj/download?id='+file.id+'&filename='+file.name" download>
+                            :href="href(file)" download>
                             <div class="row justify-content-between align-items-center">
-                                <small class="d-inline-block w-50 ellipsis">{{file.name}}</small>
+                                <small class="d-inline-block w-50 ellipsis">{{file.filename}}</small>
                                 <small class="float-right">{{file.date}}</small>
                             </div>
                         </a>
@@ -23,12 +23,12 @@ export default {
             </div>
         </div>
         <div class="col-12 col-lg-6 mb-3 mb-lg-0">
-            <div class="card">
+            <div class="card bg-main">
                 <div class="card-body">
                     <ul v-if="files.up.length" class="list-group list-group-flush">
                         <a v-for="file in files.up" @click.prevent.stop href="#" class="list-group-item">
                             <div class="row justify-content-between align-items-center">
-                                <small class="d-inline-block w-50 ellipsis">{{file.name}}</small>
+                                <small class="d-inline-block w-50 ellipsis">{{file.filename}}</small>
                                 <small class="float-right">{{file.date}}</small>
                             </div>
                         </a>
@@ -38,29 +38,57 @@ export default {
                     </div>
                 </div>
                 <footer class="card-footer d-flex align-items-center justify-content-end">
-                    <a href="#" @click.prevent.stop="upload">
+                    <a href="#" @click.prevent.stop="uploading=true">
                         <h5 class="mb-0 mr-3 d-inline-block">上传文件</h5>
                     </a>
                 </footer>
             </div>
         </div>
+        <div v-show="uploading" class="row justify-content-center mt-5 w-100">
+            <form class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center mt-3">
+                <input-file v-model="files.uploading"></input-file>
+                <div class="form-row justify-content-between align-items-center mb-3">
+                    <app-button @click.native.stop="uploading=false" class="btn btn-secondary col-12 col-md-5 mb-3 mb-md-0" type="button">取消
+                    </app-button>
+                    <app-button @click.native.stop="submit" class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">上传
+                    </app-button>
+                </div>
+            </form>
+        </div>
     </div>
     `,
     props: {
-        pid: String,
+        pid: [Number, String],
         identity: String
     },
     data() {
         return {
             files: {
                 down: [],
-                up: []
-            }
+                up: [],
+                uploading: []
+            },
+            uploading: false
         };
     },
+    computed: {
+        href(file) {
+            return this.identity == 'student' ?
+                `/bysj/download?pid=${this.pid}&filename=${file.filename}`
+                : `/bysj/download?pid=${this.pid}&uploader=${file.uploader}&filename=${file.filename}`;
+        }
+    },
     methods: {
-        async upload() {
-            this.$alertResult(await this.$axiosPost('/bysj/upload'));
+        async submit() {
+            if (this.files.uploading.length > 0) {
+                let formdata = new FormData();
+                formdata.append('file', this.files.uploading[0]);
+                formdata.append('pid', this.pid);
+                this.$alertResult(await this.$axiosFile('/bysj/upload', formdata));
+            }
+            else {
+                this.$alertWarn('请选择文件！');
+            }
         }
     },
     async created() {

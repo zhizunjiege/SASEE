@@ -1,9 +1,6 @@
 export default {
     template: `
-    <div v-if="!projects.length" class="d-flex justify-content-center" style="height: 250px">
-        <h1 class="text-muted align-self-center">暂无课题</h1>
-    </div>
-    <app-scroll v-else class="app-container px-3" mode="continue" :status="status" :bottom="60" @scroll::up="scrollUp">
+    <app-scroll v-if="projects.length" class="app-container px-3" mode="continue" :status="status" :bottom="60" @scroll::up="scrollUp">
         <table class="table table-hover table-fixed text-center">
             <thead class="thead-light">
                 <tr>
@@ -23,6 +20,9 @@ export default {
             </tbody>
         </table>
     </app-scroll>
+    <div v-else class="d-flex justify-content-center" style="height: 250px">
+        <h1 class="text-muted align-self-center">暂无课题</h1>
+    </div>
     `,
     data() {
         return {

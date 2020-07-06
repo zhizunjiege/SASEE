@@ -13,6 +13,7 @@ function login(req, res) {
         //设置session
         let [user] = data;
         req.session.uid = user.id;
+        req.session.name = user.name;
         req.session.username = username;
         req.session.identity = identity;
         let profile = `${user.gender == '男' ? 'man' : 'woman'}_${identity}.png`;
@@ -102,7 +103,7 @@ function sendPinCode(req, res) {
         });
     });
 }
-function register(req, res) {
+function signup(req, res) {
     console.log(req.body);
     let { identity, name, schoolNum, username, pinCode, password, email, wechat, tel, homepage, resume } = req.body,
         sql_query = 'SELECT id,username FROM ?? WHERE name = ? AND schoolNum=?;SELECT 1 FROM ?? WHERE username=?',
@@ -143,4 +144,4 @@ function retrieve(req, res) {
     });
 }
 
-module.exports = { login, getModules, logout, sendPinCode, register, retrieve };
+module.exports = { login, getModules, logout, sendPinCode, signup, retrieve };

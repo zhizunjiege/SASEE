@@ -82,12 +82,12 @@ global.superApp = {
 const { express, 'express-session': session } = superApp.requireAll(['express', 'express-session']),
     file = require('./scripts/file');
 
-let config = file.json(__dirname + '/config.json');
+let config = file.readJson(__dirname + '/config.json');
 superApp.errors = config.errors;
 superApp.routes = config.routes;
 superApp.transObjToPath(superApp.PATH.root, __dirname, config.paths);
 
-const { PUBLIC, TMP } = superApp.PATH.root;
+const { PUBLIC } = superApp.PATH.root;
 
 /* 增强express的response对象 */
 express.response.do = function (func) {
@@ -140,12 +140,12 @@ app.get('/', (req, res) => {
     });
 });
 app.get('/query', (req, res) => {
-    res.json({ online: req.session.uid?true:false });
+    res.json({ online: req.session.uid ? true : false });
 });
 
 const common = superApp.requireUserModule('common', 'root');
 app.post('/login', common.login);
-app.post('/register', common.register);
+app.post('/signup', common.signup);
 app.get('/sendPinCode', common.sendPinCode);
 app.post('/retrieve', common.retrieve);
 
@@ -175,7 +175,7 @@ app.get('/logout', common.logout);
 
 const modules = superApp.requireUserModules(['system', 'user', 'bysj'], 'root');
 for (const iterator of Object.values(modules)) {
-    app.use(iterator.route, iterator.app); 
+    app.use(iterator.route, iterator.app);
 }
 app.get('/modules', common.getModules);
 app.get('/components', (req, res) => {

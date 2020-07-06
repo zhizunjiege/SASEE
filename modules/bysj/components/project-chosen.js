@@ -25,7 +25,7 @@ export default {
             </div>
             <div class="row align-items-center justify-content-around">
                 <app-button :disabled="project.id<=0" @click.native="revoke(project.id,index)" class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0"
-                    type="button">退选</app-button>
+                    type="button" warn="您确定退选吗？">退选</app-button>
                 <app-button :disabled="project.id<=0" @click.native="detail(project.id,project.teacher)" class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0"
                     type="button">详细信息</app-button>
             </div>

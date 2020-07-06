@@ -4,7 +4,7 @@ export default {
         <h1 class="text-muted align-self-center">暂无通知</h1>
     </div>
     <app-scroll v-else class="app-container" :status="status" mode="continue" :bottom="60" @scroll::up="scrollUp">
-        <div class="list-group mx-auto col-12 col-md-11">
+        <div class="list-group list-group-flush mx-auto col-12 col-md-11">
             <li v-for="item in news" :data-id="item.id" @click.stop="loadContent"
                 class="list-group-item list-group-item-action">
                 <a @click.prevent href="#" class="float-left w-50 ellipsis">

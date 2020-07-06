@@ -1,187 +1,3 @@
-/* function timeDifference(date1, date2) {
-    let time1 = new Date(date1).valueOf(),
-        time2 = new Date(date2).valueOf(),
-        time = time2 - time1,
-        _time = time;
-
-    let divMap = [1000, 60, 60, 24, 365, 100], nameMap = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'years'], returnObj = {};
-    for (const [index, value] of divMap.entries()) {
-        returnObj[nameMap[index]] = _time % value;
-        _time = Math.floor(_time / value);
-    }
-    returnObj.time = time;
-    return returnObj;
-} 
-Vue.component('input-password', {
-    inheritAttrs: false,
-    props: {
-        value: String,
-        label: {
-            type: String,
-            default: '密码'
-        }
-    },
-    template: `
-    <div class="form-group form-row">
-        <label class="col-3 col-form-label">{{label}}：</label>
-        <input v-bind="$attrs" :value="value" @input="$emit('input',$event.target.value)" type="password" class="form-control col-9" placeholder="1~16位字母、数字或下划线" pattern="\\w{1,16}" required>
-    </div>
-    `
-});
-Vue.component('app-modal', {
-    template: `
-    <div class="app-modal">
-        <button type="button" @click="$router.back()" class="app-close h1"><span>&times;</span></button>
-        <slot></slot>
-    </div>
-    `
-}); 
-Vue.component('form-button-group', {
-    template: `
-    <div class="form-row justify-content-between align-items-center mb-3">
-        <button class="btn btn-secondary col-12 col-md-4 mb-3 mb-md-0" type="reset">重置</button>
-        <button class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="submit">提交</button>
-    </div>
-    `
-});
-*/
-/* const appHelp = {
-    template: ``,
-    data() {
-        return {};
-    },
-    methods: {
-        submit() { }
-    }
-};
-const appFeedback = {
-    template: ``,
-    data() {
-        return {};
-    },
-    methods: {
-        submit() { }
-    }
-};
-const appNews = {
-    template: ``,
-    data() {
-        return {};
-    },
-    methods: {
-        submit() { }
-    }
-}; 
- Vue.component('bs4-pagination', {
-    inheritAttrs: false,
-    model: {
-        prop: 'now',
-        event: 'change'
-    },
-    props: {
-        flush: {
-            type: Boolean,
-            default: true
-        },
-        action: {
-            type: Boolean,
-            default: false
-        },
-        total: Number,
-        now: Number,
-        items: Array
-    },
-    data() {
-        return {
-            start_: 1,
-            now_: 1,
-            end_: 2
-        }
-    },
-    watch: {
-        now() {
-            this.now_ = this.now;
-        },
-        now_() {
-            this.$emit('change', this.now_);
-        }
-    },
-    template: `
-    <dl class="list-group" :class="{'list-group-flush':flush}">
-        <dd class="list-group-item" :class="{'list-group-item-action':action}" v-for="item in items">
-            <slot :item="item"></slot>
-        </dd>
-    </dl> 
-    `
-});
-
-Vue.component('bs4-table', {
-    template: `
-    <table class="table" :class="classObj">
-        <thead v-if="head" class="thead-light">
-            <tr v-for="row in head">
-                <template v-for="item in row">
-                    <th v-if="item.scope" :[item.scope+'span']="item.span||1">{{item.content}}</th>
-                    <td v-else>{{item.content}}</td>
-                </template>
-            </tr>
-        </thead>
-        <tbody v-if="body">
-            <tr v-for="row in body">
-                <template v-for="item in row">
-                    <th v-if="item.scope" :[item.scope+'span']="item.span||1">{{item.content}}</th>
-                    <td v-else>{{item.content}}</td>
-                </template>
-            </tr>
-        </tbody>
-        <tfoot v-if="foot">
-
-        </tfoot>
-    </table>
-    `,
-    props: {
-        border: {
-            type: String,
-            default: ''
-        },
-        stripe: {
-            type: Boolean,
-            default: false
-        },
-        hover: {
-            type: Boolean,
-            default: false
-        },
-        fixed: {
-            type: Boolean,
-            default: false
-        },
-        responsive: {
-            type: Boolean,
-            default: false
-        },
-        head: Array,
-        default:[[{
-            
-        }]],
-        body: Array,
-        foot: Array
-    },
-    data() {
-        return {
-            classObj: {
-                'table-bordered': this.border == 'border',
-                'table-borderless': this.border == 'none',
-                'table-striped': this.stripe,
-                'table-hover': this.hover,
-                'table-fixed': this.fixed,
-                'table-responsive': this.responsive
-            }
-        }
-    }
-}); 
-*/
-
 //工具函数
 function counter({ count, doing, done } = {}) {
     let _ = { id: null };
@@ -210,7 +26,11 @@ Vue.component('app-button', {
     props: {
         interval: {
             type: Number,
-            default: 3000
+            default: 1000
+        },
+        warn: {
+            type: String,
+            default: ''
         }
     },
     data() {
@@ -221,263 +41,22 @@ Vue.component('app-button', {
     methods: {
         onclick(e) {
             let now = Date.now();
-            if (now - this.lastTime < this.interval) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.$alertWarn('点击过于频繁，请3秒后再次尝试！');
+            if (e.isTrusted) {
+                if (now - this.lastTime < this.interval) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    // this.$alertWarn('点击过于频繁，请1秒后再次尝试！');
+                } else if (this.warn) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    this.$alertWarn(this.warn, () => {
+                        let $event = new MouseEvent('click');
+                        this.$el.dispatchEvent($event);
+                    });
+                }
             }
             this.lastTime = now;
         }
-    }
-});
-Vue.component('input-text', {
-    inheritAttrs: false,
-    props: {
-        value: String,
-        label: {
-            type: String,
-            default: ''
-        },
-        type: {
-            type: String,
-            default: 'text'
-        }
-    },
-    template: `
-    <div class="form-group form-row">
-        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
-        <input v-bind="$attrs" :value="value" :type="type" @input="$emit('input',$event.target.value)" class="form-control" :class="{'col-9':label}">
-    </div>
-    `
-});
-Vue.component('input-radio', {
-    inheritAttrs: false,
-    model: {
-        prop: 'checked',
-        event: 'change'
-    },
-    props: {
-        radios: Array, checked: String
-    },
-    data() {
-        return { in_checked: this.checked }
-    },
-    watch: {
-        checked() {
-            this.in_checked = this.checked;
-        },
-        in_checked() {
-            this.$emit('change', this.in_checked);
-        }
-    },
-    template: `
-    <div>
-        <div v-for="(radio,index) of radios" class="custom-control custom-radio custom-control-inline">
-            <input v-bind="$attrs" v-model="in_checked" :value="radio.val" type="radio" name="radios" :id="'radio-'+index+'-'+radio.val" class="custom-control-input" required>
-            <label :for="'radio-'+index+'-'+radio.val" class="custom-control-label" v-html="radio.des"></label>
-        </div>
-    </div>
-    `
-});
-Vue.component('input-checkbox', {
-    inheritAttrs: false,
-    model: {
-        prop: 'checked',
-        event: 'change'
-    },
-    props: {
-        checkboxs: Array, checked: [Array, Boolean]
-    },
-    data() {
-        return { in_checked: this.checkboxs.length > 1 ? this.checked.slice() : this.checked }
-    },
-    watch: {
-        checked() {
-            this.in_checked = this.checkboxs.length > 1 ? this.checked.slice() : this.checked;
-        },
-        in_checked() {
-            this.$emit('change', this.in_checked);
-        }
-    },
-    template: `
-    <div>
-        <div v-for="(checkbox,index) of checkboxs" class="custom-control custom-checkbox custom-control-inline">
-            <input v-bind="$attrs" v-model="in_checked" :value="checkbox.val" type="checkbox" :id="'checkbox-'+index+'-'+checkbox.val" class="custom-control-input">
-            <label :for="'checkbox-'+index+'-'+checkbox.val" class="custom-control-label" v-html="checkbox.des"></label>
-        </div>
-    </div>
-    `
-});
-Vue.component('input-textarea', {
-    inheritAttrs: false,
-    model: {
-        prop: 'value',
-        event: 'change'
-    },
-    props: {
-        value: String,
-        label: {
-            type: String,
-            default: ''
-        }
-    },
-    data() {
-        return { in_value: this.value };
-    },
-    watch: {
-        value() {
-            this.in_value = this.value;
-        },
-        in_value() {
-            this.$emit('change', this.in_value.replace(/\r/g, ''));
-        }
-    },
-    template: `
-    <div class="form-group form-row">
-        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
-        <textarea v-bind="$attrs" v-model="in_value" class="form-control" :class="{'col-9':label}"></textarea>
-    </div>
-    `
-});
-Vue.component('input-file', {
-    model: {
-        prop: 'value',
-        event: 'change'
-    },
-    props: {
-        value: Object,
-        label: {
-            type: String,
-            default: ''
-        },
-        placeholder: {
-            type: String,
-            default: '请上传文档、表格或压缩文件，不超过5M'
-        },
-        max: {
-            type: Number,
-            default: 5
-        },
-        accept: {
-            type: String,
-            default: '.doc,.docx,.xml,application/msword,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        }
-    },
-    template: `
-    <div class="form-group form-row">
-        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}：</label>
-        <div class="custom-file" :class="{'col-9':label}">
-            <input v-bind="$attrs" @change="$emit('change',$event.target.files)" type="file" class="custom-file-input">
-            <label class="custom-file-label text-left">
-                <small class="form-text text-muted">{{placeholder}}</small>
-            </label>
-        </div>
-    </div>
-    `
-});
-Vue.component('input-pincode', {
-    inheritAttrs: false,
-    props: {
-        value: String,
-        label: {
-            type: String,
-            default: ''
-        },
-        extra: {
-            type: Object,
-            default: {}
-        }
-    },
-    template: `
-    <div class="form-group form-row">
-        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}:</label>
-        <div class="input-group px-0" :class="{'col-9':label}">
-            <input v-bind="$attrs" :value="value" @input="$emit('input',$event.target.value)" class="form-control px-1" type="text" placeholder="6位验证码，5分钟内有效"
-            pattern="\\d{6}">
-            <div class="input-group-append">
-                <button @click="send" type="button" class="btn btn-outline-primary" :disabled="sent">{{sent?''+count+'s':'发送验证码'}}</button>
-            </div>
-        </div>
-    </div>
-    `,
-    data() {
-        return {
-            sent: false,
-            count: 60
-        }
-    },
-    methods: {
-        async send() {
-            let msg = '';
-            this.count = 60;
-            if ('username' in this.extra && !this.extra.username) {
-                msg = '请输入用户名！';
-            } else if ('identity' in this.extra && !this.extra.identity) {
-                msg = '请选择身份！';
-            } else if ('email' in this.extra && !this.extra.email) {
-                msg = '请输入邮箱地址！';
-            }
-            if (msg) this.$alertWarn(msg);
-            this.sent = true;
-            let result = await this.$axiosGet('/sendPinCode', this.extra);
-            if (result.status) {
-                counter({
-                    count: 60,
-                    doing: c => {
-                        this.count = c;
-                    },
-                    done: () => { this.sent = false }
-                });
-            } else {
-                this.sent = false;
-            }
-            this.$alertResult(result);
-        }
-    },
-});
-Vue.component('bs4-dropdown', {
-    template: `
-    <div class="dropdown">
-        <div class="dropdown-toggle h-100" data-toggle="dropdown" :data-display="display">
-            <slot name="toggle"></slot>
-        </div>
-        <ul class="dropdown-menu">
-            <template v-for="item in menu">
-                <div class="dropdown-item h-100">
-                    <slot name="item" :item="item"></slot>
-                </div>
-                <div v-if="item.divide||false" class="dropdown-divider"></div>
-            </template>
-        </ul>
-    </div>
-    `,
-    props: {
-        display: {
-            type: String,
-            default: 'static'
-        },
-        menu: Array,
-        subclass: [Object, Array]
-    }
-});
-Vue.component('bs4-listgroup', {
-    template: `
-    <dl class="list-group" :class="{'list-group-flush':flush}">
-        <dd class="list-group-item" :class="{'list-group-item-action':action}" v-for="item in items">
-            <slot :item="item"></slot>
-        </dd>
-    </dl> 
-    `,
-    props: {
-        flush: {
-            type: Boolean,
-            default: true
-        },
-        action: {
-            type: Boolean,
-            default: false
-        },
-        items: Array
     }
 });
 Vue.component('app-scroll', {
@@ -534,45 +113,399 @@ Vue.component('app-scroll', {
         }
     }
 });
-Vue.component('app-backdrop', {
-    template: `
-    <div v-show="loading" class="app-backdrop row justify-content-center align-items-center h-100 w-100">
-        <div class="spinner-border spinner-border-lg text-primary"></div>
-    </div>
-    `,
-    props: {
-        loading: Boolean
-    }
-});
-/* Vue.component('app-table-input', {
+Vue.component('input-text', {
     inheritAttrs: false,
     props: {
         value: String,
+        label: {
+            type: String,
+            default: ''
+        },
         type: {
             type: String,
             default: 'text'
         }
     },
-    data() {
-        return {
-            dbclicked: false
+    template: `
+    <div class="form-group form-row">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
+        <input v-bind="$attrs" :value="value" :type="type" @input="$emit('input',$event.target.value)" class="form-control" :class="{'col-9':label}">
+    </div>
+    `
+});
+Vue.component('input-time', {
+    inheritAttrs: false,
+    props: {
+        value: String,
+        label: {
+            type: String,
+            default: ''
         }
     },
     template: `
-    <td v-if="dbclicked">{{value}}</td>
-    <td v-else class="table-input">
-        <div class="form-group justify-content-around mb-0">
-            <input v-bind="$attrs" :type="type" :value="value" @input="$emit('input',$event.target.value)"
-                class="form-control form-control-lg">
+    <div class="form-group form-row">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
+        <input v-bind="$attrs" :value="value" type="datetime-local" @input="$emit('input',$event.target.value)" class="form-control" :class="{'col-9':label}">
+    </div>
+    `
+});
+Vue.component('input-radio', {
+    inheritAttrs: false,
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
+    props: {
+        radios: Array, checked: [String, Boolean]
+    },
+    data() {
+        return { in_checked: this.checked, eid: (new Date).toISOString() }
+    },
+    watch: {
+        checked() {
+            this.in_checked = this.checked;
+        },
+        in_checked() {
+            this.$emit('change', this.in_checked);
+        }
+    },
+    template: `
+    <div>
+        <div v-for="(radio,index) of radios" class="custom-control custom-radio custom-control-inline">
+            <input v-bind="$attrs" v-model="in_checked" :value="radio.val" type="radio" :id="eid+'-radio-'+index" class="custom-control-input" required>
+            <label :for="eid+'-radio-'+index" class="custom-control-label" v-html="radio.des"></label>
         </div>
-    </td>
+    </div>
+    `
+});
+Vue.component('input-checkbox', {
+    inheritAttrs: false,
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
+    props: {
+        checkboxs: Array, checked: [Array, Boolean]
+    },
+    data() {
+        return { in_checked: this.checkboxs.length > 1 ? this.checked.slice() : this.checked, eid: (new Date).toISOString() }
+    },
+    watch: {
+        checked() {
+            this.in_checked = this.checkboxs.length > 1 ? this.checked.slice() : this.checked;
+        },
+        in_checked() {
+            this.$emit('change', this.in_checked);
+        }
+    },
+    template: `
+    <div>
+        <div v-for="(checkbox,index) of checkboxs" class="custom-control custom-checkbox custom-control-inline">
+            <input v-bind="$attrs" v-model="in_checked" :value="checkbox.val" type="checkbox" :id="eid+'-checkbox-'+index" class="custom-control-input">
+            <label :for="eid+'-checkbox-'+index" class="custom-control-label" v-html="checkbox.des"></label>
+        </div>
+    </div>
+    `
+});
+Vue.component('input-textarea', {
+    inheritAttrs: false,
+    model: {
+        prop: 'value',
+        event: 'change'
+    },
+    props: {
+        value: String,
+        label: {
+            type: String,
+            default: ''
+        }
+    },
+    data() {
+        return { in_value: this.value };
+    },
+    watch: {
+        value() {
+            this.in_value = this.value;
+        },
+        in_value() {
+            this.$emit('change', this.in_value.replace(/\r/g, ''));
+        }
+    },
+    template: `
+    <div class="form-group form-row">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
+        <textarea v-bind="$attrs" v-model="in_value" class="form-control textarea-alpha" :class="{'col-9':label}"></textarea>
+    </div>
+    `
+});
+Vue.component('input-select', {
+    inheritAttrs: false,
+    model: {
+        prop: 'value',
+        event: 'change'
+    },
+    props: {
+        value: [String, Array],
+        label: {
+            type: String,
+            default: ''
+        },
+        options: {
+            type: Array,
+            required: true
+        }
+    },
+    data() {
+        return { in_value: this.value };
+    },
+    watch: {
+        value() {
+            this.in_value = this.value;
+        },
+        in_value() {
+            this.$emit('change', this.in_value);
+        }
+    },
+    template: `
+    <div class="form-group form-row">
+    <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
+    <select v-model="in_value" class="custom-select form-control" :class="{'col-9':label}">
+        <option v-for="opt in options" :value="opt" >{{opt}}</option>
+    </select>
+</div>
+    `
+});
+Vue.component('input-file', {
+    inheritAttrs: false,
+    model: {
+        prop: 'value',
+        event: 'change'
+    },
+    props: {
+        value: [FileList, Array],
+        label: {
+            type: String,
+            default: ''
+        },
+        accept: {
+            type: String,
+            default: '.7z,.rar,.zip,tar,.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.xml'
+        },
+        pre: {
+            type: String,
+            default: ''
+        }
+    },
+    data() {
+        return {
+            placeholder: this.pre || '请上传文档、表格或压缩文件，不超过20M'
+        }
+    },
+    template: `
+    <div class="form-group form-row">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
+        <div class="custom-file" :class="{'col-9':label}">
+            <input v-bind="$attrs" @change="onchange" type="file" :accept="accept" class="custom-file-input">
+            <label class="custom-file-label text-left">
+                <small class="form-text text-muted">{{placeholder}}</small>
+            </label>
+        </div>
+    </div>
     `,
-}); */
+    methods: {
+        onchange(e) {
+            let files = e.target.files;
+            if (files[0].size > 20 * 1024 * 1024) {
+                this.$alertWarn('文件大小超出限制！');
+            }
+            else {
+                this.placeholder = files[0].name;
+                this.$emit('change', files);
+            }
+        }
+    }
+});
+Vue.component('input-pincode', {
+    inheritAttrs: false,
+    props: {
+        value: String,
+        label: {
+            type: String,
+            default: ''
+        },
+        extra: {
+            type: Object,
+            default: {}
+        }
+    },
+    template: `
+    <div class="form-group form-row">
+        <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
+        <div class="input-group px-0" :class="{'col-9':label}">
+            <input v-bind="$attrs" :value="value" @input="$emit('input',$event.target.value)" class="form-control px-1" type="text" placeholder="6位验证码，5分钟内有效"
+            pattern="\\d{6}">
+            <div class="input-group-append">
+                <button @click="send" type="button" class="btn btn-outline-primary" :disabled="sent">{{sent?''+count+'s':'发送验证码'}}</button>
+            </div>
+        </div>
+    </div>
+    `,
+    data() {
+        return {
+            sent: false,
+            count: 60
+        }
+    },
+    methods: {
+        async send() {
+            let msg = '';
+            this.count = 60;
+            if ('username' in this.extra && !this.extra.username) {
+                msg = '请输入用户名！';
+            } else if ('identity' in this.extra && !this.extra.identity) {
+                msg = '请选择身份！';
+            } else if ('email' in this.extra && !this.extra.email) {
+                msg = '请输入邮箱地址！';
+            }
+            if (msg) {
+                this.$alertWarn(msg);
+            } else {
+                let result = await this.$axiosGet('/sendPinCode', this.extra);
+                if (result.status) {
+                    this.sent = true;
+                    counter({
+                        count: 60,
+                        doing: c => {
+                            this.count = c;
+                        },
+                        done: () => { this.sent = false }
+                    });
+                } else {
+                    this.sent = false;
+                }
+                this.$alertResult(result);
+            }
+        }
+    },
+})
+Vue.component('bs4-listgroup', {
+    template: `
+    <dl class="list-group" :class="{'list-group-flush':flush}">
+        <dd class="list-group-item" :class="{'list-group-item-action':action}" v-for="item in items">
+            <slot :item="item"></slot>
+        </dd>
+    </dl> 
+    `,
+    props: {
+        flush: {
+            type: Boolean,
+            default: true
+        },
+        action: {
+            type: Boolean,
+            default: false
+        },
+        items: Array
+    }
+});
+Vue.component('wang-editor', {
+    model: {
+        prop: 'content',
+        event: 'change'
+    },
+    template: `
+    <div :id="eid" class="mb-3"></div>
+    `,
+    featureBase: [
+        'head',  // 标题
+        'bold',  // 粗体
+        'fontSize',  // 字号
+        'fontName',  // 字体
+        'italic',  // 斜体
+        'justify',  // 对齐方式
+        'foreColor',  // 文字颜色
+        'backColor',  // 背景颜色
+        'link',  // 插入链接
+        'undo',  // 撤销
+        'redo'  // 重复
+    ],
+    featureExtend: [
+        'underline',  // 下划线
+        'strikeThrough',  // 删除线
+        'list',  // 列表
+        'table',  // 表格
+        'quote',  // 引用
+        'emoticon',  // 表情
+        'image',  // 插入图片
+        'video',  // 插入视频
+        'code',  // 插入代码
+    ],
+    props: {
+        content: {
+            type: String,
+            required: true
+        },
+        eid: {
+            type: String,
+            required: true
+        },
+        server: {
+            type: String,
+            default: ''
+        },
+        full: {
+            type: Boolean,
+            default: false
+        },
+        height: {
+            type: Number,
+            default: 300
+        }
+    },
+    data() {
+        return {
+            editor: null,
+            inner: false
+        }
+    },
+    mounted() {
+        let editor = this.editor = new window.wangEditor(`#${this.eid}`);
+        if (this.server) {
+            editor.customConfig.uploadImgServer = this.server;
+            editor.customConfig.uploadFileName = 'file';
+            editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+            editor.customConfig.uploadImgMaxLength = 1;
+            editor.customConfig.uploadImgTimeout = 3000;
+        }
+        editor.customConfig.customAlert = function (info) {
+            this.$alertWarn(info);
+        };
+        editor.customConfig.zIndex = 1000;
+        editor.customConfig.menus = this.full ? this.$options.featureBase.concat(this.$options.featureExtend) : this.$options.featureBase;
+
+        editor.create();
+        editor.$textContainerElem[0].style.height = `${this.height}px`;
+
+        editor.txt.html(this.content);
+
+        this.$watch('content', function (n, o) {
+            if (this.inner) {
+                this.inner = false;
+            } else {
+                this.editor.txt.html(n);
+            }
+        });
+        editor.$textElem[0].addEventListener('input', () => {
+            this.inner = true;
+            this.$emit('change', editor.txt.html());
+        });
+    }
+});
 
 //局部组件
 const mainPage = {
     template: `
-    <div class="app-container">
+    <div class="app-container d-flex">
         <aside class="main-sidebar border-right border-light">
             <bs4-listgroup id="accordion_sidebar" :items="modules" v-slot="{item}">
                 <a data-toggle="collapse" :href="'#'+item.name">
@@ -600,31 +533,44 @@ const mainPage = {
 };
 const startPage = {
     template: `
-    <div class="start-page"></div>
+    <div class="start-page row justify-content-center">
+        <div class="d-none d-md-flex col-md-6 col-lg-7">
+        </div>
+        <div class="col-12 col-sm-9 col-md-6 col-lg-5">
+            <router-view></router-view>
+        </div>
+    </div>
     `
 };
 const appLogin = {
     template: `
-    <div class="app-container row align-items-center justify-content-center">
-        <form class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center" 
-            @submit.prevent="submit">
-            <input-text v-model="fields.username" label="用户名" placeholder="1~16位字母、数字或下划线" pattern="\\w{1,16}" required></input-text>
-            <input-text v-model="fields.password" type="password" label="密码" placeholder="1~16位字母、数字或下划线" pattern="\\w{1,16}" required></input-text>
-            <input-radio v-model="fields.identity"
-                :radios="[{ val: 'student', des: '学生' }, { val: 'teacher', des: '教师' }, { val: 'admin', des: '管理员' }]"
-                class="form-group form-row justify-content-around">
-            </input-radio>
-            <div class="form-row justify-content-around align-items-center mb-3">
-                <input-checkbox v-model="fields.save" :checkboxs="[{ val: 'save', des: '记住密码' }]"
-                    class="col-6 col-md-6 mb-3 mb-md-0">
-                </input-checkbox>
-                <app-button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit">登陆</app-button>
+    <div class="d-flex w-100 h-75 align-items-center justify-content-center">
+        <div class="px-5 pt-5 pb-4 rounded-lg" style="background-color: #63877d87;color:white;">
+            <form class="form-sm text-center" @submit.prevent="submit">
+                <input-text v-model="fields.username" label="用户名" placeholder="1~16位字母、数字或下划线" pattern="\\w{1,16}"
+                    required>
+                </input-text>
+                <input-text v-model="fields.password" type="password" label="密码" placeholder="1~16位字母、数字或下划线"
+                    pattern="\\w{1,16}" required></input-text>
+                <input-radio v-model="fields.identity" :radios="radios"
+                    class="form-group form-row justify-content-around">
+                </input-radio>
+                <div class="form-row justify-content-around align-items-center mb-3">
+                    <input-checkbox v-model="fields.save" :checkboxs="[{ val: 'save', des: '记住密码' }]"
+                        class="col-6 col-md-6 mb-3 mb-md-0">
+                    </input-checkbox>
+                    <app-button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit">登陆</app-button>
+                </div>
+            </form>
+            <div class="text-right px-3">
+                <router-link to='/retrieve' style="color:black;">找回密码</router-link>
             </div>
-        </form>
+        </div>
     </div>
     `,
     data() {
         return {
+            radios: [{ val: 'student', des: '学生' }, { val: 'teacher', des: '教师' }, { val: 'admin', des: '管理员' }],
             fields: {
                 username: localStorage.getItem('username') || '',
                 password: localStorage.getItem('password') || '',
@@ -655,9 +601,14 @@ const appLogin = {
                 this.$alertError(result.msg);
             }
         }
-    }
+    }/* ,
+    created(){
+        if(this.$route.query.admin){
+            this.radios
+        }
+    } */
 };
-const appRegister = {
+const appSignup = {
     template: `
     <div class="app-container app-scroll row align-items-center justify-content-center">
         <form class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center mt-3" @submit.prevent="submit">
@@ -737,7 +688,7 @@ const appRegister = {
                         if (fields.resume) data.resume = fields.resume; */
             console.log(data);
 
-            let result = await this.$axiosPost('/register', data);
+            let result = await this.$axiosPost('/signup ', data);
             if (result.status) {
                 this.$router.push({ path: '/login' });
             }
@@ -800,6 +751,7 @@ const appRetrieve = {
 const appLicense = {
     template: `
     <div class="app-container app-scroll row justify-content-center p-0 p-md-3">
+        <h3 class="col-12 text-center">用户协议</h3>
         <div class="col-12 col-md-10 col-lg-9 mb-3" v-html="content"></div>
         <button type="button" class="btn btn-primary col-8 col-md-6 col-lg-4 mb-3"
             @click="$router.back()">返回前页</button>
@@ -811,7 +763,7 @@ const appLicense = {
         };
     },
     async mounted() {
-        this.content = await this.$axiosGet('/html/license.html');
+        this.content = await this.$axiosGet('/system/license');
     }
 };
 const appNotFound = {
@@ -821,12 +773,190 @@ const appNotFound = {
     </div>
     `
 };
+const app = {
+    router: new VueRouter({
+        routes: [{
+            path: '/', component: startPage,
+            children: [{
+                path: '', component: appLogin
+            }, {
+                path: 'login', component: appLogin
+            }]
+        }, {
+            path: '/signup', component: appSignup
+        }, {
+            path: '/retrieve', component: appRetrieve
+        }, {
+            path: '/license', component: appLicense
+        }, {
+            path: '*', component: appNotFound
+        }]
+    }),
+    data: {
+        online: false,
+        loading: true,
+        user: {
+            profile: '',
+            name: '',
+            identity: ''
+        },
+        lastWriteTime: Date.now(),
+        modules: [],
+        alert: {
+            show_: false,
+            type: 'success',
+            msg: '',
+            count: 0,
+            ok: null,
+            cancel: null,
+
+            count_: null
+        },
+        serverTime: {
+            time_: Date.now(),
+            counter_: 0,
+            updater_: 0,
+            refresh: 0
+        },
+        footLinks: [{
+            href: 'http://www.buaa.edu.cn/', des: '学校官网'
+        }, {
+            href: 'http://dept3.buaa.edu.cn/', des: '学院官网'
+        }, {
+            href: 'http://10.200.21.61:7001/', des: '本科教务'
+        }]
+    },
+    computed: {
+        alertColor() {
+            return this.$options.alertColor[this.alert.type];
+        },
+        alertTitle() {
+            return this.$options.alertTitle[this.alert.type];
+        },
+        userProfileUrl() {
+            return `../img/${this.online ? this.user.profile : 'unknown.png'}`;
+        },
+        footTime() {
+            return new Date(this.serverTime.time_).toLocaleISOString().substring(0, 19).replace('T', ' ');
+        }
+    },
+    methods: {
+        alertHide() {
+            this.alert.show_ = false;
+            this.alert.count_ && clearTimeout(this.alert.count_.id);
+            this.alert.count = 0;
+        },
+        alertShow({ type = 'success', msg = '', count = 0, ok = null, cancel = null } = {}) {
+            this.alert.show_ = true;
+            this.alert.type = type;
+            this.alert.msg = msg;
+            this.alert.ok = ok;
+            this.alert.cancel = cancel;
+            if (count) {
+                this.alert.count_ = counter({
+                    count,
+                    doing: c => this.alert.count = c,
+                    done: () => this.alertHide()
+                });
+            } else {
+                this.alert.count = 0;
+            }
+        },
+        alertOk() {
+            this.alert.ok && this.alert.ok();
+            this.alertHide();
+        },
+        alertCancel() {
+            this.alert.cancel && this.alert.cancel();
+            this.alertHide();
+        },
+        timeCount() {
+            this.serverTime.time_ += 1000;
+            this.serverTime.counter_ = setTimeout(this.timeCount.bind(this), 1000);
+        },
+        async timeUpdate() {
+            try {
+                let result = await this.$axiosGet('/serverTime');
+                clearTimeout(this.serverTime.counter_);
+                this.serverTime.refresh = 0;
+                this.serverTime.time_ = result.time;
+                this.serverTime.updater_ = setTimeout(this.timeUpdate.bind(this), 5 * 60 * 1000);
+                this.timeCount();
+            } catch (err) {
+                console.log(err);
+                if (this.serverTime.refresh <= 3) {
+                    this.serverTime.refresh++;
+                    this.serverTime.updater_ = setTimeout(this.timeUpdate.bind(this), 8 * 1000);
+                } else {
+                    clearTimeout(this.serverTime.updater_);
+                    this.$alertError('与服务器失去连接！');
+                }
+            }
+        },
+        async getModules() {
+            let result = await this.$axiosGet('/modules');
+            if (result.status) {
+                let modules = [], routes = [];
+                for (const module of result.routes) {
+                    let _module = {
+                        name: module.path,
+                        des: module.des,
+                        icon: module.icon,
+                        subModules: []
+                    }, _route = {
+                        path: `/${module.path}`,
+                        component: mainPage,
+                        children: []
+                    };
+                    modules.push(_module);
+                    routes.push(_route);
+                    for (const subModule of module.subs) {
+                        if (subModule.des) {
+                            _module.subModules.push({
+                                name: subModule.path,
+                                des: subModule.des
+                            });
+                        }
+                        if (subModule.component) {
+                            _route.children.push({
+                                path: subModule.path,
+                                component: () => import(`/components?module=${module.path}&component=${subModule.component}`)
+                            });
+                        }
+                    }
+                }
+                this.modules = modules;
+                this.$router.addRoutes(routes);
+                return true;
+            } else {
+                this.$alertError(result.msg);
+                this.$router.push({ path: `/?prevent=${this.$route.path}` });
+                return false;
+            }
+        },
+        async logout() {
+            let result = await this.$axiosGet('/logout');
+            if (result.status) this.$emit('logout', '/');
+            this.$alertResult(result);
+        }
+    },
+    alertColor: {
+        'success': 'alert-primary',
+        'error': 'alert-danger',
+        'warn': 'alert-warning'
+    },
+    alertTitle: {
+        'success': '成功',
+        'error': '错误',
+        'warn': '警告'
+    }
+};
 
 //导出
 export default {
     mainPage, startPage,
-    appLogin, appRegister, appRetrieve,
+    appLogin, appSignup, appRetrieve,
     appLicense,
-    appNotFound
+    appNotFound,
+    app
 };
-export { counter };

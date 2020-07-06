@@ -1,10 +1,16 @@
 const fs = require('fs');
+const path = require('path');
 
-//读json文件
-function json(path) {
+//读写json文件
+function readJson(path) {
     return JSON.parse(fs.readFileSync(path, {
         encoding: 'utf8'
     }));
+}
+function writeJson(path, data) {
+    fs.writeFileSync(path, JSON.stringify(data), {
+        encoding: 'utf8'
+    });
 }
 //移动
 function move(from, to, callback) {
@@ -14,14 +20,14 @@ function move(from, to, callback) {
 //递归创建目录
 function _mkdir(filepath) {
     const dirCache = {};
-    const arr = filepath.split('/');
+    const arr = filepath.split(path.sep);
     let dir = arr[0];
     for (let i = 1; i < arr.length; i++) {
         if (!dirCache[dir] && !fs.existsSync(dir)) {
             dirCache[dir] = true;
             fs.mkdirSync(dir);
         }
-        dir = dir + '/' + arr[i];
+        dir = dir + path.sep + arr[i];
     }
 }
 //删除全部
@@ -43,4 +49,4 @@ function _mkdir(filepath) {
     }
 }; */
 
-module.exports = { json, move };
+module.exports = { readJson, writeJson, move, writeFile: fs.promises.writeFile };

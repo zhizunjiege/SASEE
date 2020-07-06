@@ -58,9 +58,44 @@
                     "component": "manual"
                 },
                 {
-                    "path": "yhfk",
-                    "des": "用户反馈",
-                    "component": "feedback"
+                    "path": "fbtz",
+                    "des": "发布通知",
+                    "component": "write-news",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "zxsc",
+                    "des": "撰写手册",
+                    "component": "write-manual",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "zxxy",
+                    "des": "撰写协议",
+                    "component": "write-license",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "yhgl",
+                    "des": "用户管理",
+                    "component": "user-manage",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "sjdrdc",
+                    "des": "数据导入导出",
+                    "component": "import-export",
+                    "requirement": {
+                        "identity": "admin"
+                    }
                 }
             ]
         },
@@ -92,45 +127,6 @@
                     "path": "wsxx",
                     "des": "完善信息",
                     "component": "perfect-info"
-                }
-            ]
-        },
-        {
-            "path": "manage",
-            "des": "系统管理",
-            "icon": "glyphicon-cog",
-            "requirement": {
-                "identity": "admin"
-            },
-            "subs": [
-                {
-                    "path": "",
-                    "component": "write-news"
-                },
-                {
-                    "path": "fbtz",
-                    "des": "发布通知",
-                    "component": "write-news"
-                },
-                {
-                    "path": "zxsc",
-                    "des": "撰写手册",
-                    "component": "write-manual"
-                },
-                {
-                    "path": "zxxy",
-                    "des": "撰写协议",
-                    "component": "write-license"
-                },
-                {
-                    "path": "clfk",
-                    "des": "处理反馈",
-                    "component": "deal-feedback"
-                },
-                {
-                    "path": "yhgl",
-                    "des": "用户管理",
-                    "component": "user-manage"
                 }
             ]
         },
@@ -172,37 +168,43 @@
                 {
                     "path": "wdkt",
                     "des": "我的课题",
-                    "component": "project-mine",
+                    "component": "project-detail",
                     "requirement": {
                         "identity": "student"
                     }
                 },
                 {
                     "path": "",
-                    "component": "project-submit",
+                    "component": "project-manage",
                     "requirement": {
                         "identity": "teacher"
                     }
                 },
                 {
-                    "path": "fbkt",
-                    "des": "发布课题",
-                    "component": "project-submit",
+                    "path": "project-form",
+                    "component": "project-form",
                     "requirement": {
                         "identity": "teacher"
                     }
                 },
                 {
-                    "path": "yykt",
-                    "des": "已有课题",
-                    "component": "project-submitted",
+                    "path": "project-confirm",
+                    "component": "project-confirm",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "ktgl",
+                    "des": "课题管理",
+                    "component": "project-manage",
                     "requirement": {
                         "identity": "teacher"
                     }
                 },
                 {
                     "path": "wdkt",
-                    "component": "project-mine",
+                    "component": "project-detail",
                     "requirement": {
                         "identity": "teacher"
                     }
@@ -217,7 +219,7 @@
                     }
                 },
                 {
-                    "path": "",
+                    "path": "project-content",
                     "component": "project-content",
                     "requirement": {
                         "identity": "teacher",
@@ -235,7 +237,7 @@
                 },
                 {
                     "path": "",
-                    "component": "project-manage",
+                    "component": "bysj-manage",
                     "requirement": {
                         "identity": "admin"
                     }
@@ -243,7 +245,7 @@
                 {
                     "path": "ktgl",
                     "des": "课题管理",
-                    "component": "project-manage",
+                    "component": "bysj-manage",
                     "requirement": {
                         "identity": "admin"
                     }
@@ -251,15 +253,21 @@
                 {
                     "path": "rqgl",
                     "des": "日期管理",
-                    "component": "project-state",
+                    "component": "bysj-state",
                     "requirement": {
                         "identity": "admin"
                     }
                 },
                 {
-                    "path": "gzgl",
-                    "des": "规则管理",
-                    "component": "project-rule",
+                    "path": "project-form",
+                    "component": "project-form",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "project-content",
+                    "component": "project-content",
                     "requirement": {
                         "identity": "admin"
                     }

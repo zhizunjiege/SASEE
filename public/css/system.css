@@ -1,4 +1,5 @@
 html, body, .app-container {
+    width: 100%;
     height: 100%;
 }
 
@@ -6,19 +7,46 @@ body {
     overflow: hidden;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: #eee
+}
+
+#mo-nav::-webkit-scrollbar {
+    width: 0;
+    opacity: 0
+}
+
+::-webkit-scrollbar-track {
+    background-color: #eee
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #69d2e7
+}
+
 .app-head {
-    background-color: rgba(39, 39, 184, 1);
+    background-color: #2e317c;
     height: 8%;
 }
 
+.profile {
+    min-width: 240px;
+    background-color: #63659f;
+}
+
+.app-head button {
+    min-width: 120px;
+}
+
 .app-body {
-    background-color: white;
     height: 88%;
     position: relative;
 }
 
 .app-foot {
-    background-color: rgba(63, 52, 62, 0.199);
+    background-color: #99CCCC;
     height: 4%;
 }
 
@@ -28,47 +56,30 @@ body {
 }
 
 .main-sidebar {
-    width: 20%;
+    /* width: 20%; */
+    min-width: 220px;
     height: 100%;
     float: left;
+}
+
+.list-group-item {
+    background-color: #00000000;
+}
+
+.list-group-item-action:hover {
+    background-color: #c7e6ff;
 }
 
 .main-content {
-    width: 80%;
+    /* width: 80%; */
+    flex-grow: 1;
     height: 100%;
     float: left;
 }
 
-/* 
-.app-modal {
-    background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 12000;
+.bg-main {
+    background-color: #CCFFFF;
 }
-
-.app-modal-opp {
-    background-color: rgb(255, 255, 255);
-}
-
-.app-close {
-    background-color: transparent;
-    color: rgb(255, 255, 255);
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    border: 0;
-    padding: 0.75rem 1.25rem;
-    margin: 0;
-}
-
-.app-close:focus {
-    outline: none;
-} 
-*/
 
 .app-alert {
     min-width: 375px;
@@ -135,6 +146,18 @@ a:hover, .list-group-item-action:focus, .list-group-item-action:hover, .point:ho
     text-overflow: ellipsis;
 }
 
+.table-bordered {
+    border-top: 0;
+}
+
+table thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    border-top: 0!important;
+}
+
 pre {
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -145,51 +168,36 @@ pre {
     bottom: 0;
 }
 
-/* .table-input {
-    padding: 0!important;
-    background-color: #5197f1;
+.form-sm {
+    min-width: 320px;
 }
 
-.table-input input {
-    text-align: center;
-    border: 0!important;
-    border-radius: 0!important;
-    background-color: #eff6ff;
-} */
-
-/* .rel-bottom {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+.form-control:not(textarea), .form-control:not(textarea):focus, .custom-file-label {
+    color: black;
+    background-color: #0000;
+    border: 0;
+    border-bottom: 1px solid #48aaff;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-
-
-
-
-
-.multi-ellipsis {
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
+.textarea-alpha, .textarea-alpha:focus {
+    background-color: #0000;
 }
 
-
-
-caption {
-    text-align: center;
-    caption-side: bottom;
-    font-size: 1.5em;
+.nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: #f9e9e9;
+    border-color: #0000;
 }
 
-.text-indent {
-    text-indent: 2rem;
+tr.editing, tr.searching {
+    box-shadow: 2px 2px .5rem orange, -2px -2px .5rem orange;
+    background-color: aquamarine;
+    transition: all .2s ease-in-out;
 }
 
-.w-e-text {
-    overflow-y: auto!important;
-} */
+tr.editing>td:focus {
+    outline: 0;
+    background-color: #6bd9fe;
+}

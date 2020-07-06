@@ -1,6 +1,6 @@
 export default {
     template: `
-    <div>
+    <div v-if="Number(tid)>0">
         <div class="mb-3">
             <h5 class="text-primary">教师信息</h5>
             <table class="table table-fixed table-bordered">
@@ -31,7 +31,8 @@ export default {
                     </tr>
                     <tr>
                         <th>邮箱</th>
-                        <td>{{teacher.email}}</td>
+                        <td v-if="teacher.email"><a :href="'mailto:'+teacher.email" target="_blank" title="发送邮件">{{teacher.email}}</a></td>
+                        <td v-else>暂无</td>
                         <th>个人主页</th>
                         <td>
                             <a v-if="teacher.homepage" :href="teacher.homepage">{{teacher.homepage}}</a>
@@ -55,7 +56,7 @@ export default {
     `,
     props: {
         tid: {
-            type: String,
+            type: [Number,String],
             required: true
         }
     },

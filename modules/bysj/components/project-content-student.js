@@ -9,7 +9,7 @@ export default {
                     :radios="[{val:'1',des:'平行志愿一'},{val:'2',des:'平行志愿二'},{val:'3',des:'平行志愿三'}]" class="mb-3">
                 </input-radio>
                 <div class="form-row justify-content-center align-items-center">
-                    <app-button class="btn btn-primary col-12" type="submit">选择此课题</app-button>
+                    <app-button class="btn btn-primary col-12" type="submit" warn="您确定选择此课题吗？">选择此课题</app-button>
                 </div>
             </form>
         </div>
@@ -32,7 +32,7 @@ export default {
             this.$alertResult(await this.$axiosPost('/bysj/choose', { id: this.id, target: this.target }));
         }
     },
-    async created() {
+    created() {
         let query = this.$route.query;
         this.id = query.id;
         this.teacher = query.teacher;
