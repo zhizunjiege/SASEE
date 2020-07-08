@@ -49,4 +49,4 @@ function _mkdir(filepath) {
     }
 }; */
 
-module.exports = { readJson, writeJson, move, writeFile: fs.promises.writeFile };
+module.exports = { readJson, writeJson, move, writeFile: fs.promises.writeFile, unlink: fs.promises.unlink };

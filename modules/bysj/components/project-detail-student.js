@@ -22,6 +22,12 @@ export default {
                 <project-file :pid="pid" identity="student" class="mb-3"></project-file>
             </div>
         </div>
+        <div class="px-3">
+            <a :href="'/bysj/export-excel?pid='+pid" download class="d-flex w-100 justify-content-end">
+            <app-button class="btn btn-primary col-12 col-md-3 mb-3"
+                type="button" >导出申请表</app-button>
+            </a>
+        </div>
     </template>
     <div v-else class="d-flex justify-content-center align-items-center text-muted" style="height: 250px">
         <h1>您没有生效的课题！</h1>
@@ -34,6 +40,11 @@ export default {
             pid: -1,
             tid: -1
         };
+    },
+    methods: {
+        async exportExcel(pid) {
+            await this.$axiosGet('/bysj/export-excel', { pid });
+        }
     },
     components: {
         'info-project': () => import(`/components?module=bysj&component=info-project`),

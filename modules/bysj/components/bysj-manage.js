@@ -2,13 +2,18 @@ export default {
     template: `
     <div class="app-container app-scroll px-0 px-md-3 text-center position-relative">
         <div class="sticky-top form-group form-row justify-content-around border-bottom border-primary py-3">
-            <app-button @click.native="del" class="btn btn-warning col-12 col-md-2" type="button" warn="您确定要删除所有课题吗？">删除所有课题
+            <app-button @click.native="truncate" class="btn btn-warning col-12 col-md-2" type="button" warn="您确定要删除所有课题吗？">
+                删除所有课题
             </app-button>
-            <app-button @click.native="submit" class="btn btn-primary col-12 col-md-2" type="button">新增课题
+            <app-button @click.native="submit" class="btn btn-primary col-12 col-md-1" type="button">新增课题
             </app-button>
             <app-button @click.native="show='stats'" class="btn btn-secondary col-12 col-md-2" type="button">课题信息统计
             </app-button>
-            <div class="input-group col-12 col-md-4">
+            <a href="/bysj/export-table" download class="col-12 col-md-1">
+            <app-button class="btn btn-primary w-100" type="button">导出总表
+            </app-button>
+            </a>
+            <div class="input-group col-12 col-md-3">
                 <input v-model="name" @keyup.enter="search" class="form-control" type="search"
                     placeholder="输入教师姓名进行搜索..." required>
                 <div class="input-group-append">
@@ -87,11 +92,11 @@ export default {
         };
     },
     methods: {
-        async del() {
-
+        async truncate() {
+            this.$alertResult(await this.$axiosGet('/bysj/truncate'));
         },
         async search() {
-            if (this.schoolNum.length) {
+            if (this.name) {
                 let rst = await this.$axiosGet('/bysj/search', { name: this.name });
                 if (rst.status) {
                     this.projects = rst.projects;

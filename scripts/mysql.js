@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     multipleStatements: true, //配置true一次可以执行多条语句
-    password: 'sasee2016',
+    password: /* 'sasee2016' */'jason',
     database: 'app',
     port: 3306,
     dateStrings: true,

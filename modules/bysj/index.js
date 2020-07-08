@@ -1,4 +1,4 @@
-const { express, multer, path, 'node-schedule': schedule } = superApp.requireAll(['express', 'multer', 'path', 'node-schedule']),
+const { express, multer, path, 'node-schedule': schedule, exceljs: ExcelJs } = superApp.requireAll(['express', 'multer', 'path', 'node-schedule', 'exceljs']),
     { mysql, file, util } = superApp.requireUserModules(['mysql', 'file', 'util']);
 
 const CONFIG = file.readJson(__dirname + '/config/map.json');
@@ -364,10 +364,12 @@ app.get('/download', (req, res) => {
     let { pid, filename, uploader } = req.query,
         { identity } = req.session,
         from = path.resolve(__dirname, 'files', pid, identity, uploader ? uploader : '', filename);
-    res.download(from, err => {
-        if (err) {
-            throw 23;
-        }
+    res.do(async () => {
+        res.download(from, err => {
+            if (err) {
+                throw 23;
+            }
+        });
     });
 });
 
@@ -482,7 +484,7 @@ app.post('/check', (req, res) => {
 
 
 //admin
-app.get('/del', (req, res) => {
+app.get('/truncate', (req, res) => {
     let sql_truncate = 'TRUNCATE TABLE bysj';
     res.do(async () => {
         await mysql.find(sql_truncate);
@@ -564,6 +566,89 @@ app.get('/manual-operation', (req, res) => {
         res.json({
             status: true,
             msg: '操作成功!'
+        });
+    });
+});
+
+let excelWB = null, excelWS = null;
+(async () => {
+    excelWB = new ExcelJs.Workbook();
+    await excelWB.xlsx.readFile(__dirname + '/config/template.xlsx');
+    excelWS = excelWB.getWorksheet(1);
+    for (const c of excelWS.columns) {
+        c.width = 14;
+    }
+    excelWS.eachRow(function (row, index) {
+        row.height = 20;
+    });
+})();
+
+app.get('/export-excel', (req, res) => {
+    let { pid } = req.query,
+        sql_query = 'SELECT title,type,source,introduction,requirement,`check`,t.name teacher,t.department,t.proTitle,s.name student,s.schoolNum stuNum FROM bysj b INNER JOIN teacher t ON b.teacher=t.id INNER JOIN student s ON b.student=s.id WHERE b.id=?';
+    res.do(async () => {
+        let [data] = await mysql.find(sql_query, pid);
+        excelWS.getCell('E3').value = data.department;
+        excelWS.getCell('B4').value = data.teacher;
+        excelWS.getCell('E4').value = data.proTitle;
+        excelWS.getCell('B5').value = data.student;
+        excelWS.getCell('E5').value = data.stuNum;
+        excelWS.getCell('B6').value = data.title;
+        excelWS.getCell('B7').value = data.type;
+        excelWS.getCell('B8').value = data.source;
+        excelWS.getCell('B9').value = data.introduction;
+        excelWS.getCell('B12').value = data.requirement;
+        excelWS.getCell('B16').value = data.check.ifClear ? '是' : '否';
+        excelWS.getCell('B18').value = data.check.ifDifficultyProper ? '是' : '否';
+        excelWS.getCell('B20').value = data.check.ifMeetGoal ? '是' : '否';
+        excelWS.getCell('B22').value = data.check.ifConditionWell ? '是' : '否';
+        excelWS.getCell('B24').value = data.check.ifPass ? '通过' : '不通过';
+        let tmp = path.resolve(__dirname, 'tmp', `${(new Date()).getFullYear()}年本科生毕业设计（论文）题目申报表-${data.teacher}-${data.student}.xlsx`);
+        await excelWB.xlsx.writeFile(tmp);
+        res.download(tmp, err => {
+            if (err) {
+                throw 23;
+            }
+            file.unlink(tmp);
+        });
+    });
+});
+
+app.get('/export-table', (req, res) => {
+    let sql_query = 'SELECT title,type,source,difficulty,weight,ability,introduction,requirement,t.name tname,t.gender tgender,t.schoolNum tnum,SUBSTR(t.`group`,3) tgroup,department,proTitle,s.name sname,s.gender sgender,specialty,s.schoolNum snum,SUBSTR(s.`group`,3) sgroup,`class`,postGraduate FROM bysj b INNER JOIN teacher t ON b.teacher=t.id INNER JOIN student s ON b.student=s.id WHERE b.student IS NOT NULL ORDER BY t.id';
+    res.do(async () => {
+        let table = await mysql.find(sql_query);
+        for (const i of table) {
+            Object.assign(i, i.ability);
+            delete i.ability;
+        }
+
+        let tableWB = new ExcelJs.Workbook(), tableWS = tableWB.addWorksheet('sheet1');
+        let style = {
+            font: {
+                name: '宋体',
+                size: 10,
+            },
+            alignment: {
+                vertical: 'middle',
+                horizontal: 'center'
+            }
+        };
+        tableWS.columns = [{ header: '毕业设计（论文）题目', key: 'title', width: 60, style }, { header: '题目类型', key: 'type', width: 12, style }, { header: '题目来源', key: 'source', width: 12, style }, { header: '题目难度', key: 'difficulty', width: 12, style }, { header: '题目份量', key: 'weight', width: 12, style }, { header: '解决问题综合能力要求', key: 'allRound', width: 12, style }, { header: '实验能力要求', key: 'experiment', width: 12, style }, { header: '绘图能力要求', key: 'graphic', width: 12, style }, { header: '数据处理能力要求', key: 'data', width: 12, style }, { header: '计算结果分析能力要求', key: 'analysis', width: 12, style }, { header: '题目简介', key: 'introduction', width: 60, style }, { header: '学生要求', key: 'requirement', width: 60, style }, { header: '教师姓名', key: 'tname', width: 12, style }, { header: '教师性别', key: 'tgender', width: 12, style }, { header: '教师职称', key: 'proTitle', width: 12, style }, { header: '教师工号', key: 'tnum', width: 12, style }, { header: '教师分组', key: 'tgroup', width: 20, style }, { header: '教师系别', key: 'department', width: 12, style }, { header: '学生姓名', key: 'sname', width: 12, style }, { header: '学生性别', key: 'sgender', width: 12, style }, { header: '学生专业', key: 'specialty', width: 20, style }, { header: '学生学号', key: 'snum', width: 12, style }, { header: '学生分组', key: 'sgroup', width: 20, style }, { header: '学生班级', key: 'class', width: 12, style }, { header: '学生是否保研', key: 'postGraduate', width: 12, style }];
+
+        tableWS.addRows(table);
+        tableWS.getRow(1).font = { name: '华文行楷', size: 12 };
+        tableWS.eachRow(function (row, index) {
+            row.height = 20;
+        });
+
+        let time = new Date();
+        let tmp = path.resolve(__dirname, 'backup', `${time.getFullYear()}年本科生毕业设计（论文）题目汇总表-${time.toLocaleDateString()}.xlsx`);
+        await tableWB.xlsx.writeFile(tmp);
+        res.download(tmp, err => {
+            if (err) {
+                throw 23;
+            }
         });
     });
 });

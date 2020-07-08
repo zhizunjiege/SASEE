@@ -149,6 +149,13 @@ app.post('/signup', common.signup);
 app.get('/sendPinCode', common.sendPinCode);
 app.post('/retrieve', common.retrieve);
 
+
+app.get('/license', (req, res) => {
+    res.do(async () => {
+        res.sendFile(`license.html`, { root: `${__dirname}/modules/system/resources/html` });
+    });
+});
+
 app.get('/serverTime', (req, res) => {
     res.json({
         status: true,

@@ -22,6 +22,12 @@ export default {
                 <project-file :pid="pid" identity="teacher" class="mb-3"></project-file>
             </div>
         </div>
+        <div class="px-3">
+            <a :href="'/bysj/export-excel?pid='+pid" download class="d-flex w-100 justify-content-end">
+            <app-button class="btn btn-primary col-12 col-md-3 mb-3"
+                type="button" >导出申请表</app-button>
+            </a>
+        </div>
         </template>
     </div>
     `,

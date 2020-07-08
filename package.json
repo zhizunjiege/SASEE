@@ -6,6 +6,7 @@
   "dependencies": {
     "@vue/cli": "^4.1.2",
     "ejs": "^3.0.1",
+    "exceljs": "^4.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "js-cookie": "^2.2.1",

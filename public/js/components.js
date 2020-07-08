@@ -317,8 +317,7 @@ Vue.component('input-file', {
             let files = e.target.files;
             if (files[0].size > 20 * 1024 * 1024) {
                 this.$alertWarn('文件大小超出限制！');
-            }
-            else {
+            } else {
                 this.placeholder = files[0].name;
                 this.$emit('change', files);
             }
@@ -632,18 +631,16 @@ const appSignup = {
             <input-text v-model="fields.wechat" label="微信" placeholder="1~255位字母或数字" pattern="[a-zA-Z0-9]{1,255}">
             </input-text>
             <input-text v-model="fields.tel" label="手机号" placeholder="11位数字" pattern="^[1]([3-9])[0-9]{9}$">
+            </input-text>
             <input-text v-model="fields.homepage" label="个人主页" placeholder="请输入正确的网址，不超过255位字符"></input-text>
-            </input-text>
             <template v-if="fields.identity=='teacher'">
-            <input-text v-model="fields.office" label="办公地点" placeholder="不超过255个字符（或汉字）"></input-text>
-            </input-text>
-            <input-text v-model="fields.field" label="研究领域" placeholder="不超过255个字符（或汉字）"></input-text>
-            </input-text>
+                <input-text v-model="fields.office" label="办公地点" placeholder="不超过255个字符（或汉字）"></input-text>
+                <input-text v-model="fields.field" label="研究领域" placeholder="不超过255个字符（或汉字）"></input-text>
             </template>
-            <input-textarea v-model="fields.resume" label="个人简介" rows="12" placeholder="不超过1023个字符（或汉字）" maxlength="1023"></input-textarea>
+            <input-textarea v-model="fields.resume" label="个人简介" rows="12" placeholder="不超过1023个字符（或汉字）"
+                maxlength="1023"></input-textarea>
             <div class="form-row justify-content-between align-items-center mb-3">
-                <input-checkbox v-model="fields.license" :checkboxs="checkboxs"
-                    class="col-12 col-md-7 mb-3 mb-md-0">
+                <input-checkbox v-model="fields.license" :checkboxs="checkboxs" class="col-12 col-md-7 mb-3 mb-md-0">
                 </input-checkbox>
                 <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" :disabled="!fields.license"
                     type="submit">注册</app-button>
@@ -753,8 +750,8 @@ const appLicense = {
     <div class="app-container app-scroll row justify-content-center p-0 p-md-3">
         <h3 class="col-12 text-center">用户协议</h3>
         <div class="col-12 col-md-10 col-lg-9 mb-3" v-html="content"></div>
-        <button type="button" class="btn btn-primary col-8 col-md-6 col-lg-4 mb-3"
-            @click="$router.back()">返回前页</button>
+        <app-button type="button" class="btn btn-primary col-8 col-md-6 col-lg-4 mb-3"
+            @click="$router.back()">返回前页</app-button>
     </div>
     `,
     data() {
@@ -763,7 +760,7 @@ const appLicense = {
         };
     },
     async mounted() {
-        this.content = await this.$axiosGet('/system/license');
+        this.content = await this.$axiosGet('/license');
     }
 };
 const appNotFound = {

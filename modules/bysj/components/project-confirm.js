@@ -12,7 +12,7 @@ export default {
                 <div v-for="(s,index) in students" :id="'student-'+index" :class="{'show active':!index}"
                     class="tab-pane fade">
                     <info-student :sid="s"></info-student>
-                    <div class="row align-items-between justify-content-around">
+                    <div class="row align-items-center justify-content-around">
                         <app-button @click.native="submit(s)" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
                             type="button" warn="您确定选择该学生吗？">选择该学生</app-button>
                     </div>

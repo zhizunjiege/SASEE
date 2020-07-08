@@ -90,9 +90,17 @@
                     }
                 },
                 {
-                    "path": "sjdrdc",
-                    "des": "数据导入导出",
-                    "component": "import-export",
+                    "path": "dryh",
+                    "des": "导入用户",
+                    "component": "import-user",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "bfyhf",
+                    "des": "备份与恢复",
+                    "component": "backup-recovery",
                     "requirement": {
                         "identity": "admin"
                     }

@@ -25,9 +25,9 @@
                 </div>
                 <div class="d-none d-md-flex col-md-6 h-100 justify-content-end px-0">
                     <div v-if="online" class="profile dropdown h-100 text-center border-left border-dark point">
-                        <div class="dropdown-toggle d-flex w-100 justify-content-around align-items-center"
+                        <div class="dropdown-toggle d-flex w-100 h-100 justify-content-around align-items-center"
                             data-toggle="dropdown" data-display="static">
-                            <img :src="userProfileUrl" class="float-left rounded-circle" alt="profile" width="64px">
+                            <img :src="userProfileUrl" class="float-left rounded-circle" alt="profile" height="80%">
                             <div class="d-flex align-items-center">
                                 <div class="h5 my-0 mr-2">{{user.name}}</div>
                                 <span class="badge badge-pill badge-info">{{user.identity}}</span>
@@ -87,9 +87,6 @@
             </div>
         </div>
     </div>
-
-
-
 
     <script src="/frames/others/jquery-3.4.0.js"> </script>
     <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
