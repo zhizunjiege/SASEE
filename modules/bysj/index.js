@@ -10,14 +10,20 @@ app.use((req, res, next) => {
 });
 
 let TIMES = file.readJson(__dirname + '/config/time.json');
+let JOBS = {};
 function save() {
     file.writeJson(__dirname + '/config/time.json', TIMES);
 }
 const CALLBACKS = {
-    choose(param = 'open') {
-        TIMES.choose.usable = param === 'open';
+    close() {
+        TIMES.CHOOSEUSABLE = false;
         save();
-        console.log('切换选题状态为--' + param);
+        console.log('切换选题状态为--关闭');
+    },
+    open() {
+        TIMES.CHOOSEUSABLE = true;
+        save();
+        console.log('切换选题状态为--打开');
     },
     async draw() {
         let sql_query = 'SELECT id,target1,target2,target3 FROM bysj WHERE state="2-通过" AND student IS NULL AND (JSON_LENGTH(target1) OR JSON_LENGTH(target2) OR JSON_LENGTH(target3))';
@@ -95,14 +101,13 @@ const CALLBACKS = {
         console.log('调剂完成！');
     }
 };
-let JOBS = {};
 
 app.get('/project-list', (req, res) => {
     let { length: limit, start: offset } = req.query,
         { uid, identity } = req.session,
         sql_query1 = 'SELECT b.id,title,teacher,t.`name`,SUBSTR(t.`group`,3) `group`,(IFNULL(JSON_LENGTH(b.target1),0)+IFNULL(JSON_LENGTH(b.target2),0)+IFNULL(JSON_LENGTH(b.target3),0)) chosen FROM bysj b INNER JOIN teacher t ON b.teacher=t.id INNER JOIN student s ON t.`group`=s.`group`||s.`group`="7-高工" WHERE s.id=? AND b.state="2-通过" AND b.student IS NULL ORDER BY b.id LIMIT ? OFFSET ?',
         sql_query2 = 'SELECT b.id,title,teacher,student,state,submitTime,lastModifiedTime,t1.`name`,t1.proTitle FROM bysj b INNER JOIN teacher t1 ON b.teacher=t1.id INNER JOIN teacher t2 ON t1.`group`=t2.`group` WHERE t2.id=? ORDER BY b.state,b.id LIMIT ? OFFSET ?';
-    if (identity == 'student' && !TIMES.choose.usable) {
+    if (identity == 'student' && !TIMES.CHOOSEUSABLE) {
         res.json({
             status: true,
             projects: [],
@@ -513,7 +518,7 @@ app.get('/stats', (req, res) => {
             stats[k].teachers = v.teachers;
         }
         for (const v of rst[2]) {
-            stats[Number(v.group[0] - 1)][CONFIG.state[v.state]] = v.projects;
+            stats[Number(v.group[0]) - 1][CONFIG.state[v.state]] = v.projects;
         }
         res.json({
             status: true,
@@ -537,13 +542,13 @@ app.get('/search', (req, res) => {
 app.post('/date', (req, res) => {
     let { times: t } = req.body;
     for (const [k, v] of Object.entries(t)) {
-        TIMES[k].time = v.time;
+        TIMES[k] = v;
     }
     for (const i of Object.values(JOBS)) {
         i.cancel();
     }
     for (const [k, v] of Object.entries(TIMES)) {
-        schedule.scheduleJob(new Date(v.time), CALLBACKS[k]);
+        schedule.scheduleJob(new Date(v), CALLBACKS[k]);
     }
     JOBS = schedule.scheduledJobs;
     save();
@@ -562,7 +567,7 @@ app.get('/date-info', (req, res) => {
 
 app.get('/manual-operation', (req, res) => {
     res.do(async () => {
-        await CALLBACKS[req.query.opt](req.query.param);
+        await CALLBACKS[req.query.opt]();
         res.json({
             status: true,
             msg: '操作成功!'
@@ -643,7 +648,7 @@ app.get('/export-table', (req, res) => {
         });
 
         let time = new Date();
-        let tmp = path.resolve(__dirname, 'backup', `${time.getFullYear()}年本科生毕业设计（论文）题目汇总表-${time.toLocaleDateString()}.xlsx`);
+        let tmp = path.resolve(__dirname, 'backup', `${time.getFullYear()}年自动化与电气工程学院本科生毕业设计（论文）题目汇总表-${time.toLocaleDateString()}.xlsx`);
         await tableWB.xlsx.writeFile(tmp);
         res.download(tmp, err => {
             if (err) {

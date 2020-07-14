@@ -28,7 +28,7 @@ export default {
             </input-select>
             <input-file v-model="files" label="附件" :pre="project.materials"></input-file>
             <div class="form-row justify-content-end align-items-center mb-3">
-                <app-button class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="submit" warn="您确定提交该课题吗？">提交</app-button>
+                <app-button class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="submit" warn="您确定提交该课题吗？"><i class="fa fa-paper-plane"></i>提交</app-button>
             </div>
         </form>
     </div>
@@ -37,8 +37,8 @@ export default {
         return {
             project: {
                 title: '',
-                type: '',
-                source: '',
+                type: '科学研究',
+                source: '科学研究',
                 introduction: '',
                 requirement: '',
                 difficulty: '一般',

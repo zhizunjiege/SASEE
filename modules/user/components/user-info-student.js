@@ -1,6 +1,6 @@
 export default {
     template: `
-    <div class="p-3">
+    <div class="p-3 app-container app-scroll">
         <div class="mb-3">
             <table class="table table-bordered table-fixed text-center">
                 <tbody>
@@ -52,7 +52,7 @@ export default {
                         <td>{{user.tel}}</td>
                         <th>个人主页</th>
                         <td>
-                            <a v-if="user.homepage" :href="user.homepage">{{user.homepage}}</a>
+                            <a v-if="user.homepage" :href="user.homepage" target="_blank">{{user.homepage}}</a>
                             <span v-else>无</span>
                         </td>
                     </tr>

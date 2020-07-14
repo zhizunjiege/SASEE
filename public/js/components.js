@@ -270,7 +270,7 @@ Vue.component('input-select', {
     <div class="form-group form-row">
     <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
     <select v-model="in_value" class="custom-select form-control" :class="{'col-9':label}">
-        <option v-for="opt in options" :value="opt" >{{opt}}</option>
+        <option v-for="opt in options" :value="opt">{{opt}}</option>
     </select>
 </div>
     `
@@ -296,16 +296,25 @@ Vue.component('input-file', {
             default: ''
         }
     },
+    note: '请上传文档、表格或压缩文件，不超过20M',
     data() {
         return {
-            placeholder: this.pre || '请上传文档、表格或压缩文件，不超过20M'
+            placeholder: this.pre || this.$options.note
+        }
+    },
+    watch: {
+        value(n, o) {
+            if (n.length == 0) {
+                this.$refs.input.value = '';
+                this.placeholder = this.$options.note;
+            }
         }
     },
     template: `
     <div class="form-group form-row">
         <label v-if="label" class="col-3 col-form-label" :class="{'required':'required' in $attrs}">{{label}}</label>
         <div class="custom-file" :class="{'col-9':label}">
-            <input v-bind="$attrs" @change="onchange" type="file" :accept="accept" class="custom-file-input">
+            <input ref="input" v-bind="$attrs" @change="onchange" type="file" :accept="accept" class="custom-file-input">
             <label class="custom-file-label text-left">
                 <small class="form-text text-muted">{{placeholder}}</small>
             </label>
@@ -317,6 +326,8 @@ Vue.component('input-file', {
             let files = e.target.files;
             if (files[0].size > 20 * 1024 * 1024) {
                 this.$alertWarn('文件大小超出限制！');
+                e.target.value = '';
+                this.placeholder = this.$options.note;
             } else {
                 this.placeholder = files[0].name;
                 this.$emit('change', files);
@@ -558,7 +569,7 @@ const appLogin = {
                     <input-checkbox v-model="fields.save" :checkboxs="[{ val: 'save', des: '记住密码' }]"
                         class="col-6 col-md-6 mb-3 mb-md-0">
                     </input-checkbox>
-                    <app-button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit">登陆</app-button>
+                    <app-button class="btn btn-primary col-6 col-md-6 mb-3 mb-md-0" type="submit"><i class="fa fa-paper-plane"></i>登陆</app-button>
                 </div>
             </form>
             <div class="text-right px-3">
@@ -569,7 +580,7 @@ const appLogin = {
     `,
     data() {
         return {
-            radios: [{ val: 'student', des: '学生' }, { val: 'teacher', des: '教师' }, { val: 'admin', des: '管理员' }],
+            radios: [{ val: 'student', des: '学生' }, { val: 'teacher', des: '教师' }],
             fields: {
                 username: localStorage.getItem('username') || '',
                 password: localStorage.getItem('password') || '',
@@ -600,12 +611,13 @@ const appLogin = {
                 this.$alertError(result.msg);
             }
         }
-    }/* ,
-    created(){
-        if(this.$route.query.admin){
-            this.radios
+    },
+    created() {
+        if (this.$route.query.admin || localStorage.getItem('identity') == 'admin') {
+            this.radios.push({ val: 'admin', des: '管理员' });
+            this.fields.identity = 'admin';
         }
-    } */
+    }
 };
 const appSignup = {
     template: `
@@ -643,7 +655,7 @@ const appSignup = {
                 <input-checkbox v-model="fields.license" :checkboxs="checkboxs" class="col-12 col-md-7 mb-3 mb-md-0">
                 </input-checkbox>
                 <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" :disabled="!fields.license"
-                    type="submit">注册</app-button>
+                    type="submit"><i class="fa fa-paper-plane"></i>注册</app-button>
             </div>
         </form>
     </div>
@@ -709,7 +721,7 @@ const appRetrieve = {
             <input-text v-model="fields.repeatPW" type="password" label="重复密码" placeholder="1~16位字母、数字或下划线"
                 pattern="\\w{1,16}" required></input-text>
             <div class="form-row justify-content-end align-items-center mb-3">
-                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">提交</app-button>
+                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit"><i class="fa fa-paper-plane"></i>提交</app-button>
             </div>
         </form>
     </div>
@@ -751,7 +763,7 @@ const appLicense = {
         <h3 class="col-12 text-center">用户协议</h3>
         <div class="col-12 col-md-10 col-lg-9 mb-3" v-html="content"></div>
         <app-button type="button" class="btn btn-primary col-8 col-md-6 col-lg-4 mb-3"
-            @click="$router.back()">返回前页</app-button>
+            @click.native="$router.back()">返回前页</app-button>
     </div>
     `,
     data() {
@@ -860,12 +872,12 @@ const app = {
             }
         },
         alertOk() {
-            this.alert.ok && this.alert.ok();
             this.alertHide();
+            this.alert.ok && this.alert.ok();
         },
         alertCancel() {
-            this.alert.cancel && this.alert.cancel();
             this.alertHide();
+            this.alert.cancel && this.alert.cancel();
         },
         timeCount() {
             this.serverTime.time_ += 1000;

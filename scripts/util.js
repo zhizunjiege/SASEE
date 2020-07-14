@@ -47,7 +47,7 @@ function dataFilter(data, fields) {
 function dataExtracter(from, to, fields) {
     for (const key of fields) {
         if (from[key]) {
-            to[value] = from[key];
+            to[key] = from[key];
         }
     }
     return to;

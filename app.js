@@ -113,7 +113,7 @@ express.response.do = function (func) {
 
 const app = express();
 
-// app.set('env', 'production');
+app.set('env', 'production');
 app.set('strict routing', true);
 app.use(express.static(PUBLIC));
 app.use(express.urlencoded({ extended: false }));

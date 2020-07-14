@@ -6,7 +6,7 @@ export default {
                 <header class="card-header">
                     <h5 class="mb-0 text-left">下载文件</h5>
                 </header>
-                <div class="card-body">
+                <div class="card-body" style="min-height: 200px">
                     <ul v-if="files.down.length" class="list-group list-group-flush">
                         <a v-for="file in files.down" class="list-group-item"
                             :href="href(file)" download>
@@ -24,7 +24,7 @@ export default {
         </div>
         <div class="col-12 col-lg-6 mb-3 mb-lg-0">
             <div class="card bg-main">
-                <div class="card-body">
+                <div class="card-body" style="min-height: 200px">
                     <ul v-if="files.up.length" class="list-group list-group-flush">
                         <a v-for="file in files.up" @click.prevent.stop href="#" class="list-group-item">
                             <div class="row justify-content-between align-items-center">
@@ -45,12 +45,12 @@ export default {
             </div>
         </div>
         <div v-show="uploading" class="row justify-content-center mt-5 w-100">
-            <form class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center mt-3">
+            <form @submit.prevent="submit" class="col-12 col-sm-9 col-md-8 col-lg-6 col-xl-5 text-center mt-3">
                 <input-file v-model="files.uploading"></input-file>
                 <div class="form-row justify-content-between align-items-center mb-3">
-                    <app-button @click.native.stop="uploading=false" class="btn btn-secondary col-12 col-md-5 mb-3 mb-md-0" type="button">取消
+                    <app-button @click.native.stop="uploading=false" class="btn btn-secondary col-12 col-md-5 mb-3 mb-md-0" type="button"><i class="fa fa-ban"></i>取消
                     </app-button>
-                    <app-button @click.native.stop="submit" class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">上传
+                    <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit"><i class="fa fa-arrow-up"></i>上传
                     </app-button>
                 </div>
             </form>
@@ -85,6 +85,12 @@ export default {
                 formdata.append('file', this.files.uploading[0]);
                 formdata.append('pid', this.pid);
                 this.$alertResult(await this.$axiosFile('/bysj/upload', formdata));
+                let now = this.files.uploading[0];
+                this.files.up.push({
+                    filename: now.name,
+                    date: (new Date()).toLocaleISOString().substr(0, 10)
+                });
+                this.files.uploading = [];
             }
             else {
                 this.$alertWarn('请选择文件！');

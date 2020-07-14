@@ -35,7 +35,7 @@ export default {
                         <td v-else>暂无</td>
                         <th>个人主页</th>
                         <td>
-                            <a v-if="teacher.homepage" :href="teacher.homepage">{{teacher.homepage}}</a>
+                            <a v-if="teacher.homepage" :href="teacher.homepage" target="_blank">{{teacher.homepage}}</a>
                             <span v-else>无</span>
                         </td>
                     </tr>

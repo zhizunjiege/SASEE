@@ -101,7 +101,9 @@ app.get('/user-manage', (req, res) => {
 app.post('/add-user', (req, res) => {
     let { identity, info } = req.body,
         sql_insert = 'INSERT INTO ?? SET ?';
-    info.group = `${CONFIG.group[info.group]}-${info.group}`;
+    if ('group' in info) {
+        info.group = `${CONFIG.group[info.group || 0]}-${info.group}`;
+    }
     res.do(async () => {
         let rst = await mysql.find(sql_insert, [identity, info]);
         res.json({
@@ -115,7 +117,9 @@ app.post('/add-user', (req, res) => {
 app.post('/edit-user', (req, res) => {
     let { id, identity, info } = req.body,
         sql_update = 'UPDATE ?? SET ? WHERE id=?';
-    info.group = `${CONFIG.group[info.group]}-${info.group}`;
+    if ('group' in info) {
+        info.group = `${CONFIG.group[info.group] || 0}-${info.group}`;
+    }
     res.do(async () => {
         await mysql.find(sql_update, [identity, info, id]);
         res.json({

@@ -35,6 +35,7 @@ app.post('/set-email', (req, res) => {
     res.do(async () => {
         if (util.pinValidate(req.session.pin, pinCode)) {
             await mysql.find(sql_update, [identity, email, uid]);
+            req.session.pin = null;
             res.json({
                 status: true,
                 msg: '绑定邮箱成功！'

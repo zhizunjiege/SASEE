@@ -3,7 +3,7 @@ export default {
     <div class="app-container app-scroll px-0 px-md-3 text-center">
         <header class="sticky-top bg-main border-bottom border-secondary py-1 row justify-content-end">
             <app-button :disabled="projects.length>=limit" @click.native="submit"
-                class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="button">发布新课题</app-button>
+                class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="button"><i class="fa fa-plus"></i>发布新课题</app-button>
         </header>
         <template v-if="projects.length">
             <div v-for="(p,index) in projects" class="mb-3 py-3 border-bottom border-secondary">
@@ -30,13 +30,13 @@ export default {
                 </div>
                 <div class="row align-items-between justify-content-around">
                     <app-button @click.native="remove(index)" class="btn btn-secondary col-12 col-md-2 mb-3 mb-md-0"
-                        type="button" warn="您确定删除该课题吗？">删除</app-button>
+                        type="button" warn="您确定删除该课题吗？"><i class="fa fa-trash"></i>删除</app-button>
                     <app-button @click.native="edit(index)" class="btn btn-primary col-12 col-md-2 mb-2 mb-md-0"
-                        type="button">修改</app-button>
+                        type="button"><i class="fa fa-pencil"></i>修改</app-button>
                     <app-button @click.native="confirm(index)" class="btn btn-secondary col-12 col-md-2 mb-3 mb-md-0"
-                        type="button">选择学生</app-button>
+                        type="button"><i class="fa fa-users"></i>选择学生</app-button>
                     <app-button @click.native="detail(index)"
-                        class="btn btn-primary col-12 col-md-2 mb-3 mb-md-0" type="button">详情</app-button>
+                        class="btn btn-primary col-12 col-md-2 mb-3 mb-md-0" type="button"><i class="fa fa-info"></i>详情</app-button>
                 </div>
             </div>
         </template>

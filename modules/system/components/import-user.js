@@ -16,7 +16,7 @@ export default {
                     class="col-12 col-md-4"></input-radio>
             </div>
             <div class="form-group form-row justify-content-center">
-                <app-button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mx-auto">导入教师信息
+                <app-button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mx-auto"><i class="fa fa-arrow-up"></i>导入教师信息
                 </app-button>
             </div>
         </form>
@@ -33,7 +33,7 @@ export default {
                     class="col-12 col-md-4"></input-radio>
             </div>
             <div class="form-group form-row justify-content-center">
-                <app-button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mx-auto">导入学生信息
+                <app-button type="submit" class="btn btn-primary col-12 col-md-4 mb-3 mx-auto"><i class="fa fa-arrow-up"></i>导入学生信息
                 </app-button>
             </div>
         </form>

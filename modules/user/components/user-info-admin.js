@@ -1,6 +1,6 @@
 export default {
     template: `
-    <div class="p-3">
+    <div class="p-3 app-container app-scroll">
         <div class="mb-3">
             <table class="table table-bordered table-fixed text-center">
                 <tbody>

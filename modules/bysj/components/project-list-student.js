@@ -56,7 +56,7 @@ export default {
                 query: {
                     id: e.currentTarget.dataset.id,
                     teacher: e.currentTarget.dataset.teacher,
-                    choseUsable: true
+                    chooseUsable: 'yes'
                 }
             });
         }

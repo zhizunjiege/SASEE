@@ -33,7 +33,7 @@ export default {
                     <input-textarea v-model="check.extra" rows="8" placeholder="选填，最大1023个字符（或汉字）" maxlength="1023">
                     </input-textarea>
                     <div class="form-row justify-content-center align-items-end">
-                        <app-button class="btn btn-primary col-12 col-md-6" type="submit">提交审核结果</app-button>
+                        <app-button class="btn btn-primary col-12 col-md-6" type="submit"><i class="fa fa-check"></i>提交审核结果</app-button>
                     </div>
                 </div>
             </form>

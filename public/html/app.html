@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh_ch">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="keywords" content="毕设,选题,js,css,html,vue">
+    <meta name="description" content="北京航空航天大学自动化科学与电气工程学院毕业设计选题网站">
+    <meta name="author" content="陈智杰,杜韶阳">
     <link rel="icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/frames/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/frames/font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="/frames/wangEditor/wangEditor.min.css">
     <link rel="stylesheet" href="/css/system.css">
     <title>毕业设计综合系统</title>
 </head>
@@ -67,7 +72,7 @@
             <div class="col-12 col-md-7 col-lg-6 text-center">
                 <div v-for="link in footLinks" style="min-width:25%;max-width: 25%;display:inline-block;">
                     <router-link v-if="link.to" :to="link.to" class="d-block px-3">{{link.des}}</router-link>
-                    <a v-else :href="link.href" class="d-block px-3">{{link.des}}</a>
+                    <a v-else :href="link.href" class="d-block px-3" target="_blank">{{link.des}}</a>
                 </div>
             </div>
         </footer>
@@ -88,13 +93,14 @@
         </div>
     </div>
 
+
     <script src="/frames/others/jquery-3.4.0.js"> </script>
     <script src="/frames/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/frames/others/wangEditor.min.js"></script>
+    <script src="/frames/wangEditor/wangEditor.min.js"></script>
     <script src="/frames/others/object_hash.js"></script>
-    <script src="/frames/vue/vue.js"></script>
-    <script src="/frames/vue/vue-router.js"></script>
-    <script src="/frames/axios/axios.js"></script>
+    <script src="/frames/vue/vue.min.js"></script>
+    <script src="/frames/vue/vue-router.min.js"></script>
+    <script src="/frames/axios/axios.min.js"></script>
     <script type="module" src="/js/app.js"></script>
 </body>
 

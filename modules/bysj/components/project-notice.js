@@ -15,12 +15,12 @@ export default {
                 <div v-for="(notice,index) in notices" v-html="notice.content" :id="'notice-'+index"
                     :class="{'show active':!index}" class="tab-pane fade"></div>
                 <div id="submit_notice" class="tab-pane fade" :class="{'show active':!notices.length}">
-                    <wang-editor v-model="content" eid="teacher_notice_editor"></wang-editor>
+                    <wang-editor v-model="content" eid="teacher_notice_editor" :height="400"></wang-editor>
                     <form @submit.prevent="submit" class="text-center">
                         <input-text v-model="title" label="标题" placeholder="不超过255个字符（或汉字）" maxlength="255" required>
                         </input-text>
                         <div class="form-group form-row justify-content-end">
-                            <app-button class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="submit" warn="您确定发布该通知吗？">发布
+                            <app-button class="btn btn-primary col-12 col-md-4 mb-3 mb-md-0" type="submit" warn="您确定发布该通知吗？"><i class="fa fa-paper-plane"></i>发布
                             </app-button>
                         </div>
                     </form>

@@ -10,9 +10,9 @@ export default {
         <div class="tab-content p-3 app-container app-scroll">
             <div class="tab-pane fade show active" id="manual_editor">
                 <wang-editor v-model="content[identity]" eid="admin_manual_editor" server="/system/editor-img" :full="true"
-                    :height="560"></wang-editor>
+                    :height="480"></wang-editor>
                 <div class="form-row justify-content-end mb-3">
-                    <app-button @click.native="submit" class="btn btn-primary col-12 col-md-4" type="button" warn="您确定要发布该手册吗？">发布</app-button>
+                    <app-button @click.native="submit" class="btn btn-primary col-12 col-md-4" type="button" warn="您确定要发布该手册吗？"><i class="fa fa-paper-plane"></i>发布</app-button>
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ export default {
             <li v-for="item in news" :data-id="item.id" @click.stop="loadContent"
                 class="list-group-item list-group-item-action">
                 <a @click.prevent href="#" class="float-left w-50 ellipsis">
-                    <span v-if="item.top" class="badge badge-pill badge-warning">置顶</span>
+                    <span v-if="item.top" class="badge badge-pill badge-warning"><i class="fa fa-hand-o-up"></i>置顶</span>
                     {{item.title}}
                 </a>
                 <span class="float-right">{{item.publisher+'--'+item.date}}</span>

@@ -35,24 +35,26 @@ export default {
             </div>
         </div>
         <div class="w-100 form-group d-flex justify-content-around border-top border-secondary py-3 mb-0">
-            <app-button @click.native="select" :disabled="adding||editing" class="btn btn-primary col-12 col-md-1" type="button">反选
+            <app-button @click.native="select" :disabled="adding||editing" class="btn btn-primary" type="button">
+            <i class="fa fa-check"></i>反选
             </app-button>
-            <app-button @click.native="del" :disabled="selected.length<=0||adding||editing" class="btn btn-warning col-12 col-md-1"
+            <app-button @click.native="del" :disabled="selected.length<=0||adding||editing" class="btn btn-warning"
                 type="button" warn="您确定要删除所选用户吗？">
-                删除用户
+                <i class="fa fa-trash"></i>删除用户
             </app-button>
-            <app-button @click.native="add" :disabled="editing&&!adding" class="btn btn-primary col-12 col-md-1" type="button">
-            {{adding?'确认增加':'增加用户'}}
+            <app-button @click.native="add" :disabled="editing&&!adding" class="btn btn-primary" type="button">
+            <i class="fa fa-plus"></i>{{adding?'确认增加':'增加用户'}}
             </app-button>
-            <app-button @click.native="edit" :disabled="selected.length!=1||adding" class="btn btn-secondary col-12 col-md-2"
+            <app-button @click.native="edit" :disabled="selected.length!=1||adding" class="btn btn-secondary"
                 type="button">
-                {{editing?'确认修改':'修改用户信息'}}
+                <i class="fa fa-pencil"></i>{{editing?'确认修改':'修改用户信息'}}
             </app-button>
             <div class="input-group col-12 col-md-4">
                 <input v-model="name" @keyup.enter="search" class="form-control" type="search"
                     placeholder="输入用户姓名进行搜索..." required>
                 <div class="input-group-append">
-                    <app-button @click.native="search" class="btn btn-outline-success" type="button" :disabled="adding||editing">搜索用户
+                    <app-button @click.native="search" class="btn btn-outline-success" type="button" :disabled="adding||editing">
+                    <i class="fa fa-search"></i>搜索用户
                     </app-button>
                 </div>
             </div>

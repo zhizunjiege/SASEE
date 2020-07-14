@@ -2,22 +2,22 @@ export default {
     template: `
     <div class="app-container app-scroll px-0 px-md-3 text-center position-relative">
         <div class="sticky-top form-group form-row justify-content-around border-bottom border-primary py-3">
-            <app-button @click.native="truncate" class="btn btn-warning col-12 col-md-2" type="button" warn="您确定要删除所有课题吗？">
-                删除所有课题
+            <app-button @click.native="truncate" class="btn btn-warning" type="button" warn="您确定要删除所有课题吗？">
+            <i class="fa fa-trash"></i>删除所有课题
             </app-button>
-            <app-button @click.native="submit" class="btn btn-primary col-12 col-md-1" type="button">新增课题
+            <app-button @click.native="submit" class="btn btn-primary" type="button"><i class="fa fa-plus"></i>新增课题
             </app-button>
-            <app-button @click.native="show='stats'" class="btn btn-secondary col-12 col-md-2" type="button">课题信息统计
+            <app-button @click.native="show='stats'" class="btn btn-secondary" type="button"><i class="fa fa-bar-chart"></i>课题信息统计
             </app-button>
-            <a href="/bysj/export-table" download class="col-12 col-md-1">
-            <app-button class="btn btn-primary w-100" type="button">导出总表
+            <a href="/bysj/export-table" download>
+            <app-button class="btn btn-primary" type="button"><i class="fa fa-arrow-down"></i>导出总表
             </app-button>
             </a>
             <div class="input-group col-12 col-md-3">
                 <input v-model="name" @keyup.enter="search" class="form-control" type="search"
                     placeholder="输入教师姓名进行搜索..." required>
                 <div class="input-group-append">
-                    <app-button @click.native="search" class="btn btn-outline-success" type="button">搜索
+                    <app-button @click.native="search" class="btn btn-outline-success" type="button"><i class="fa fa-search"></i>搜索
                     </app-button>
                 </div>
             </div>
@@ -69,11 +69,11 @@ export default {
                     </div>
                     <div class="row align-items-between justify-content-around">
                         <app-button @click.native="remove(index)" class="btn btn-warning col-12 col-md-3 mb-3 mb-md-0"
-                            type="button">删除</app-button>
+                            type="button" warn="您确定删除该课题吗？"><i class="fa fa-trash"></i>删除</app-button>
                         <app-button @click.native="edit(index)" class="btn btn-secondary col-12 col-md-3 mb-3 mb-md-0"
-                            type="button">修改</app-button>
+                            type="button"><i class="fa fa-pencil"></i>修改</app-button>
                         <app-button @click.native="check(index)" class="btn btn-primary col-12 col-md-3 mb-3 mb-md-0"
-                            type="button">审核</app-button>
+                            type="button"><i class="fa fa-gavel"></i>审核</app-button>
                     </div>
                 </div>
             </template>

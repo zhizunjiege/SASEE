@@ -1,7 +1,7 @@
 export default {
     template: `
     <div class="p-3 app-container app-scroll">
-        <form class="app-container" id="aaaa" @submit.prevent="submit">
+        <form class="app-container" @submit.prevent="submit">
             <div class="form-row justify-content-around align-items-center mb-3">
                 <input-checkbox v-model="top" :checkboxs="[{ val: true, des: '置顶' }]" class="col-2">
                 </input-checkbox>
@@ -9,10 +9,10 @@ export default {
                     class="col-10 col-md-6 col-lg-4 mb-0">
                 </input-text>
             </div>
-            <wang-editor v-model="content" eid="admin_news_editor" :full="true" :height="560" server="/system/editor-img">
+            <wang-editor v-model="content" eid="admin_news_editor" :full="true" :height="480" server="/system/editor-img">
             </wang-editor>
             <div class="form-row justify-content-end mb-3">
-                <app-button class="btn btn-primary col-12 col-md-4" type="submit" warn="您确定要发布该通知吗？">发布</app-button>
+                <app-button class="btn btn-primary col-12 col-md-4" type="submit" warn="您确定要发布该通知吗？"><i class="fa fa-paper-plane"></i>发布</app-button>
             </div>
         </form>
     </div>

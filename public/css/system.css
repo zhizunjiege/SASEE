@@ -208,3 +208,11 @@ tr.editing>td:focus {
     outline: 0;
     background-color: #6bd9fe;
 }
+
+button:disabled, input[type=checkbox]:disabled, input[type=radio]:disabled {
+    cursor: not-allowed;
+}
+
+.fa{
+    margin: 0 .25rem;
+}

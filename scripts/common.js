@@ -104,16 +104,17 @@ function sendPinCode(req, res) {
     });
 }
 function signup(req, res) {
-    console.log(req.body);
     let { identity, name, schoolNum, username, pinCode, password, email, wechat, tel, homepage, resume } = req.body,
+        { pin } = req.session,
         sql_query = 'SELECT id,username FROM ?? WHERE name = ? AND schoolNum=?;SELECT 1 FROM ?? WHERE username=?',
         sql_update = 'UPDATE ?? SET ? WHERE id=?';
     res.do(async () => {
         let data = await mysql.find(sql_query, [identity, name, schoolNum, identity, username]);
+        req.session.pin = null;
         if (!data[0].length) throw 1003;
         if (data[0][0].username) throw 1004;
         if (data[1].length) throw 1005;
-        if (!util.pinValidate(req.session.pin, pinCode)) throw 1102;
+        if (!util.pinValidate(pin, pinCode)) throw 1102;
 
         let params = { username, password, email };
         if (wechat) params.wechat = wechat;

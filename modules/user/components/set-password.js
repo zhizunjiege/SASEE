@@ -9,7 +9,7 @@ export default {
             <input-text v-model="fields.repeatPW" type="password" label="重复密码" placeholder="1~16位字母、数字或下划线"
                 pattern="\\w{1,16}" required></input-text>
             <div class="form-row justify-content-end align-items-center mb-3">
-                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit">修改</app-button>
+                <app-button class="btn btn-primary col-12 col-md-5 mb-3 mb-md-0" type="submit"><i class="fa fa-paper-plane"></i>修改</app-button>
             </div>
         </form>
     </div>
