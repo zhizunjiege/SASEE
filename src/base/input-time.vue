@@ -1,0 +1,29 @@
+<template>
+  <div class="form-group form-row">
+    <label
+      v-if="label"
+      class="col-3 col-form-label"
+      :class="{'required':'required' in $attrs}"
+    >{{label}}</label>
+    <input
+      v-bind="$attrs"
+      :value="value"
+      type="datetime-local"
+      @input="$emit('input',$event.target.value)"
+      class="form-control"
+      :class="{'col-9':label}"
+    />
+  </div>
+</template>
+<script>
+export default {
+  inheritAttrs: false,
+  props: {
+    value: String,
+    label: {
+      type: String,
+      default: "",
+    },
+  },
+};
+</script>

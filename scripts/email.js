@@ -32,29 +32,8 @@ function send({ from = 'benke03@buaa.edu.cn', password = 'zXYnJxAqvHfNdE3c', to,
     }
 }
 
-/* function sendEmail(req, res) {
-    let { toAddr, title, content, extraData } = req.body;
-    _send({
-        to: toAddr,
-        html: (extraData || '') + content + CONSTANT.FOOTER,
-        subject: title
-    }).then(info => {
-        res.send('邮件发送成功！');
-    }).catch(util.catchError(res, superApp.errorMap));
-} */
 function pinCodeTemp(code) {
     return `这是本次验证码：${code}。<br/>此验证码在五分钟内有效。<br/>${CONSTANT.FOOTER}`;
 }
-function emailTemp({ title = '通知', paragraph = [] } = {}) {
-    let p = ``;
-    for (let i = 0; i < paragraph.length; i++) {
-        p += `<p>${paragraph[i]}</p>`;
-    }
-    return `
-        <h3 style="text-align:center;">${title}</h3>
-        ${p}
-        <p style="text-align:center;">系统时间：${new Date().toLocaleString()}</p>
-            ${CONSTANT.FOOTER}`;
-}
 
-module.exports = { createSixNum, send, pinCodeTemp, emailTemp };
+module.exports = { createSixNum, send, pinCodeTemp };

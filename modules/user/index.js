@@ -1,15 +1,8 @@
-const express = require('express'),
-    { mysql, util } = superApp.requireUserModules(['mysql', 'util']);
+const express = require('express');
+const mysql = require('../../scripts/mysql');
+const util = require('../../scripts/util');
 
 const app = express();
-
-function getComponentName(identity, component) {
-    switch (component) {
-        case 'user-info':
-        case 'perfect-info': return `${component}-${identity}.js`;
-        default: return component + '.js';
-    }
-}
 
 //可以修改一下查询语句
 app.get('/info', (req, res) => {
@@ -85,4 +78,4 @@ app.post('/perfect-info', (req, res) => {
     });
 });
 
-module.exports = { getComponentName, app, route: '/user' };
+module.exports = app;

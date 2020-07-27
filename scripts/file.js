@@ -1,12 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-//读写json文件
-function readJson(path) {
-    return JSON.parse(fs.readFileSync(path, {
-        encoding: 'utf8'
-    }));
-}
 function writeJson(path, data) {
     fs.writeFileSync(path, JSON.stringify(data), {
         encoding: 'utf8'
@@ -49,4 +43,4 @@ function _mkdir(filepath) {
     }
 }; */
 
-module.exports = { readJson, writeJson, move, writeFile: fs.promises.writeFile, unlink: fs.promises.unlink };
+module.exports = { writeJson, move, writeFile: fs.promises.writeFile, unlink: fs.promises.unlink };

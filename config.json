@@ -10,34 +10,11 @@
         "1102": "验证码已失效或验证失败！",
         "1200": "未找到该组件！"
     },
-    "paths": {
-        "public": "PUBLIC",
-        "tmp": "TMP",
-        "scripts": {
-            "file": "file",
-            "mysql": "mysql",
-            "util": "util",
-            "object_hash": "hash",
-            "email": "email",
-            "common": "common"
-        },
-        "modules": {
-            "system": {
-                "index.js": "system"
-            },
-            "user": {
-                "index.js": "user"
-            },
-            "bysj": {
-                "index.js": "bysj"
-            }
-        }
-    },
     "routes": [
         {
             "path": "system",
             "des": "系统相关",
-            "icon": "glyphicon-home",
+            "icon": "fa-home",
             "subs": [
                 {
                     "path": "",
@@ -110,16 +87,31 @@
         {
             "path": "user",
             "des": "个人空间",
-            "icon": "glyphicon-user",
+            "icon": "fa-user",
             "subs": [
                 {
-                    "path": "",
-                    "component": "user-info"
+                    "path": "grxx",
+                    "des": "个人信息",
+                    "component": "user-info-student",
+                    "requirement": {
+                        "identity": "student"
+                    }
                 },
                 {
                     "path": "grxx",
                     "des": "个人信息",
-                    "component": "user-info"
+                    "component": "user-info-teacher",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "grxx",
+                    "des": "个人信息",
+                    "component": "user-info-admin",
+                    "requirement": {
+                        "identity": "admin"
+                    }
                 },
                 {
                     "path": "bdyx",
@@ -134,18 +126,37 @@
                 {
                     "path": "wsxx",
                     "des": "完善信息",
-                    "component": "perfect-info"
+                    "component": "perfect-info-student",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
+                    "path": "wsxx",
+                    "des": "完善信息",
+                    "component": "perfect-info-teacher",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "wsxx",
+                    "des": "完善信息",
+                    "component": "perfect-info-admin",
+                    "requirement": {
+                        "identity": "admin"
+                    }
                 }
             ]
         },
         {
             "path": "bysj",
             "des": "毕业设计",
-            "icon": "glyphicon-th-list",
+            "icon": "fa-bars",
             "subs": [
                 {
                     "path": "",
-                    "component": "project-list",
+                    "component": "project-list-student",
                     "requirement": {
                         "identity": "student"
                     }
@@ -153,14 +164,14 @@
                 {
                     "path": "xzkt",
                     "des": "选择课题",
-                    "component": "project-list",
+                    "component": "project-list-student",
                     "requirement": {
                         "identity": "student"
                     }
                 },
                 {
                     "path": "project-content",
-                    "component": "project-content",
+                    "component": "project-content-student",
                     "requirement": {
                         "identity": "student"
                     }
@@ -176,7 +187,7 @@
                 {
                     "path": "wdkt",
                     "des": "我的课题",
-                    "component": "project-detail",
+                    "component": "project-detail-student",
                     "requirement": {
                         "identity": "student"
                     }
@@ -190,7 +201,7 @@
                 },
                 {
                     "path": "project-form",
-                    "component": "project-form",
+                    "component": "project-form-teacher",
                     "requirement": {
                         "identity": "teacher"
                     }
@@ -212,7 +223,7 @@
                 },
                 {
                     "path": "wdkt",
-                    "component": "project-detail",
+                    "component": "project-detail-teacher",
                     "requirement": {
                         "identity": "teacher"
                     }
@@ -220,7 +231,7 @@
                 {
                     "path": "ktsh",
                     "des": "课题审核",
-                    "component": "project-list",
+                    "component": "project-list-teacher",
                     "requirement": {
                         "identity": "teacher",
                         "ifDean": "是"
@@ -228,7 +239,7 @@
                 },
                 {
                     "path": "project-content",
-                    "component": "project-content",
+                    "component": "project-content-teacher",
                     "requirement": {
                         "identity": "teacher",
                         "ifDean": "是"
@@ -268,14 +279,14 @@
                 },
                 {
                     "path": "project-form",
-                    "component": "project-form",
+                    "component": "project-form-admin",
                     "requirement": {
                         "identity": "admin"
                     }
                 },
                 {
                     "path": "project-content",
-                    "component": "project-content",
+                    "component": "project-content-admin",
                     "requirement": {
                         "identity": "admin"
                     }

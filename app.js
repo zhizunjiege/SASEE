@@ -39,55 +39,15 @@ Promise.allSettled = function (promiseArray) {
     });
 };
 
-/* 自定义全局对象 */
-global.superApp = {
-    server: null,
-    errors: null,
-    PATH: {
-        root: {}
-    },
-    routes: null,
-    startTime: new Date(),
-    requireUserModule(name, path = 'root') {
-        return require(this.PATH[path][name]);
-    },
-    requireUserModules(names, path) {
-        let modules = {};
-        for (const iterator of names) {
-            modules[iterator] = this.requireUserModule(iterator, path);
-        }
-        return modules;
-    },
-    requireAll(names) {
-        let modules = {};
-        for (const iterator of names) {
-            modules[iterator] = require(iterator);
-        }
-        return modules;
-    },
-    transObjToPath(cache, path, node) {
-        if (node instanceof Object) {
-            for (const [dir, nextNode] of Object.entries(node)) {
-                this.transObjToPath(cache, path + '/' + dir, nextNode);
-            }
-        } else {
-            cache[node] = path;
-        }
-    }
-};
-
 /* fs模块使用cwd路径为根目录，随脚本启动位置不同而变化；而require函数使用__dirname，以文件间相对路径关系为准。
 故模块加载只要使用相对路径即可，而资源定位需要绝对路径。为确保准确，本程序均使用绝对路径。 */
 
-const { express, 'express-session': session } = superApp.requireAll(['express', 'express-session']),
-    file = require('./scripts/file');
+const express = require('express');
+const session = require('express-session');
 
-let config = file.readJson(__dirname + '/config.json');
-superApp.errors = config.errors;
-superApp.routes = config.routes;
-superApp.transObjToPath(superApp.PATH.root, __dirname, config.paths);
+const common = require('./common');
 
-const { PUBLIC } = superApp.PATH.root;
+const config = require('./config.json');
 
 /* 增强express的response对象 */
 express.response.do = function (func) {
@@ -113,9 +73,24 @@ express.response.do = function (func) {
 
 const app = express();
 
+// app.set('env', 'development');
 app.set('env', 'production');
+
 app.set('strict routing', true);
-app.use(express.static(PUBLIC));
+
+app.use(express.static(__dirname + '/dist'));
+
+/* const webpack = require('webpack');
+const webpackConfig = require('./webpack.config.dev');
+const WebpackDevMiddleware = require('webpack-dev-middleware');
+const WebpackHotMiddleware = require('webpack-hot-middleware');
+const compiler = webpack(webpackConfig);
+app.use(WebpackDevMiddleware(compiler, {
+    publicPath: webpackConfig.output.publicPath
+}));
+app.use(WebpackHotMiddleware(compiler)); */
+
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(session({
@@ -128,27 +103,20 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-    res.errors = superApp.errors;
+    res.errors = config.errors;
     next();
 });
+
 /* 路由 */
-app.get('/', (req, res) => {
-    res.do(() => {
-        res.sendFile('app.html', {
-            root: PUBLIC + '/html'
-        });
-    });
-});
+
 app.get('/query', (req, res) => {
     res.json({ online: req.session.uid ? true : false });
 });
 
-const common = superApp.requireUserModule('common', 'root');
 app.post('/login', common.login);
 app.post('/signup', common.signup);
 app.get('/sendPinCode', common.sendPinCode);
 app.post('/retrieve', common.retrieve);
-
 
 app.get('/license', (req, res) => {
     res.do(async () => {
@@ -180,22 +148,12 @@ app.use((req, res, next) => {
 
 app.get('/logout', common.logout);
 
-const modules = superApp.requireUserModules(['system', 'user', 'bysj'], 'root');
-for (const iterator of Object.values(modules)) {
-    app.use(iterator.route, iterator.app);
+const modules = ['system', 'user', 'bysj'];
+for (const iterator of modules) {
+    let sub = require(`./modules/${iterator}/index`);
+    app.use(`/${iterator}`, sub);
 }
 app.get('/modules', common.getModules);
-app.get('/components', (req, res) => {
-    res.do(async () => {
-        let { module, component } = req.query;
-        if (component) {
-            let file = modules[module].getComponentName(req.session.identity, component);
-            res.sendFile(file, { root: `${__dirname}/modules/${module}/components` });
-        } else {
-            throw 1200;
-        }
-    });
-});
 
 app.use((req, res) => {
     res.type('text/html');
@@ -203,6 +161,6 @@ app.use((req, res) => {
     res.send(`您要的东西没找到哦-_-，看看地址是不是输错了？`);
 });
 
-superApp.server = app.listen(3000, '::', () => {
+app.listen(3000, '::', () => {
     console.log('express is running on localhost:3000')
 });

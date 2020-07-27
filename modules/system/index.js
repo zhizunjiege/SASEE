@@ -1,9 +1,15 @@
-const { express, multer, path, exceljs: ExcelJs, child_process } = superApp.requireAll(['express', 'multer', 'path', 'exceljs', 'child_process']),
-    { mysql, file } = superApp.requireUserModules(['mysql', 'file']);
+const express = require('express');
+const path = require('path');
+const multer = require('multer');
+const child_process = require('child_process');
+const exceljs = require('exceljs');
+
+const mysql = require('../../scripts/mysql');
+const file = require('../../scripts/file');
+
+const CONFIG = require('./config.json');
 
 const app = express();
-
-const CONFIG = file.readJson(`${__dirname}/config.json`);
 
 app.get('/news-content', (req, res) => {
     let { id } = req.query;
@@ -147,7 +153,7 @@ app.post('/import-user', receiver, (req, res) => {
         sql_truncate = 'TRUNCATE TABLE ??',
         sql_insert = `INSERT INTO ${identity} (name,gender,schoolNum,\`group\`,${identity == 'teacher' ? `proTitle,department,ifDean` : `specialty,\`class\`,postGraduate`}) VALUES `;
     res.do(async () => {
-        let wb = new ExcelJs.Workbook();
+        let wb = new exceljs.Workbook();
         await wb.xlsx.readFile(tmp);
         let ws = wb.getWorksheet(1);
 
@@ -206,8 +212,4 @@ app.get('/data-recovery', (req, res) => {
     });
 });
 
-function getComponentName(identity, component) {
-    return component + '.js';
-}
-
-module.exports = { getComponentName, app, route: '/system' };
+module.exports = app;

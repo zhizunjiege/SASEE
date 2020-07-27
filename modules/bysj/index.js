@@ -1,7 +1,16 @@
-const { express, multer, path, 'node-schedule': schedule, exceljs: ExcelJs } = superApp.requireAll(['express', 'multer', 'path', 'node-schedule', 'exceljs']),
-    { mysql, file, util } = superApp.requireUserModules(['mysql', 'file', 'util']);
+const express = require('express');
+const path = require('path');
+const multer = require('multer');
+const schedule = require('node-schedule');
+const exceljs = require('exceljs');
 
-const CONFIG = file.readJson(__dirname + '/config/map.json');
+const mysql = require('../../scripts/mysql');
+const file = require('../../scripts/file');
+const util = require('../../scripts/util');
+
+const CONFIG = require('./config/map.json');
+const TIMES = require('./config/time.json');
+
 
 const app = express();
 app.use((req, res, next) => {
@@ -9,7 +18,6 @@ app.use((req, res, next) => {
     next();
 });
 
-let TIMES = file.readJson(__dirname + '/config/time.json');
 let JOBS = {};
 function save() {
     file.writeJson(__dirname + '/config/time.json', TIMES);
@@ -577,7 +585,7 @@ app.get('/manual-operation', (req, res) => {
 
 let excelWB = null, excelWS = null;
 (async () => {
-    excelWB = new ExcelJs.Workbook();
+    excelWB = new exceljs.Workbook();
     await excelWB.xlsx.readFile(__dirname + '/config/template.xlsx');
     excelWS = excelWB.getWorksheet(1);
     for (const c of excelWS.columns) {
@@ -628,7 +636,7 @@ app.get('/export-table', (req, res) => {
             delete i.ability;
         }
 
-        let tableWB = new ExcelJs.Workbook(), tableWS = tableWB.addWorksheet('sheet1');
+        let tableWB = new exceljs.Workbook(), tableWS = tableWB.addWorksheet('sheet1');
         let style = {
             font: {
                 name: '宋体',
@@ -658,17 +666,4 @@ app.get('/export-table', (req, res) => {
     });
 });
 
-function getComponentName(identity, component) {
-    switch (component) {
-        case 'project-list':
-        case 'project-content':
-        case 'project-detail':
-        case 'project-form':
-            component += `-${identity}`;
-            break;
-        default: ;
-    }
-    return component + '.js';
-}
-
-module.exports = { getComponentName, app, route: '/bysj' };
+module.exports = app;
