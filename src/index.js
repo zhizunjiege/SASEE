@@ -54,14 +54,8 @@ baseComponents.keys().forEach(filename => {
     Vue.component(filename.split('/').pop().replace(/\.\w+$/, ''), config.default || config);
 });
 
-const app = new Vue({
-    components: { APP },
-    template: `<APP/>`
-});
-const alert = new Vue({
-    components: { ALERT },
-    template: `<ALERT/>`
-});
+const app = new Vue(APP);
+const alert = new Vue(ALERT);
 
 // axios.defaults.timeout = 5000;
 axios.interceptors.response.use(
