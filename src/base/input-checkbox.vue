@@ -33,14 +33,20 @@ export default {
       in_checked:
         this.checkboxs.length > 1 ? this.checked.slice() : this.checked,
       eid: new Date().toISOString(),
+      emitted: false,
     };
   },
   watch: {
     checked() {
-      this.in_checked =
-        this.checkboxs.length > 1 ? this.checked.slice() : this.checked;
+      if (!this.emitted) {
+        this.in_checked =
+          this.checkboxs.length > 1 ? this.checked.slice() : this.checked;
+      } else {
+        this.emitted = false;
+      }
     },
     in_checked() {
+      this.emitted = true;
       this.$emit("change", this.in_checked);
     },
   },

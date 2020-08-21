@@ -292,6 +292,111 @@
                     }
                 }
             ]
+        },
+        {
+            "path": "kcsj",
+            "des": "课程设计",
+            "icon": "fa-book",
+            "subs": [
+                {
+                    "path": "fzxx",
+                    "component": "group-info"
+                },
+                {
+                    "path": "",
+                    "component": "group-choose",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
+                    "path": "xzfz",
+                    "des": "选择分组",
+                    "component": "group-choose",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
+                    "path": "wdfz",
+                    "des": "我的分组",
+                    "component": "group-info",
+                    "requirement": {
+                        "identity": "student"
+                    }
+                },
+                {
+                    "path": "",
+                    "component": "group-info",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "wdfz",
+                    "des": "我的分组",
+                    "component": "group-info",
+                    "requirement": {
+                        "identity": "teacher"
+                    }
+                },
+                {
+                    "path": "xzfz",
+                    "des": "新增分组",
+                    "component": "group-form-teacher",
+                    "requirement": {
+                        "identity": "teacher",
+                        "ifDean": "是"
+                    }
+                },
+                {
+                    "path": "xgfz",
+                    "component": "group-form-teacher",
+                    "requirement": {
+                        "identity": "teacher",
+                        "ifDean": "是"
+                    }
+                },
+                {
+                    "path": "glfz",
+                    "des": "管理分组",
+                    "component": "group-manage-teacher",
+                    "requirement": {
+                        "identity": "teacher",
+                        "ifDean": "是"
+                    }
+                },
+                {
+                    "path": "",
+                    "component": "group-manage-admin",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "glfz",
+                    "des": "管理分组",
+                    "component": "group-manage-admin",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "xzfz",
+                    "des": "新增分组",
+                    "component": "group-form-admin",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                },
+                {
+                    "path": "xgfz",
+                    "component": "group-form-admin",
+                    "requirement": {
+                        "identity": "admin"
+                    }
+                }
+            ]
         }
     ]
 }

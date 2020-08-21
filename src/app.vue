@@ -220,34 +220,36 @@ export default {
         let modules = [],
           routes = [];
         for (const module of result.routes) {
-          let _module = {
-              name: module.path,
-              des: module.des,
-              icon: module.icon,
-              subModules: [],
-            },
-            _route = {
-              path: `/${module.path}`,
-              component: mainPage,
-              children: [],
-            };
-          modules.push(_module);
-          routes.push(_route);
-          for (const subModule of module.subs) {
-            if (subModule.des) {
-              _module.subModules.push({
-                name: subModule.path,
-                des: subModule.des,
-              });
-            }
-            if (subModule.component) {
-              _route.children.push({
-                path: subModule.path,
-                component: () =>
-                  import(
-                    `../modules/${module.path}/components/${subModule.component}`
-                  ),
-              });
+          if (module.subs.length) {
+            let _module = {
+                name: module.path,
+                des: module.des,
+                icon: module.icon,
+                subModules: [],
+              },
+              _route = {
+                path: `/${module.path}`,
+                component: mainPage,
+                children: [],
+              };
+            modules.push(_module);
+            routes.push(_route);
+            for (const subModule of module.subs) {
+              if (subModule.des) {
+                _module.subModules.push({
+                  name: subModule.path,
+                  des: subModule.des,
+                });
+              }
+              if (subModule.component) {
+                _route.children.push({
+                  path: subModule.path,
+                  component: () =>
+                    import(
+                      `../modules/${module.path}/components/${subModule.component}`
+                    ),
+                });
+              }
             }
           }
         }

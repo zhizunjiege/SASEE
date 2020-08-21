@@ -19,7 +19,7 @@
 export default {
   inheritAttrs: false,
   props: {
-    value: String,
+    value: [String,Number],
     label: {
       type: String,
       default: "",

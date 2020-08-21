@@ -5,7 +5,12 @@
       class="col-3 col-form-label"
       :class="{'required':'required' in $attrs}"
     >{{label}}</label>
-    <select v-model="in_value" class="custom-select form-control" :class="{'col-9':label}">
+    <select
+      v-bind="$attrs"
+      v-model="in_value"
+      class="custom-select form-control"
+      :class="{'col-9':label}"
+    >
       <option v-for="(opt,index) in options" :key="index" :value="opt">{{opt}}</option>
     </select>
   </div>

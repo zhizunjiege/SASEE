@@ -656,7 +656,7 @@ app.get('/export-table', (req, res) => {
         });
 
         let time = new Date();
-        let tmp = path.resolve(__dirname, 'backup', `${time.getFullYear()}年自动化与电气工程学院本科生毕业设计（论文）题目汇总表-${time.toLocaleDateString()}.xlsx`);
+        let tmp = path.resolve(__dirname, 'backup', `${time.getFullYear()}年自动化科学与电气工程学院本科生毕业设计（论文）题目汇总表-${time.toLocaleDateString()}.xlsx`);
         await tableWB.xlsx.writeFile(tmp);
         res.download(tmp, err => {
             if (err) {

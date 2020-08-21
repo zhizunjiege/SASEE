@@ -73,14 +73,14 @@ express.response.do = function (func) {
 
 const app = express();
 
-// app.set('env', 'development');
-app.set('env', 'production');
-
 app.set('strict routing', true);
 
 app.use(express.static(__dirname + '/dist'));
 
-/* const webpack = require('webpack');
+// app.set('env', 'production');
+
+app.set('env', 'development');
+const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.dev');
 const WebpackDevMiddleware = require('webpack-dev-middleware');
 const WebpackHotMiddleware = require('webpack-hot-middleware');
@@ -88,7 +88,7 @@ const compiler = webpack(webpackConfig);
 app.use(WebpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath
 }));
-app.use(WebpackHotMiddleware(compiler)); */
+app.use(WebpackHotMiddleware(compiler));
 
 
 app.use(express.urlencoded({ extended: false }));
@@ -148,7 +148,7 @@ app.use((req, res, next) => {
 
 app.get('/logout', common.logout);
 
-const modules = ['system', 'user', 'bysj'];
+const modules = ['system', 'user', 'bysj', 'kcsj'];
 for (const iterator of modules) {
     let sub = require(`./modules/${iterator}/index`);
     app.use(`/${iterator}`, sub);
