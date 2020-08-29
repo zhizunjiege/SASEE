@@ -11,8 +11,14 @@ import 'font-awesome/css/font-awesome.min.css'
 
 import './style.css';
 
-Date.prototype.toLocaleISOString = function () {
-    return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString();
+Date.prototype.toLocaleISOString = function (mode = 'readable') {
+    let raw = new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString();
+    switch (mode) {
+        case 'readable':
+            return raw.replace('T', ' ').replace('Z', '').substr(0, 19);
+        default:
+            return raw;
+    }
 };
 
 const _push = VueRouter.prototype.push;

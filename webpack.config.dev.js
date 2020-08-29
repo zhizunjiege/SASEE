@@ -54,22 +54,7 @@ module.exports = {
                 'vue-style-loader',
                 'css-loader'
             ]
-        }/*, {
-            test: /\.less$/,
-            use: [
-                'vue-style-loader',
-                'css-loader',
-                'less-loader'
-            ]
-        } , {
-            test: /\.(png|jpg|webp|gif|svg|ico)$/,
-            use: [{
-                loader: 'file-loader',
-                options: {
-                    outputPath: 'img/'
-                }
-            }]
-        } */, {
+        }, {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
             use: [{
                 loader: 'file-loader',

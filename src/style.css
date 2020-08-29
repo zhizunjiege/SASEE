@@ -137,7 +137,12 @@ body {
     z-index: 13000;
 }
 
-a:hover {
+a:hover, .btn-link:hover {
+    text-decoration: none;
+}
+
+a:focus, .btn-link:focus {
+    box-shadow: none;
     text-decoration: none;
 }
 

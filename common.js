@@ -36,17 +36,25 @@ function login(req, res) {
     });
 }
 
-function routesFilter(routes, user) {
-    function _filter(element) {
-        if (element.subs) element.subs = element.subs.filter(_filter);
-        if (!element.requirement) return true;
-        for (const [key, value] of Object.entries(element.requirement)) {
-            if (user[key] != value) return false;
+function modulesFilter(modules, user) {
+    return modules.filter(module => {
+        if (module.open) {
+            module.subs = module.subs.filter(route => {
+                if (route.requirement) {
+                    for (const [key, value] of Object.entries(route.requirement)) {
+                        if (user[key] != value) {
+                            return false;
+                        }
+                    }
+                    delete route.requirement;
+                }
+                return true;
+            });
+            return true;
+        } else {
+            return false;
         }
-        delete element.requirement;
-        return true;
-    }
-    return routes.filter(_filter);
+    });
 }
 function getModules(req, res) {
     let { identity, uid } = req.session,
@@ -55,7 +63,7 @@ function getModules(req, res) {
         let [user] = await mysql.find(sql_query, [identity, uid]),
             routes = JSON.parse(JSON.stringify(config.routes));
         user.identity = identity;
-        routes = routesFilter(routes, user);
+        routes = modulesFilter(routes, user);
         res.json({
             status: true,
             routes
@@ -64,12 +72,7 @@ function getModules(req, res) {
 }
 function logout(req, res) {
     res.do(async () => {
-        await new Promise((resolve, reject) => {
-            req.session.destroy(err => {
-                if (err) reject(err);
-                resolve();
-            });
-        });
+        await req.logout();
         res.json({
             status: true,
             msg: '登出成功！'

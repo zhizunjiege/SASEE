@@ -86,7 +86,7 @@
         type="button"
         warn="您确定要删除所选用户吗？"
       >
-        <i class="fa fa-trash"></i>删除用户
+        <i class="fa fa-trash"></i>删除
       </app-button>
       <app-button
         @click.native="add"
@@ -95,7 +95,7 @@
         type="button"
       >
         <i class="fa fa-plus"></i>
-        {{adding?'确认增加':'增加用户'}}
+        {{adding?'确认':'新增'}}
       </app-button>
       <app-button
         @click.native="edit"
@@ -104,7 +104,7 @@
         type="button"
       >
         <i class="fa fa-pencil"></i>
-        {{editing?'确认修改':'修改用户信息'}}
+        {{editing?'确认':'修改'}}
       </app-button>
       <div class="input-group col-12 col-md-4">
         <input
@@ -154,6 +154,7 @@ export default {
           { key: "group", des: "分组" },
           { key: "department", des: "教研室" },
           { key: "ifDean", des: "是否系主任" },
+          { key: "ifHead", des: "是否班主任" },
         ],
         admin: [
           { key: "name", des: "姓名" },
@@ -233,12 +234,12 @@ export default {
             identity: this.identity,
           });
           if (rst.status) {
-            let nodes = document.querySelectorAll(
+/*             let nodes = document.querySelectorAll(
               "tr.editing>td:not(:first-child)"
             );
             for (const v of this.heads[this.identity]) {
               v.innerText = "";
-            }
+            } */
             info.id = rst.insertId;
             // this.users[this.identity].splice(this.users[this.identity].length - 1, 1, info);
             this.users[this.identity].pop();

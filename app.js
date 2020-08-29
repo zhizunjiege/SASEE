@@ -4,8 +4,14 @@ Array.prototype.remove = function (val) {
     if (index >= 0) this.splice(index, 1);
     return this;
 };
-Date.prototype.toLocaleISOString = function () {
-    return new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z', '');
+Date.prototype.toLocaleISOString = function (mode = 'readable') {
+    let raw = new Date(this.valueOf() - this.getTimezoneOffset() * 1000 * 60).toISOString();
+    switch (mode) {
+        case 'readable':
+            return raw.replace('T', ' ').replace('Z', '').substr(0, 19);
+        default:
+            return raw;
+    }
 };
 Promise.allSettled = function (promiseArray) {
     let len = promiseArray.length,
@@ -39,37 +45,48 @@ Promise.allSettled = function (promiseArray) {
     });
 };
 
-/* fs模块使用cwd路径为根目录，随脚本启动位置不同而变化；而require函数使用__dirname，以文件间相对路径关系为准。
-故模块加载只要使用相对路径即可，而资源定位需要绝对路径。为确保准确，本程序均使用绝对路径。 */
-
 const express = require('express');
 const session = require('express-session');
 
 const common = require('./common');
+const file = require('./scripts/file');
 
 const config = require('./config.json');
 
 /* 增强express的response对象 */
-express.response.do = function (func) {
-    new Promise(resolve => resolve(func())).catch(err => {
+const errorHandler = function (res, err) {
+    if (err) {
         let msg = '服务器出现错误，请稍后重试！';
         if (err instanceof Error) {
             console.error(err);
         } else {
-            for (const [errCode, errMsg] of Object.entries(this.errors)) {
+            for (const [errCode, errMsg] of Object.entries(res.errors)) {
                 if (err == errCode) {
                     msg = errMsg;
                     break;
                 }
             }
         }
-        this.json({
+        res.json({
             status: false,
             msg
         });
-        return;
-    });
+    }
 };
+express.response.do = function (func) {
+    const h = err => {
+        errorHandler(this, err);
+    };
+    func(h).catch(h);
+};
+express.request.logout = function () {
+    return new Promise((resolve, reject) => {
+        this.session.destroy(err => {
+            if (err) reject(err);
+            resolve();
+        });
+    });
+}
 
 const app = express();
 
@@ -77,19 +94,17 @@ app.set('strict routing', true);
 
 app.use(express.static(__dirname + '/dist'));
 
-// app.set('env', 'production');
-
-app.set('env', 'development');
-const webpack = require('webpack');
-const webpackConfig = require('./webpack.config.dev');
-const WebpackDevMiddleware = require('webpack-dev-middleware');
-const WebpackHotMiddleware = require('webpack-hot-middleware');
-const compiler = webpack(webpackConfig);
-app.use(WebpackDevMiddleware(compiler, {
-    publicPath: webpackConfig.output.publicPath
-}));
-app.use(WebpackHotMiddleware(compiler));
-
+if (app.get('env') == 'development') {
+    const webpack = require('webpack');
+    const webpackConfig = require('./webpack.config.dev');
+    const WebpackDevMiddleware = require('webpack-dev-middleware');
+    const WebpackHotMiddleware = require('webpack-hot-middleware');
+    const compiler = webpack(webpackConfig);
+    app.use(WebpackDevMiddleware(compiler, {
+        publicPath: webpackConfig.output.publicPath
+    }));
+    app.use(WebpackHotMiddleware(compiler));
+}
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -148,12 +163,64 @@ app.use((req, res, next) => {
 
 app.get('/logout', common.logout);
 
-const modules = ['system', 'user', 'bysj', 'kcsj'];
+const modules = ['system', 'user', 'bysj', 'kcsj', 'scsx'];
 for (const iterator of modules) {
     let sub = require(`./modules/${iterator}/index`);
     app.use(`/${iterator}`, sub);
 }
 app.get('/modules', common.getModules);
+
+app.get('/modules-list', (req, res) => {
+    let modules = [];
+    for (const [i, v] of config.routes.entries()) {
+        modules.push({
+            val: i,
+            des: v.des
+        });
+    }
+    modules.shift();
+    res.json({
+        status: true,
+        modules
+    });
+});
+
+app.post('/modules-opt', (req, res) => {
+    let { mode, modules } = req.body;
+    res.do(async () => {
+        for (const i of modules) {
+            config.routes[i].open = mode;
+        }
+        await file.writeJson('./config.json', config);
+        await req.logout();
+        res.json({
+            status: true,
+            offline: true,
+            msg: '修改成功，请重新登录！'
+        });
+    })
+});
+
+app.get('/reset-system', (req, res) => {
+    res.do(async () => {
+        for (const [i, v] of config.routes.entries()) {
+            v.open = i <= 1;
+        }
+        await file.writeJson('./config.json', config);
+        let promises = [];
+        for (const iterator of modules) {
+            let reset = require(`./modules/${iterator}/reset`);
+            promises.push(reset());
+        }
+        await Promise.allSettled(promises);
+        await req.logout();
+        res.json({
+            status: true,
+            offline: true,
+            msg: '系统重置成功，请重新登录！'
+        });
+    });
+});
 
 app.use((req, res) => {
     res.type('text/html');

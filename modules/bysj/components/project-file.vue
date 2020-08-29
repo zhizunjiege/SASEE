@@ -114,7 +114,7 @@ export default {
         let now = this.files.uploading[0];
         this.files.up.push({
           filename: now.name,
-          date: new Date().toLocaleISOString().substr(0, 10),
+          date: new Date().toLocaleISOString(),
         });
         this.files.uploading = [];
       } else {

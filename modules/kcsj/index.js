@@ -179,7 +179,7 @@ app.get('/truncate', (req, res) => {
 });
 
 app.get('/export-table', (req, res) => {
-    res.do(async () => {
+    res.do(async (h) => {
         let sql_query = 'SELECT SUBSTR(`group`,3) `group`,num,time,place,description,capacity,JSON_LENGTH(students) chosen,(SELECT GROUP_CONCAT(t.`name` SEPARATOR ",") FROM teacher t WHERE JSON_CONTAINS(k.teachers,	CONCAT("",t.id))) teachers,(SELECT GROUP_CONCAT(s.`name` SEPARATOR ",") FROM student s WHERE JSON_CONTAINS(k.students,	CONCAT("",s.id))) students FROM kcsj k ORDER BY `group`';
         let table = await mysql.find(sql_query);
 
@@ -206,11 +206,7 @@ app.get('/export-table', (req, res) => {
         let time = new Date();
         let tmp = path.resolve(__dirname, 'backup', `${time.getFullYear()}年自动化科学与电气工程学院本科生课程设计与综合实验分组情况汇总表-${time.toLocaleDateString()}.xlsx`);
         await tableWB.xlsx.writeFile(tmp);
-        res.download(tmp, err => {
-            if (err) {
-                throw err;
-            }
-        });
+        res.download(tmp, h);
     });
 });
 

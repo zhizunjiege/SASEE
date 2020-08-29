@@ -172,10 +172,7 @@ export default {
       return `./img/${this.user.profile}`;
     },
     footTime() {
-      return new Date(this.serverTime.time_)
-        .toLocaleISOString()
-        .substring(0, 19)
-        .replace("T", " ");
+      return new Date(this.serverTime.time_).toLocaleISOString();
     },
   },
   methods: {

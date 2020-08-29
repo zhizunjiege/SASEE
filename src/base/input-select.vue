@@ -11,7 +11,11 @@
       class="custom-select form-control"
       :class="{'col-9':label}"
     >
-      <option v-for="(opt,index) in options" :key="index" :value="opt">{{opt}}</option>
+      <option
+        v-for="(opt,index) in options"
+        :key="index"
+        :value="typeof opt=='string'?opt:opt.val"
+      >{{typeof opt=='string'?opt:opt.des}}</option>
     </select>
   </div>
 </template>
@@ -23,7 +27,7 @@ export default {
     event: "change",
   },
   props: {
-    value: [String, Array],
+    value: [String, Number],
     label: {
       type: String,
       default: "",

@@ -1,5 +1,4 @@
 const path = require('path');
-// const webpack = require('webpack');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
@@ -44,11 +43,7 @@ module.exports = {
         }, {
             test: /\.js$/,
             loader: 'babel-loader'
-        }, /* {
-            test: /\.ts$/,
-            loader: 'ts-loader',
-            exclude: /node_modules/
-        }, */ {
+        }, {
             test: /\.css$/,
             use: [
                 'vue-style-loader',
@@ -61,15 +56,7 @@ module.exports = {
                 'css-loader',
                 'less-loader'
             ]
-        }/* , {
-            test: /\.(png|jpg|webp|gif|svg|ico)$/,
-            use: [{
-                loader: 'file-loader',
-                options: {
-                    outputPath: 'img/'
-                }
-            }]
-        } */, {
+        }, {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
             use: [{
                 loader: 'file-loader',

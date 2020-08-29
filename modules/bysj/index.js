@@ -361,14 +361,10 @@ app.post('/upload', receiver, (req, res) => {
     res.do(async () => {
         await mysql.find(sql_update, param);
         let to = path.resolve(__dirname, 'files', pid, identity, identity == 'student' ? name : '', filename);
-        file.move(from, to, err => {
-            if (err) {
-                throw 22;
-            }
-            res.json({
-                status: true,
-                msg: '文件上传成功！'
-            });
+        await file.move(from, to);
+        res.json({
+            status: true,
+            msg: '文件上传成功！'
         });
     });
 });
@@ -380,7 +376,7 @@ app.get('/download', (req, res) => {
     res.do(async () => {
         res.download(from, err => {
             if (err) {
-                throw 23;
+                h(23);
             }
         });
     });
@@ -416,22 +412,12 @@ app.post('/submit', receiver, (req, res) => {
         if (req.file) {
             let { filename, path: from } = req.file;
             let to = path.resolve(__dirname, 'files', '' + pid, 'teacher', filename);
-            file.move(from, to, err => {
-                if (err) {
-                    throw 22;
-                }
-                res.json({
-                    status: true,
-                    msg: '操作成功！'
-                });
-            });
+            await file.move(from, to);
         }
-        else {
-            res.json({
-                status: true,
-                msg: '操作成功！'
-            });
-        }
+        res.json({
+            status: true,
+            msg: '操作成功！'
+        });
     });
 });
 
@@ -620,7 +606,7 @@ app.get('/export-excel', (req, res) => {
         await excelWB.xlsx.writeFile(tmp);
         res.download(tmp, err => {
             if (err) {
-                throw 23;
+                h(23);
             }
             file.unlink(tmp);
         });
@@ -660,7 +646,7 @@ app.get('/export-table', (req, res) => {
         await tableWB.xlsx.writeFile(tmp);
         res.download(tmp, err => {
             if (err) {
-                throw 23;
+                h(23);
             }
         });
     });

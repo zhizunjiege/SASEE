@@ -8,7 +8,7 @@
     <input
       v-bind="$attrs"
       :value="value"
-      type="datetime-local"
+      :type="type"
       @input="$emit('input',$event.target.value)"
       class="form-control"
       :class="{'col-9':label}"
@@ -23,6 +23,10 @@ export default {
     label: {
       type: String,
       default: "",
+    },
+    type: {
+      type: String,
+      default: "datetime-local",
     },
   },
 };
