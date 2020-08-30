@@ -44,7 +44,13 @@ export default {
         d.append("content", this.content);
         d.append("title", this.title);
         d.append("top", Number(this.top));
-        this.$alertResult(await this.$axiosFile("/system/write-news", d));
+        let rst = await this.$axiosFile("/system/write-news", d);
+        this.$alertResult(rst);
+        if (rst.status) {
+          this.$router.push({
+            path: "/system/tzgg",
+          });
+        }
       } else {
         this.$alertWarn("通知内容太短！");
       }

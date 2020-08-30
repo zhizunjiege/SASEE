@@ -9,10 +9,13 @@
         type="button"
         warn="您确定要删除所有分组吗？"
       >
-        <i class="fa fa-trash"></i>删除所有分组
+        <i class="fa fa-trash"></i>删除所有
+      </app-button>
+      <app-button @click.native="add" class="btn btn-primary" type="button">
+        <i class="fa fa-plus"></i>新增分组
       </app-button>
       <a href="/kcsj/export-table" download>
-        <app-button class="btn btn-primary" type="button">
+        <app-button class="btn btn-secondary" type="button">
           <i class="fa fa-arrow-down"></i>导出总表
         </app-button>
       </a>
@@ -93,6 +96,11 @@ export default {
         this.groups.splice(index, 1);
       }
       this.$alertResult(result);
+    },
+    add() {
+      this.$router.push({
+        path: "/kcsj/xzfz",
+      });
     },
     edit(gid) {
       this.$router.push({

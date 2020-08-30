@@ -1,7 +1,7 @@
 <template>
   <div class="p-3 app-container app-scroll">
-    <div class="mb-3">
-      <table class="table table-bordered table-fixed text-center">
+    <div class="mb-3 text-center">
+      <table class="table table-bordered table-fixed">
         <tbody>
           <tr>
             <th scope="col" colspan="4">学籍信息</th>
@@ -58,7 +58,7 @@
         </tbody>
       </table>
       <div class="mb-3">
-        <h5 class="text-center">个人简介</h5>
+        <h5>个人简介</h5>
         <pre class="p-3 border rounded">{{user.resume}}</pre>
       </div>
     </div>

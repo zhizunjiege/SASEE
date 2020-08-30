@@ -30,7 +30,7 @@
     <div class="row w-100 justify-content-center">
       <app-button
         @click.native="reset"
-        class="btn btn-primary col-12 col-md-4"
+        class="btn btn-warning col-12 col-md-4"
         type="button"
         warn="您确定要重置系统吗？"
       >
@@ -39,26 +39,20 @@
     </div>
     <div class="row w-100">
       <input-checkbox
+        v-if="modules.length"
         v-model="checked"
         :checkboxs="modules"
         class="d-flex w-100 justify-content-around align-items-center mb-5"
       ></input-checkbox>
+      <h3 v-else class="text-center">加载模块失败，请刷新页面重试！</h3>
       <div class="row w-100 justify-content-around">
         <app-button
-          @click.native="modulesOpt(true)"
+          @click.native="modulesToggle"
           class="btn btn-primary col-12 col-md-4"
           type="button"
-          warn="您确定要开放这些模块吗？"
+          warn="您确定要提交该结果吗？"
         >
-          <i class="fa fa-check"></i>开放模块
-        </app-button>
-        <app-button
-          @click.native="modulesOpt(false)"
-          class="btn btn-secondary col-12 col-md-4"
-          type="button"
-          warn="您确定要关闭这些模块吗？"
-        >
-          <i class="fa fa-times"></i>关闭模块
+          <i class="fa fa-paper-plane"></i>切换模块状态（开放/关闭）
         </app-button>
       </div>
     </div>
@@ -86,21 +80,20 @@ export default {
       this.$alertResult(await this.$axiosGet("/reset-system"));
       this.waiting = false;
     },
-    async modulesOpt(mode = true) {
-      if (this.checked.length) {
-        this.$alertResult(
-          await this.$axiosPost("/modules-opt", {
-            mode,
-            modules: this.checked,
-          })
-        );
-      } else {
-        this.$alertWarn("请选择模块！");
-      }
+    async modulesToggle() {
+      this.$alertResult(
+        await this.$axiosPost("/modules-opt", {
+          open: this.checked,
+        })
+      );
     },
   },
   async created() {
-    this.modules = (await this.$axiosGet("/modules-list")).modules;
+    let rst = await this.$axiosGet("/modules-list");
+    if (rst.status) {
+      this.modules = rst.modules;
+      this.checked = rst.checked;
+    }
   },
 };
 </script>

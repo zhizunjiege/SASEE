@@ -86,17 +86,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.editable {
-  outline: 0;
-  padding: 0 !important;
-  background-color: #6bd9fe;
-  vertical-align: middle !important;
-  text-align: center;
-  text-align-last: center;
-}
-.editable select {
-  border: 0 !important;
-}
-</style>

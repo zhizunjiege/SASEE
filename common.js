@@ -87,7 +87,7 @@ function sendPinCode(req, res) {
             let { identity, username } = req.query,
                 sql_query = 'SELECT email FROM ?? WHERE username=?',
                 [user] = await mysql.find(sql_query, [identity, username]);
-            if (data.length) {
+            if (user) {
                 addr = user.email;
             } else {
                 throw 1101;

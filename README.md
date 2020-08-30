@@ -36,3 +36,17 @@
 > 前端利用Vue重构完成，新增一些功能。
 
 `更新于 2020/07/14`
+
+# 注意
+> 需要配置的地方有：
+> 1. modules/system/index.js line 179 ，将mysqlpw改成数据库密码；
+> 2. scripts/mysql.js 配置host,user,password,database,port等；
+> 3. scripts/email.js 配置from（邮箱地址）,password（这个password是授权码而非密码）,host,port等；
+> 运行时，先执行
+> `npm install`
+> 安装所有依赖；
+> 通过执行
+> `pm2 start pm2.config.js`，在开发模式development环境下运行，这时具有热替换等功能；
+> 或者
+> `npm run build`，先构建生成生产环境所需文件
+> `pm2 start pm2.config.js --env production`，在生产模式production环境下运行。

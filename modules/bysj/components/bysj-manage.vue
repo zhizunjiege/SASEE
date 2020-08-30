@@ -9,13 +9,13 @@
         type="button"
         warn="您确定要删除所有课题吗？"
       >
-        <i class="fa fa-trash"></i>删除所有课题
+        <i class="fa fa-trash"></i>删除所有
       </app-button>
       <app-button @click.native="submit" class="btn btn-primary" type="button">
         <i class="fa fa-plus"></i>新增课题
       </app-button>
       <app-button @click.native="show='stats'" class="btn btn-secondary" type="button">
-        <i class="fa fa-bar-chart"></i>课题信息统计
+        <i class="fa fa-bar-chart"></i>信息统计
       </app-button>
       <a href="/bysj/export-table" download>
         <app-button class="btn btn-primary" type="button">
@@ -114,7 +114,7 @@
         class="d-flex justify-content-center align-items-center text-muted"
         style="height: 250px"
       >
-        <h1>工号有误或该老师未发布课题！</h1>
+        <h1>姓名有误或该老师未发布课题！</h1>
       </div>
     </template>
   </div>

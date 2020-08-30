@@ -12,7 +12,7 @@ module.exports = async function () {
     }
 
     let promises = [];
-    for (const i of ['tmp']) {
+    for (const i of ['resources/html/news', 'tmp']) {
         promises.push(file.clrdir(path.resolve(__dirname, i)));
     }
     return Promise.allSettled(promises);

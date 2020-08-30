@@ -4,8 +4,10 @@ module.exports = {
     script: 'app.js',
     watch: [
       'dist',
+      'modules/*/index.js',
+      'modules/*/reset.js',
       'scripts',
-      'app,js',
+      'app.js',
       'common.js'
     ],
     ignore_watch: [

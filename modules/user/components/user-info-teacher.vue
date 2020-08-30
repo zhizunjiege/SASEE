@@ -31,8 +31,10 @@
             <td>{{user.field}}</td>
           </tr>
           <tr>
-            <th>是否负责人</th>
+            <th>是否为负责人</th>
             <td>{{user.ifDean}}</td>
+            <th>是否为班主任</th>
+            <td>{{user.ifHead}}</td>
           </tr>
           <tr>
             <th scope="col" colspan="4">账户信息</th>
@@ -64,7 +66,7 @@
         </tbody>
       </table>
       <div class="mb-3">
-        <h5 class="text-center">个人简介</h5>
+        <h5>个人简介</h5>
         <pre class="p-3 border rounded">{{user.resume}}</pre>
       </div>
     </div>

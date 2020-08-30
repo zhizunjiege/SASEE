@@ -150,7 +150,7 @@ app.post('/del-user', (req, res) => {
 app.post('/import-user', receiver, (req, res) => {
     let { identity, mode } = req.body,
         { path: tmp } = req.file,
-        sql_truncate = 'TRUNCATE TABLE ??',
+        sql_truncate = 'SET FOREIGN_KEY_CHECKS=0;TRUNCATE TABLE ??;SET FOREIGN_KEY_CHECKS=1;',
         sql_insert = `INSERT INTO ${identity} (name,gender,schoolNum,\`group\`,${identity == 'teacher' ? 'proTitle,department,ifDean,ifHead' : 'specialty,`class`,postGraduate'}) VALUES `;
     res.do(async () => {
         let wb = new exceljs.Workbook();
@@ -159,7 +159,7 @@ app.post('/import-user', receiver, (req, res) => {
 
         for (let i = 2; i <= ws.rowCount; i++) {
             let r = ws.getRow(i).values;
-            sql_insert += `('${r[1]}','${r[2]}','${r[3]}','${CONFIG.group[r[4]]}-${r[4]}','${r[5]}','${r[6]}','${r[7]}'${identity == 'teacher' ? `,'${r[8]}'` : ''})${i == ws.rowCount ? '' : ','}`;
+            sql_insert += `('${r[1]}','${r[2]}','${r[3]}','${CONFIG.group[r[4]]}-${r[4]}','${r[5]}','${r[6]}','${r[7] || '否'}'${identity == 'teacher' ? `,'${r[8] || '否'}'` : ''})${i == ws.rowCount ? '' : ','}`;
         }
 
         let conn = await mysql.transaction();
@@ -176,47 +176,49 @@ app.post('/import-user', receiver, (req, res) => {
     });
 });
 
+const mysqlpw = 'jason';
+
 app.get('/data-backup', (req, res) => {
     let filename = path.resolve(__dirname, 'backup.sql');
+    child_process.exec(`mysqldump -uroot -p${mysqlpw} -B app > ${filename}`, { timeout: 10000 }, err => {
+        if (err) {
+            console.log(err);
+            res.json({
+                status: false,
+                msg: '数据库备份出错！'
+            });
+        } else {
+            res.json({
+                status: true,
+                msg: '数据库备份成功！'
+            });
+        }
+    });
+});
+
+app.get('/data-recovery', (req, res) => {
+    let filename = path.resolve(__dirname, 'backup.sql');
     if (file.exists(filename)) {
-        child_process.exec(`mysqldump -uroot -pjason -B app > ${filename}`, { timeout: 10000 }, err => {
+        child_process.exec(`mysql -uroot -p${mysqlpw} -B app < ${filename}`, { timeout: 10000 }, err => {
             if (err) {
                 console.log(err);
                 res.json({
                     status: false,
-                    msg: '数据库备份出错！'
+                    msg: '数据库恢复出错！'
                 });
             } else {
                 res.json({
                     status: true,
-                    msg: '数据库备份成功！'
+                    msg: '数据库恢复成功！'
                 });
             }
         });
     } else {
         res.json({
-            status: true,
+            status: false,
             msg: '没有数据库备份！'
         });
     }
-});
-
-app.get('/data-recovery', (req, res) => {
-    let filename = path.resolve(__dirname, 'backup.sql');
-    child_process.exec(`mysql -uroot -pjason -B app < ${filename}`, { timeout: 10000 }, err => {
-        if (err) {
-            console.log(err);
-            res.json({
-                status: false,
-                msg: '数据库恢复出错！'
-            });
-        } else {
-            res.json({
-                status: true,
-                msg: '数据库恢复成功！'
-            });
-        }
-    });
 });
 
 module.exports = app;

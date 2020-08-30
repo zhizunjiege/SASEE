@@ -13,25 +13,27 @@ const path = require('path');
         });
         fs.rmdirSync(p);
     }
-}
+}*/
+
+//fs模块的递归删除是实验性的，经常出错，所以自己写一个异步的
 async function rmdir(p) {
-    if (fs.existsSync(p)) {
-        let files = await fs.promises.readdir(p);
-        files.forEach(async function (file) {
-            let curPath = path.resolve(p, file);
-            let stat = await fs.promises.stat(curPath);
-            if (stat.isDirectory()) {
-                await rmdir(curPath);
-            } else {
-                await fs.promises.unlink(curPath);
-            }
-        });
-        return fs.promises.rmdir(p);
+    let files = await fs.promises.readdir(p);
+    for (const file of files) {
+        let curPath = path.resolve(p, file);
+        let stat = await fs.promises.stat(curPath);
+        if (stat.isDirectory()) {
+            await rmdir(curPath);
+        } else {
+            await fs.promises.unlink(curPath);
+        }
     }
-} */
+    return fs.promises.rmdir(p);
+}
 
 async function clrdir(p) {
-    await fs.promises.rmdir(p, { recursive: true });
+    if (fs.existsSync(p)) {
+        await rmdir(p);
+    }
     return fs.promises.mkdir(p);
 }
 
@@ -51,7 +53,7 @@ module.exports = {
     writeFile: fs.promises.writeFile,
     unlink: fs.promises.unlink,
     mkdir: fs.promises.mkdir,
-    rmdir: fs.promises.rmdir,
+    rmdir,
     clrdir,
     move,
     writeJson

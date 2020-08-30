@@ -14,8 +14,8 @@
       <div class="d-flex justify-content-center align-items-center mb-3">
         <input-file
           v-model="teacher"
-          accept=".xls, .xlsx"
-          pre="请上传表格文件，不超过20M"
+          accept=".xlsx"
+          pre="只支持xlsx格式，不超过20M"
           required
           class="col-12 col-md-6 mb-3 mb-md-0"
         ></input-file>
@@ -43,8 +43,8 @@
       <div class="d-flex justify-content-center align-items-center mb-3">
         <input-file
           v-model="student"
-          accept=".xls, .xlsx"
-          pre="请上传表格文件，不超过20M"
+          accept=".xlsx"
+          pre="只支持xlsx格式，不超过20M"
           required
           class="col-12 col-md-6 mb-3 mb-md-0"
         ></input-file>
