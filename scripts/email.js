@@ -1,3 +1,4 @@
+const { host, port, user, password } = global.config.email;
 const nodemailer = require('nodemailer');
 
 const CONSTANT = {
@@ -14,13 +15,13 @@ function createSixNum() {
     return Num;
 }
 
-function send({ from = 'benke03@buaa.edu.cn', password = 'zXYnJxAqvHfNdE3c', to, text = '', html = CONSTANT.TEST, subject = CONSTANT.SUBJECT } = {}) {
+function send({ to, text = '', html = CONSTANT.TEST, subject = CONSTANT.SUBJECT } = {}) {
     const transporter = nodemailer.createTransport({
-        host: 'smtp.buaa.edu.cn',
-        port: 25,
+        host,
+        port,
         secure: false,
         auth: {
-            user: from,
+            user,
             pass: password
         },
         tls: { rejectUnauthorized: false }

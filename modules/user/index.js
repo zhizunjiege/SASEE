@@ -1,61 +1,56 @@
+const { scripts } = global.config.files;
 const express = require('express');
-const mysql = require('../../scripts/mysql');
-const util = require('../../scripts/util');
+const mysql = require(`${scripts}/mysql`);
+const util = require(`${scripts}/util`);
 
 const app = express();
 
 //可以修改一下查询语句
-app.get('/info', (req, res) => {
+app.get('/info', async (req, res) => {
     let { identity, uid } = req.session,
         sql_query = 'SELECT * FROM ?? WHERE id=?';
-    res.do(async () => {
-        let [user] = await mysql.find(sql_query, [identity, uid]);
-        delete user.id;
-        delete user.password;
-        if (user.group) user.group = user.group.substr(2);
-        user = util.dataFilter(user, ['wechat', 'tel', 'homepage', 'resume', 'office', 'field']);
-        res.json({
-            status: true,
-            user
-        });
+    let [user] = await mysql.query(sql_query, [identity, uid]);
+    delete user.id;
+    delete user.password;
+    if (user.group) user.group = user.group.substr(2);
+    user = util.dataFilter(user, ['wechat', 'tel', 'homepage', 'resume', 'office', 'field']);
+    res.json({
+        status: true,
+        user
     });
 });
 
-app.post('/set-email', (req, res) => {
+app.post('/set-email', async (req, res) => {
     let { identity, uid } = req.session,
         { email, pinCode } = req.body,
         sql_update = 'UPDATE ?? SET email=? WHERE id=?';
-    res.do(async () => {
-        if (util.pinValidate(req.session.pin, pinCode)) {
-            await mysql.find(sql_update, [identity, email, uid]);
-            req.session.pin = null;
-            res.json({
-                status: true,
-                msg: '绑定邮箱成功！'
-            });
-        } else {
-            throw 1102;
-        }
-    });
+    if (util.pinValidate(req.session.pin, pinCode)) {
+        await mysql.query(sql_update, [identity, email, uid]);
+        req.session.pin = null;
+        res.json({
+            status: true,
+            msg: '绑定邮箱成功！'
+        });
+    } else {
+        throw 1102;
+    }
 });
 
-app.post('/set-password', (req, res) => {
+app.post('/set-password', async (req, res) => {
     let { identity, uid } = req.session,
         { oldPW, newPW } = req.body,
         sql_query = 'SELECT 1 FROM ?? WHERE id=? AND password=?',
         sql_update = 'UPDATE ?? SET password=? WHERE id=?';
-    res.do(async () => {
-        let result = await mysql.find(sql_query, [identity, uid, oldPW]);
-        if (result.length) {
-            await mysql.find(sql_update, [identity, newPW, uid]);
-            res.json({
-                status: true,
-                msg: '修改密码成功，请重新登陆！'
-            });
-        } else {
-            throw 1002;
-        }
-    });
+    let result = await mysql.query(sql_query, [identity, uid, oldPW]);
+    if (result.length) {
+        await mysql.query(sql_update, [identity, newPW, uid]);
+        res.json({
+            status: true,
+            msg: '修改密码成功，请重新登陆！'
+        });
+    } else {
+        throw 1002;
+    }
 });
 
 const fieldsMap = {
@@ -63,18 +58,16 @@ const fieldsMap = {
     teacher: ['wechat', 'tel', 'homepage', 'resume', 'field', 'office'],
     admin: ['tel']
 };
-app.post('/perfect-info', (req, res) => {
+app.post('/perfect-info', async (req, res) => {
     let { identity, uid } = req.session,
         sql_update = 'UPDATE ?? SET ? WHERE id=?',
         param = {};
 
-    res.do(async () => {
-        param = util.dataExtracter(req.body, param, fieldsMap[identity]);
-        await mysql.find(sql_update, [identity, param, uid]);
-        res.json({
-            status: true,
-            msg: '已更新信息！'
-        });
+    param = util.dataExtracter(req.body, param, fieldsMap[identity]);
+    await mysql.query(sql_update, [identity, param, uid]);
+    res.json({
+        status: true,
+        msg: '已更新信息！'
     });
 });
 

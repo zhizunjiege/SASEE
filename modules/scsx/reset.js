@@ -1,5 +1,6 @@
+const { scripts } = global.config.files;
 const path = require('path');
-const file = require('../../scripts/file');
+const file = require(`${scripts}/file`);
 
 module.exports = async function () {
     let promises = [];
