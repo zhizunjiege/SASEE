@@ -12,12 +12,9 @@ const util = require(`${scripts}/util`);
 const CONFIG = require('./config/map.json');
 const TIMES = require('./config/time.json');
 
-
 const app = express();
-app.use((req, res, next) => {
-    res.errors = CONFIG.errors;
-    next();
-});
+
+app.locals.error = CONFIG.error;
 
 let JOBS = {};
 function save() {
@@ -27,12 +24,12 @@ const CALLBACKS = {
     close() {
         TIMES.CHOOSEUSABLE = false;
         save();
-        console.log('切换选题状态为--关闭');
+        console.log('毕业设计--切换选题状态为--关闭');
     },
     open() {
         TIMES.CHOOSEUSABLE = true;
         save();
-        console.log('切换选题状态为--打开');
+        console.log('毕业设计--切换选题状态为--打开');
     },
     async draw() {
         let sql_query = 'SELECT id,target1,target2,target3 FROM bysj WHERE state="2-通过" AND student IS NULL AND (JSON_LENGTH(target1) OR JSON_LENGTH(target2) OR JSON_LENGTH(target3))';

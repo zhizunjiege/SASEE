@@ -210,6 +210,8 @@ app.post('/modules-opt', async (req, res) => {
     });
 });
 
+const pm2 = require('pm2');
+
 app.get('/reset-system', async (req, res) => {
     for (const [i, v] of routes.entries()) {
         v.open = i <= 1;
@@ -226,6 +228,13 @@ app.get('/reset-system', async (req, res) => {
         status: true,
         offline: true,
         msg: '系统重置成功，请重新登录！'
+    });
+    pm2.restart('all', (err, proc) => {
+        if (err) {
+            console.log('系统重置出错，请手动重启！');
+        } else {
+            console.log('系统重置成功，所有进程全部重启。');
+        }
     });
 });
 

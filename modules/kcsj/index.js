@@ -2,22 +2,50 @@ const { scripts } = global.config.files;
 const express = require('express');
 const path = require('path');
 const exceljs = require('exceljs');
+const schedule = require('node-schedule');
 
 const mysql = require(`${scripts}/mysql`);
+const file = require(`${scripts}/file`);
+
+const TIME = require('./time.json');
 
 const app = express();
 
-app.get('/group-choose', async (req,res) => {
-    let { uid } = req.session,
+let JOBS = {};
+function save() {
+    file.writeJson(__dirname + '/time.json', TIME);
+}
+const CALLBACKS = {
+    close() {
+        TIME.CHOOSEUSABLE = false;
+        save();
+        console.log('课程设计--切换选择状态为--关闭');
+    },
+    open() {
+        TIME.CHOOSEUSABLE = true;
+        save();
+        console.log('课程设计--切换选择状态为--打开');
+    },
+}
+
+app.get('/group-choose', async (req, res) => {
+    let { uid, identity } = req.session,
         sql_query = 'SELECT k.id,k.num,SUBSTR(k.`group`,3) `group`,k.time,k.place,k.capacity,JSON_LENGTH(k.students) chosen FROM kcsj k INNER JOIN student s ON k.`group`=s.`group`||s.`group`="7-高工" WHERE s.id=?';
-    let groups = await mysql.query(sql_query, uid);
-    res.json({
-        status: true,
-        groups
-    });
+    if (identity == 'student' && !TIME.CHOOSEUSABLE) {
+        res.json({
+            status: false,
+            msg: '未到选择时间！'
+        });
+    } else {
+        let groups = await mysql.query(sql_query, uid);
+        res.json({
+            status: true,
+            groups
+        });
+    }
 });
 
-app.get('/users', async (req,res) => {
+app.get('/users', async (req, res) => {
     let { identity, group } = req.query,
         sql_query1 = 'SELECT id,name FROM ?? WHERE `group`=?',
         sql_query2 = 'SELECT u1.id,u1.name FROM ?? u1 INNER JOIN ?? u2 ON u1.`group`=u2.`group` WHERE u2.id=?';
@@ -33,7 +61,7 @@ app.get('/users', async (req,res) => {
     });
 });
 
-app.get('/group-query', async (req,res) => {
+app.get('/group-query', async (req, res) => {
     let { identity, uid } = req.session,
         sql_query = `SELECT id FROM kcsj WHERE JSON_CONTAINS(${identity}s,"${uid}")`;
     let gid = 0,
@@ -47,7 +75,7 @@ app.get('/group-query', async (req,res) => {
     });
 });
 
-app.get('/group-info', async (req,res) => {
+app.get('/group-info', async (req, res) => {
     let { gid, name } = req.query,
         sql_query1 = 'SELECT * FROM kcsj WHERE id=?',
         sql_query2 = 'SELECT GROUP_CONCAT(`name` SEPARATOR ",") users FROM ?? WHERE id in (?)';
@@ -66,7 +94,7 @@ app.get('/group-info', async (req,res) => {
     });
 });
 
-app.get('/group-manage', async (req,res) => {
+app.get('/group-manage', async (req, res) => {
     let { uid } = req.session,
         sql_query1 = 'SELECT * FROM kcsj',
         sql_query2 = 'SELECT k.* FROM kcsj k INNER JOIN teacher t ON k.`group`=t.`group` WHERE t.id=?';
@@ -82,7 +110,7 @@ app.get('/group-manage', async (req,res) => {
     });
 });
 
-app.post('/group-add', async (req,res) => {
+app.post('/group-add', async (req, res) => {
     let data = req.body,
         sql_query = 'SELECT `group` FROM teacher WHERE id=?',
         sql_insert = 'INSERT INTO kcsj SET ?';
@@ -98,7 +126,7 @@ app.post('/group-add', async (req,res) => {
     });
 });
 
-app.post('/group-edit', async (req,res) => {
+app.post('/group-edit', async (req, res) => {
     let data = req.body,
         sql_update = 'UPDATE kcsj SET ? WHERE id=?';
     let id = data.id;
@@ -112,7 +140,7 @@ app.post('/group-edit', async (req,res) => {
     });
 });
 
-app.get('/group-remove', async (req,res) => {
+app.get('/group-remove', async (req, res) => {
     let { gid } = req.query,
         sql_delete = 'DELETE FROM kcsj WHERE id=?';
     await mysql.query(sql_delete, gid);
@@ -122,7 +150,7 @@ app.get('/group-remove', async (req,res) => {
     });
 });
 
-app.post('/choose', async (req,res) => {
+app.post('/choose', async (req, res) => {
     let { gid } = req.body,
         { uid } = req.session,
         sql_query1 = 'SELECT capacity,JSON_LENGTH(students) chosen FROM kcsj WHERE id=?',
@@ -150,7 +178,7 @@ app.post('/choose', async (req,res) => {
     }
 });
 
-app.get('/truncate', async (req,res) => {
+app.get('/truncate', async (req, res) => {
     let sql_truncate = 'TRUNCATE TABLE kcsj';
     await mysql.query(sql_truncate);
     res.json({
@@ -159,7 +187,38 @@ app.get('/truncate', async (req,res) => {
     });
 });
 
-app.get('/export-table', async (req,res) => {
+app.post('/date', async (req, res) => {
+    let { open } = req.body;
+    TIME.open = open;
+    for (const i of Object.values(JOBS)) {
+        i.cancel();
+    }
+    schedule.scheduleJob(new Date(open), CALLBACKS.open);
+    JOBS = schedule.scheduledJobs;
+    save();
+    res.json({
+        status: true,
+        msg: '日期设置成功！'
+    });
+});
+
+app.get('/state-info', async (req, res) => {
+    res.json({
+        status: true,
+        time: TIME
+    });
+});
+
+app.post('/operation', async (req, res) => {
+    let { mode } = req.body;
+    await CALLBACKS[mode]();
+    res.json({
+        status: true,
+        msg: '操作成功!'
+    });
+});
+
+app.get('/export-table', async (req, res) => {
     let sql_query = 'SELECT SUBSTR(`group`,3) `group`,num,time,place,description,capacity,JSON_LENGTH(students) chosen,(SELECT GROUP_CONCAT(t.`name` SEPARATOR ",") FROM teacher t WHERE JSON_CONTAINS(k.teachers,	CONCAT("",t.id))) teachers,(SELECT GROUP_CONCAT(s.`name` SEPARATOR ",") FROM student s WHERE JSON_CONTAINS(k.students,	CONCAT("",s.id))) students FROM kcsj k ORDER BY `group`';
     let table = await mysql.query(sql_query);
 

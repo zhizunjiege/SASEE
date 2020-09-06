@@ -20,6 +20,8 @@ module.exports = {
       NODE_ENV: 'production'
     },
     error_file: 'logs/err.log',
-    out_file: 'logs/out.log'
+    out_file: 'logs/out.log',
+    exec_mode: "cluster",
+    instances: 4
   }]
 };

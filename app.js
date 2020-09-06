@@ -59,7 +59,7 @@ const _errorHandler = function (req, res, err) {
         console.error(` 访问路径：${req.originalUrl},附带参数：${JSON.stringify(req.body)}`);
         console.error(' 错误信息：\n', err);
     } else {
-        const errMap = global.error;
+        const errMap = req.app.locals.error || global.error;
         for (const [errCode, errMsg] of Object.entries(errMap)) {
             if (err == errCode) {
                 msg = errMsg;
@@ -88,7 +88,6 @@ const _bindHandler = function (funcs) {
 const _get = express.application.get;
 express.application.get = function (path, ...args) {
     if (args.length) {
-        console.log(path);
         _bindHandler(args);
     }
     return _get.call(this, path, ...args);
@@ -96,7 +95,6 @@ express.application.get = function (path, ...args) {
 const _post = express.application.post;
 express.application.post = function (path, ...args) {
     if (args.length) {
-        console.log(path);
         _bindHandler(args);
     }
     return _post.call(this, path, ...args);
