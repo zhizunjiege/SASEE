@@ -1,5 +1,5 @@
 <template>
-  <div v-if="groups.length" class="text-center">
+  <div v-if="groups.length" class="text-center app-container app-scroll">
     <div v-for="(g,index) in groups" :key="index" class="py-3 border-bottom border-secondary">
       <header class="mb-3">
         <h3 class="pt-3 mb-0">{{`${g.group}-第${g.num}组`}}</h3>

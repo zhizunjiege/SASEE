@@ -70,7 +70,7 @@ export default {
       editor.customConfig.uploadImgMaxLength = 1;
       editor.customConfig.uploadImgTimeout = 3000;
     }
-    editor.customConfig.customAlert = function (info) {
+    editor.customConfig.customAlert = (info) => {
       this.$alertWarn(info);
     };
     editor.customConfig.zIndex = 1000;

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container app-scroll px-0 px-md-3 text-center position-relative">
     <div
-      class="sticky-top form-group form-row justify-content-around border-bottom border-primary py-2"
+      class="sticky-top bg-main form-group form-row justify-content-around border-bottom border-primary py-2"
     >
       <app-button
         @click.native="truncate"

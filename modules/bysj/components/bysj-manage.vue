@@ -39,7 +39,7 @@
       </div>
     </div>
     <template v-if="show=='stats'">
-      <table class="table table-fixed table-hover table-bordered text-center py-3">
+      <table class="table table-hover table-bordered text-center py-3">
         <caption class="text-center">课题信息统计</caption>
         <thead class="thead-light">
           <tr>

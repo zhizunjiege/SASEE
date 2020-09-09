@@ -27,7 +27,7 @@ function send({ to, text = '', html = CONSTANT.TEST, subject = CONSTANT.SUBJECT 
         tls: { rejectUnauthorized: false }
     });
     if (to.length) {
-        return transporter.sendMail({ from, to, text, html, subject });
+        return transporter.sendMail({ from: user, to, text, html, subject });
     } else {
         throw 1101;
     }

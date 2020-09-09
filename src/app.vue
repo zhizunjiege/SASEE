@@ -161,7 +161,7 @@ export default {
           des: "学院官网",
         },
         {
-          href: "http://10.200.21.61:7001/",
+          href: "http://jwxt.buaa.edu.cn:7001/ieas2.1/",
           des: "本科教务",
         },
       ],

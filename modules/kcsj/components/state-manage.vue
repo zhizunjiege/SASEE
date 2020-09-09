@@ -21,7 +21,7 @@
         class="btn btn-success col-12 col-md-3 mb-3 mb-md-0"
         type="button"
       >
-        <i class="fa fa-check"></i>开放选择
+        <i class="fa fa-check"></i>允许选择
       </app-button>
       <app-button
         @click.native="operation('close')"

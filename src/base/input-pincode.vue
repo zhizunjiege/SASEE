@@ -50,14 +50,15 @@ export default {
   },
   methods: {
     async send() {
+      let emailReg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
       let msg = "";
       this.count = 60;
       if ("username" in this.extra && !this.extra.username) {
         msg = "请输入用户名！";
       } else if ("identity" in this.extra && !this.extra.identity) {
         msg = "请选择身份！";
-      } else if ("email" in this.extra && !this.extra.email) {
-        msg = "请输入邮箱地址！";
+      } else if ("email" in this.extra && !emailReg.test(this.extra.email)) {
+        msg = "请输入正确的邮箱地址！";
       }
       if (msg) {
         this.$alertWarn(msg);

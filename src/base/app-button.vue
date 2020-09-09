@@ -8,7 +8,7 @@ export default {
   props: {
     interval: {
       type: Number,
-      default: 1000,
+      default: 2000,
     },
     warn: {
       type: String,
@@ -27,7 +27,8 @@ export default {
         if (now - this.lastTime < this.interval) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          // this.$alertWarn('点击过于频繁，请1秒后再次尝试！');
+          this.$alertWarn('点击太快啦，请2秒后再次尝试~');
+          return ;
         } else if (this.warn) {
           e.preventDefault();
           e.stopImmediatePropagation();

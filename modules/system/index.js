@@ -50,6 +50,18 @@ const upload = multer({
 
 let receiver = upload.single('file');
 
+app.post('/editor-img', receiver, async (req, res) => {
+    let { filename, path: from } = req.file;
+    let newName = `${Date.now()}-${filename}`;
+    console.log(filename);
+    console.log(from);
+    await file.move(from, path.resolve(__dirname, 'resources/img', newName));
+    res.json({
+        errno: 0,
+        data: ['system/img?file=' + newName]
+    });
+});
+
 app.post('/write-news', receiver, async (req, res) => {
     let { top, title, content } = req.body,
         sql_insert = 'INSERT INTO news (top,title,date) VALUES (?,?,CURDATE())';
@@ -139,7 +151,7 @@ app.post('/import-user', receiver, async (req, res) => {
 
     for (let i = 2; i <= ws.rowCount; i++) {
         let r = ws.getRow(i).values;
-        sql_insert += `('${r[1]}','${r[2]}','${r[3]}','${config.group[r[4]]}-${r[4]}','${r[5]}','${r[6]}','${r[7] || '否'}'${identity == 'teacher' ? `,'${r[8] || '否'}'` : ''})${i == ws.rowCount ? '' : ','}`;
+        sql_insert += `('${r[1]}','${r[2]}','${r[3]}','${config.group[r[4]]||0}-${r[4]}','${r[5]}','${r[6]}','${r[7] || '否'}'${identity == 'teacher' ? `,'${r[8] || '否'}'` : ''})${i == ws.rowCount ? '' : ','}`;
     }
 
     let conn = await mysql.transaction();

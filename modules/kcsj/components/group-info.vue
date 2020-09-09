@@ -1,5 +1,5 @@
 <template>
-  <div v-if="group.id" class="py-3 text-center">
+  <div v-if="group.id" class="py-3 text-center app-container app-scroll">
     <header class="mb-3 border-bottom border-secondary">
       <h3 class="mb-0">{{`${group.group}-第${group.num}组`}}</h3>
     </header>

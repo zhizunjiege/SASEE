@@ -164,7 +164,7 @@ if (node_env == 'development') {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(session({
-    store: new MemoryStore({ checkPeriod: 5 * 60 * 1000 }),
+    store: new MemoryStore({ checkPeriod: 60 * 60 * 1000 }),
     resave: false,
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
