@@ -7,23 +7,25 @@ const schedule = require('node-schedule');
 const mysql = require(`${scripts}/mysql`);
 const file = require(`${scripts}/file`);
 
-const TIME = require('./time.json');
-
 const app = express();
 
-let JOBS = {};
-function save() {
-    file.writeJson(__dirname + '/time.json', TIME);
+const timeFile = path.resolve(__dirname, 'time.json');
+
+async function saveTime(time) {
+    return file.writeJson(timeFile, time);
 }
+
 const CALLBACKS = {
     close() {
-        TIME.CHOOSEUSABLE = false;
-        save();
+        let time = require(timeFile);
+        time.CHOOSEUSABLE = false;
+        saveTime(time);
         console.log('课程设计--切换选择状态为--关闭');
     },
     open() {
-        TIME.CHOOSEUSABLE = true;
-        save();
+        let time = require(timeFile);
+        time.CHOOSEUSABLE = true;
+        saveTime(time);
         console.log('课程设计--切换选择状态为--打开');
     },
 }
@@ -31,7 +33,9 @@ const CALLBACKS = {
 app.get('/group-choose', async (req, res) => {
     let { uid, identity } = req.session,
         sql_query = 'SELECT k.id,k.num,SUBSTR(k.`group`,3) `group`,k.time,k.place,k.capacity,JSON_LENGTH(k.students) chosen FROM kcsj k INNER JOIN student s ON k.`group`=s.`group`||s.`group`="7-高工" WHERE s.id=?';
-    if (identity == 'student' && !TIME.CHOOSEUSABLE) {
+
+    let time = require(timeFile);
+    if (identity == 'student' && !time.CHOOSEUSABLE) {
         res.json({
             status: false,
             msg: '未到选择时间！'
@@ -187,15 +191,34 @@ app.get('/truncate', async (req, res) => {
     });
 });
 
-app.post('/date', async (req, res) => {
-    let { open } = req.body;
-    TIME.open = open;
+let JOBS = {};
+
+function registerJobs(open, close) {
     for (const i of Object.values(JOBS)) {
         i.cancel();
     }
-    schedule.scheduleJob(new Date(open), CALLBACKS.open);
+    if (open) {
+        schedule.scheduleJob(new Date(open), CALLBACKS.open);
+    }
+    if (close) {
+        schedule.scheduleJob(new Date(close), CALLBACKS.close);
+    }
     JOBS = schedule.scheduledJobs;
-    save();
+}
+
+(() => {
+    let time = require(timeFile);
+    registerJobs(time.open, time.close);
+})();
+
+app.post('/date', async (req, res) => {
+    let { open, close } = req.body;
+    let time = require(timeFile);
+
+    time.open = open;
+    time.close = close;
+    registerJobs(open, close);
+    await saveTime(time);
     res.json({
         status: true,
         msg: '日期设置成功！'
@@ -203,9 +226,10 @@ app.post('/date', async (req, res) => {
 });
 
 app.get('/state-info', async (req, res) => {
+    let time = require(timeFile);
     res.json({
         status: true,
-        time: TIME
+        time
     });
 });
 

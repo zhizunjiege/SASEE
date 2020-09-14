@@ -3,7 +3,7 @@ const path = require('path');
 const file = require(`${scripts}/file`);
 
 module.exports = async function () {
-    let time = { open: '', CHOOSEUSABLE: false };
+    let time = { open: '', close: '', CHOOSEUSABLE: false };
     await file.writeJson(path.resolve(__dirname, 'time.json'), time);
 
     let promises = [];

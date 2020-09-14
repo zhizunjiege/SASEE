@@ -131,7 +131,7 @@ app.post('/edit-user', async (req, res) => {
 
 app.post('/del-user', async (req, res) => {
     let { id, identity } = req.body,
-        sql_update = 'DELETE FROM ?? WHERE id in ' + `(${id.join(',')})`;
+        sql_update = `DELETE FROM ?? WHERE id in (${id.join(',')})`;
 
     await mysql.query(sql_update, identity);
     res.json({
@@ -151,7 +151,7 @@ app.post('/import-user', receiver, async (req, res) => {
 
     for (let i = 2; i <= ws.rowCount; i++) {
         let r = ws.getRow(i).values;
-        sql_insert += `('${r[1]}','${r[2]}','${r[3]}','${config.group[r[4]]||0}-${r[4]}','${r[5]}','${r[6]}','${r[7] || '否'}'${identity == 'teacher' ? `,'${r[8] || '否'}'` : ''})${i == ws.rowCount ? '' : ','}`;
+        sql_insert += `('${r[1]}','${r[2]}','${r[3]}','${config.group[r[4]] || 0}-${r[4]}','${r[5]}','${r[6]}','${r[7] || '否'}'${identity == 'teacher' ? `,'${r[8] || '否'}'` : ''})${i == ws.rowCount ? '' : ','}`;
     }
 
     let conn = await mysql.transaction();
@@ -164,6 +164,60 @@ app.post('/import-user', receiver, async (req, res) => {
     res.json({
         status: true,
         msg: '导入用户成功！'
+    });
+});
+
+app.post('/import-ifdean', receiver, async (req, res) => {
+    let { mode } = req.body,
+        { path: tmp } = req.file,
+        sql_update1 = `UPDATE teacher SET ifDean='否';`,
+        sql_update2 = `UPDATE teacher SET ifDean='是' WHERE schoolNum in `;
+    let wb = new exceljs.Workbook();
+    await wb.xlsx.readFile(tmp);
+    let ws = wb.getWorksheet(1);
+    let teachers = [];
+    for (let i = 2; i <= ws.rowCount; i++) {
+        let r = ws.getRow(i).values;
+        teachers.push(r[2]);//读第二栏工号
+    }
+
+    let conn = await mysql.transaction();
+    if (mode == 'overwrite') {
+        await conn.query(sql_update1);
+    }
+    await conn.query(sql_update2 + `('${teachers.join("','")}')`);
+    await conn.commit();
+    await file.unlink(tmp);
+    res.json({
+        status: true,
+        msg: '导入负责人信息成功！'
+    });
+});
+
+app.post('/import-postgraduate', receiver, async (req, res) => {
+    let { mode } = req.body,
+        { path: tmp } = req.file,
+        sql_update1 = `UPDATE student SET postGraduate='否';`,
+        sql_update2 = `UPDATE student SET postGraduate='是' WHERE schoolNum in `;
+    let wb = new exceljs.Workbook();
+    await wb.xlsx.readFile(tmp);
+    let ws = wb.getWorksheet(1);
+    let students = [];
+    for (let i = 2; i <= ws.rowCount; i++) {
+        let r = ws.getRow(i).values;
+        students.push(r[2]);//读第二栏学号
+    }
+
+    let conn = await mysql.transaction();
+    if (mode == 'overwrite') {
+        await conn.query(sql_update1);
+    }
+    await conn.query(sql_update2 + `('${students.join("','")}')`);
+    await conn.commit();
+    await file.unlink(tmp);
+    res.json({
+        status: true,
+        msg: '导入保研信息成功！'
     });
 });
 

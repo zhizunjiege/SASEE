@@ -48,16 +48,17 @@ Promise.allSettled = function (promiseArray) {
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const MemoryStore = require('memorystore')(session);
+const MySQLStore = require('express-mysql-session')(session);
 
 //错误统一捕获与处理
 const _errorHandler = function (req, res, err) {
     let msg = '服务器出现错误，请稍后重试！';
     if (err instanceof Error) {
-        console.error(`----------运行出错,请检查代码！----------`);
-        console.error(` 用户身份：${req.session.identity},用户ID：${req.session.uid},用户姓名：${req.session.name}`);
-        console.error(` 访问路径：${req.originalUrl},附带参数：${JSON.stringify(req.body)}`);
+        console.error(`----------运行出错,请检查代码！----------\n`);
+        console.error(` 用户身份：${req.session.identity},用户ID：${req.session.uid},用户姓名：${req.session.name}\n`);
+        console.error(` 访问路径：${req.originalUrl},附带参数：${JSON.stringify(req.body)}\n`);
         console.error(' 错误信息：\n', err);
+        console.error('\n\n');
     } else {
         const errMap = req.app.locals.error || global.error;
         for (const [errCode, errMsg] of Object.entries(errMap)) {
@@ -161,10 +162,12 @@ if (node_env == 'development') {
     app.use(express.static(config.files.public));
 }
 
+const sessionStore = new MySQLStore(config.mysql);
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(session({
-    store: new MemoryStore({ checkPeriod: 60 * 60 * 1000 }),
+    store: sessionStore,
     resave: false,
     secret: 'SASEE', //使用随机自定义字符串进行加密
     saveUninitialized: false,//不保存未初始化的cookie，也就是未登录的cookie
@@ -172,6 +175,15 @@ app.use(session({
         maxAge: node_env == 'development' ? 20 * 60 * 1000 : 30 * 60 * 1000,//设置cookie的过期时间
     }
 }));
+
+//关闭进程时清除session数据
+process.on('message', msg => {
+    if (msg == 'shutdown') {
+        sessionStore.clear(err => {
+            process.exit(err ? 1 : 0);
+        });
+    }
+});
 
 //加入基础路由
 app.use(require('./modules/index'));

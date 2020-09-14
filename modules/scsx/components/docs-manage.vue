@@ -60,7 +60,6 @@
               <td>暂无</td>
               <td>暂无</td>
               <td>暂无</td>
-              <td>暂无</td>
             </tr>
           </tbody>
         </table>
@@ -117,7 +116,6 @@ export default {
       heads: [
         { key: "filename", des: "文件名" },
         { key: "time", des: "更新时间" },
-        { key: "count", des: "下载次数" },
       ],
       docs: {
         student: [],

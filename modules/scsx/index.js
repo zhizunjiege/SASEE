@@ -7,11 +7,9 @@ const multer = require('multer');
 const file = require(`${scripts}/file`);
 const mysql = require(`${scripts}/mysql`);
 
-const templates = require('./templates/manifest.json');
-
 const app = express();
 
-app.get('/get-class-teacher', async (req,res) => {
+app.get('/get-class-teacher', async (req, res) => {
     let sql_query = 'SELECT DISTINCT `class` FROM student WHERE `group` != "7-高工" ORDER BY `class`;SELECT id,`name` FROM teacher WHERE ifHead="是"';
     let rst = await mysql.query(sql_query);
     let classes = rst[0].map(i => {
@@ -31,7 +29,7 @@ app.get('/get-class-teacher', async (req,res) => {
     })
 });
 
-app.get('/class-query', async (req,res) => {
+app.get('/class-query', async (req, res) => {
     let { identity, uid } = req.session,
         sql_query = {
             student: 'SELECT s1.id FROM scsx s1 INNER JOIN student s2 ON s1.`class`=s2.class OR s1.`class`=SUBSTR(s2.`group`,3) WHERE s2.id=?',
@@ -48,7 +46,7 @@ app.get('/class-query', async (req,res) => {
     });
 });
 
-app.get('/class-info', async (req,res) => {
+app.get('/class-info', async (req, res) => {
     let { cid, mode } = req.query,
         sql_query1 = 'SELECT s.id,`class`,specialty,t.`name` teacher,mode,place,employer,startTime,endTime,(SELECT COUNT(*) FROM student WHERE `class`=s.`class` AND gender="男") male,(SELECT COUNT(*) FROM student WHERE `class`=s.`class` AND gender="女") female FROM scsx s INNER JOIN teacher t ON s.teacher=t.id WHERE s.id=?',
         sql_query2 = 'SELECT * FROM scsx WHERE id=?';
@@ -59,7 +57,7 @@ app.get('/class-info', async (req,res) => {
     });
 });
 
-app.get('/class-manage', async (req,res) => {
+app.get('/class-manage', async (req, res) => {
     let sql_query = 'SELECT s.id,`class`,specialty,t.`name` teacher,mode,place,employer,startTime,endTime FROM scsx s INNER JOIN teacher t ON s.teacher=t.id ORDER BY `class`';
     let classes = await mysql.query(sql_query);
     res.json({
@@ -68,7 +66,7 @@ app.get('/class-manage', async (req,res) => {
     });
 });
 
-app.post('/class-add', async (req,res) => {
+app.post('/class-add', async (req, res) => {
     let data = req.body,
         sql_insert = 'INSERT INTO scsx SET ?';
     await mysql.query(sql_insert, data);
@@ -78,7 +76,7 @@ app.post('/class-add', async (req,res) => {
     });
 });
 
-app.post('/class-edit', async (req,res) => {
+app.post('/class-edit', async (req, res) => {
     let data = req.body,
         sql_update = 'UPDATE scsx SET ? WHERE id=?';
     let id = data.id;
@@ -90,7 +88,7 @@ app.post('/class-edit', async (req,res) => {
     });
 });
 
-app.post('/class-remove', async (req,res) => {
+app.post('/class-remove', async (req, res) => {
     let { cid } = req.body,
         sql_delete = 'DELETE FROM scsx WHERE id in ' + `(${cid.join(',')})`;
 
@@ -101,7 +99,7 @@ app.post('/class-remove', async (req,res) => {
     });
 });
 
-app.get('/task-manage', async (req,res) => {
+app.get('/task-manage', async (req, res) => {
     let { uid } = req.session,
         sql_query1 = 'SELECT id FROM scsx WHERE teacher=?',
         sql_query2 = 'SELECT id,mode,deadline,title,(SELECT COUNT(*) FROM scsx_report WHERE task_id=t.id) submitted FROM scsx_task t WHERE scsx_id=?';
@@ -118,7 +116,7 @@ app.get('/task-manage', async (req,res) => {
     });
 });
 
-app.get('/task-info', async (req,res) => {
+app.get('/task-info', async (req, res) => {
     let { tid } = req.query,
         sql_query = 'SELECT id,mode,deadline,title,description FROM scsx_task WHERE id=?';
     let [t] = await mysql.query(sql_query, tid);
@@ -128,7 +126,7 @@ app.get('/task-info', async (req,res) => {
     });
 });
 
-app.post('/task-add', async (req,res) => {
+app.post('/task-add', async (req, res) => {
     let { uid } = req.session,
         data = req.body,
         sql_query = 'SELECT id FROM scsx WHERE teacher=?',
@@ -143,7 +141,7 @@ app.post('/task-add', async (req,res) => {
     });
 });
 
-app.post('/task-edit', async (req,res) => {
+app.post('/task-edit', async (req, res) => {
     let data = req.body,
         sql_update = 'UPDATE scsx_task SET ? WHERE id=?';
     let id = data.id;
@@ -156,7 +154,7 @@ app.post('/task-edit', async (req,res) => {
     });
 });
 
-app.post('/task-remove', async (req,res) => {
+app.post('/task-remove', async (req, res) => {
     let { tid } = req.body,
         sql_delete = 'DELETE FROM scsx_task WHERE id in ' + `(${tid.join(',')})`;
     let promises = [];
@@ -171,7 +169,7 @@ app.post('/task-remove', async (req,res) => {
     });
 });
 
-app.get('/task-detail', async (req,res) => {
+app.get('/task-detail', async (req, res) => {
     let { tid } = req.query,
         sql_query = 'SELECT s1.id,s1.score,s1.filename,s1.time,s2.`name`,s2.schoolNum FROM scsx_report s1,student s2 WHERE s1.task_id=? AND s1.student=s2.id;SELECT s2.`name` FROM scsx s1,student s2,scsx_task t WHERE t.id=? AND t.scsx_id=s1.id AND s1.`class`=s2.`class` AND NOT EXISTS (SELECT 1 FROM scsx_report s3 WHERE s2.id=s3.student AND s3.task_id=t.id);';
     let rst = await mysql.query(sql_query, [tid, tid]);
@@ -184,7 +182,7 @@ app.get('/task-detail', async (req,res) => {
     });
 });
 
-app.post('/task-score', async (req,res) => {
+app.post('/task-score', async (req, res) => {
     let { scores } = req.body,
         sql_update = '';
     for (const i of scores) {
@@ -199,14 +197,14 @@ app.post('/task-score', async (req,res) => {
     });
 });
 
-app.get('/download-report', async (req,res) => {
+app.get('/download-report', async (req, res) => {
     let { task_id, report_id, filename } = req.query,
         from = path.resolve(__dirname, 'reports', '' + task_id, `${report_id}--${filename}`);
 
     await res.download(from, filename);
 });
 
-app.get('/task-list', async (req,res) => {
+app.get('/task-list', async (req, res) => {
     let { uid } = req.session,
         { tid } = req.query,
         sql_query1 = 'SELECT t.id, title, deadline,description,`mode`, filename,time, score FROM scsx_task t LEFT JOIN scsx_report s ON s.task_id = t.id WHERE t.id=?',
@@ -238,7 +236,7 @@ const upload = multer({
 });
 const receiver = upload.single('file');
 
-app.post('/upload-report', receiver, async (req,res) => {
+app.post('/upload-report', receiver, async (req, res) => {
     let { uid } = req.session,
         { tid } = req.body,
         { filename, path: from } = req.file,
@@ -263,73 +261,70 @@ app.post('/upload-report', receiver, async (req,res) => {
 });
 
 const templatesDirname = path.resolve(__dirname, 'templates');
+const templatesFile = path.resolve(templatesDirname, 'manifest.json');
 
-async function saveTemplates() {
-    await file.writeJson(path.resolve(templatesDirname, 'manifest.json'), templates);
+async function saveTemplates(templates) {
+    return file.writeJson(templatesFile, templates);
 }
 
-app.get('/docs-templates', async (req,res) => {
+app.get('/docs-templates', async (req, res) => {
     let { identity } = req.session;
+    let templates = require(templatesFile);
     res.json({
         status: true,
         docs: identity == 'admin' ? templates : templates[identity]
     });
 });
 
-let _count = 0;
-app.get('/download-docs', async (req,res) => {
-    let { index, filename } = req.query,
-        { identity } = req.session;
-    templates[identity][Number(index)].count++;
-    if (++_count > 20) {
-        await saveTemplates();
-        _count = 0;
-    }
+app.get('/download-docs', async (req, res) => {
+    let { filename } = req.query;
     await res.download(path.resolve(templatesDirname, filename));
 });
 
-app.post('/add-doc', receiver, async (req,res) => {
+app.post('/add-doc', receiver, async (req, res) => {
     let { identity } = req.body,
         { filename, path: from } = req.file;
+
+    let templates = require(templatesFile);
     let to = path.resolve(templatesDirname, filename);
     templates[identity].push({
         filename,
-        time: new Date().toLocaleISOString(),
-        count: 0
+        time: new Date().toLocaleISOString()
     });
     await file.move(from, to);
-    await saveTemplates();
+    await saveTemplates(templates);
     res.json({
         status: true,
         msg: '新增文档成功！'
     });
 });
 
-app.post('/edit-doc', receiver, async (req,res) => {
+app.post('/edit-doc', receiver, async (req, res) => {
     let { identity, index } = req.body,
         { filename, path: from } = req.file;
+    let templates = require(templatesFile);
     let ref = templates[identity][index];
     let to = path.resolve(templatesDirname, ref.filename);
     await file.unlink(to);
     to = path.resolve(templatesDirname, filename);
     ref.filename = filename;
     ref.time = new Date().toLocaleISOString();
-    ref.count = 0;
     await file.move(from, to);
-    await saveTemplates();
+    await saveTemplates(templates);
     res.json({
         status: true,
         msg: '修改文档成功！'
     });
 });
 
-app.post('/remove-doc', async (req,res) => {
+app.post('/remove-doc', async (req, res) => {
     let { indexes, identity } = req.body;
+    let templates = require(templatesFile);
     for (const i of indexes) {
         await file.unlink(path.resolve(templatesDirname, templates[identity][i].filename));
         templates[identity].splice(i, 1);
     }
-    await saveTemplates();
+    await saveTemplates(templates);
     res.json({
         status: true,
         msg: '删除文档成功！'

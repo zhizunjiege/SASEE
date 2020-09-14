@@ -234,14 +234,7 @@ export default {
             identity: this.identity,
           });
           if (rst.status) {
-/*             let nodes = document.querySelectorAll(
-              "tr.editing>td:not(:first-child)"
-            );
-            for (const v of this.heads[this.identity]) {
-              v.innerText = "";
-            } */
             info.id = rst.insertId;
-            // this.users[this.identity].splice(this.users[this.identity].length - 1, 1, info);
             this.users[this.identity].pop();
             this.$nextTick(() => {
               this.users[this.identity].push(info);
@@ -280,6 +273,7 @@ export default {
           });
           if (rst.status) {
             this.editing = false;
+            this.selected = [];
           }
           this.$alertResult(rst);
         } else {

@@ -7,7 +7,6 @@
           <th>序号</th>
           <th>文件名(点击下载)</th>
           <th>更新时间</th>
-          <th>下载次数</th>
         </tr>
       </thead>
       <tbody>
@@ -16,16 +15,14 @@
             <td :title="index+1">{{index+1}}</td>
             <td :title="d.filename">
               <a
-                :href="`/scsx/download-docs?index=${index}&filename=${d.filename}`"
+                :href="`/scsx/download-docs?filename=${d.filename}`"
                 download
               >{{d.filename}}</a>
             </td>
             <td>{{d.time}}</td>
-            <td>{{d.count}}</td>
           </tr>
         </template>
         <tr v-else>
-          <td>暂无</td>
           <td>暂无</td>
           <td>暂无</td>
           <td>暂无</td>

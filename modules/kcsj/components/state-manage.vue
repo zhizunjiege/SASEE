@@ -3,6 +3,7 @@
     <h4 class="col-12 text-center">自动模式</h4>
     <form class="col-12 col-md-8 col-lg-6 text-center" @submit.prevent="submit">
       <input-time v-model="time.open" label="开放选择" required></input-time>
+      <input-time v-model="time.close" label="禁止选择" required></input-time>
 
       <div class="row justify-content-end">
         <app-button
@@ -40,15 +41,23 @@ export default {
     return {
       time: {
         open: "",
+        close: "",
         CHOOSEUSABLE: false,
       },
     };
   },
   methods: {
     async submit() {
-      this.$alertResult(
-        await this.$axiosPost("/kcsj/date", { open: this.time.open })
-      );
+      if (this.time.close > this.time.open) {
+        this.$alertResult(
+          await this.$axiosPost("/kcsj/date", {
+            open: this.time.open,
+            close: this.time.close,
+          })
+        );
+      } else {
+        this.$alertWarn("禁止时间应晚于允许时间，请重新设置！");
+      }
     },
     async operation(mode = "open") {
       let rst = await this.$axiosPost("/kcsj/operation", { mode });
