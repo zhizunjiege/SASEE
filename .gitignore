@@ -78,6 +78,7 @@ typings/
 .idea
 
 cmd.js
-demo.js
-demo/
-node_modules
+node_modules/
+dist/
+
+.vscode/

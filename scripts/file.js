@@ -42,6 +42,13 @@ async function move(from, to) {
     return fs.promises.rename(from, to);
 }
 
+async function readJson(path) {
+    let ret = await fs.promises.readFile(path, {
+        encoding: 'utf8'
+    });
+    return JSON.parse(ret);
+}
+
 async function writeJson(path, data) {
     return fs.promises.writeFile(path, JSON.stringify(data), {
         encoding: 'utf8'
@@ -56,5 +63,6 @@ module.exports = {
     rmdir,
     clrdir,
     move,
+    readJson,
     writeJson
 };

@@ -24,7 +24,7 @@
               data-toggle="dropdown"
               data-display="static"
             >
-              <img :src="profile" class="float-left rounded-circle" alt="profile" height="80%" />
+              <app-avatar :src="profile" size="48px"></app-avatar>
               <div class="d-flex align-items-center">
                 <div class="h5 my-0 mr-2">{{user.name}}</div>
                 <span class="badge badge-pill badge-info">{{user.identity}}</span>

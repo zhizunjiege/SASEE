@@ -80,9 +80,9 @@ app.get('/sendPinCode', async (req, res) => {
     let pinCode = email.createSixNum(),
         addr = req.query.email;
     if (!addr) {
-        let { identity, username } = req.query,
-            sql_query = 'SELECT email FROM ?? WHERE username=?',
-            [user] = await mysql.query(sql_query, [identity, username]);
+        let { identity, schoolNum } = req.query,
+            sql_query = 'SELECT email FROM ?? WHERE schoolNum=?',
+            [user] = await mysql.query(sql_query, [identity, schoolNum]);
         if (user) {
             addr = user.email;
         } else {
@@ -104,11 +104,11 @@ app.get('/sendPinCode', async (req, res) => {
     });
 });
 app.post('/retrieve', async (req, res) => {
-    let { identity, newPW, username, pinCode } = req.body,
-        sql_update = 'UPDATE ?? SET password=? WHERE username=?';
+    let { identity, newPW, schoolNum, pinCode } = req.body,
+        sql_update = 'UPDATE ?? SET password=? WHERE schoolNum=?';
 
     if (util.pinValidate(req.session.pin, pinCode)) {
-        await mysql.query(sql_update, [identity, newPW, username]);
+        await mysql.query(sql_update, [identity, newPW, schoolNum]);
         res.json({
             status: true,
             msg: '找回密码成功，请使用新密码登陆！'
@@ -143,10 +143,6 @@ app.get('/logout', async (req, res) => {
 
 const routesFile = path.resolve(__dirname, 'routes.json');
 
-async function saveRoutes(routes) {
-    return file.writeJson(routesFile, routes);
-}
-
 function modulesFilter(modules, user) {
     return modules.filter(module => {
         if (module.open) {
@@ -167,11 +163,12 @@ function modulesFilter(modules, user) {
         }
     });
 }
+
 app.get('/modules', async (req, res) => {
     let { identity, uid } = req.session,
         sql_query = 'SELECT * FROM ?? WHERE id=?';
     let [user] = await mysql.query(sql_query, [identity, uid]);
-    let routes = require(routesFile);
+    let routes = await file.readJson(routesFile);
     user.identity = identity;
     routes = modulesFilter(routes, user);
     res.json({
@@ -182,7 +179,7 @@ app.get('/modules', async (req, res) => {
 
 app.get('/modules-list', async (req, res) => {
     let modules = [], checked = [];
-    let routes = require(routesFile);
+    let routes = await file.readJson(routesFile);
     for (const [i, v] of routes.entries()) {
         modules.push({
             val: i,
@@ -202,11 +199,11 @@ app.get('/modules-list', async (req, res) => {
 
 app.post('/modules-opt', async (req, res) => {
     let { open } = req.body;
-    let routes = require(routesFile);
+    let routes = await file.readJson(routesFile);
     for (let i = 1; i < routes.length; i++) {
         routes[i].open = open.indexOf(i) >= 0;
     }
-    await saveRoutes(routes);
+    await file.writeJson(routesFile, routes);
     await req.logout();
     res.json({
         status: true,
@@ -218,11 +215,11 @@ app.post('/modules-opt', async (req, res) => {
 const pm2 = require('pm2');
 
 app.get('/reset-system', async (req, res) => {
-    let routes = require(routesFile);
+    let routes = await file.readJson(routesFile);
     for (const [i, v] of routes.entries()) {
         v.open = i <= 1;
     }
-    await saveRoutes(routes);
+    await file.writeJson(routesFile, routes);
     let promises = [];
     for (const i of routes) {
         let reset = require(`./${i.path}/reset`);

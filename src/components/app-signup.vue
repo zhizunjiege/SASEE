@@ -18,7 +18,7 @@
       ></input-text>
       <input-text
         v-model="fields.schoolNum"
-        :label="fields.identity=='student'?'学号':'工号'"
+        :label="fields.identity=='student'?'学号':'职工号'"
         placeholder="1~16位字母或数字"
         pattern="[a-zA-Z0-9]{1,16}"
         required

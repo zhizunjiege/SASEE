@@ -53,8 +53,8 @@ export default {
       let emailReg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
       let msg = "";
       this.count = 60;
-      if ("username" in this.extra && !this.extra.username) {
-        msg = "请输入用户名！";
+      if ("schoolNum" in this.extra && !this.extra.schoolNum) {
+        msg = "请输入学号或职工号！";
       } else if ("identity" in this.extra && !this.extra.identity) {
         msg = "请选择身份！";
       } else if ("email" in this.extra && !emailReg.test(this.extra.email)) {

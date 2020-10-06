@@ -21,8 +21,8 @@ module.exports = {
     },
     error_file: 'logs/err.log',
     out_file: 'logs/out.log',
-    exec_mode: "cluster",
-    instances: 8,
+    // exec_mode: "cluster",
+    // instances: 8,
     shutdown_with_message: true
   }]
 };

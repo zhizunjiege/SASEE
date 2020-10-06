@@ -3,13 +3,14 @@
     <label
       v-if="label"
       class="col-3 col-form-label"
-      :class="{'required':'required' in $attrs}"
-    >{{label}}</label>
+      :class="{ required: 'required' in $attrs }"
+      >{{ label }}</label
+    >
     <textarea
       v-bind="$attrs"
       v-model="in_value"
       class="form-control textarea-alpha"
-      :class="{'col-9':label}"
+      :class="{ 'col-9': label }"
     ></textarea>
   </div>
 </template>

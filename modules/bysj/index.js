@@ -17,21 +17,21 @@ app.locals.error = CONFIG.error;
 
 const timeFile = path.resolve(__dirname, 'config/time.json');
 
-async function saveTime(time) {
+/* async function await file.writeJson(timeFile, time);(time) {
     file.writeJson(timeFile, time);
-}
+} */
 const CALLBACKS = {
-    close() {
-        let time = require(timeFile);
+    async close() {
+        let time = await file.readJson(timeFile);
         time.CHOOSEUSABLE = false;
-        saveTime(time);
         console.log('毕业设计--切换选题状态为--关闭');
+        return file.writeJson(timeFile, time);
     },
-    open() {
-        let time = require(timeFile);
+    async open() {
+        let time = await file.readJson(timeFile);
         time.CHOOSEUSABLE = true;
-        saveTime(time);
         console.log('毕业设计--切换选题状态为--打开');
+        return file.writeJson(timeFile, time);
     },
     async draw() {
         let sql_query = 'SELECT id,target1,target2,target3 FROM bysj WHERE state="2-通过" AND student IS NULL AND (JSON_LENGTH(target1) OR JSON_LENGTH(target2) OR JSON_LENGTH(target3))';
@@ -116,7 +116,7 @@ app.get('/project-list', async (req, res) => {
         sql_query1 = 'SELECT b.id,title,teacher,t.`name`,SUBSTR(t.`group`,3) `group`,(IFNULL(JSON_LENGTH(b.target1),0)+IFNULL(JSON_LENGTH(b.target2),0)+IFNULL(JSON_LENGTH(b.target3),0)) chosen FROM bysj b INNER JOIN teacher t ON b.teacher=t.id INNER JOIN student s ON t.`group`=s.`group`||s.`group`="7-高工" WHERE s.id=? AND b.state="2-通过" AND b.student IS NULL ORDER BY b.id LIMIT ? OFFSET ?',
         sql_query2 = 'SELECT b.id,title,teacher,student,state,submitTime,lastModifiedTime,t1.`name`,t1.proTitle FROM bysj b INNER JOIN teacher t1 ON b.teacher=t1.id INNER JOIN teacher t2 ON t1.`group`=t2.`group` WHERE t2.id=? ORDER BY b.state,b.id LIMIT ? OFFSET ?';
 
-    let time = require(timeFile);
+    let time = await file.readJson(timeFile);
     if (identity == 'student' && !time.CHOOSEUSABLE) {
         res.json({
             status: true,
@@ -506,13 +506,13 @@ function registerJobs(time) {
 
 app.post('/date', async (req, res) => {
     let { times: t } = req.body;
-    let time = require(timeFile);
+    let time = await file.readJson(timeFile);
 
     for (const [k, v] of Object.entries(t)) {
         time[k] = v;
     }
     registerJobs(time);
-    saveTime(time);
+    await file.writeJson(timeFile, time);
     res.json({
         status: true,
         msg: '日期设置成功！'
@@ -520,7 +520,7 @@ app.post('/date', async (req, res) => {
 });
 
 app.get('/date-info', async (req, res) => {
-    let time = require(timeFile);
+    let time = await file.readJson(timeFile);
     res.json({
         status: true,
         times: time

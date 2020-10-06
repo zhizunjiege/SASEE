@@ -266,4 +266,35 @@ app.get('/data-recovery', async (req, res) => {
     }
 });
 
+app.get('/comments-total', async (req, res) => {
+    let sql_query = 'SELECT COUNT(*) total FROM comment';
+    let result = await mysql.query(sql_query);
+    res.json({
+        status: true,
+        total: result[0].total
+    });
+});
+
+app.get('/comments-list', async (req, res) => {
+    let { length: limit, start: offset } = req.query,
+        sql_query = 'SELECT * FROM comment ORDER BY time DESC LIMIT ? OFFSET ?';
+    let result = await mysql.query(sql_query, [Number(limit), Number(offset)]);
+    res.json({
+        status: true,
+        comments: result
+    });
+});
+
+app.post('/submit-feedback', async (req, res) => {
+    let { content, star } = req.body,
+        sql_insert = "INSERT INTO comment (star,time,content) VALUES (?,NOW(),?)";
+
+    let rst = await mysql.query(sql_insert, [Number(star) || 5, content]);
+    res.json({
+        status: true,
+        msg: '发表反馈成功！',
+        id: rst.insertId
+    });
+});
+
 module.exports = app;
