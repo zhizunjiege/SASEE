@@ -51,8 +51,8 @@
   "scripts": {
     "server": "node app.js",
     "build": "webpack --config webpack.config.prod.js",
-    "dev": "pm2 start pm2.config.js",
-    "prod": "pm2 start pm2.config.js -i 8 --env production"
+    "dev": "pm2 start pm2.config.js --only dev",
+    "prod": "pm2 start pm2.config.js --only prod --env production"
   },
   "repository": {
     "type": "git",
